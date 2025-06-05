@@ -1,4 +1,4 @@
-# Amy Script Compiler - x86 backend 
+# Cerulean Compiler - x86 backend 
 # By Amy Burnett
 # April 11 2021
 # ========================================================================
@@ -7,11 +7,11 @@ import os
 from sys import exit
 
 if __name__ == "codegen":
-    from amyAST import *
+    from ceruleanAST import *
     from visitor import ASTVisitor
     from symbolTable import SymbolTable
 else:
-    from .amyAST import *
+    from .ceruleanAST import *
     from .visitor import ASTVisitor
     from .symbolTable import SymbolTable
 
@@ -25,7 +25,7 @@ LIB_FILENAME = os.path.dirname(__file__) + "/AmyScriptBuiltinLib_x86.asm"
 
 # ========================================================================
 
-class CodeGenVisitor_x86 (ASTVisitor):
+class CodeGenVisitor (ASTVisitor):
 
     def __init__(self, lines):
         self.parameters = []

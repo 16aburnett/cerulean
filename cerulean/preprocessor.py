@@ -1,8 +1,8 @@
-# Amy Script Preprocessor 
-#    AmyScript's preprocessor that handles the preprocessor directives 
-#    and any other pre-compile changes. 
+# Cerulean Preprocessor 
+#    Cerulean's preprocessor that handles the preprocessor directives 
+#    and any other pre-compile changes.
 # By Amy Burnett
-# November 17 2021
+# June 5th 2025
 # ========================================================================
 
 import sys 
@@ -27,7 +27,7 @@ class DirectiveToken:
 
 # ========================================================================
 
-class AmyScriptPreprocessor:
+class CeruleanPreprocessor:
 
     def __init__(self, mainFilename, otherFilenames=[], emitPreprocessed=False):
         self.mainFilename = mainFilename
@@ -408,7 +408,7 @@ if __name__ == "__main__":
     for i in range(2, len(sys.argv)):
         otherFilenames += [sys.argv[i]]
     
-    preprocessor = AmyScriptPreprocessor(mainFilename, otherFilenames)
+    preprocessor = CeruleanPreprocessor(mainFilename, otherFilenames)
 
     preprocessedCode = preprocessor.process()
 

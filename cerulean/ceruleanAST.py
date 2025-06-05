@@ -1,4 +1,4 @@
-# Cerulean Frontend Compiler - Abstract Syntax Tree
+# Cerulean Compiler - Abstract Syntax Tree
 # By Amy Burnett
 # April 24 2021
 # ========================================================================
@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from sys import exit
 
-if __name__ == "amyAST":
+if __name__ == "ceruleanAST":
     from visitor import *
 else:
     from .visitor import *

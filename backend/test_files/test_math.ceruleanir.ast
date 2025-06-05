@@ -12,8 +12,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = add (int32(10), int32(7))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f00102294c0>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=11, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=11, includeChain=[], lineStr='    %x = add (int32(10), int32(7))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1d370>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=11, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=11, includeChain=[], lineStr='    %x = add (int32(10), int32(7))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -45,8 +45,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = add (float32(3.14), float32(100.5))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f0010229b80>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=16, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=16, includeChain=[], lineStr='    %x = add (float32(3.14), float32(100.5))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1d8b0>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=16, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=16, includeChain=[], lineStr='    %x = add (float32(3.14), float32(100.5))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.FLOAT32 float32
@@ -78,8 +78,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = sub (int32(10), int32(7))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022a150>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='sub', value='sub', line=21, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=21, includeChain=[], lineStr='    %x = sub (int32(10), int32(7))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1de80>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='sub', value='sub', line=21, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=21, includeChain=[], lineStr='    %x = sub (int32(10), int32(7))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -111,8 +111,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = sub (float32(3.14), float32(100.5))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022a6c0>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='sub', value='sub', line=26, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=26, includeChain=[], lineStr='    %x = sub (float32(3.14), float32(100.5))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1e480>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='sub', value='sub', line=26, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=26, includeChain=[], lineStr='    %x = sub (float32(3.14), float32(100.5))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.FLOAT32 float32
@@ -144,8 +144,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = mul (int32(10), int32(7))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022ac00>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='mul', value='mul', line=31, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=31, includeChain=[], lineStr='    %x = mul (int32(10), int32(7))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1ea80>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='mul', value='mul', line=31, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=31, includeChain=[], lineStr='    %x = mul (int32(10), int32(7))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -177,8 +177,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = mul (float32(3.14), float32(100.5))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022b2f0>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='mul', value='mul', line=36, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=36, includeChain=[], lineStr='    %x = mul (float32(3.14), float32(100.5))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1f1d0>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='mul', value='mul', line=36, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=36, includeChain=[], lineStr='    %x = mul (float32(3.14), float32(100.5))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.FLOAT32 float32
@@ -210,8 +210,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = div (int32(10), int32(7))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022b830>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='div', value='div', line=41, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=41, includeChain=[], lineStr='    %x = div (int32(10), int32(7))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1f650>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='div', value='div', line=41, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=41, includeChain=[], lineStr='    %x = div (int32(10), int32(7))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -243,8 +243,8 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   String Literal: "%x = div (float32(3.14), float32(100.5))" char*
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7f001022bce0>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='div', value='div', line=46, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=46, includeChain=[], lineStr='    %x = div (float32(3.14), float32(100.5))')
+|   |   |   |   |   LHS: <ast.VariableDeclarationNode object at 0x7fa271e1fb00>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='div', value='div', line=46, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=46, includeChain=[], lineStr='    %x = div (float32(3.14), float32(100.5))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.FLOAT32 float32
@@ -269,7 +269,7 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Local Variable: %x
 |   |   |   |   Instruction:
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=49, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend_compilers/test_files/test_math.ceruleanir', originalLine=49, includeChain=[], lineStr='    return (int32(0))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=49, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/test_math.ceruleanir', originalLine=49, includeChain=[], lineStr='    return (int32(0))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32

@@ -1,7 +1,7 @@
-# Cerulean Frontend Compiler
-# Cerulean is a C/C++ -like programming language
+# Cerulean Compiler
+# Cerulean is a C/C++ like programming language
 # By Amy Burnett
-# March 7, 2024
+# June 5, 2025
 # ========================================================================
 
 import sys 
@@ -10,20 +10,23 @@ from enum import Enum
 import argparse 
 
 if __name__ == "__main__":
-    import preprocessor
-    from tokenizer import tokenize
-    from ast import *
-    from parser import Parser
-    from visitor import *
-    from semantic_analyzer import *
-    from codegen import CodeGenVisitor
-else:
+    from .preprocessor import CeruleanPreprocessor
     from .tokenizer import tokenize
-    from .ast import *
+    from .ceruleanAST import *
     from .parser import Parser
     from .visitor import *
-    from .semantic_analyzer import *
+    from .semanticAnalyzer import *
+    from .codegen import CodeGenVisitor
+    from backend.ceruleanIRBuilder import CeruleanIRBuilder
+else:
+    from .preprocessor import CeruleanPreprocessor
+    from .tokenizer import tokenize
+    from .ceruleanAST import *
+    from .parser import Parser
+    from .visitor import *
+    from .semanticAnalyzer import *
     from .codeGen import CodeGenVisitor
+    from backend.ceruleanIRBuilder import CeruleanIRBuilder
 
 
 # ========================================================================
@@ -35,21 +38,24 @@ TARGET_CPP    = "cpp"
 
 BUILTIN_PREFIX = "__builtin__"
 
-class AmyScriptCompiler:
+class CeruleanCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitAST=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
         self.files = {}
-        self.debug = False
-        self.ast = ""
+        self.debug = debug
 
-        self.emitAST = emitAST
         self.emitPreprocessed = emitPreprocessed
         self.onlyPreprocess = preprocess
-
+        self.emitTokens = emitTokens
+        self.tokensFilename = mainFilename + ".tokens"
+        self.emitAST = emitAST
         self.astFilename = mainFilename + ".ast"
+        self.emitIR = emitIR
+        self.IRFilename = mainFilename + ".ir"
+
         self.debugLines = []
 
         self.target = target
@@ -61,7 +67,7 @@ class AmyScriptCompiler:
         #=== PREPROCESSING =======================================================
 
         # send through preprocessor
-        pp = preprocessor.AmyScriptPreprocessor(mainFilename, otherFilenames, emitPreprocessed=self.emitPreprocessed)
+        pp = CeruleanPreprocessor (mainFilename, otherFilenames, emitPreprocessed=self.emitPreprocessed)
         preprocessedCode = pp.process ()
         self.debugLines = pp.outputLines
         self.files = pp.files 
@@ -77,6 +83,18 @@ class AmyScriptCompiler:
         if (self.debug):
             print ("Tokenizing...")
         tokens = tokenize(preprocessedCode, self.mainFilename, self.debugLines)
+        if self.emitTokens:
+            tokenStrings = [""]
+            currline = 1
+            for token in tokens:
+                while token.line != currline:
+                    currline += 1
+                    tokenStrings.append ("\n")
+                tokenStrings.append (token.type)
+                tokenStrings.append (' ')
+            print (f"Writing Tokens to \"{self.tokensFilename}\"")
+            file = open (self.tokensFilename, "w")
+            file.write ("".join (tokenStrings))
 
         #=== PARSING =============================================================
 
@@ -517,45 +535,47 @@ class AmyScriptCompiler:
         if (self.debug):
             print ("Passes Semantic Analysis")
 
-        # get a string representation of the ast 
-        visitor = PrintVisitor ()
-        visitor.visitProgramNode (ast)
-        astOutput = "".join(visitor.outputstrings)
-
-        # save ast 
-        self.ast = astOutput
-
         if self.emitAST:
             print (f"Writing AST to \"{self.astFilename}\"")
-            file = open(self.astFilename, "w")
+            # get a string representation of the ast 
+            visitor = PrintVisitor ()
+            visitor.visitProgramNode (ast)
+            astOutput = "".join (visitor.outputstrings)
+
+            file = open (self.astFilename, "w")
             file.write (astOutput)
 
-        #=== CODE GENERATION =====================================================
+        #=== CONVERT TO IR =======================================================
 
-        if target == TARGET_AMYASM:
-            codeGenVisitor = CodeGenVisitor (lines)
-        elif target == TARGET_X86:
-            codeGenVisitor = CodeGenVisitor_x86 (lines)
-        elif target == TARGET_PYTHON:
-            codeGenVisitor = CodeGenVisitor_python (lines)
-        elif target == TARGET_CPP:
+        print ("TODO: CONVERTING TO IR NOT YET IMPLEMENTED")
+        return ''
+
+        #=== CODEGEN =============================================================
+
+        # if target == TARGET_AMYASM:
+            # codeGenVisitor = CodeGenVisitor (lines)
+        # elif target == TARGET_X86:
+            # codeGenVisitor = CodeGenVisitor_x86 (lines)
+        # elif target == TARGET_PYTHON:
+            # codeGenVisitor = CodeGenVisitor_python (lines)
+        # elif target == TARGET_CPP:
             # precodegen stage to generate scopenames
-            ast.accept (PreCodeGenVisitor_cpp (lines))
-            codeGenVisitor = CodeGenVisitor_cpp (lines)
+            # ast.accept (PreCodeGenVisitor_cpp (lines))
+            # codeGenVisitor = CodeGenVisitor_cpp (lines)
 
         # generate code
-        ast.accept (codeGenVisitor)
+        # ast.accept (codeGenVisitor)
 
         #=== OUTPUT ==============================================================
 
-        destCode = "".join(codeGenVisitor.code)
+        # destCode = "".join(codeGenVisitor.code)
 
         # output generated/compiled code to separate file
-        print (f"Writing compiled code to \"{self.destFilename}\"")
-        file = open(self.destFilename, "w")
-        file.write (destCode)
+        # print (f"Writing compiled code to \"{self.destFilename}\"")
+        # file = open(self.destFilename, "w")
+        # file.write (destCode)
 
-        return destCode
+        # return destCode
 
         #=== END =================================================================
 
@@ -568,8 +588,11 @@ if __name__ == "__main__":
 
     argparser.add_argument(dest="sourceFiles", nargs="+", help="source files to compile (first file should be the main file)")
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name of the outputted compiled file")
+    argparser.add_argument("--debug", dest="debug", action="store_true", help="enable debug output")
     argparser.add_argument("--emitPreprocessed", dest="emitPreprocessed", action="store_true", help="output the preprocessed code")
+    argparser.add_argument("--emitTokens", dest="emitTokens", action="store_true", help="output the lexed tokens")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the ast")
+    argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the generated IR")
     argparser.add_argument("--preprocess", dest="preprocess", action="store_true", help="only run preprocessor")
     argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm | x86 | python | cpp)")
 
@@ -599,11 +622,14 @@ if __name__ == "__main__":
     print ("destFilename:", destFilename)
 
     # compile code 
-    compiler = AmyScriptCompiler (
+    compiler = CeruleanCompiler (
         mainFilename, 
         otherFilenames, 
         destFilename=destFilename,
-        emitAST=args.emitAST, 
+        debug=args.debug,
+        emitTokens=args.emitTokens,
+        emitAST=args.emitAST,
+        emitIR=args.emitIR,
         emitPreprocessed=args.emitPreprocessed, 
         preprocess=args.preprocess,
         target=target

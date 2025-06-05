@@ -1,4 +1,4 @@
-# Amy Script Compiler
+# Cerulean Compiler
 # By Amy Burnett
 # April 10 2021
 # ========================================================================
@@ -7,10 +7,10 @@ from sys import exit
 
 if __name__ == "parser":
     from tokenizer import printToken
-    from amyAST import *
+    from ceruleanAST import *
 else:
     from .tokenizer import printToken
-    from .amyAST import *
+    from .ceruleanAST import *
 
 # ========================================================================
 

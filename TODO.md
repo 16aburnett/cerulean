@@ -1,4 +1,14 @@
 
+
+```bash
+
+# run as a module for correct import between cerulean and ceruleanIR backend
+# needs to run from root of repo
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR
+
+```
+
+
 ```bash
 # Building CeruleanIRBackend
 # this does not seem to work??
@@ -29,6 +39,24 @@ python3 AmyAssembly/code/amyAssemblyInterpreter.py test_files/test_math.cerulean
 ```
 
 ### NOTES ################################################################
+
+
+Architecture:
+- each frontend language needs its own compiler
+- we dont actually need to convert frontend to an IR language, just to the IR AST and then codegen from there
+    - so the frontend compiler becomes the full compiler
+- The ceruleanIR code can be a separate module that the frontend compiler imports
+    - CeruleanIR module handles creating the CeruleanIR AST (API functions for doing so, makeFunction() makeInstruction() etc..)
+    - and it has multiple backend codegen visitors for each target language
+    - The main compiler will then convert its AST to CeruleanIR and then run the codegen
+- for debugging, we can add a CeruleanIR print visitor and a CeruleanIR compiler
+```
+ceruleanCompiler     -> lex/parse -> AST -|                   |-> codegen_x86
+ceruleanPPCompiler   -> lex/parse -> AST -|-> CeruleanIR_AST -|-> codegen_amyasm
+ceruleanFuncCompiler -> lex/parse -> AST -|         |         |-> codegen_ceruleanasm
+ceruleanIRCompiler   -> lex/parse -> AST -|         |-> CeruleanIR emitter/codegen
+```
+
 
 Similar to Zig
 - able to use the c library

@@ -1,4 +1,4 @@
-# Amy Script Compiler - AST Visitors
+# Cerulean Compiler - AST Visitors
 # By Amy Burnett
 # April 24 2021
 # ========================================================================

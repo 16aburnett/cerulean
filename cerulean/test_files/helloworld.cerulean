@@ -4,15 +4,14 @@
 //========================================================================
 
 // global variables can be allocated outside of functions
-// strings are a built-in type for convenience
-string g_customary_greeting = "Hello, World!";
+char[] g_customary_greeting = "Hello, World!";
 int32 g_length = 13;
 
 //========================================================================
 
 // function syntax is very similar to C/C++ with the exception of the 
 // function keyword at the start.
-function void print_greeting (string greeting, int32 length)
+function void print_greeting (char[] greeting, int32 length)
 {
     // C/C++ for loop syntax all the way!!
     for (int32 i = 0; i < length; ++i)

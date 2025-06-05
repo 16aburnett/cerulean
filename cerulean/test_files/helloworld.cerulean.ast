@@ -1,0 +1,72 @@
+ProgramNode:
+|   ExpressionStatement:
+|   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=29, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=7, includeChain=[], lineStr='char[] g_customary_greeting = "Hello, World!";') char[]
+|   |   |   Type: Type.CHAR char[]
+|   |   |   VariableDeclaration: 
+|   |   |   |   Type: Type.CHAR char[]
+|   |   |   |   Name: g_customary_greeting
+|   |   |   String Literal: "Hello, World!" char[]
+|   ExpressionStatement:
+|   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=8, column=16, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=8, includeChain=[], lineStr='int32 g_length = 13;') int
+|   |   |   Type: Type.INT int
+|   |   |   VariableDeclaration: 
+|   |   |   |   Type: Type.INT int
+|   |   |   |   Name: g_length
+|   |   |   Int Literal: 13 int
+|   Function: print_greeting char[]:int->void
+|   |   ReturnType:
+|   |   |   Type: Type.VOID void
+|   |   Parameter: 
+|   |   |   Type: Type.CHAR char[]
+|   |   |   Name: greeting
+|   |   Parameter: 
+|   |   |   Type: Type.INT int
+|   |   |   Name: length
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int
+|   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   |   Name: i
+|   |   |   |   |   |   |   Int Literal: 0 int
+|   |   |   |   |   Condition: Type.INT
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=17, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int
+|   |   |   |   |   |   |   Identifier: i int
+|   |   |   |   |   |   |   Identifier: length int
+|   |   |   |   |   Update: Type.INT
+|   |   |   |   |   |   UnaryLeftExpression: Token(type='INCR', lexeme='++', value='++', line=17, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int
+|   |   |   |   |   |   |   Identifier: i int
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Subscript Operator: char
+|   |   |   |   |   |   |   |   |   |   |   Array:
+|   |   |   |   |   |   |   |   |   |   |   |   Identifier: greeting char[]
+|   |   |   |   |   |   |   |   |   |   |   Offset:
+|   |   |   |   |   |   |   |   |   |   |   |   Identifier: i int
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   Function: main void->int
+|   |   ReturnType:
+|   |   |   Type: Type.INT int
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print_greeting 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: g_customary_greeting char[]
+|   |   |   |   |   |   |   Identifier: g_length int
+|   |   |   |   ReturnStatement:
+|   |   |   |   |   |   Int Literal: 0 int

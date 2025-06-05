@@ -1,4 +1,4 @@
-# Amy Script Compiler
+# Cerulean Compiler
 # By Amy Burnett
 # April 11 2021
 # ========================================================================
@@ -8,11 +8,11 @@ from sys import exit
 
 if __name__ == "symbolTable":
     from tokenizer import printToken
-    from amyAST import *
+    from ceruleanAST import *
     from template import TemplateVisitor
 else:
     from .tokenizer import printToken
-    from .amyAST import *  
+    from .ceruleanAST import *  
     from .template import TemplateVisitor
 
 # ========================================================================

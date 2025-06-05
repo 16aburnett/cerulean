@@ -1,4 +1,4 @@
-# Amy Script Compiler
+# Cerulean Compiler
 # By Amy Burnett
 # April 10 2021
 # ========================================================================
@@ -170,39 +170,20 @@ def tokenize(code, mainFilename, debugLines=[]):
                 kind = "CONTINUE"
             elif (lexeme == "function"):
                 kind = "FUNCTION"
-            elif (lexeme == "class"):
-                kind = "CLASS"
-            elif (lexeme == "inherits"):
-                kind = "INHERITS"
-            elif (lexeme == "public"):
-                kind = "PUBLIC"
-            elif (lexeme == "private"):
-                kind = "PRIVATE"
-            elif (lexeme == "field"):
-                kind = "FIELD"
-            elif (lexeme == "virtual"):
-                kind = "VIRTUAL"
-            elif (lexeme == "method"):
-                kind = "METHOD"
-            elif (lexeme == "constructor"):
-                kind = "CONSTRUCTOR"
-            elif (lexeme == "enum"):
-                kind = "ENUM"
-            elif (lexeme == "template"):
-                kind = "TEMPLATE"
+            elif (lexeme == "struct"):
+                kind = "STRUCT"
             elif (lexeme == "new"):
                 kind = "NEW"
             elif (lexeme == "free"):
                 kind = "FREE"
-            elif (lexeme == "this"):
-                kind = "THIS"
             elif (lexeme == "sizeof"):
                 kind = "SIZEOF"
             elif (lexeme == "null"):
                 kind = "NULL"
-            elif (lexeme == "int"):
+            # Types
+            elif (lexeme == "int32"):
                 kind = "INTTYPE"
-            elif (lexeme == "float"):
+            elif (lexeme == "float32"):
                 kind = "FLOATTYPE"
             elif (lexeme == "bool"):
                 kind = "BOOLTYPE"
