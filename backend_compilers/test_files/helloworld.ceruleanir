@@ -1,0 +1,38 @@
+// C/C++ style comments
+// Author: Amy Burnett
+//========================================================================
+
+// You can specify static global info outside of functions
+// global variables are denoted by the @ symbol
+global @customary_greeting = value (char*("Hello, World!"))
+global @length = value (int32(14))
+
+//========================================================================
+
+function void @print_greeting (char*(%greeting), int32(%length))
+{
+    // normal instructions
+    // local variables are denoted with % symbol
+    // [%varname = ]<command> (<arguments>)
+    %i = value (int32(0))
+label loop_start
+    // loop condition
+    jge (int32(%i), int32(%length), label(loop_end))
+    // loop body
+    %char = load (char*(%greeting), int32(%i))
+    call @__builtin__print__char (char(%char))
+    // loop update
+    %i = add (int32(%i), int32(1))
+    jmp (label(loop_start))
+label loop_end
+    call @__builtin__println ()
+    return ()
+}
+
+//========================================================================
+
+function int32 @main ()
+{
+    call @print_greeting (char*(@customary_greeting), int32(@length))
+    return (int32(0))
+}

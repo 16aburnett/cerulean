@@ -1,0 +1,50 @@
+// Testing math correctness
+// Author: Amy Burnett
+//========================================================================
+
+
+//========================================================================
+
+function int32 @main ()
+{
+    call @__builtin__println__char__1 (char*("%x = add (int32(10), int32(7))"))
+    %x = add (int32(10), int32(7))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__int32 (int32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = add (float32(3.14), float32(100.5))"))
+    %x = add (float32(3.14), float32(100.5))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__float32 (float32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = sub (int32(10), int32(7))"))
+    %x = sub (int32(10), int32(7))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__int32 (int32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = sub (float32(3.14), float32(100.5))"))
+    %x = sub (float32(3.14), float32(100.5))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__float32 (float32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = mul (int32(10), int32(7))"))
+    %x = mul (int32(10), int32(7))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__int32 (int32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = mul (float32(3.14), float32(100.5))"))
+    %x = mul (float32(3.14), float32(100.5))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__float32 (float32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = div (int32(10), int32(7))"))
+    %x = div (int32(10), int32(7))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__int32 (int32(%x))
+
+    call @__builtin__println__char__1 (char*("%x = div (float32(3.14), float32(100.5))"))
+    %x = div (float32(3.14), float32(100.5))
+    call @__builtin__print__char__1 (char*("=> "))
+    call @__builtin__println__float32 (float32(%x))
+    return (int32(0))
+}

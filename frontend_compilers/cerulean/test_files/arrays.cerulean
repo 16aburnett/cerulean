@@ -1,0 +1,11 @@
+// Cerulean is a C style programming language
+// Author: Amy Burnett
+//========================================================================
+
+function int32 main ()
+{
+    int32 N = 10;
+    int32* values = new int32 (N);
+
+    return 0;
+}
