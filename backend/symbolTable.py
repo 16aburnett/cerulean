@@ -6,8 +6,8 @@
 from enum import Enum
 from sys import exit
 
-from tokenizer import printToken
-from ast import *
+from .tokenizer import printToken
+from .ceruleanIRAST import *
 
 # ========================================================================
 

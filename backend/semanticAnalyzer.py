@@ -5,10 +5,10 @@
 
 from sys import exit
 
-from tokenizer import printToken
-from ast import *
-from visitor import ASTVisitor
-from symbol_table import *
+from .tokenizer import printToken
+from .ceruleanIRAST import *
+from .visitor import ASTVisitor
+from .symbolTable import *
 
 # ========================================================================
 

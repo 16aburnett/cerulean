@@ -10,15 +10,14 @@ from sys import exit
 from enum import Enum
 import argparse
 
-from preprocessor import Preprocessor
-from tokenizer import tokenize
-from ast import *
-from print_visitor import PrintVisitor
-from parser import Parser
-from visitor import *
-from semantic_analyzer import *
-from codegen_amyasm import CodeGenVisitor_AmyAssembly
-from codegen_x86 import CodeGenVisitor_x86
+from .tokenizer import tokenize
+from .ceruleanIRAST import *
+from .printVisitor import PrintVisitor
+from .parser import Parser
+from .visitor import *
+from .semanticAnalyzer import *
+from .codegen_amyasm import CodeGenVisitor_AmyAssembly
+from .codegen_x86 import CodeGenVisitor_x86
 
 # ========================================================================
 
@@ -33,7 +32,7 @@ BUILTIN_PREFIX = "__builtin__"
 
 class CeruleanIRCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, target=TARGET_AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
@@ -42,8 +41,6 @@ class CeruleanIRCompiler:
         self.ast = ""
 
         self.emitAST = emitAST
-        self.emitPreprocessed = emitPreprocessed
-        self.onlyPreprocess = preprocess
 
         self.astFilename = mainFilename + ".ast"
         self.debugLines = []
@@ -559,9 +556,7 @@ if __name__ == "__main__":
 
     argparser.add_argument(dest="sourceFiles", nargs="+", help="source files to compile (first file should be the main file)")
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name of the outputted compiled file")
-    argparser.add_argument("--emitPreprocessed", dest="emitPreprocessed", action="store_true", help="output the preprocessed code")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the ast")
-    argparser.add_argument("--preprocess", dest="preprocess", action="store_true", help="only run preprocessor")
     argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm, x86)")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
@@ -596,8 +591,6 @@ if __name__ == "__main__":
         otherFilenames, 
         destFilename=destFilename,
         emitAST=args.emitAST, 
-        emitPreprocessed=args.emitPreprocessed, 
-        preprocess=args.preprocess,
         target=target,
         debug=args.debug
     )
