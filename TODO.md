@@ -31,15 +31,41 @@ ceruleanirc <source_files> -o <dest_filename>
 
 # test examples
 python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld.ceruleanir -o backend/test_files/helloworld.amyasm --debug
-python3 AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld.ceruleanir.amyasm
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld.ceruleanir.amyasm
 
 python3 -m backend.ceruleanIRCompiler backend/test_files/test_math.ceruleanir -o backend/test_files/test_math.amyasm --debug
-python3 AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_math.ceruleanir.amyasm
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_math.ceruleanir.amyasm
+
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_heap_arrays.ceruleanir.amyasm
 
 ```
 
 ### NOTES ################################################################
 
+
+OpaquePointers 
+- Developers of LLVM determined that typed pointers are a hinderance to some optimizations
+- And so LLVM IR now only uses opaque pointers
+- instead of i32*, just use ptr
+- some instructions still need type info like with load/store so pass type as an extra arg
+- we should try to capture the same
+```
+# before
+load i64* %p
+# after
+load i64, ptr %p
+```
+
+Stack v heap (might be moreso for AmyAssembly)
+- stack points are negative (akin to stack growing down)
+- but if you allocate an array on the stack, the pointer needs to point to the lowest address
+so that you can iterate over it via incrementing the pointer
+```
+          5  4  3  2  1  0  <-- array index
+        |  |  |  |  |  |  | <-- array
+-1 -2 -3 -4 -5 -6 -7 -8 -9  <-- stack address
+```
 
 Architecture:
 - each frontend language needs its own compiler
@@ -51,11 +77,55 @@ Architecture:
     - The main compiler will then convert its AST to CeruleanIR and then run the codegen
 - for debugging, we can add a CeruleanIR print visitor and a CeruleanIR compiler
 ```
-ceruleanCompiler     -> lex/parse -> AST -|                   |-> codegen_x86
-ceruleanPPCompiler   -> lex/parse -> AST -|-> CeruleanIR_AST -|-> codegen_amyasm
-ceruleanFuncCompiler -> lex/parse -> AST -|         |         |-> codegen_ceruleanasm
-ceruleanIRCompiler   -> lex/parse -> AST -|         |-> CeruleanIR emitter/codegen
+ceruleanCompiler     -> lex/parse -> AST -> semantic-passes -|                                                       |-> codegen_x86
+ceruleanPPCompiler   -> lex/parse -> AST -> semantic-passes -|-> CeruleanIR_AST -> semantic-passes -> optimizations -|-> codegen_amyasm
+ceruleanFuncCompiler -> lex/parse -> AST -> semantic-passes -|         |                                             |-> codegen_ceruleanasm
+ceruleanIRCompiler   -> lex/parse -> AST -> semantic-passes -|         |-> CeruleanIR emitter/codegen
 ```
+
+
+IR Builder Interface
+- inspiration from https://github.com/numba/llvmlite/blob/main/examples/sum.py
+```python
+
+# Need the ability to build a function
+funcType = IR.createFuncType(IR.Int32, [IR.Int32, IR.Int32])
+func = IR.createFunction (name="sum", funcType=funcType)
+
+# The control flow of code is explicitly defined with basic blocks and branching
+# Functions always need an "entry" basic block to know where to start
+entryBlock = func.appendBasicBlock (name="entry")
+loopBlock = func.appendBasicBlock (name="loop")
+loopEndBlock = func.appendBasicBlock (name="loopEnd")
+
+# Add instructions to the block
+# This might be order dependent
+entryBlock.phi ()
+# Make sure to add a branch to the next block
+entryBlock.addBranch (loopBlock)
+
+# if a block is the exit point of the function, then add a return statement
+loopEndBlock.addReturn ()
+
+
+```
+
+x86 label naming
+.LBB1_2:
+.LBB<funcID>_<BBID>:
+
+SSA
+- cannot reassign var
+- use alloca for stack vars
+- or use phi to assign registers based on predecessor bb
+- mem2reg promotion (replace alloca with phi variables)
+- reg/labels can repeat across functions
+
+
+Basic Blocks!!
+- a function starts with an entry block
+- blocks need to explicitly branch between each other (no fall through)
+- I wonder if we should create a block diagram tool (compiler explorer)
 
 
 Similar to Zig

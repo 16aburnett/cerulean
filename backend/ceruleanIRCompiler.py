@@ -193,7 +193,7 @@ class CeruleanIRCompiler:
             # Add built-in functions/variables 
             #  char[] input ();
             add_builtin_function (
-                TypeSpecifierNode (Type.CHAR, "char", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}input",
                 []
             )
@@ -201,7 +201,7 @@ class CeruleanIRCompiler:
             add_builtin_function (
                 TypeSpecifierNode (Type.VOID, "void", None, 0),
                 f"{BUILTIN_PREFIX}print__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "str", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "str", None)]
             )
             #  void print__int32 (int32 val);
             add_builtin_function (
@@ -254,7 +254,7 @@ class CeruleanIRCompiler:
             add_builtin_function (
                 TypeSpecifierNode (Type.VOID, "void", None, 0),
                 f"{BUILTIN_PREFIX}println__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "str", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "str", None)]
             )
             #  void println (int32 intToPrint);
             add_builtin_function (
@@ -352,13 +352,13 @@ class CeruleanIRCompiler:
             add_builtin_function (
                 TypeSpecifierNode (Type.FLOAT32, "float32", None, 0),
                 f"{BUILTIN_PREFIX}stringToFloat32__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "val", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
             )
             #  float64 stringToFloat64 (char[]);
             add_builtin_function (
                 TypeSpecifierNode (Type.FLOAT64, "float64", None, 0),
                 f"{BUILTIN_PREFIX}stringToFloat64__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "val", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
             )
             #  int32 int32 ();
             add_builtin_function (
@@ -396,13 +396,13 @@ class CeruleanIRCompiler:
             add_builtin_function (
                 TypeSpecifierNode (Type.INT32, "int32", None, 0),
                 f"{BUILTIN_PREFIX}stringToInt32__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "val", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
             )
             #  int64 stringToInt64 (char[]);
             add_builtin_function (
                 TypeSpecifierNode (Type.INT64, "int64", None, 0),
                 f"{BUILTIN_PREFIX}stringToInt64__char__1",
-                [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 1), "val", None)]
+                [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
             )
             #  int32 charToInt32 (char);
             add_builtin_function (
@@ -418,54 +418,54 @@ class CeruleanIRCompiler:
             )
             #  char[] string (int32);
             add_builtin_function (
-                TypeSpecifierNode (Type.CHAR, "char", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}string__int32",
                 [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None, 0), "val", None)]
             )
             #  char[] string (int64);
             add_builtin_function (
-                TypeSpecifierNode (Type.CHAR, "char", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}string__int64",
                 [ParameterNode(TypeSpecifierNode (Type.INT64, "int64", None, 0), "val", None)]
             )
             #  char[] string (float32);
             add_builtin_function (
-                TypeSpecifierNode (Type.CHAR, "char", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}string__float32",
                 [ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None, 0), "val", None)]
             )
             #  char[] string (float64);
             add_builtin_function (
-                TypeSpecifierNode (Type.CHAR, "char", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}string__float64",
                 [ParameterNode(TypeSpecifierNode (Type.FLOAT64, "float64", None, 0), "val", None)]
             )
             #  void* null ();
             add_builtin_function (
-                TypeSpecifierNode (Type.VOID, "void", None, 1),
+                TypeSpecifierNode (Type.PTR, "ptr", None, 0),
                 f"{BUILTIN_PREFIX}null",
                 []
             )
 
 
-        #     # LIBRARY OBJECTS
+            # # LIBRARY OBJECTS
 
-        #     # create default object type 
-        #     # class Object
-        #     # {
-        #     #   public virtual char[] toString ()
-        #     #   {
-        #     #       return "<Object>";
-        #     #   }
-        #     # }
-        #     objClass = ClassDeclarationNode (TypeSpecifierNode (Type.USERTYPE, "Object", None), "Object", None, None, [], [], [], [], [])
-        #     objClass.scopeName = BUILTIN_PREFIX+"__main__Object"
-        #     semanticAnalysisVisitor.table.insert (objClass, "Object", Kind.TYPE)
+            # # create default object type 
+            # # class Object
+            # # {
+            # #   public virtual char[] toString ()
+            # #   {
+            # #       return "<Object>";
+            # #   }
+            # # }
+            # objClass = ClassDeclarationNode (TypeSpecifierNode (Type.USERTYPE, "Object", None), "Object", None, None, [], [], [], [], [])
+            # objClass.scopeName = BUILTIN_PREFIX+"__main__Object"
+            # semanticAnalysisVisitor.table.insert (objClass, "Object", Kind.TYPE)
 
-        #     # create default object type 
-        #     enumClass = ClassDeclarationNode (TypeSpecifierNode (Type.USERTYPE, "Enum", None), "Enum", None, None, ["Object"], [], [], [], [])
-        #     enumClass.scopeName = BUILTIN_PREFIX+"__main__Enum"
-        #     semanticAnalysisVisitor.table.insert (enumClass, "Enum", Kind.TYPE)
+            # # create default object type 
+            # enumClass = ClassDeclarationNode (TypeSpecifierNode (Type.USERTYPE, "Enum", None), "Enum", None, None, ["Object"], [], [], [], [])
+            # enumClass.scopeName = BUILTIN_PREFIX+"__main__Enum"
+            # semanticAnalysisVisitor.table.insert (enumClass, "Enum", Kind.TYPE)
 
             # Check AST
             # checks for:

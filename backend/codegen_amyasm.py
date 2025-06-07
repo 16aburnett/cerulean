@@ -166,8 +166,8 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
     #=====================================================================
 
     def visitLabelNode (self, node):
-        # node.scopeName = "".join (self.scopeNames) + "__" + node.id[1:]
-        self.printLabel (f"{node.id}")
+        node.scopeName = "".join (self.scopeNames) + "__" + node.id
+        self.printLabel (f"{node.scopeName}")
 
     #=====================================================================
 
@@ -368,15 +368,47 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit argument expression to get new argument
             rhs_value = node.arguments[0].accept (self)
             self.printCode (f"ASSIGN {lhs_var} {rhs_value}")
+        elif command_name == "alloca":
+            # CeruleanIR : <ptr> = alloca (<type>, <size>)
+            # AmyAssembly: MALLOC <ptr> <size>
+            # NOTE: amyasm probably needs an alloca but mapping to malloc for now
+            # visit variabledecl to establish scopename
+            # **lhsvariable should probably return scopename
+            node.lhsVariable.accept (self)
+            lhs_var = node.lhsVariable.scopeName
+            type = node.arguments[0].accept (self)
+            # AmyAsm allocates in terms of elements not bytes
+            # so we can ignore the type
+            size = node.arguments[1].accept (self)
+            self.printCode (f"MALLOC {lhs_var} {size}")
+        elif command_name == "malloc":
+            # CeruleanIR : <ptr> = malloc (<type>, <size>)
+            # AmyAssembly: MALLOC <ptr> <size>
+            # NOTE: LLVMIR uses a call to malloc - not a builtin malloc
+            # visit variabledecl to establish scopename
+            # **lhsvariable should probably return scopename
+            node.lhsVariable.accept (self)
+            lhs_var = node.lhsVariable.scopeName
+            type = node.arguments[0].accept (self)
+            # AmyAsm allocates in terms of elements not bytes
+            # so we can ignore the type
+            size = node.arguments[1].accept (self)
+            self.printCode (f"MALLOC {lhs_var} {size}")
+        elif command_name == "free":
+            # CeruleanIR : free (<ptr>)
+            # AmyAssembly: FREE <ptr>
+            ptr = node.arguments[0].accept (self)
+            self.printCode (f"FREE {ptr}")
         elif command_name == "load":
-            # CeruleanIR : <dest> = load (<pointer>, <offset>)
+            # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
             # AmyAssembly: ASSIGN <dest> <pointer>[<offset>]
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
             lhs_var = node.lhsVariable.scopeName
-            pointer = node.arguments[0].accept (self)
-            offset = node.arguments[1].accept (self)
+            # **NOTE** ignoring type arg
+            pointer = node.arguments[1].accept (self)
+            offset = node.arguments[2].accept (self)
             self.printCode (f"ASSIGN {lhs_var} {pointer}[{offset}]")
         elif command_name == "store":
             # CeruleanIR : store (<pointer>, <offset>, <value>)
@@ -515,9 +547,10 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
     #=====================================================================
 
-    def visitIdentifierExpressionNode (self, node):
-        self.printComment (f"Identifier - {node.id}")
-        return node.id
+    def visitLabelExpressionNode (self, node):
+        scopeName = "".join (self.scopeNames) + "__" + node.id
+        self.printComment (f"Identifier - {scopeName}")
+        return scopeName
 
     #=====================================================================
 

@@ -21,8 +21,10 @@ class Type(Enum):
     FLOAT64  = 6
     VOID     = 7
     LABEL    = 8
-    UNKNOWN  = 9
-    USERTYPE = 10 # SHOULD NOT BE USED - YET
+    TYPE     = 9
+    PTR      = 10
+    UNKNOWN  = 11
+    USERTYPE = 12 # SHOULD NOT BE USED - YET
 
 # ========================================================================
 
@@ -302,7 +304,7 @@ class CallInstructionNode (Node):
         return visitor.visitCallInstructionNode (self)
 
     def copy (self):
-        return InstructionNode (self.lhsVariable.copy (), self.function_name.copy (), self.token.copy (), [argument.copy () for argument in self.arguments])
+        return CallInstructionNode (self.lhsVariable.copy (), self.function_name.copy (), self.token.copy (), [argument.copy () for argument in self.arguments])
 
 # ========================================================================
 # An argument expression looks like the following
@@ -393,7 +395,7 @@ class LocalVariableExpressionNode (ExpressionNode):
 # ========================================================================
 # id - string
 
-class IdentifierExpressionNode (ExpressionNode):
+class LabelExpressionNode (ExpressionNode):
 
     def __init__(self, id, token, line, column):
         super ().__init__ ()
@@ -408,10 +410,10 @@ class IdentifierExpressionNode (ExpressionNode):
         self.columnNumber = column
 
     def accept (self, visitor):
-        return visitor.visitIdentifierExpressionNode (self)
+        return visitor.visitLabelExpressionNode (self)
 
     def copy (self):
-        return IdentifierExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
+        return LabelExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
 
 # ========================================================================
 # value - int

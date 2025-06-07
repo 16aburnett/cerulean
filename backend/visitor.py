@@ -68,7 +68,7 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitIdentifierExpressionNode (self, node):
+    def visitLabelExpressionNode (self, node):
         pass
 
     @abstractmethod

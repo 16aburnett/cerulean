@@ -4,27 +4,34 @@
 
 // You can specify static global info outside of functions
 // global variables are denoted by the @ symbol
-global @customary_greeting = value (char*("Hello, World!"))
+global @customary_greeting = value (ptr("Hello, World!"))
 global @length = value (int32(14))
 
 //========================================================================
 
-function void @print_greeting (char*(%greeting), int32(%length))
+function void @print_greeting (ptr(%greeting), int32(%length))
 {
-    // normal instructions
-    // local variables are denoted with % symbol
-    // [%varname = ]<command> (<arguments>)
-    %i = value (int32(0))
-label loop_start
-    // loop condition
-    jge (int32(%i), int32(%length), label(loop_end))
-    // loop body
-    %char = load (char*(%greeting), int32(%i))
+label entry
+    %i_ptr = alloca (type(int32), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(0))
+    jmp (label(for_cond))
+
+label for_cond
+    %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+    jge (int32(%i_curr), int32(%length), label(for_end))
+    jmp (label(for_body))
+
+label for_body
+    %char = load (type(char), ptr(%greeting), int32(%i_curr))
     call @__builtin__print__char (char(%char))
-    // loop update
-    %i = add (int32(%i), int32(1))
-    jmp (label(loop_start))
-label loop_end
+    jmp (label(for_update))
+
+label for_update
+    %i_next = add (int32(%i_curr), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(%i_next))
+    jmp (label(for_cond))
+
+label for_end
     call @__builtin__println ()
     return ()
 }
@@ -33,6 +40,7 @@ label loop_end
 
 function int32 @main ()
 {
-    call @print_greeting (char*(@customary_greeting), int32(@length))
+label entry
+    call @print_greeting (ptr(@customary_greeting), int32(@length))
     return (int32(0))
 }

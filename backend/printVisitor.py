@@ -238,9 +238,9 @@ class PrintVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitIdentifierExpressionNode (self, node):
+    def visitLabelExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"Identifier: {node.id}\n"]
+        self.outputstrings += [f"Label: {node.id}\n"]
 
     # ====================================================================
 

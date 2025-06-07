@@ -276,6 +276,14 @@ class Parser:
         elif (self.tokens[self.currentToken].type == 'TYPE_LABEL'):
             self.match ("typeSpecifier", 'TYPE_LABEL')
             type = TypeSpecifierNode (Type.LABEL, "label", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_TYPE
+        elif (self.tokens[self.currentToken].type == 'TYPE_TYPE'):
+            self.match ("typeSpecifier", 'TYPE_TYPE')
+            type = TypeSpecifierNode (Type.TYPE, "type", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_PTR
+        elif (self.tokens[self.currentToken].type == 'TYPE_PTR'):
+            self.match ("typeSpecifier", 'TYPE_PTR')
+            type = TypeSpecifierNode (Type.PTR, "ptr", self.tokens[self.currentToken])
         else:
             # we expected some sort of type here
             self.match ("typeSpecifier", "TYPE_INT", "Expected a type")
@@ -310,11 +318,12 @@ class Parser:
         #         type.arrayDimensions += 1
 
         # match pointers
-        while self.tokens[self.currentToken].type == "TIMES":
-            # increment number of dimensions
-            type.arrayDimensions += 1
-            # consume star
-            self.match ("typeSpecifier", "TIMES")
+        # NOTE: use TYPE_PTR instead of C-style pointer types
+        # while self.tokens[self.currentToken].type == "TIMES":
+        #     # increment number of dimensions
+        #     type.arrayDimensions += 1
+        #     # consume star
+        #     self.match ("typeSpecifier", "TIMES")
         
         self.leave ("typeSpecifier")
 
@@ -462,6 +471,7 @@ class Parser:
     #              -> FLOAT
     #              -> CHAR
     #              -> STRING
+    #              -> <TYPE>
 
     def expression (self):
         self.enter ("expression")
@@ -491,7 +501,7 @@ class Parser:
             id = self.tokens[self.currentToken].lexeme
             token = self.tokens[self.currentToken]
             self.match ("expression", "IDENTIFIER")
-            node = IdentifierExpressionNode (id, token, line, column)
+            node = LabelExpressionNode (id, token, line, column)
         #              -> INT
         elif self.tokens[self.currentToken].type == "INT":
             value = self.tokens[self.currentToken].value
@@ -512,6 +522,9 @@ class Parser:
             value = self.tokens[self.currentToken].value
             self.match ("expression", "STRING")
             node = StringLiteralExpressionNode (value)
+        #              -> <TYPE>
+        else:
+            node = self.typeSpecifier ()
 
         self.leave ("expression")
 

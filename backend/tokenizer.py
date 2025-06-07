@@ -152,6 +152,10 @@ def tokenize(code, filename):
                 kind = "TYPE_VOID"
             elif (lexeme == "label"): # jump label
                 kind = "TYPE_LABEL"
+            elif (lexeme == "type"): # type (typically for passing a type as a param)
+                kind = "TYPE_TYPE"
+            elif (lexeme == "ptr"): # pointers/addresses to memory
+                kind = "TYPE_PTR"
             # KEYWORDS
             elif (lexeme == "function"):
                 kind = "FUNCTION"

@@ -4,7 +4,7 @@ ProgramNode:
 |   |   Command: value
 |   |   Arguments:
 |   |   |   Argument: 
-|   |   |   |   Type: Type.CHAR char*
+|   |   |   |   Type: Type.PTR ptr
 |   |   |   |   Expression:
 |   |   |   |   |   String Literal: "Hello, World!" char*
 |   GlobalVariableDeclaration: 
@@ -15,33 +15,76 @@ ProgramNode:
 |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   Expression:
 |   |   |   |   |   Int Literal: 14 int32
-|   Function: @print_greeting (char*,int32)->void
+|   Function: @print_greeting (ptr,int32)->void
 |   |   ReturnType:
 |   |   |   Type: Type.VOID void
 |   |   Parameter: 
-|   |   |   Type: Type.CHAR char*
+|   |   |   Type: Type.PTR ptr
 |   |   |   Name: %greeting
 |   |   Parameter: 
 |   |   |   Type: Type.INT32 int32
 |   |   |   Name: %length
 |   |   Body:
 |   |   |   CodeBlock:
+|   |   |   |   Label: entry
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f0c0d9fd340>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='value', value='value', line=17, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=17, includeChain=[], lineStr='    %i = value (int32(0))')
+|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f709c19dbe0>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='alloca', value='alloca', line=15, column=14, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=15, includeChain=[], lineStr='    %i_ptr = alloca (type(int32), int32(1))')
 |   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='store', value='store', line=16, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=16, includeChain=[], lineStr='    store (ptr(%i_ptr), int32(0), int32(0))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %i_ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Int Literal: 0 int32
-|   |   |   |   Label: loop_start
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   Instruction:
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jge', value='jge', line=20, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=20, includeChain=[], lineStr='    jge (int32(%i), int32(%length), label(loop_end))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jmp', value='jmp', line=17, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=17, includeChain=[], lineStr='    jmp (label(for_cond))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.LABEL label
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Label: for_cond
+|   |   |   |   Label: for_cond
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f709c19e1e0>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='load', value='load', line=20, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=20, includeChain=[], lineStr='    %i_curr = load (type(int32), ptr(%i_ptr), int32(0))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %i_ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jge', value='jge', line=21, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=21, includeChain=[], lineStr='    jge (int32(%i_curr), int32(%length), label(for_end))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %i
+|   |   |   |   |   |   |   |   Local Variable: %i_curr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -49,19 +92,31 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.LABEL label
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Identifier: loop_end
+|   |   |   |   |   |   |   |   Label: for_end
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f0c0d9fd640>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='load', value='load', line=22, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=22, includeChain=[], lineStr='    %char = load (char*(%greeting), int32(%i))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jmp', value='jmp', line=22, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=22, includeChain=[], lineStr='    jmp (label(for_body))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
-|   |   |   |   |   |   |   Type: Type.CHAR char*
+|   |   |   |   |   |   |   Type: Type.LABEL label
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Label: for_body
+|   |   |   |   Label: for_body
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f709c19e900>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='load', value='load', line=25, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=25, includeChain=[], lineStr='    %char = load (type(char), ptr(%greeting), int32(%i_curr))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Local Variable: %greeting
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %i
+|   |   |   |   |   |   |   |   Local Variable: %i_curr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__print__char
 |   |   |   |   |   Arguments:
@@ -70,41 +125,65 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Local Variable: %char
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f0c0d9fd850>
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=25, column=10, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=25, includeChain=[], lineStr='    %i = add (int32(%i), int32(1))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jmp', value='jmp', line=27, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=27, includeChain=[], lineStr='    jmp (label(for_update))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.LABEL label
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Label: for_update
+|   |   |   |   Label: for_update
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: <backend.ceruleanIRAST.VariableDeclarationNode object at 0x7f709c19eea0>
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='add', value='add', line=30, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=30, includeChain=[], lineStr='    %i_next = add (int32(%i_curr), int32(1))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %i
+|   |   |   |   |   |   |   |   Local Variable: %i_curr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   Instruction:
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jmp', value='jmp', line=26, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=26, includeChain=[], lineStr='    jmp (label(loop_start))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='store', value='store', line=31, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=31, includeChain=[], lineStr='    store (ptr(%i_ptr), int32(0), int32(%i_next))')
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %i_ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %i_next
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='jmp', value='jmp', line=32, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=32, includeChain=[], lineStr='    jmp (label(for_cond))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.LABEL label
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Identifier: loop_start
-|   |   |   |   Label: loop_end
+|   |   |   |   |   |   |   |   Label: for_cond
+|   |   |   |   Label: for_end
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println
 |   |   |   |   |   Arguments:
 |   |   |   |   Instruction:
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=29, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=29, includeChain=[], lineStr='    return ()')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=36, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=36, includeChain=[], lineStr='    return ()')
 |   |   |   |   |   Arguments:
 |   Function: @main (void)->int32
 |   |   ReturnType:
 |   |   |   Type: Type.INT32 int32
 |   |   Body:
 |   |   |   CodeBlock:
+|   |   |   |   Label: entry
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @print_greeting
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
-|   |   |   |   |   |   |   Type: Type.CHAR char*
+|   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Global Variable: @customary_greeting
 |   |   |   |   |   |   Argument: 
@@ -112,7 +191,7 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Global Variable: @length
 |   |   |   |   Instruction:
-|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=37, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=37, includeChain=[], lineStr='    return (int32(0))')
+|   |   |   |   |   Command: Token(type='IDENTIFIER', lexeme='return', value='return', line=45, column=5, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/backend/test_files/helloworld.ceruleanir', originalLine=45, includeChain=[], lineStr='    return (int32(0))')
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32

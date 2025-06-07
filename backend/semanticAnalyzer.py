@@ -115,7 +115,6 @@ class SemanticAnalysisVisitor (ASTVisitor):
     def visitGlobalVariableDeclarationNode (self, node):
         # node.type.accept (self)
         wasSuccessful = self.table.insert (node, node.id, Kind.VAR)
-
         if (not wasSuccessful):
             varname = node.id 
             originalDec = self.table.lookup (varname, Kind.VAR)
@@ -130,25 +129,18 @@ class SemanticAnalysisVisitor (ASTVisitor):
     # ====================================================================
 
     def visitVariableDeclarationNode (self, node):
-        # print (f"checking type of {node.id} {node.type}")
         # node.type.accept (self)
-        # print (f"finished checking type {node.id} {node.type}")
-
         wasSuccessful = self.table.insert (node, node.id, Kind.VAR)
-
-        # CeruleanIR does not really declare variables
-        # so we cannot have a redeclaration of a variable
-        # only future assignments
-        # if (not wasSuccessful):
-        #     varname = node.id 
-        #     originalDec = self.table.lookup (varname, Kind.VAR)
-        #     print (f"Semantic Error: Redeclaration of variable '{varname}'")
-        #     print (f"   Original:")
-        #     printToken (originalDec.token, "      ")
-        #     print (f"   Redeclaration:")
-        #     printToken (node.token, "      ")
-        #     print ()
-        #     self.wasSuccessful = False
+        if (not wasSuccessful):
+            varname = node.id 
+            originalDec = self.table.lookup (varname, Kind.VAR)
+            print (f"Semantic Error: Reassignment of SSA variable '{varname}'")
+            print (f"   Original:")
+            printToken (originalDec.token, "      ")
+            print (f"   Reassignment:")
+            printToken (node.token, "      ")
+            print ()
+            self.wasSuccessful = False
 
         # save a reference to this variable for the function header
         if len(self.containingFunction) > 0:
@@ -354,7 +346,7 @@ class SemanticAnalysisVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitIdentifierExpressionNode (self, node):
+    def visitLabelExpressionNode (self, node):
         # if (self.checkDeclaration):
         #     decl = self.table.lookup (node.id, Kind.VAR)
         #     # variable has no declaration

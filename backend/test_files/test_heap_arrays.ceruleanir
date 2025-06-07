@@ -1,0 +1,79 @@
+// Testing arrays
+// Author: Amy Burnett
+//========================================================================
+
+function void @fill (ptr(%arr_ptr), int32(%N))
+{
+label entry
+    %i_ptr = alloca (type(int32), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(0))
+    jmp (label(for_cond))
+
+label for_cond
+    %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+    jge (int32(%i_curr), int32(%N), label(for_end))
+    jmp (label(for_body))
+
+label for_body
+    %i0 = load (type(int32), ptr(%i_ptr), int32(0))
+    %i1 = value (int32(%i0))
+    %i2 = mul (int32(%i0), int32(%i1))
+    store (ptr(%arr_ptr), int32(%i_curr), int32(%i2))
+    jmp (label(for_update))
+
+label for_update
+    %i_next = add (int32(%i_curr), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(%i_next))
+    jmp (label(for_cond))
+
+label for_end
+    return ()
+}
+//========================================================================
+
+function void @print (ptr(%arr_ptr), int32(%N))
+{
+label entry
+    %i_ptr = alloca (type(int32), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(0))
+    jmp (label(for_cond))
+
+label for_cond
+    %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+    jge (int32(%i_curr), int32(%N), label(for_end))
+    jmp (label(for_body))
+
+label for_body
+    %value = load (type(int32), ptr(%arr_ptr), int32(%i_curr))
+    call @__builtin__println__int32 (int32(%value))
+    jmp (label(for_update))
+
+label for_update
+    %i_next = add (int32(%i_curr), int32(1))
+    store (ptr(%i_ptr), int32(0), int32(%i_next))
+    jmp (label(for_cond))
+
+label for_end
+    return ()
+}
+
+//========================================================================
+
+function int32 @main ()
+{
+label entry
+    // Allocating memory on the heap via malloc instruction
+    %N = value (int32(10))
+    %arr_ptr = malloc (type(int32), int32(%N))
+
+    // Assignment to an array
+    call @fill (ptr(%arr_ptr), int32(%N))
+
+    // Reading from memory
+    call @print (ptr(%arr_ptr), int32(%N))
+
+    // Free heap memory with the free instruction
+    free (ptr(%arr_ptr))
+
+    return (int32(0))
+}
