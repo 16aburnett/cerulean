@@ -17,6 +17,8 @@ if __name__ == "__main__":
     from .visitor import *
     from .semanticAnalyzer import *
     from .codegen import CodeGenVisitor
+    from .irGenerator import IRGeneratorVisitor
+    from backend.printVisitor import PrintVisitor as IRPrintVisitor
     from backend.ceruleanIRBuilder import CeruleanIRBuilder
 else:
     from .preprocessor import CeruleanPreprocessor
@@ -26,6 +28,8 @@ else:
     from .visitor import *
     from .semanticAnalyzer import *
     from .codeGen import CodeGenVisitor
+    from .irGenerator import IRGeneratorVisitor
+    from backend.printVisitor import PrintVisitor as IRPrintVisitor
     from backend.ceruleanIRBuilder import CeruleanIRBuilder
 
 
@@ -54,7 +58,7 @@ class CeruleanCompiler:
         self.emitAST = emitAST
         self.astFilename = mainFilename + ".ast"
         self.emitIR = emitIR
-        self.IRFilename = mainFilename + ".ir"
+        self.irFilename = mainFilename + ".ir"
 
         self.debugLines = []
 
@@ -547,7 +551,22 @@ class CeruleanCompiler:
 
         #=== CONVERT TO IR =======================================================
 
-        print ("TODO: CONVERTING TO IR NOT YET IMPLEMENTED")
+        print ("Converting to IR... [WIP]")
+
+        irGeneratorVisitor = IRGeneratorVisitor (lines)
+        # Generate IR AST
+        ast.accept (irGeneratorVisitor)
+        irAST = irGeneratorVisitor.ast
+        
+        if self.emitIR:
+            irPrintVisitor = IRPrintVisitor ()
+            irAST.accept (irPrintVisitor)
+            ast_filename = f"{self.irFilename}.ast"
+            ast_file = open (ast_filename, "w")
+            if (self.debug): print (f"Writing IR AST to {ast_filename}...")
+            ast_file.write ("".join (irPrintVisitor.outputstrings))
+            ast_file.close ()
+
         return ''
 
         #=== CODEGEN =============================================================

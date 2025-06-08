@@ -6,7 +6,7 @@ ProgramNode:
 |   |   |   Argument: 
 |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   Expression:
-|   |   |   |   |   String Literal: "Hello, World!" char*
+|   |   |   |   |   String Literal: "Hello, World!" ptr
 |   GlobalVariableDeclaration: 
 |   |   Name: @length
 |   |   Command: value

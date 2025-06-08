@@ -459,8 +459,7 @@ class StringLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, value:str):
         super ().__init__ ()
-        # char[] instead of string
-        self.type = TypeSpecifierNode (Type.CHAR, "char", None, 1)
+        self.type = TypeSpecifierNode (Type.PTR, "ptr", None, 0)
         self.value = value
 
         self.lineNumber = 0

@@ -1,0 +1,21 @@
+ProgramNode:
+|   Function: @print_greeting (ptr,int32)->void
+|   |   ReturnType:
+|   |   |   Type: Type.VOID void
+|   |   Parameter: 
+|   |   |   Type: Type.PTR ptr
+|   |   |   Name: %greeting
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: %length
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   Basic Block: for_cond
+|   |   |   Basic Block: for_body
+|   |   |   Basic Block: for_update
+|   |   |   Basic Block: for_end
+|   Function: @main (void)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   Basic Block: entry

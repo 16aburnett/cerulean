@@ -10,7 +10,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = add (int32(10), int32(7))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = add (int32(10), int32(7))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x0
 |   |   |   |   |   Command: add
@@ -29,7 +29,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__int32
 |   |   |   |   |   Arguments:
@@ -43,7 +43,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = add (float32(3.14), float32(100.5))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = add (float32(3.14), float32(100.5))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x1
 |   |   |   |   |   Command: add
@@ -62,7 +62,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__float32
 |   |   |   |   |   Arguments:
@@ -76,7 +76,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = sub (int32(10), int32(7))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = sub (int32(10), int32(7))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x2
 |   |   |   |   |   Command: sub
@@ -95,7 +95,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__int32
 |   |   |   |   |   Arguments:
@@ -109,7 +109,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = sub (float32(3.14), float32(100.5))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = sub (float32(3.14), float32(100.5))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x3
 |   |   |   |   |   Command: sub
@@ -128,7 +128,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__float32
 |   |   |   |   |   Arguments:
@@ -142,7 +142,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = mul (int32(10), int32(7))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = mul (int32(10), int32(7))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x4
 |   |   |   |   |   Command: mul
@@ -161,7 +161,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__int32
 |   |   |   |   |   Arguments:
@@ -175,7 +175,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = mul (float32(3.14), float32(100.5))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = mul (float32(3.14), float32(100.5))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x5
 |   |   |   |   |   Command: mul
@@ -194,7 +194,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__float32
 |   |   |   |   |   Arguments:
@@ -208,7 +208,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = div (int32(10), int32(7))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = div (int32(10), int32(7))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x6
 |   |   |   |   |   Command: div
@@ -227,7 +227,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__int32
 |   |   |   |   |   Arguments:
@@ -241,7 +241,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "%x = div (float32(3.14), float32(100.5))" char*
+|   |   |   |   |   |   |   |   String Literal: "%x = div (float32(3.14), float32(100.5))" ptr
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %x7
 |   |   |   |   |   Command: div
@@ -260,7 +260,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   String Literal: "=> " char*
+|   |   |   |   |   |   |   |   String Literal: "=> " ptr
 |   |   |   |   Call Instruction:
 |   |   |   |   |   Called Function: @__builtin__println__float32
 |   |   |   |   |   Arguments:

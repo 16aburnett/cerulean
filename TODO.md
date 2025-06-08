@@ -44,6 +44,12 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_he
 ### NOTES ################################################################
 
 
+Optimizations
+- dead code elimination
+- basic block merging
+- mem2reg promotion (alloca -> phi)
+- mem access hoisting
+
 Ditch call instruction???
 - we can treat function calls as a custom instruction (no call keyword)
 - although maybe a bad idea (control flow?)
@@ -104,7 +110,7 @@ loopEndBlock = func.appendBasicBlock (name="loopEnd")
 
 # Add instructions to the block
 # This might be order dependent
-entryBlock.phi ()
+entryBlock.appendInstruction ("add", )
 # Make sure to add a branch to the next block
 entryBlock.addBranch (loopBlock)
 
@@ -112,6 +118,28 @@ entryBlock.addBranch (loopBlock)
 loopEndBlock.addReturn ()
 
 
+
+functionnode:
+basicblocks = visit body
+return IR.FunctionNode(name, basicblocks)
+
+
+currentBasicBlock = bnweaoffd
+
+# int x = 10;
+#assign
+if lhs == vardec
+    x = IRBuilder.createReg (vardec.type)
+    x = IRBuilder.assign(vardec, )
+
+ 
+```
+
+Global variables
+```
+@flapjacks = dso_local global i32 7, align 4
+# need to be loaded
+  %3 = load i32, ptr @flapjacks, align 4
 ```
 
 x86 label naming
