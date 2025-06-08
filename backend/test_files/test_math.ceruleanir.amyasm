@@ -319,6 +319,7 @@ __builtin__null:
 __endOfLibrary:
    JUMP __end____main____main
 __main____main:
+__main__main__entry:
    MALLOC __str 31
    ASSIGN __str[0] '%'
    ASSIGN __str[1] 'x'
@@ -354,7 +355,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   ADD __main__main__block__0__x0 10 7
+   ADD __main__main__x0 10 7
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -363,7 +364,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x0
+   PUSH __main__main__x0
    CALL __builtin__println__int32
    POP _arg0
    MALLOC __str 41
@@ -411,7 +412,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   ADD __main__main__block__0__x1 3.14 100.5
+   ADD __main__main__x1 3.14 100.5
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -420,7 +421,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x1
+   PUSH __main__main__x1
    CALL __builtin__println__float32
    POP _arg0
    MALLOC __str 31
@@ -458,7 +459,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   SUBTRACT __main__main__block__0__x2 10 7
+   SUBTRACT __main__main__x2 10 7
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -467,7 +468,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x2
+   PUSH __main__main__x2
    CALL __builtin__println__int32
    POP _arg0
    MALLOC __str 41
@@ -515,7 +516,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   SUBTRACT __main__main__block__0__x3 3.14 100.5
+   SUBTRACT __main__main__x3 3.14 100.5
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -524,7 +525,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x3
+   PUSH __main__main__x3
    CALL __builtin__println__float32
    POP _arg0
    MALLOC __str 31
@@ -562,7 +563,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   MULTIPLY __main__main__block__0__x4 10 7
+   MULTIPLY __main__main__x4 10 7
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -571,7 +572,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x4
+   PUSH __main__main__x4
    CALL __builtin__println__int32
    POP _arg0
    MALLOC __str 41
@@ -619,7 +620,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   MULTIPLY __main__main__block__0__x5 3.14 100.5
+   MULTIPLY __main__main__x5 3.14 100.5
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -628,7 +629,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x5
+   PUSH __main__main__x5
    CALL __builtin__println__float32
    POP _arg0
    MALLOC __str 31
@@ -666,7 +667,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   DIVIDE __main__main__block__0__x6 10 7
+   DIVIDE __main__main__x6 10 7
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -675,7 +676,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x6
+   PUSH __main__main__x6
    CALL __builtin__println__int32
    POP _arg0
    MALLOC __str 41
@@ -723,7 +724,7 @@ __main____main:
    PUSH __str
    CALL __builtin__println__char__1
    POP _arg0
-   DIVIDE __main__main__block__0__x7 3.14 100.5
+   DIVIDE __main__main__x7 3.14 100.5
    MALLOC __str 4
    ASSIGN __str[0] '='
    ASSIGN __str[1] '>'
@@ -732,7 +733,7 @@ __main____main:
    PUSH __str
    CALL __builtin__print__char__1
    POP _arg0
-   PUSH __main__main__block__0__x7
+   PUSH __main__main__x7
    CALL __builtin__println__float32
    POP _arg0
    RETURN 0

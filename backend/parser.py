@@ -1,6 +1,6 @@
-# Amy Script Compiler
+# CeruleanIR Compiler: Parsing
 # By Amy Burnett
-# April 10 2021
+# June 7 2025
 # ========================================================================
 
 from sys import exit
@@ -112,11 +112,11 @@ class Parser:
 
     # ====================================================================
     # function declaration
-    # <function> -> FUNCTION <typeSpecifier> GVARIABLE <paramlist> <codeblock>
+    # <function> -> FUNCTION <typeSpecifier> GVARIABLE <paramlist> <basicBlockList>
     
     def function (self):
         self.enter ("function")
-        expected_syntax = "Function Definition Syntax:\nfunction <return_type> @<function_name> (<parameter_list>) { <code_body> }"
+        expected_syntax = "Function Definition Syntax:\nfunction <return_type> @<function_name> (<parameter_list>) { <basic_blocks> }"
 
         self.match ("function", "FUNCTION", expected_syntax)
         
@@ -136,11 +136,11 @@ class Parser:
             self.match ("function", "NEWLINE")
 
         # match function's code body
-        body = self.codeblock ()
+        basicBlockList = self.basicBlockList ()
 
         self.leave ("function")
 
-        return FunctionNode (return_type, function_name, token, params, body)
+        return FunctionNode (return_type, function_name, token, params, basicBlockList)
 
     # ====================================================================
     # parameter list for a function declaration
@@ -189,34 +189,58 @@ class Parser:
         return params
 
     # ====================================================================
-    # codeblock 
-    # <codeblock> -> '{' { <instruction> } '}'
-    #             -> '{' { <label> } '}'
+    # basicBlockList 
+    # <basicBlockList> -> '{' { <basicBlock> } '}'
 
-    def codeblock (self):
-        self.enter ("codeblock")
+    def basicBlockList (self):
+        self.enter ("basicBlockList")
 
-        codeunits = []
+        basicBlocks = []
 
-        self.match ("codeblock", "LBRACE")
+        self.match ("basicBlockList", "LBRACE")
         
         while self.tokens[self.currentToken].type != "RBRACE":
             # AD HOC!! ignore newlines
             if self.tokens[self.currentToken].type == "NEWLINE":
-                self.match ("codeblock", "NEWLINE")
+                self.match ("basicBlockList", "NEWLINE")
                 continue
-            # labels
-            if self.tokens[self.currentToken].type == "TYPE_LABEL":
-                codeunits += [self.label ()]
-            # instructions
-            else:
-                codeunits += [self.instruction ()]
+            basicBlocks += [self.basicBlock ()]
         
-        self.match ("codeblock", "RBRACE")
+        self.match ("basicBlockList", "RBRACE")
 
-        self.leave ("codeblock")
+        self.leave ("basicBlockList")
 
-        return CodeBlockNode (codeunits)
+        return basicBlocks
+
+    # ====================================================================
+    # basicBlock 
+    # <basicBlock> -> BLOCK <blockname> '{' { <instruction> } '}'
+
+    def basicBlock (self):
+        self.enter ("basicBlock")
+
+        expected_syntax = "Basic Block Definition Syntax:\nblock <block_name> {\n   <instructions>\n}"
+        self.match ("basicBlock", "TYPE_BLOCK", expected_syntax)
+        # match block's name
+        blockName = self.tokens[self.currentToken].lexeme
+        token = self.tokens[self.currentToken]
+        self.match ("basicBlock", "IDENTIFIER", expected_syntax)
+
+        self.match ("basicBlock", "LBRACE", expected_syntax)
+        
+        instructions = []
+        while self.tokens[self.currentToken].type != "RBRACE":
+            # AD HOC!! ignore newlines
+            if self.tokens[self.currentToken].type == "NEWLINE":
+                self.match ("basicBlock", "NEWLINE")
+                continue
+            instructions += [self.instruction ()]
+        
+        self.match ("basicBlock", "RBRACE")
+
+        self.leave ("basicBlock")
+
+        return BasicBlockNode (blockName, instructions)
 
     # ====================================================================
 
@@ -228,15 +252,17 @@ class Parser:
             or self.tokens[self.currentToken].type == 'TYPE_FLOAT32'\
             or self.tokens[self.currentToken].type == 'TYPE_FLOAT64'\
             or self.tokens[self.currentToken].type == 'TYPE_VOID'   \
-            or self.tokens[self.currentToken].type == 'TYPE_LABEL'
+            or self.tokens[self.currentToken].type == 'TYPE_BLOCK'
 
-    # <typeSpecifier> -> TYPE_BYTE { '*' }
-    #                  | TYPE_INT32 { '*' }
-    #                  | TYPE_INT64 { '*' }
-    #                  | TYPE_FLOAT32 { '*' }
-    #                  | TYPE_FLOAT64 { '*' }
-    #                  | TYPE_VOID { '*' }
-    #                  | TYPE_LABEL { '*' }
+    # <typeSpecifier> -> TYPE_BYTE
+    #                  | TYPE_INT32
+    #                  | TYPE_INT64
+    #                  | TYPE_FLOAT32
+    #                  | TYPE_FLOAT64
+    #                  | TYPE_VOID
+    #                  | TYPE_BLOCK
+    #                  | TYPE_TYPE
+    #                  | TYPE_PTR
     def typeSpecifier (self):
         self.enter ("typeSpecifier")
 
@@ -272,10 +298,10 @@ class Parser:
         elif (self.tokens[self.currentToken].type == 'TYPE_VOID'):
             self.match ("typeSpecifier", 'TYPE_VOID')
             type = TypeSpecifierNode (Type.VOID, "void", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_LABEL
-        elif (self.tokens[self.currentToken].type == 'TYPE_LABEL'):
-            self.match ("typeSpecifier", 'TYPE_LABEL')
-            type = TypeSpecifierNode (Type.LABEL, "label", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_BLOCK
+        elif (self.tokens[self.currentToken].type == 'TYPE_BLOCK'):
+            self.match ("typeSpecifier", 'TYPE_BLOCK')
+            type = TypeSpecifierNode (Type.BLOCK, "block", self.tokens[self.currentToken])
         # <typeSpecifier> -> TYPE_TYPE
         elif (self.tokens[self.currentToken].type == 'TYPE_TYPE'):
             self.match ("typeSpecifier", 'TYPE_TYPE')
@@ -328,23 +354,6 @@ class Parser:
         self.leave ("typeSpecifier")
 
         return type
-
-    # ====================================================================
-    # label 
-    # <label> -> TYPE_LABEL IDENTIFIER NEWLINE
-
-    def label (self):
-        self.enter ("label")
-
-        self.match ("label", "TYPE_LABEL")
-        token = self.tokens[self.currentToken]
-        labelStr = token.lexeme
-        self.match ("label", "IDENTIFIER")
-        self.match ("label", "NEWLINE")
-
-        self.leave ("label")
-
-        return LabelNode (labelStr, token)
 
     # ====================================================================
     # instruction 
@@ -494,14 +503,14 @@ class Parser:
             self.match ("expression", "LVARIABLE")
             node = LocalVariableExpressionNode (id, token, line, column)
         #              -> IDENTIFIER
-        # labels!
+        # block names!
         elif self.tokens[self.currentToken].type == "IDENTIFIER":
             line = self.tokens[self.currentToken].line
             column = self.tokens[self.currentToken].column
             id = self.tokens[self.currentToken].lexeme
             token = self.tokens[self.currentToken]
             self.match ("expression", "IDENTIFIER")
-            node = LabelExpressionNode (id, token, line, column)
+            node = BasicBlockExpressionNode (id, token, line, column)
         #              -> INT
         elif self.tokens[self.currentToken].type == "INT":
             value = self.tokens[self.currentToken].value

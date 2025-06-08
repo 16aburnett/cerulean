@@ -321,26 +321,26 @@ __endOfLibrary:
 __main____fill__ptr__int32:
    STACKGET __main__fill__arr_ptr 0
    STACKGET __main__fill__N 1
-__main__fill__block__0__entry:
-   MALLOC __main__fill__block__0__i_ptr 1
-   ASSIGN __main__fill__block__0__i_ptr[0] 0
-   JUMP __main__fill__block__0__for_cond
-__main__fill__block__0__for_cond:
-   ASSIGN __main__fill__block__0__i_curr __main__fill__block__0__i_ptr[0]
-   CMP __main__fill__block__0__i_curr, __main__fill__N
-   JGE __main__fill__block__0__for_end
-   JUMP __main__fill__block__0__for_body
-__main__fill__block__0__for_body:
-   ASSIGN __main__fill__block__0__i0 __main__fill__block__0__i_ptr[0]
-   ASSIGN __main__fill__block__0__i1 __main__fill__block__0__i0
-   MULTIPLY __main__fill__block__0__i2 __main__fill__block__0__i0 __main__fill__block__0__i1
-   ASSIGN __main__fill__arr_ptr[__main__fill__block__0__i_curr] __main__fill__block__0__i2
-   JUMP __main__fill__block__0__for_update
-__main__fill__block__0__for_update:
-   ADD __main__fill__block__0__i_next __main__fill__block__0__i_curr 1
-   ASSIGN __main__fill__block__0__i_ptr[0] __main__fill__block__0__i_next
-   JUMP __main__fill__block__0__for_cond
-__main__fill__block__0__for_end:
+__main__fill__entry:
+   MALLOC __main__fill__i_ptr 1
+   ASSIGN __main__fill__i_ptr[0] 0
+   JUMP __main__fill__for_cond
+__main__fill__for_cond:
+   ASSIGN __main__fill__i_curr __main__fill__i_ptr[0]
+   CMP __main__fill__i_curr, __main__fill__N
+   JGE __main__fill__for_end
+   JUMP __main__fill__for_body
+__main__fill__for_body:
+   ASSIGN __main__fill__i0 __main__fill__i_ptr[0]
+   ASSIGN __main__fill__i1 __main__fill__i0
+   MULTIPLY __main__fill__i2 __main__fill__i0 __main__fill__i1
+   ASSIGN __main__fill__arr_ptr[__main__fill__i_curr] __main__fill__i2
+   JUMP __main__fill__for_update
+__main__fill__for_update:
+   ADD __main__fill__i_next __main__fill__i_curr 1
+   ASSIGN __main__fill__i_ptr[0] __main__fill__i_next
+   JUMP __main__fill__for_cond
+__main__fill__for_end:
    RETURN 0
    RETURN 0
 __end____main____fill__ptr__int32:
@@ -348,45 +348,45 @@ __end____main____fill__ptr__int32:
 __main____print__ptr__int32:
    STACKGET __main__print__arr_ptr 0
    STACKGET __main__print__N 1
-__main__print__block__1__entry:
-   MALLOC __main__print__block__1__i_ptr 1
-   ASSIGN __main__print__block__1__i_ptr[0] 0
-   JUMP __main__print__block__1__for_cond
-__main__print__block__1__for_cond:
-   ASSIGN __main__print__block__1__i_curr __main__print__block__1__i_ptr[0]
-   CMP __main__print__block__1__i_curr, __main__print__N
-   JGE __main__print__block__1__for_end
-   JUMP __main__print__block__1__for_body
-__main__print__block__1__for_body:
-   ASSIGN __main__print__block__1__value __main__print__arr_ptr[__main__print__block__1__i_curr]
-   PUSH __main__print__block__1__value
+__main__print__entry:
+   MALLOC __main__print__i_ptr 1
+   ASSIGN __main__print__i_ptr[0] 0
+   JUMP __main__print__for_cond
+__main__print__for_cond:
+   ASSIGN __main__print__i_curr __main__print__i_ptr[0]
+   CMP __main__print__i_curr, __main__print__N
+   JGE __main__print__for_end
+   JUMP __main__print__for_body
+__main__print__for_body:
+   ASSIGN __main__print__value __main__print__arr_ptr[__main__print__i_curr]
+   PUSH __main__print__value
    CALL __builtin__println__int32
    POP _arg0
-   JUMP __main__print__block__1__for_update
-__main__print__block__1__for_update:
-   ADD __main__print__block__1__i_next __main__print__block__1__i_curr 1
-   ASSIGN __main__print__block__1__i_ptr[0] __main__print__block__1__i_next
-   JUMP __main__print__block__1__for_cond
-__main__print__block__1__for_end:
+   JUMP __main__print__for_update
+__main__print__for_update:
+   ADD __main__print__i_next __main__print__i_curr 1
+   ASSIGN __main__print__i_ptr[0] __main__print__i_next
+   JUMP __main__print__for_cond
+__main__print__for_end:
    RETURN 0
    RETURN 0
 __end____main____print__ptr__int32:
    JUMP __end____main____main
 __main____main:
-__main__main__block__2__entry:
-   ASSIGN __main__main__block__2__N 10
-   MALLOC __main__main__block__2__arr_ptr __main__main__block__2__N
-   PUSH __main__main__block__2__N
-   PUSH __main__main__block__2__arr_ptr
+__main__main__entry:
+   ASSIGN __main__main__N 10
+   MALLOC __main__main__arr_ptr __main__main__N
+   PUSH __main__main__N
+   PUSH __main__main__arr_ptr
    CALL __main____fill__ptr__int32
    POP _arg0
    POP _arg1
-   PUSH __main__main__block__2__N
-   PUSH __main__main__block__2__arr_ptr
+   PUSH __main__main__N
+   PUSH __main__main__arr_ptr
    CALL __main____print__ptr__int32
    POP _arg0
    POP _arg1
-   FREE __main__main__block__2__arr_ptr
+   FREE __main__main__arr_ptr
    RETURN 0
    RETURN 0
 __end____main____main:

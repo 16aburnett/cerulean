@@ -150,8 +150,8 @@ def tokenize(code, filename):
                 kind = "TYPE_FLOAT64"
             elif (lexeme == "void"): # void - no type
                 kind = "TYPE_VOID"
-            elif (lexeme == "label"): # jump label
-                kind = "TYPE_LABEL"
+            elif (lexeme == "block"): # basic block
+                kind = "TYPE_BLOCK"
             elif (lexeme == "type"): # type (typically for passing a type as a param)
                 kind = "TYPE_TYPE"
             elif (lexeme == "ptr"): # pointers/addresses to memory

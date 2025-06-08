@@ -24,10 +24,6 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitLabelNode (self, node):
-        pass
-
-    @abstractmethod
     def visitGlobalVariableDeclarationNode (self, node):
         pass
 
@@ -40,7 +36,7 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitCodeBlockNode (self, node):
+    def visitBasicBlockNode (self, node):
         pass
 
     @abstractmethod
@@ -68,7 +64,7 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitLabelExpressionNode (self, node):
+    def visitBasicBlockExpressionNode (self, node):
         pass
 
     @abstractmethod

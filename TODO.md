@@ -44,6 +44,10 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_he
 ### NOTES ################################################################
 
 
+Ditch call instruction???
+- we can treat function calls as a custom instruction (no call keyword)
+- although maybe a bad idea (control flow?)
+
 OpaquePointers 
 - Developers of LLVM determined that typed pointers are a hinderance to some optimizations
 - And so LLVM IR now only uses opaque pointers

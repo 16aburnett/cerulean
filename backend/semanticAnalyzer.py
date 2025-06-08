@@ -93,25 +93,6 @@ class SemanticAnalysisVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitLabelNode (self, node):
-        wasSuccessful = self.table.insert (node, node.id, Kind.VAR)
-
-        # TODO: need to ensure labels are unique
-        # dont have this right now bc need to work around labels
-        # being used before being defined
-        # if (not wasSuccessful):
-        #     varname = node.id 
-        #     originalDec = self.table.lookup (varname, Kind.VAR)
-        #     print (f"Semantic Error: Redeclaration of Label '{varname}'")
-        #     print (f"   Original:")
-        #     printToken (originalDec.token, "      ")
-        #     print (f"   Redeclaration:")
-        #     printToken (node.token, "      ")
-        #     print ()
-        #     self.wasSuccessful = False
-
-    # ====================================================================
-
     def visitGlobalVariableDeclarationNode (self, node):
         # node.type.accept (self)
         wasSuccessful = self.table.insert (node, node.id, Kind.VAR)
@@ -153,13 +134,6 @@ class SemanticAnalysisVisitor (ASTVisitor):
 
     def visitFunctionNode (self, node):
         node.type.accept (self)
-
-        # grab params so that the body can use them
-        for p in node.params:
-            # visit type to ensure valid type 
-            p.type.accept (self)
-            self.parameters += [p]
-
         # create signature for node
         signature = [f"{node.id}"]
         signature += [f"("]
@@ -187,42 +161,26 @@ class SemanticAnalysisVisitor (ASTVisitor):
         else:
             self.insertFunc = True
 
+        self.table.enterScope (ScopeType.FUNCTION)
+        # check parameters
+        for p in node.params:
+            p.accept (self)
         # containing function keeps track of what function 
         # we're currently in 
         # this is helpful for ensuring RETURN is in a function
         # and for ensuring the value being returned matches the function's return type 
         self.containingFunction += [node]
-
-        self.isFunctionBody = True
-        node.body.accept (self)
-        self.isFunctionBody = False
-
+        for basicBlock in node.basicBlocks:
+            basicBlock.accept (self)
         self.containingFunction.pop ()
+        self.table.exitScope ()
 
     # ====================================================================
 
-    def visitCodeBlockNode (self, node):
-
-        # determine scope type
-        # this is used to determine number of dynamic links to follow
-        scopeType = ScopeType.OTHER
-        if self.isFunctionBody:
-            scopeType = ScopeType.FUNCTION
-            self.isFunctionBody = False
-
-        self.table.enterScope (scopeType)
-
-        # if this is a function body
-        # then add the parameters to this scope
-        for p in self.parameters:
-            p.accept (self)
-        self.parameters.clear ()
-
-        # visit each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
-
-        self.table.exitScope ()
+    def visitBasicBlockNode (self, node):
+        # visit each instruction
+        for instruction in node.instructions:
+            instruction.accept (self)
 
     # ====================================================================
 
@@ -346,7 +304,7 @@ class SemanticAnalysisVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitLabelExpressionNode (self, node):
+    def visitBasicBlockExpressionNode (self, node):
         # if (self.checkDeclaration):
         #     decl = self.table.lookup (node.id, Kind.VAR)
         #     # variable has no declaration

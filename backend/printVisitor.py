@@ -58,12 +58,6 @@ class PrintVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitLabelNode (self, node):
-        self.printSpaces (self.level)
-        self.outputstrings += [f"Label: {node.id}\n"]
-
-    # ====================================================================
-
     def visitGlobalVariableDeclarationNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += [f"GlobalVariableDeclaration: \n"]
@@ -132,25 +126,20 @@ class PrintVisitor (ASTVisitor):
 
         self.printSpaces (self.level)
         self.outputstrings += ["Body:\n"]
-
         self.level += 1
-        if node.body != None:
-            node.body.accept (self)
-
+        for basicBlock in node.basicBlocks:
+            basicBlock.accept (self)
         self.level -= 2
 
     # ====================================================================
 
-    def visitCodeBlockNode (self, node):
+    def visitBasicBlockNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"CodeBlock:\n"]
-
+        self.outputstrings += [f"Basic Block: {node.name}\n"]
         self.level += 1
-
-        # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
-
+        # print each instruction
+        for instruction in node.instructions:
+            instruction.accept (self)
         self.level -= 1
 
     # ====================================================================
@@ -163,10 +152,10 @@ class PrintVisitor (ASTVisitor):
 
         if node.hasAssignment:
             self.printSpaces (self.level)
-            self.outputstrings += [f"LHS: {node.lhsVariable}\n"]
+            self.outputstrings += [f"LHS: {node.lhsVariable.id}\n"]
         
         self.printSpaces (self.level)
-        self.outputstrings += [f"Command: {node.command}\n"]
+        self.outputstrings += [f"Command: {node.command.lexeme}\n"]
 
         self.printSpaces (self.level)
         self.outputstrings += [f"Arguments:\n"]
@@ -187,7 +176,7 @@ class PrintVisitor (ASTVisitor):
 
         if node.hasAssignment:
             self.printSpaces (self.level)
-            self.outputstrings += [f"LHS: {node.lhsVariable}\n"]
+            self.outputstrings += [f"LHS: {node.lhsVariable.id}\n"]
         
         self.printSpaces (self.level)
         self.outputstrings += [f"Called Function: {node.function_name}\n"]
@@ -238,9 +227,9 @@ class PrintVisitor (ASTVisitor):
 
     # ====================================================================
 
-    def visitLabelExpressionNode (self, node):
+    def visitBasicBlockExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"Label: {node.id}\n"]
+        self.outputstrings += [f"Block Name: {node.id}\n"]
 
     # ====================================================================
 

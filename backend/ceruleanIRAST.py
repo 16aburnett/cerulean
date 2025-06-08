@@ -20,7 +20,7 @@ class Type(Enum):
     FLOAT32  = 5
     FLOAT64  = 6
     VOID     = 7
-    LABEL    = 8
+    BLOCK    = 8
     TYPE     = 9
     PTR      = 10
     UNKNOWN  = 11
@@ -190,43 +190,18 @@ class ParameterNode (DeclarationNode):
         return node
 
 # ========================================================================
-
-class LabelNode (Node):
-
-    def __init__(self, id, token):
-        self.id = id
-        self.token = token
-
-        self.lineNumber = 0
-        self.columnNumber = 0
-
-        # Label nodes are implicitly assigned
-        self.wasAssigned = True
-
-        # x86 fields
-        self.stackOffset = 0
-
-    def accept (self, visitor):
-        return visitor.visitLabelNode (self)
-
-    def copy (self):
-        node = LabelNode (self.id, self.token.copy ())
-        node.stackOffset = self.stackOffset
-        return node
-
-# ========================================================================
 # id - string
 # params - List(ParameterNode)
 # body - CodeBlockNode
 
 class FunctionNode (Node):
     
-    def __init__(self, type:TypeSpecifierNode, id, token, params, body):
+    def __init__(self, type:TypeSpecifierNode, id, token, params, basicBlocks):
         self.type = type 
         self.id = id
         self.token = token
         self.params = params
-        self.body = body
+        self.basicBlocks = basicBlocks
 
         self.signature = ""
 
@@ -245,7 +220,7 @@ class FunctionNode (Node):
         return visitor.visitFunctionNode (self)
 
     def copy (self):
-        node = FunctionNode (self.type.copy(), self.id, self.token, [param.copy() for param in self.params], self.body.copy())
+        node = FunctionNode (self.type.copy(), self.id, self.token, [param.copy() for param in self.params], [block.copy() for block in self.basicBlocks])
         node.signature = self.signature
         node.scopeName = self.scopeName
         node.label = self.label
@@ -254,22 +229,21 @@ class FunctionNode (Node):
         return node
 
 # ========================================================================
-# code blocks {}
-# mostly just function body
+# basic block - represents a group of instructions
 
-class CodeBlockNode (Node):
+class BasicBlockNode (Node):
     
-    def __init__(self, codeunits):
-        self.codeunits = codeunits
-
+    def __init__(self, name, instructions):
+        self.name = name
+        self.instructions = instructions
         self.lineNumber = 0
         self.columnNumber = 0
 
     def accept (self, visitor):
-        return visitor.visitCodeBlockNode (self)
+        return visitor.visitBasicBlockNode (self)
 
     def copy (self):
-        return CodeBlockNode ([codeunit.copy () for codeunit in self.codeunits])
+        return BasicBlockNode (self.name, [instruction.copy () for instruction in self.instructions])
 
 # ========================================================================
 
@@ -280,6 +254,8 @@ class InstructionNode (Node):
         self.lhsVariable = lhsVariable
         self.command = command
         self.arguments = arguments
+        self.lineNumber = 0
+        self.columnNumber = 0
 
     def accept (self, visitor):
         return visitor.visitInstructionNode (self)
@@ -297,8 +273,9 @@ class CallInstructionNode (Node):
         self.function_name = function_name
         self.token = token
         self.arguments = arguments
-
         self.decl = None
+        self.lineNumber = 0
+        self.columnNumber = 0
 
     def accept (self, visitor):
         return visitor.visitCallInstructionNode (self)
@@ -395,7 +372,7 @@ class LocalVariableExpressionNode (ExpressionNode):
 # ========================================================================
 # id - string
 
-class LabelExpressionNode (ExpressionNode):
+class BasicBlockExpressionNode (ExpressionNode):
 
     def __init__(self, id, token, line, column):
         super ().__init__ ()
@@ -410,10 +387,10 @@ class LabelExpressionNode (ExpressionNode):
         self.columnNumber = column
 
     def accept (self, visitor):
-        return visitor.visitLabelExpressionNode (self)
+        return visitor.visitBasicBlockExpressionNode (self)
 
     def copy (self):
-        return LabelExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
+        return BasicBlockExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
 
 # ========================================================================
 # value - int

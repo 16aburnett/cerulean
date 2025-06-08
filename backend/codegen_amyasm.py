@@ -165,12 +165,6 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
     #=====================================================================
 
-    def visitLabelNode (self, node):
-        node.scopeName = "".join (self.scopeNames) + "__" + node.id
-        self.printLabel (f"{node.scopeName}")
-
-    #=====================================================================
-
     def visitGlobalVariableDeclarationNode (self, node):
         self.printComment (f"Global Variable Declaration - {node.id}")
 
@@ -256,7 +250,8 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
         self.printComment ("Body")
         self.indentation += 1
-        node.body.accept (self)
+        for basicBlock in node.basicBlocks:
+            basicBlock.accept (self)
         self.indentation -= 1
 
         # extra return statement for if return is not provided 
@@ -275,27 +270,16 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
     #=====================================================================
 
-    def visitCodeBlockNode (self, node):
+    def visitBasicBlockNode (self, node):
         self.printSubDivider ()
-        self.printComment ("Code Block")
+        self.printComment ("Basic Block")
         self.indentation += 1
 
-        # create new scope level 
-        self.scopeNames += [f"__block__{self.jumpIndex}"]
-        self.jumpIndex += 1
+        node.scopeName = "".join (self.scopeNames) + "__" + node.name
+        self.printLabel (f"{node.scopeName}")
 
-        # if this is a function body
-        # then add the parameters to this scope
-        for p in self.parameters:
-            p.accept (self)
-        self.parameters.clear ()
-
-        # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
-
-        # exit scope
-        self.scopeNames.pop ()
+        for instruction in node.instructions:
+            instruction.accept (self)
 
         self.indentation -= 1
         self.printSubDivider ()
@@ -547,7 +531,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
     #=====================================================================
 
-    def visitLabelExpressionNode (self, node):
+    def visitBasicBlockExpressionNode (self, node):
         scopeName = "".join (self.scopeNames) + "__" + node.id
         self.printComment (f"Identifier - {scopeName}")
         return scopeName
