@@ -89,6 +89,28 @@ class SymbolTableVisitor (ASTVisitor):
     def visitCodeUnitNode (self, node):
         pass
 
+    def visitGlobalVariableDeclarationNode (self, node):
+        # print (f"checking type of {node.id} {node.type}")
+        node.type.accept (self)
+        # print (f"finished checking type {node.id} {node.type}")
+
+        wasSuccessful = self.table.insert (node, node.id, Kind.VAR)
+        if (not wasSuccessful):
+            varname = node.id 
+            originalDec = self.table.lookup (varname, Kind.VAR)
+            print (f"Semantic Error: Redeclaration of global variable '{varname}'")
+            print (f"   Original:")
+            printToken (originalDec.token, "      ")
+            print (f"   Redeclaration:")
+            printToken (node.token, "      ")
+            print ()
+            self.wasSuccessful = False
+
+        if node.rhs:
+            node.wasAssigned = True
+
+        self.programNode.localVariables += [node]
+
     def visitVariableDeclarationNode (self, node):
         # print (f"checking type of {node.id} {node.type}")
         node.type.accept (self)
@@ -702,9 +724,9 @@ class SymbolTableVisitor (ASTVisitor):
             p.accept (self)
         self.parameters.clear ()
 
-        # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
+        # visit each statement
+        for statement in node.statements:
+            statement.accept (self)
 
         self.table.exitScope ()
 
@@ -774,7 +796,7 @@ class SymbolTableVisitor (ASTVisitor):
             node.overloadedFunctionCall.decl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
 
         # mark variable as assigned to
-        if isinstance (node.lhs, (VariableDeclarationNode, IdentifierExpressionNode)):
+        if isinstance (node.lhs, (VariableDeclarationNode, GlobalVariableDeclarationNode, IdentifierExpressionNode)):
             node.lhs.wasAssigned = True
 
     def visitLogicalOrExpressionNode (self, node):
@@ -1157,7 +1179,7 @@ class SymbolTableVisitor (ASTVisitor):
                     node.type = typedecl.type 
                     # ensure rhs is an identifier
                     if not isinstance (node.rhs, IdentifierExpressionNode):
-                        print (f"Semantic Error: RHS of dot operator must be an indentifier")
+                        print (f"Semantic Error: RHS of dot operator must be an identifier")
                         printToken (node.op)
                         print ()
                         self.wasSuccessful = False

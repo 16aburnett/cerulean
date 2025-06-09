@@ -287,12 +287,12 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
     #=====================================================================
 
     def visitInstructionNode (self, node):
-        self.printComment (f"Instruction - {node.command.lexeme}")
+        self.printComment (f"Instruction - {node.command}")
         self.indentation += 1
 
         # Convert/map CeruleanIR instructions to AmyAssembly instructions
         # Instructions are slightly different in either language.
-        command_name = node.command.lexeme
+        command_name = node.command
         if command_name == "add":
             # CeruleanIR : <dest> = add (<src0>, <src1>)
             # AmyAssembly: add <dest> <src0> <src1>

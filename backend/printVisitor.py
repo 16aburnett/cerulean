@@ -68,7 +68,7 @@ class PrintVisitor (ASTVisitor):
         self.outputstrings += [f"Name: {node.id}\n"]
 
         self.printSpaces (self.level)
-        self.outputstrings += [f"Command: {node.command.lexeme}\n"]
+        self.outputstrings += [f"Command: {node.command}\n"]
 
         self.printSpaces (self.level)
         self.outputstrings += [f"Arguments:\n"]
@@ -155,7 +155,7 @@ class PrintVisitor (ASTVisitor):
             self.outputstrings += [f"LHS: {node.lhsVariable.id}\n"]
         
         self.printSpaces (self.level)
-        self.outputstrings += [f"Command: {node.command.lexeme}\n"]
+        self.outputstrings += [f"Command: {node.command}\n"]
 
         self.printSpaces (self.level)
         self.outputstrings += [f"Arguments:\n"]

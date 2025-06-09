@@ -136,10 +136,34 @@ class DeclarationNode (Node):
 
 # ========================================================================
 
+class GlobalVariableDeclarationNode (DeclarationNode):
+
+    def __init__(self, type:TypeSpecifierNode, id, token, rhs):
+        super().__init__(type, id, token)
+        self.rhs = rhs
+        self.wasAssigned = False
+
+        self.lineNumber = 0
+        self.columnNumber = 0
+
+        # x86 fields
+        self.stackOffset = 0
+
+    def accept (self, visitor):
+        return visitor.visitGlobalVariableDeclarationNode (self)
+
+    def copy (self):
+        node = GlobalVariableDeclarationNode (self.type.copy(), self.id, self.token, self.rhs.copy())
+        node.stackOffset = self.stackOffset
+        return node
+
+# ========================================================================
+
 class VariableDeclarationNode (DeclarationNode):
 
     def __init__(self, type:TypeSpecifierNode, id, token):
         super().__init__(type, id, token)
+        self.wasAssigned = False
 
         self.lineNumber = 0
         self.columnNumber = 0
@@ -702,12 +726,12 @@ class BreakStatementNode (StatementNode):
         return BreakStatementNode (self.token)
 
 # ========================================================================
-# codeunits - List(CodeUnitNode)
+# statements - List(StatementNode)
 
 class CodeBlockNode (StatementNode):
     
-    def __init__(self, codeunits):
-        self.codeunits = codeunits
+    def __init__(self, statements):
+        self.statements = statements
 
         self.lineNumber = 0
         self.columnNumber = 0
@@ -716,7 +740,7 @@ class CodeBlockNode (StatementNode):
         return visitor.visitCodeBlockNode (self)
 
     def copy (self):
-        return CodeBlockNode ([codeunit.copy() for codeunit in self.codeunits])
+        return CodeBlockNode ([statement.copy() for statement in self.statements])
 
 # ========================================================================
 

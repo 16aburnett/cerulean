@@ -154,8 +154,6 @@ class GlobalVariableDeclarationNode (DeclarationNode):
         self.command = command
         self.arguments = arguments
 
-        # Unsure if this should be true by default
-        # Every global decl should be LHS of =
         self.wasAssigned = True
 
     def accept (self, visitor):
@@ -473,5 +471,23 @@ class StringLiteralExpressionNode (ExpressionNode):
 
     def copy (self):
         return StringLiteralExpressionNode(self.value)
+
+# ========================================================================
+
+class NullExpressionNode (ExpressionNode):
+
+    def __init__(self):
+        super ().__init__ ()
+        self.type = TypeSpecifierNode (Type.PTR, "ptr", None, 0)
+        self.value = None
+
+        self.lineNumber = line
+        self.columnNumber = column
+
+    def accept (self, visitor):
+        return visitor.visitNullExpressionNode (self)
+
+    def copy (self):
+        return NullExpressionNode(self.lineNumber, self.columnNumber)
 
 # ========================================================================

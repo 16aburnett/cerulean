@@ -28,6 +28,10 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
+    def visitGlobalVariableDeclarationNode (self, node):
+        pass
+
+    @abstractmethod
     def visitVariableDeclarationNode (self, node):
         pass
 
@@ -258,6 +262,26 @@ class PrintVisitor (ASTVisitor):
 
     def visitCodeUnitNode (self, node):
         pass
+
+    def visitGlobalVariableDeclarationNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"GlobalVariableDeclaration: \n"]
+
+        self.level += 1
+
+        node.type.accept (self)
+
+        self.printSpaces (self.level)
+        self.outputstrings += [f"Name: {node.id}\n"]
+
+        if node.rhs:
+            self.printSpaces (self.level)
+            self.outputstrings += [f"RHS:\n"]
+            self.level += 1
+            node.rhs.accept (self)
+            self.level -= 1
+
+        self.level -= 1
 
     def visitVariableDeclarationNode (self, node):
         self.printSpaces (self.level)
@@ -634,9 +658,9 @@ class PrintVisitor (ASTVisitor):
 
         self.level += 1
 
-        # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
+        # print each statement
+        for statement in node.statements:
+            statement.accept (self)
 
         self.level -= 1
 

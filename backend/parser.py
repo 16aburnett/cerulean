@@ -390,7 +390,7 @@ class Parser:
 
         # normal instruction
         else:
-            command = self.tokens[self.currentToken]
+            command = self.tokens[self.currentToken].lexeme
             self.match ("instruction", "IDENTIFIER")
 
             # match arguments
@@ -419,7 +419,7 @@ class Parser:
         self.match ("globalVarDeclaration", "ASSIGN", expected_syntax)
 
         # match command
-        command = self.tokens[self.currentToken]
+        command = self.tokens[self.currentToken].lexeme
         self.match ("globalVarDeclaration", "IDENTIFIER", expected_syntax)
 
         # match arguments

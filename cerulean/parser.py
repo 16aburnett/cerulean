@@ -86,11 +86,8 @@ class Parser:
 
     # Generic syntax start state 
     # <codeunit> -> <function>
-    #            -> <class>
-    #            -> <enum>
-    #            -> <template>
-    #            -> <namespace>
-    #            -> <statement>
+    #            -> <struct>
+    #            -> <globalVariable>
     def codeunit (self):
         self.enter ("codeunit")
 
@@ -99,18 +96,13 @@ class Parser:
         # <codeunit> -> <function>
         if (self.tokens[self.currentToken].type == 'FUNCTION'):
             node = self.function ()
-        # <codeunit> -> <class>
-        elif (self.tokens[self.currentToken].type == "CLASS"):
-            node = self.classDeclaration ()
-        # <codeunit> -> <enum>
-        elif (self.tokens[self.currentToken].type == "ENUM"):
-            node = self.enumDeclaration ()
-        # <codeunit> -> <template>
-        elif (self.tokens[self.currentToken].type == "TEMPLATE"):
-            node = self.templateDeclaration ()
-        # <codeunit> -> <statement>
+        # <codeunit> -> <struct>
+        elif (self.tokens[self.currentToken].type == "STRUCT"):
+            # node = self.structDeclaration ()
+            pass
+        # <codeunit> -> <globalVariable>
         else:
-            node = self.statement ()
+            node = self.globalVariableDeclaration ()
         
         self.leave ("codeunit")
 
@@ -562,6 +554,30 @@ class Parser:
         return node
 
     # ====================================================================
+    # Global Variable Declaration
+    # <globalVariable> -> GLOBAL <typeSpecifier> IDENTIFIER ( ASSIGN <literal> ) SEMI
+    # Example:
+    # 1.  global int32 x;
+    # 2.  global int32 x = 10;
+
+    def globalVariableDeclaration (self):
+        self.enter ("globalVariableDeclaration")
+        expectedSyntax = "Global Variable Declaration Syntax:\nglobal <type> <varname>;\nglobal <type> <varname> = <literal>;"
+        type = self.typeSpecifier ()
+        id = self.tokens[self.currentToken].lexeme
+        token = self.tokens[self.currentToken]
+        self.match ("globalVariableDeclaration", "IDENTIFIER", expectedSyntax)
+        # Optional rhs
+        rhs = None
+        if self.tokens[self.currentToken].type == "ASSIGN":
+            self.match ("globalVariableDeclaration", "ASSIGN", expectedSyntax)
+            rhs = self.literal ()
+        self.match ("globalVariableDeclaration", "SEMI", expectedSyntax)
+        node = GlobalVariableDeclarationNode (type, id, token, rhs)
+        self.leave ("globalVariableDeclaration")
+        return node
+
+    # ====================================================================
     # statement 
     # <statement> -> <codeblock>
     #             -> <forloop>
@@ -608,23 +624,23 @@ class Parser:
 
     # ====================================================================
     # codeblock 
-    # <codeblock> -> '{' { <codeunit> } '}'
+    # <codeblock> -> '{' { <statement> } '}'
 
     def codeblock (self):
         self.enter ("codeblock")
 
-        codeunits = []
+        statements = []
 
         self.match ("codeblock", "LBRACE")
         
         while self.tokens[self.currentToken].type != "RBRACE":
-            codeunits += [self.codeunit ()]
+            statements += [self.statement ()]
         
         self.match ("codeblock", "RBRACE")
 
         self.leave ("codeblock")
 
-        return CodeBlockNode (codeunits)
+        return CodeBlockNode (statements)
 
     # ====================================================================
     # for loop 

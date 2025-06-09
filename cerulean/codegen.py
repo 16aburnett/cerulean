@@ -266,6 +266,9 @@ class CodeGenVisitor (ASTVisitor):
     def visitCodeUnitNode (self, node):
         pass
 
+    def visitGlobalVariableDeclarationNode (self, node):
+        pass
+
     def visitVariableDeclarationNode (self, node):
         self.printComment (f"Variable Declaration - {node.id}")
         node.type.accept (self)
@@ -1187,9 +1190,9 @@ class CodeGenVisitor (ASTVisitor):
             p.accept (self)
         self.parameters.clear ()
 
-        # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
+        # visit each statement
+        for statement in node.statements:
+            statement.accept (self)
 
         # exit scope
         self.scopeNames.pop ()

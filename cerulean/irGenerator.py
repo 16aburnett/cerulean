@@ -77,7 +77,7 @@ class IRGeneratorVisitor (ASTVisitor):
         #     node.floatLiterals[i].label = f".float{i}"
 
         for codeunit in node.codeunits:
-            if codeunit != None and isinstance (codeunit, FunctionNode):
+            if codeunit != None:
                 codeunit.accept (self)
 
         # Global data
@@ -159,6 +159,21 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitCodeUnitNode (self, node):
         pass
+
+    def visitGlobalVariableDeclarationNode (self, node):
+        node.type.accept (self)
+        # variable names are modified by its scope 
+        scopeName = "".join (self.scopeNames) + "__" + node.id
+        node.scopeName = scopeName
+        command="value"
+        if node.rhs:
+            literal = node.rhs.accept (self)
+        else:
+            # If global wasnt assigned, default to 0
+            literal = IntLiteralExpressionNode (0)
+        arg0 = irast.ArgumentExpressionNode (literal.type, literal)
+        irNode = irast.GlobalVariableDeclarationNode (f"@{node.id}", None, command, [arg0])
+        self.ast.codeunits += [irNode]
 
     def visitVariableDeclarationNode (self, node):
         self.printComment (f"Variable Declaration - {node.id}")
@@ -930,9 +945,9 @@ class IRGeneratorVisitor (ASTVisitor):
         # for p in self.parameters:
         #     p.accept (self)
         # self.parameters.clear ()
-        # visit each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
+        # visit each statement
+        for statement in node.statements:
+            statement.accept (self)
         # exit scope
         self.scopeNames.pop ()
 
@@ -2260,65 +2275,19 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitIntLiteralExpressionNode (self, node):
-        self.printComment ("Int Literal")
-        self.indentation += 1
-        self.printCode (f"mov rax, {node.value}")
-        self.printCode (f"push rax")
-        self.indentation -= 1
+        return irast.IntLiteralExpressionNode (node.value)
 
     def visitFloatLiteralExpressionNode (self, node):
-        self.printComment ("Float Literal")
-        self.indentation += 1
-        self.printCode (f"mov rax, qword [{node.label}] ; {node.value}")
-        self.printCode ("push rax")
-        self.indentation -= 1
+        return irast.FloatLiteralExpressionNode (node.value)
 
     def visitCharLiteralExpressionNode (self, node):
-        self.printComment ("Char Literal")
-        self.indentation += 1
-        # normal character:
-        if node.value[0] != '\\':
-            self.printCode (f"push '{(node.value)}'")
-        # escaped character
-        else:
-            # convert to ascii value 
-            import ast
-            asciiValue = ord(ast.literal_eval(str("".join(["\"", node.value, "\""]))))
-            self.printCode (f"push {asciiValue} ; {node.value}")
-        self.indentation -= 1
+        return irast.CharLiteralExpressionNode (node.value)
 
     def visitStringLiteralExpressionNode (self, node):
-        self.printComment ("String Literal")
-        self.indentation += 1
+        return irast.StringLiteralExpressionNode (node.value)
 
-        self.printComment (node.value)
-        self.printCode (f"mov rax, {node.label}")
-        self.printCode ("push rax")
-
-        # # create string on heap as char[]
-        # node.value = (node.value.replace(f'\n', f'\\n').replace ('\t', '\\t')).replace ("\r", "\\r").replace ("\b", "\\b")
-        # # node.value = node.value.replace ("\\n", "\n").replace ("\\t", "\t").replace ("\\r", "\r").replace ("\\b", "\b")
-        # chars = [node.value[i] for i in range(1, len(node.value)-1)]
-        # for i in range(len(chars)-1):
-        #     if i >= len(chars)-1:
-        #         break
-        #     if chars[i] == "\\" and \
-        #         (chars[i+1] == 'n'  \
-        #         or chars[i+1] == 't'\
-        #         or chars[i+1] == 'r'\
-        #         or chars[i+1] == 'b'):
-        #         chars[i] = "\\" + chars[i+1]
-        #         del chars[i+1]
-        # node.value = chars
-        # backSlashes = 0
-        # # for c in node.value:
-        # #     if c == '\\':
-        # #         backSlashes += 1
-        # self.printCode (f"MALLOC __str {len(node.value)-backSlashes}")
-        # for i in range(len(node.value)-backSlashes):
-        #     self.printCode (f"ASSIGN __str[{i}] '{(node.value[i])}'")
-        # self.printCode ("PUSH __str")
-        self.indentation -= 1
+    def visitNullExpressionNode (self, node):
+        return irast.NullExpressionNode ()
 
     def visitListConstructorExpressionNode (self, node):
 
@@ -2363,12 +2332,5 @@ class IRGeneratorVisitor (ASTVisitor):
         self.printCode ("push rax")
 
         self.indentation -= 1
-
-    def visitNullExpressionNode (self, node):
-        self.printComment ("Null Literal")
-        self.indentation += 1
-        self.printCode ("push 0")
-        self.indentation -= 1
-
 
 # ========================================================================

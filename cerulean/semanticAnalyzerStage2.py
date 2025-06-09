@@ -69,6 +69,19 @@ class SymbolTableVisitor2 (ASTVisitor):
     def visitCodeUnitNode (self, node):
         pass
 
+    def visitGlobalVariableDeclarationNode (self, node):
+        node.type.accept (self)
+        wasSuccessful = self.table.insert (node)
+
+        if (not wasSuccessful):
+            varname = node.id 
+            originalDec = self.table.lookup (varname)
+            print (f"Semantic Error: Redeclaration of '{varname}'")
+            print (f"   Originally on line {node.token.line}: column {node.token.column}")
+            print (f"   Redeclaration on line {node.token.line}: column {node.token.column}")
+            print ()
+            self.wasSuccessful = False
+
     def visitVariableDeclarationNode (self, node):
         node.type.accept (self)
         wasSuccessful = self.table.insert (node)
@@ -629,8 +642,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         self.parameters.clear ()
 
         # print each codeunit
-        for unit in node.codeunits:
-            unit.accept (self)
+        for statement in node.statements:
+            statement.accept (self)
 
         self.table.exitScope ()
         self.typesTable.exitScope ()
