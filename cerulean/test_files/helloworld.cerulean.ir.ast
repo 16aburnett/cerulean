@@ -30,8 +30,24 @@ ProgramNode:
 |   |   |   Basic Block: for_body
 |   |   |   Basic Block: for_update
 |   |   |   Basic Block: for_end
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %0
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
 |   Function: @main (void)->int32
 |   |   ReturnType:
 |   |   |   Type: Type.INT32 int32
 |   |   Body:
 |   |   |   Basic Block: entry
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %0
+|   |   |   |   |   Called Function: @__main____print_greeting__char__1__int
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %g_customary_greeting
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %g_length

@@ -34,6 +34,10 @@ class IRGeneratorVisitor (ASTVisitor):
         self.lines = lines 
         self.indentation = 0
         self.ast = None
+        self.containingIRFunction = None
+        self.containingBasicBlock = None
+        self.newLocalRegIndex = 0
+
         self.lhs = "null"
         self.jumpIndex = 0
         self.shouldComment = True
@@ -56,6 +60,12 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def exitScope (self):
         self.scopeNames.pop ()
+
+    # Returns a new unique local register
+    def newLocalReg (self):
+        reg = irast.LocalVariableExpressionNode (f"%{self.newLocalRegIndex}", None, None, None)
+        self.newLocalRegIndex += 1
+        return reg
 
     # === VISITOR FUNCTIONS ==============================================
 
@@ -176,20 +186,12 @@ class IRGeneratorVisitor (ASTVisitor):
         self.ast.codeunits += [irNode]
 
     def visitVariableDeclarationNode (self, node):
-        self.printComment (f"Variable Declaration - {node.id}")
         node.type.accept (self)
-
-        self.indentation += 1
-
         # variable names are modified by its scope 
         scopeName = "".join (self.scopeNames) + "__" + node.id
-
-        # declare the variable with default value 
-        self.printCode (f"mov rax, qword [rbp - {node.stackOffset}]  ; {scopeName}")
-        self.lhs = node.id
         node.scopeName = scopeName
-
-        self.indentation -= 1
+        # NOTE: this should probably be scopename
+        return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
 
     def visitFunctionNode (self, node):
 
@@ -245,6 +247,7 @@ class IRGeneratorVisitor (ASTVisitor):
         # Add function to program
         self.ast.codeunits += [irFunction]
         self.containingIRFunction = irFunction
+        self.newLocalRegIndex = 0
 
         # load parameters 
         for i in range(len(node.params)):
@@ -959,148 +962,39 @@ class IRGeneratorVisitor (ASTVisitor):
         node.rhs.accept (self)
 
     def visitAssignExpressionNode (self, node):
-        self.printComment (f"Assignment - '{node.op.lexeme}'")
-
-        self.indentation += 1
-
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-
-        # determine number of bytes being assigned
-        destSize = 8
-        if node.rhs.type.__str__() == "char":
-            destSize = 1
-
+        rhsReg = node.rhs.accept (self)
         if isinstance(node.lhs, VariableDeclarationNode):
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.accept (self)
-            self.indentation -= 1
-            # self.printCode (f"pop rdx ; __rhs")
-            # char - 1 byte 
-            if node.rhs.type.__str__() == "char":
-                lhsStr = f"byte [rbp - {node.lhs.stackOffset}]"
-            # int, float, pointer - 8 bytes
-            else:
-                lhsStr = f"qword [rbp - {node.lhs.stackOffset}]"
-
+            lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, IdentifierExpressionNode):
-            # self.printCode (f"pop rdx ; __rhs")
-            # char - 1 byte 
-            if node.rhs.type.__str__() == "char":
-                lhsStr = f"byte [rbp - {node.lhs.decl.stackOffset}]"
-            # int, float, pointer - 8 bytes
-            else:
-                lhsStr = f"qword [rbp - {node.lhs.decl.stackOffset}]"
-        elif isinstance(node.lhs, ThisExpressionNode):
-            print ("This assignment - Not implemented")
-            exit (1)
-            # self.printCode (f"pop rdx ; __rhs")
-            lhsStr = f"{node.lhs.decl.scopeName}"
+            lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, SubscriptExpressionNode):
-            self.printComment ("LHS")
-            self.indentation += 1
-            self.printComment ("Subscript assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("OFFSET")
-            self.indentation += 1
-            node.lhs.offset.accept (self)
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; __offset")
-            pointerReg = "rbx"
-            self.printCode (f"pop {pointerReg} ; __pointer")
-
-            self.indentation -= 1
-            self.indentation -= 1
-
-            # self.printCode (f"pop rdx ; __rhs")
-            # char - 1 byte 
-            if node.rhs.type.__str__() == "char":
-                lhsStr = f"byte [{pointerReg} + rdi]"
-            # int, float, pointer - 8 bytes
-            else:
-                lhsStr = f"qword [{pointerReg} + 8*rdi]"
-
+            # node.lhs.lhs.accept (self)
+            # node.lhs.offset.accept (self)
+            pass
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
-            self.printComment ("LHS")
-            self.indentation += 1
-            self.printComment ("Member Accessor Assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("RHS")
-            self.indentation += 1
-            # # construct field index var 
-            # fieldIndex = f"__field__{node.lhs.lhs.type.id}__{node.lhs.rhs.id}"
-            self.printCode (f"push qword [{node.lhs.decl.scopeName}] ; {node.lhs.id}")
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; rhs")
-            self.printCode ("pop rbx ; lhs")
-            
-            lhsStr = f"qword [rbx + 8*rdi]"
-
-            self.indentation -= 1
-            self.indentation -= 1
-        
-        # get rhs value
-        self.printCode (f"pop rdx ; rhs value")
-
+            # node.lhs.lhs.accept (self)
+            pass
         # perform operation and save to lhsStr
         # =
         if node.op.type == "ASSIGN":
-            if destSize == 1:
-                self.printCode (f"mov {lhsStr}, dl")
-            # 8 bytes
-            else:
-                self.printCode (f"mov {lhsStr}, rdx")
-            self.printCode ("push rdx")
+            rhsIRType = node.type.accept (self)
+            arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+            # Add to the current basic block
+            self.containingBasicBlock.instructions += [instruction]
         # +=
         elif node.op.type == "ASSIGN_ADD":
-            # floating point 
-            if node.type.__str__() == "float":
-                self.printCode (f"movq xmm0, rdx    ; load rhs value, xmm0 = mem[0], zero")
-                self.printCode (f"addsd xmm0, {lhsStr} ; add lhs and rhs")
-                self.printCode (f"movsd {lhsStr}, xmm0 ; write back to lhs")
-                self.printCode (f"movq rax, xmm0")
-                self.printCode (f"push rax          ; push result for other expressions")
-            # integer
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; read lhs value")
-                self.printCode (f"add rax, rdx      ; add lhs and rhs")
-                self.printCode (f"mov {lhsStr}, rax ; write back to lhs")
-                self.printCode (f"push rax          ; push result for other expressions")
+            # Add
+            # TODO
+            # Assign
+            rhsIRType = node.type.accept (self)
+            arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+            # Add to the current basic block
+            self.containingBasicBlock.instructions += [instruction]
         # -=
         elif node.op.type == "ASSIGN_SUB":
-            # floating point 
-            if node.type.__str__() == "float":
-                self.printCode (f"movq xmm0, {lhsStr} ; load lhs value, xmm0 = mem[0], zero")
-                self.printCode (f"movq xmm1, rdx ; load rhs value, xmm1 = mem[0], zero")
-                self.printCode (f"subsd xmm0, xmm1 ; lhs = lhs - rhs")
-                self.printCode (f"movsd {lhsStr}, xmm0 ; write back to lhs")
-                self.printCode (f"movq rax, xmm0")
-                self.printCode (f"push rax          ; push result for other expressions")
-            # integer
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; read lhs value")
-                self.printCode (f"sub rax, rdx      ; lhs = lhs - rhs")
-                self.printCode (f"mov {lhsStr}, rax ; write back to lhs")
-                self.printCode (f"push rax          ; push result for other expressions")
+            print ("NOT IMPLMENTED")
         # *=
         elif node.op.type == "ASSIGN_MUL":
             # floating point 
@@ -1158,7 +1052,7 @@ class IRGeneratorVisitor (ASTVisitor):
                 self.printCode (f"mov {lhsStr}, rdx ; write back to lhs")
                 self.printCode (f"push rdx          ; push result for other expressions")
         
-        self.indentation -= 1
+        return lhsReg
 
     def visitLogicalOrExpressionNode (self, node):
         self.printComment ("OR")
@@ -1358,146 +1252,38 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitAdditiveExpressionNode (self, node):
-        # addition 
-        if node.op.lexeme == "+":
-            self.printComment (f"Addition - {node.lhs.type}, {node.rhs.type}")
-        # subtraction 
-        elif node.op.lexeme == "-":
-            self.printComment (f"Subtraction - {node.lhs.type}, {node.rhs.type}")
-
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-        # calc rhs 
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-        # get rhs and lhs off the stack 
-        self.printCode ("pop rdx ; rhs")
-        self.printCode ("pop rax ; lhs")
-        
-        # floating point addition/subtraction
-        if node.lhs.type.__str__() == "float" or node.rhs.type.__str__() == "float":
-            self.printComment ("Move to big boi reg")
-            self.printCode ("movq xmm0, rax ; lhs")
-            self.printCode ("movq xmm1, rdx ; rhs")
-
-            # addition
-            if node.op.lexeme == "+":
-                self.printCode ("addsd xmm0, xmm1 ; perform addition")
-            # subtraction 
-            elif node.op.lexeme == "-":
-                self.printCode ("subsd xmm0, xmm1 ; perform subtraction")
-
-            self.printCode ("movq rax, xmm0")
-            
-        # simple integer addition/subtraction
-        elif node.overloadedFunctionCall == None:
-            # addition
-            if node.op.lexeme == "+":
-                self.printCode ("add rax, rdx")
-            # subtraction 
-            elif node.op.lexeme == "-":
-                self.printCode ("sub rax, rdx")
-        # overloaded function call 
-        else:
-            self.printComment (f"Using Overloaded Version - {node.overloadedFunctionCall.function.id}")
-            # push args in reverse order
-            self.printCode (f"push rdx")
-            self.printCode (f"push rax")
-            self.printCode (f"call {node.overloadedFunctionCall.decl.scopeName}")
-
-        # push result to the stack
-        self.printCode ("push rax")
-
-        self.indentation -= 1
+        lhsReg = node.lhs.accept (self)
+        rhsReg = node.rhs.accept (self)
+        destReg = self.newLocalReg ()
+        if node.op.lexeme == '+':
+            command = "add"
+        else: # node.op.lexeme == '-':
+            command = "sub"
+        lhsIRType = node.lhs.type.accept (self)
+        arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
+        rhsIRType = node.rhs.type.accept (self)
+        arg1 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (destReg, command, [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return destReg
 
     def visitMultiplicativeExpressionNode (self, node):
-        # Multiplication 
-        if node.op.lexeme == "*":
-            self.printComment (f"Multiplication - {node.lhs.type}, {node.rhs.type}")
-        # division 
-        elif node.op.lexeme == "/":
-            self.printComment (f"Division - {node.lhs.type}, {node.rhs.type}")
-        # Mod
-        elif node.op.lexeme == "%":
-            self.printComment (f"Mod - {node.lhs.type}, {node.rhs.type}")
-
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-        # calc rhs 
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-        # get rhs and lhs off the stack 
-        self.printCode ("pop rdx")
-        self.printCode ("pop rax")
-    
-        # floating point 
-        if node.lhs.type.__str__() == "float" or node.rhs.type.__str__() == "float":
-            self.printComment ("Move to big boi reg")
-            self.printCode ("movq xmm0, rax ; lhs")
-            self.printCode ("movq xmm1, rdx ; rhs")
-
-            # Multiplication 
-            if node.op.lexeme == "*":
-                self.printCode ("mulsd xmm0, xmm1 ; perform multiplication")
-            # division 
-            elif node.op.lexeme == "/":
-                self.printCode ("divsd xmm0, xmm1 ; perform division")
-            # Mod
-            elif node.op.lexeme == "%":
-                print ("Error: mod not allowed with floating point operands")
-
-            self.printCode ("movq rax, xmm0")
-        # simple multiplicative  
-        elif node.overloadedFunctionCall == None:
-            # Multiplication 
-            if node.op.lexeme == "*":
-                self.printCode ("imul rax, rdx")
-            # division 
-            elif node.op.lexeme == "/":
-                # rax contains the dividend (lhs)
-                self.printCode ("mov rsi, rdx")
-                self.printCode ("xor rdx, rdx")
-                self.printCode ("cqo ; sign extend rax into rdx (specifically for 64bit -> 128bit)")
-                self.printCode ("idiv rsi ; perform rdx:rax (128bit) / rsi (64bit) = rax")
-                # rax now contains quotient
-                # rdx contains remainder
-            # Mod
-            elif node.op.lexeme == "%":
-                self.printCode ("mov rsi, rdx")
-                self.printCode ("xor rdx, rdx")
-                self.printCode ("cqo ; sign extend rax into rdx (specifically for 64bit -> 128bit)")
-                self.printCode ("idiv rsi ; perform rdx:rax (128bit) / rsi (64bit)")
-                # rax now contains quotient
-                # rdx contains remainder
-                # we want rax to have rdx
-                self.printCode ("mov rax, rdx ; move remainder to rax")
-        # overloaded function call 
-        else:
-            self.printComment (f"Using Overloaded Version - {node.overloadedFunctionCall.function.id}")
-            # push args in reverse order
-            self.printCode (f"push rdx")
-            self.printCode (f"push rax")
-            self.printCode (f"call {node.overloadedFunctionCall.decl.scopeName}")
-        
-
-        # push result to the stack
-        self.printCode ("push rax")
-
-        self.indentation -= 1
+        lhsReg = node.lhs.accept (self)
+        rhsReg = node.rhs.accept (self)
+        destReg = self.newLocalReg ()
+        if node.op.lexeme == '*':
+            command = "mul"
+        if node.op.lexeme == '/':
+            command = "div"
+        else: # node.op.lexeme == '%':
+            command = "mod"
+        lhsIRType = node.lhs.type.accept (self)
+        arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
+        rhsIRType = node.rhs.type.accept (self)
+        arg1 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (destReg, command, [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return destReg
             
     #  ++ | -- | + | - | ! | ~
     def visitUnaryLeftExpressionNode (self, node):
@@ -1974,13 +1760,15 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitFunctionCallExpressionNode (self, node):
-        # calc arguments first
+        arguments = []
         for i in range(len(node.args)):
-            # node.args[i].accept (self)
-            pass
-
-        # call function
-        # TODO
+            argReg = node.args[i].accept (self)
+            argType = node.args[i].type.accept (self)
+            arguments += [irast.ArgumentExpressionNode (argType, argReg)]
+        retReg = self.newLocalReg ()
+        instruction = irast.CallInstructionNode (retReg, f"@{node.decl.scopeName}", None, arguments)
+        self.containingBasicBlock.instructions += [instruction]
+        return retReg
 
     def visitMemberAccessorExpressionNode (self, node):
 
@@ -2137,16 +1925,7 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitIdentifierExpressionNode (self, node):
-        self.printComment (f"Identifier - {node.type} {node.id}")
-        self.indentation += 1
-        # chars
-        if node.type.__str__() == "char":
-            self.printCode (f"mov al, byte [rbp - {node.decl.stackOffset}]")
-            self.printCode (f"movzx rax, al")
-            self.printCode (f"push rax")
-        else:
-            self.printCode (f"push qword [rbp - {node.decl.stackOffset}]")
-        self.indentation -= 1
+        return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
 
     def visitArrayAllocatorExpressionNode (self, node):
         self.printComment ("Array Allocator")

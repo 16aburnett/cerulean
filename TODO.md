@@ -6,6 +6,8 @@
 # needs to run from root of repo
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR
 
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR
+
 ```
 
 
@@ -43,6 +45,12 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_he
 
 ### NOTES ################################################################
 
+
+- [TODO] rename localvariableexpression to register
+
+Ditch branch/jump instructions all  together?
+- if all blocks require a branch at the end, then should we just build that into the syntax??
+- 
 
 Optimizations
 - dead code elimination

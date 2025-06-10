@@ -1,0 +1,45 @@
+ProgramNode:
+|   Function: main void->int
+|   |   ReturnType:
+|   |   |   Type: Type.INT int
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=2, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=2, includeChain=[], lineStr='    int32 x = 1 + 2;') int
+|   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   Name: x
+|   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=2, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=2, includeChain=[], lineStr='    int32 x = 1 + 2;') int
+|   |   |   |   |   |   |   Int Literal: 1 int
+|   |   |   |   |   |   |   Int Literal: 2 int
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=4, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=4, includeChain=[], lineStr='    int32 y = x * 10;') int
+|   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   Name: y
+|   |   |   |   |   |   MultiplicativeExpression: Token(type='TIMES', lexeme='*', value='*', line=4, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=4, includeChain=[], lineStr='    int32 y = x * 10;') int
+|   |   |   |   |   |   |   Identifier: x int
+|   |   |   |   |   |   |   Int Literal: 10 int
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: y int
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=6, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=6, includeChain=[], lineStr='    y = (x + y) % 3;') int
+|   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   Identifier: y int
+|   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=6, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=6, includeChain=[], lineStr='    y = (x + y) % 3;') int
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=6, column=12, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=6, includeChain=[], lineStr='    y = (x + y) % 3;') int
+|   |   |   |   |   |   |   |   Identifier: x int
+|   |   |   |   |   |   |   |   Identifier: y int
+|   |   |   |   |   |   |   Int Literal: 3 int
