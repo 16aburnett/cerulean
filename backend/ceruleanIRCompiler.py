@@ -13,6 +13,7 @@ import argparse
 from .tokenizer import tokenize
 from .ceruleanIRAST import *
 from .printVisitor import PrintVisitor
+from .irEmitter import IREmitterVisitor
 from .parser import Parser
 from .visitor import *
 from .semanticAnalyzer import *
@@ -32,15 +33,16 @@ BUILTIN_PREFIX = "__builtin__"
 
 class CeruleanIRCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, emitIR=False, target=TARGET_AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
         self.files = {}
-        self.debug = debug
+        self.shouldPrintDebug = debug
         self.ast = ""
 
         self.emitAST = emitAST
+        self.emitIR = emitIR
 
         self.astFilename = mainFilename + ".ast"
         self.debugLines = []
@@ -94,13 +96,11 @@ class CeruleanIRCompiler:
         # Tokenization will throw errors for invalid symbols and invalid
         # identifiers.
 
-        if (self.debug):
-            print ("Tokenizing...")
+        self.debug ("Tokenizing...")
         # Tokenize each file
         fileTokens = {}
         for filename in self.files:
-            if (self.debug):
-                print (f"   Tokenizing '{filename}'...")
+            self.debug (f"   Tokenizing '{filename}'...")
             fileLines = self.files[filename]
             fileContentsString = "".join (fileLines)
             fileTokens[filename] = tokenize (fileContentsString, filename, )
@@ -131,45 +131,25 @@ class CeruleanIRCompiler:
         # Since the parser is looking for specific code structures, it will
         # give an error if incorrect syntax is found.
 
-        if (self.debug):
-            print ("Parsing...")
+        self.debug ("Parsing...")
         
         # Parse each file 
         fileASTs = {}
         for filename in self.files:
-            if (self.debug):
-                print (f"   Parsing '{filename}'...")
+            self.debug (f"   Parsing '{filename}'...")
             fileLines = self.files[filename]
             tokens = fileTokens[filename]
             # Parse file
             parser = Parser (tokens, fileLines, False)
             fileASTs[filename] = parser.parse ()
 
-        #=== PRINT AST ===================================================
-
-        print_visitor = PrintVisitor ()
-
-        # DEBUG - print AST to file
-        for filename in fileASTs:
-            if (self.debug):
-                print (f"   Printing AST for '{filename}'...")
-            ast = fileASTs[filename]
-            ast.accept (print_visitor)
-            ast_filename = f"{filename}.ast"
-            ast_file = open (ast_filename, "w")
-            if (self.debug): print (f"   Writing AST to {ast_filename}...")
-            ast_file.write ("".join (print_visitor.outputstrings))
-            ast_file.close ()
-
         #=== SEMANTIC ANALYSIS ===========================================
 
-        if (self.debug):
-            print ("Analyzing semantics...")
+        self.debug ("Analyzing semantics...")
 
         # semantically analyze each file's AST
         for filename in fileASTs:
-            if (self.debug):
-                print (f"   Analyzing semantics of AST for '{filename}'...")
+            self.debug (f"   Analyzing semantics of AST for '{filename}'...")
             ast = fileASTs[filename]
             source_code_lines = self.files[filename]
 
@@ -479,21 +459,39 @@ class CeruleanIRCompiler:
                 exit (1)
 
             # Reaches here if the file is semantically valid
-            if (self.debug):
-                print ("   Semantic analysis passes successfully")
+            self.debug ("   Semantic analysis passes successfully")
+        
+        #=== PRINT AST ===================================================
 
-        # # get a string representation of the ast 
-        # visitor = PrintVisitor ()
-        # visitor.visitProgramNode (ast)
-        # astOutput = "".join(visitor.outputstrings)
+        # DEBUG - print AST to file
+        if self.emitAST:
+            self.debug (f"Printing AST...")
+            for filename in fileASTs:
+                self.debug (f"   Printing AST for '{filename}'...")
+                printVisitor = PrintVisitor ()
+                ast = fileASTs[filename]
+                ast.accept (printVisitor)
+                astFilename = f"{filename}.ast"
+                astFile = open (astFilename, "w")
+                self.debug (f"   Writing AST to '{astFilename}'...")
+                astFile.write ("".join (printVisitor.outputstrings))
+                astFile.close ()
 
-        # # save ast 
-        # self.ast = astOutput
+        #=== EMITTING IR =================================================
+        # Regenerates the IR code and outputs to a file
 
-        # if self.emitAST:
-        #     print (f"Writing AST to \"{self.astFilename}\"")
-        #     file = open(self.astFilename, "w")
-        #     file.write (astOutput)
+        if self.emitIR:
+            self.debug (f"Emitting IR...")
+            for filename in fileASTs:
+                ast = fileASTs[filename]
+                self.debug (f"   Emitting IR for '{filename}'...")
+                irEmitter = IREmitterVisitor ()
+                ast.accept (irEmitter)
+                irOutput = irEmitter.getIRCode ()
+                irFilename = filename + ".ir"
+                self.debug (f"   Writing IR to '{irFilename}'...")
+                file = open (irFilename, "w")
+                file.write (irOutput)
 
         #=== OPTIMIZATION ================================================
         # TODO: figure out what optimizations I can do
@@ -501,6 +499,7 @@ class CeruleanIRCompiler:
         #=== CODE GENERATION =============================================
 
         # keyed by filename
+        self.debug (f"Generating code...")
         code_generators = {}
         for filename in fileASTs:
             ast = fileASTs[filename]
@@ -538,8 +537,7 @@ class CeruleanIRCompiler:
                 exit (1)
 
             # output generated/compiled code to separate file
-            if (self.debug):
-                print (f"Writing compiled code to \"{dest_filename}\"")
+            self.debug (f"   Writing compiled code to \"{dest_filename}\"")
             file = open(dest_filename, "w")
             file.write (destCode)
 
@@ -547,6 +545,11 @@ class CeruleanIRCompiler:
 
         print ("Compiled successfully!")
         return None
+
+    def debug(self, *args, **kwargs):
+        """Custom debug print function."""
+        if (self.shouldPrintDebug):
+            print(*args, **kwargs)
 
 # ========================================================================
 
@@ -556,7 +559,8 @@ if __name__ == "__main__":
 
     argparser.add_argument(dest="sourceFiles", nargs="+", help="source files to compile (first file should be the main file)")
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name of the outputted compiled file")
-    argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the ast")
+    argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the Abstract Syntax Tree (AST)")
+    argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the IR")
     argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm, x86)")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
@@ -590,7 +594,8 @@ if __name__ == "__main__":
         mainFilename, 
         otherFilenames, 
         destFilename=destFilename,
-        emitAST=args.emitAST, 
+        emitAST=args.emitAST,
+        emitIR=args.emitIR,
         target=target,
         debug=args.debug
     )

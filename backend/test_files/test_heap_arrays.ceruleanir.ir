@@ -1,0 +1,65 @@
+function void @fill (ptr(%arr_ptr), int32(%N)) {
+    block entry {
+        %i_ptr = alloca (type(int32), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+        jge (int32(%i_curr), int32(%N), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %i0 = load (type(int32), ptr(%i_ptr), int32(0))
+        %i1 = value (int32(%i0))
+        %i2 = mul (int32(%i0), int32(%i1))
+        store (ptr(%arr_ptr), int32(%i_curr), int32(%i2))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (int32(%i_curr), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        return ()
+    }
+}
+
+function void @print (ptr(%arr_ptr), int32(%N)) {
+    block entry {
+        %i_ptr = alloca (type(int32), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+        jge (int32(%i_curr), int32(%N), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %value = load (type(int32), ptr(%arr_ptr), int32(%i_curr))
+        call @__builtin__println__int32 (int32(%value))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (int32(%i_curr), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        return ()
+    }
+}
+
+function int32 @main () {
+    block entry {
+        %N = value (int32(10))
+        %arr_ptr = malloc (type(int32), int32(%N))
+        call @fill (ptr(%arr_ptr), int32(%N))
+        call @print (ptr(%arr_ptr), int32(%N))
+        free (ptr(%arr_ptr))
+        return (int32(0))
+    }
+}
+

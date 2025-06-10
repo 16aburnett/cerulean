@@ -18,7 +18,7 @@ if __name__ == "__main__":
     from .semanticAnalyzer import *
     from .codegen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
-    from backend.printVisitor import PrintVisitor as IRPrintVisitor
+    from backend.irEmitter import IREmitterVisitor
     from backend.ceruleanIRBuilder import CeruleanIRBuilder
 else:
     from .preprocessor import CeruleanPreprocessor
@@ -559,13 +559,12 @@ class CeruleanCompiler:
         irAST = irGeneratorVisitor.ast
         
         if self.emitIR:
-            irPrintVisitor = IRPrintVisitor ()
-            irAST.accept (irPrintVisitor)
-            ast_filename = f"{self.irFilename}.ast"
-            ast_file = open (ast_filename, "w")
-            if (self.debug): print (f"Writing IR AST to {ast_filename}...")
-            ast_file.write ("".join (irPrintVisitor.outputstrings))
-            ast_file.close ()
+            irEmitterVisitor = IREmitterVisitor ()
+            irAST.accept (irEmitterVisitor)
+            irFile = open (self.irFilename, "w")
+            if (self.debug): print (f"Writing IR to '{self.irFilename}'...")
+            irFile.write (irEmitterVisitor.getIRCode ())
+            irFile.close ()
 
         return ''
 

@@ -1,0 +1,22 @@
+global @g_customary_greeting = value (ptr("Hello, World!"))
+global @g_length = value (int32(13))
+function void @print_greeting (ptr(%greeting), int32(%length)) {
+    block entry {
+    }
+    block for_cond {
+    }
+    block for_body {
+    }
+    block for_update {
+    }
+    block for_end {
+        %0 = call @__builtin__println ()
+    }
+}
+
+function int32 @main () {
+    block entry {
+        %0 = call @__main____print_greeting__char__1__int (ptr(%g_customary_greeting), int32(%g_length))
+    }
+}
+

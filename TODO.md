@@ -32,13 +32,13 @@ ceruleanirc <source_files> -o <dest_filename>
 
 
 # test examples
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld.ceruleanir -o backend/test_files/helloworld.amyasm --debug
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld.ceruleanir -o backend/test_files/helloworld.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld.ceruleanir.amyasm
 
-python3 -m backend.ceruleanIRCompiler backend/test_files/test_math.ceruleanir -o backend/test_files/test_math.amyasm --debug
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_math.ceruleanir -o backend/test_files/test_math.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_math.ceruleanir.amyasm
 
-python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_heap_arrays.ceruleanir.amyasm
 
 ```

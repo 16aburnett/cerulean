@@ -1,0 +1,14 @@
+function int32 @main () {
+    block entry {
+        %0 = add (int32(1), int32(2))
+        %x = value (int32(%0))
+        %1 = call @__builtin__println__int (int32(%x))
+        %2 = mod (int32(%x), int32(10))
+        %y = value (int32(%2))
+        %3 = call @__builtin__println__int (int32(%y))
+        %4 = add (int32(%x), int32(%y))
+        %5 = mod (int32(%4), int32(3))
+        %y = value (int32(%5))
+    }
+}
+

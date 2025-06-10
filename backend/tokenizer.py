@@ -72,7 +72,7 @@ token_specification = [
     ('MINUS',    r'\-'),
     ('TIMES',    r'\*'),
     ('DIVIDE',   r'\/'),
-    ('MOD',      r'\%'),
+    # ('MOD',      r'\%'), # conflicts with register syntax
     ('LTE',      r'\<\='),
     ('LT',       r'\<'),
     ('GTE',      r'\>\='),
