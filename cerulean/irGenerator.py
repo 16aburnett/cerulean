@@ -186,12 +186,23 @@ class IRGeneratorVisitor (ASTVisitor):
         self.ast.codeunits += [irNode]
 
     def visitVariableDeclarationNode (self, node):
-        node.type.accept (self)
+        varIRType = node.type.accept (self)
         # variable names are modified by its scope 
         scopeName = "".join (self.scopeNames) + "__" + node.id
         node.scopeName = scopeName
-        # NOTE: this should probably be scopename
-        return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+        # Reassigned variable
+        if (node.assignCount > 1):
+            reg = irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+            # Use alloca to store on the stack to support reassignment
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), varIRType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+            instruction = irast.InstructionNode (reg, "alloca", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
+            return reg
+        # Single assign variable
+        else:
+            # NOTE: this should probably be scopename
+            return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
 
     def visitFunctionNode (self, node):
 
@@ -963,13 +974,37 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitAssignExpressionNode (self, node):
         rhsReg = node.rhs.accept (self)
+        lhsReg = None
+        isMem = False
         if isinstance(node.lhs, VariableDeclarationNode):
-            lhsReg = node.lhs.accept (self)
-        elif isinstance(node.lhs, IdentifierExpressionNode):
-            lhsReg = node.lhs.accept (self)
+            # alloca
+            if node.lhs.assignCount > 1:
+                isMem = True
+                # Vardec should add the alloca instruction so we need to visit
+                lhsReg = node.lhs.accept (self)
+            # register
+            else:
+                lhsReg = node.lhs.accept (self)
+        elif isinstance(node.lhs, IdentifierExpressionNode):            
+            # global var
+            if isinstance(node.lhs.decl, GlobalVariableDeclarationNode):
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}", None, None, None)
+            # alloca
+            elif node.lhs.decl.assignCount > 1:
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}", None, None, None)
+            # register
+            else:
+                lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, SubscriptExpressionNode):
             # node.lhs.lhs.accept (self)
             # node.lhs.offset.accept (self)
+            # NOTE: maybe make lhsReg the result of getelementptr? and mark as mem
             pass
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
             # node.lhs.lhs.accept (self)
@@ -977,11 +1012,19 @@ class IRGeneratorVisitor (ASTVisitor):
         # perform operation and save to lhsStr
         # =
         if node.op.type == "ASSIGN":
-            rhsIRType = node.type.accept (self)
-            arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
-            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
-            # Add to the current basic block
-            self.containingBasicBlock.instructions += [instruction]
+            if isMem:
+                rhsIRType = node.type.accept (self)
+                offset = irast.IntLiteralExpressionNode (0)
+                arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+                arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+                arg2 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+                instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+                self.containingBasicBlock.instructions += [instruction]
+            else:
+                rhsIRType = node.type.accept (self)
+                arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+                instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+                self.containingBasicBlock.instructions += [instruction]
         # +=
         elif node.op.type == "ASSIGN_ADD":
             # Add
@@ -1052,7 +1095,7 @@ class IRGeneratorVisitor (ASTVisitor):
                 self.printCode (f"mov {lhsStr}, rdx ; write back to lhs")
                 self.printCode (f"push rdx          ; push result for other expressions")
         
-        return lhsReg
+        return rhsReg
 
     def visitLogicalOrExpressionNode (self, node):
         self.printComment ("OR")
@@ -1273,7 +1316,7 @@ class IRGeneratorVisitor (ASTVisitor):
         destReg = self.newLocalReg ()
         if node.op.lexeme == '*':
             command = "mul"
-        if node.op.lexeme == '/':
+        elif node.op.lexeme == '/':
             command = "div"
         else: # node.op.lexeme == '%':
             command = "mod"
@@ -1925,6 +1968,23 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitIdentifierExpressionNode (self, node):
+        # Var is on the stack
+        # Global variables are stored on the stack
+        if node.decl.assignCount > 1 or isinstance(node.decl, GlobalVariableDeclarationNode):
+            irType = node.type.accept (self)
+            if isinstance(node.decl, GlobalVariableDeclarationNode):
+                ptr = irast.LocalVariableExpressionNode (f"@{node.id}", None, None, None)
+            else:
+                ptr = irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+            offset = irast.IntLiteralExpressionNode (0)
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), irType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR  , "ptr", None), ptr)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+            resultReg = self.newLocalReg ()
+            instruction = irast.InstructionNode (resultReg, "load", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+            return resultReg
+        # Var is in a reg
         return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
 
     def visitArrayAllocatorExpressionNode (self, node):

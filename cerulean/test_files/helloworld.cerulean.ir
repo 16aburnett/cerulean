@@ -16,7 +16,9 @@ function void @print_greeting (ptr(%greeting), int32(%length)) {
 
 function int32 @main () {
     block entry {
-        %0 = call @__main____print_greeting__char__1__int (ptr(%g_customary_greeting), int32(%g_length))
+        %0 = load (type(ptr), ptr(@g_customary_greeting), int32(0))
+        %1 = load (type(int32), ptr(@g_length), int32(0))
+        %2 = call @__main____print_greeting__char__1__int (ptr(%0), int32(%1))
     }
 }
 

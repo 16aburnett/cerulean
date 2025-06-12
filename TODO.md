@@ -5,8 +5,14 @@
 # run as a module for correct import between cerulean and ceruleanIR backend
 # needs to run from root of repo
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR
+python3 -m backend.ceruleanIRCompiler cerulean/test_files/helloworld.cerulean.ir -o cerulean/test_files/helloworld.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.cerulean.ir.amyasm
+
 
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR
+python3 -m backend.ceruleanIRCompiler cerulean/test_files/simple.cerulean.ir -o cerulean/test_files/simple.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/simple.cerulean.ir.amyasm
+
 
 ```
 
@@ -57,6 +63,8 @@ Optimizations
 - basic block merging
 - mem2reg promotion (alloca -> phi)
 - mem access hoisting
+- conditional->select to reduce control flow
+- eliminate duplicate mem lookups
 
 Ditch call instruction???
 - we can treat function calls as a custom instruction (no call keyword)

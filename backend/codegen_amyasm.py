@@ -177,7 +177,9 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
         rhs_value = node.arguments[0].accept (self)
 
         # declare the variable with default value
-        self.printCode (f"ASSIGN {scopeName} {rhs_value}")
+        # Moreso a requirement of CeruleanIR, global variables must be pointers to memory
+        self.printCode (f"MALLOC {scopeName} 1")
+        self.printCode (f"ASSIGN {scopeName}[0] {rhs_value}")
         self.lhs = node.id
         node.scopeName = scopeName
 

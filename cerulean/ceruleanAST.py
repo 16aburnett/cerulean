@@ -142,6 +142,8 @@ class GlobalVariableDeclarationNode (DeclarationNode):
         super().__init__(type, id, token)
         self.rhs = rhs
         self.wasAssigned = False
+        # For determining whether to use alloca or reg
+        self.assignCount = 0
 
         self.lineNumber = 0
         self.columnNumber = 0
@@ -164,6 +166,8 @@ class VariableDeclarationNode (DeclarationNode):
     def __init__(self, type:TypeSpecifierNode, id, token):
         super().__init__(type, id, token)
         self.wasAssigned = False
+        # For determining whether to use alloca or reg
+        self.assignCount = 0
 
         self.lineNumber = 0
         self.columnNumber = 0

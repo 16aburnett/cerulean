@@ -108,6 +108,7 @@ class SymbolTableVisitor (ASTVisitor):
 
         if node.rhs:
             node.wasAssigned = True
+            node.assignCount += 1
 
         self.programNode.localVariables += [node]
 
@@ -135,7 +136,6 @@ class SymbolTableVisitor (ASTVisitor):
         # if global code, save to global localVariables 
         else:
             self.programNode.localVariables += [node]
-
 
     def visitFunctionNode (self, node):
         node.type.accept (self)
@@ -796,8 +796,12 @@ class SymbolTableVisitor (ASTVisitor):
             node.overloadedFunctionCall.decl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
 
         # mark variable as assigned to
-        if isinstance (node.lhs, (VariableDeclarationNode, GlobalVariableDeclarationNode, IdentifierExpressionNode)):
+        if isinstance (node.lhs, (VariableDeclarationNode, GlobalVariableDeclarationNode)):
             node.lhs.wasAssigned = True
+            node.lhs.assignCount += 1
+        elif isinstance (node.lhs, IdentifierExpressionNode):
+            node.lhs.decl.wasAssigned = True
+            node.lhs.decl.assignCount += 1
 
     def visitLogicalOrExpressionNode (self, node):
         node.lhs.accept (self)

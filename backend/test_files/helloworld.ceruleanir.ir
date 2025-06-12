@@ -29,7 +29,9 @@ function void @print_greeting (ptr(%greeting), int32(%length)) {
 
 function int32 @main () {
     block entry {
-        call @print_greeting (ptr(@customary_greeting), int32(@length))
+        %0 = load (type(ptr), ptr(@customary_greeting), int32(0))
+        %1 = load (type(ptr), ptr(@length), int32(0))
+        call @print_greeting (ptr(%0), int32(%1))
         return (int32(0))
     }
 }
