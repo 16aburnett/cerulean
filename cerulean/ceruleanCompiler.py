@@ -117,10 +117,9 @@ class CeruleanCompiler:
 
 
         #  char[] input ();
-        inputFunc = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None), "input", None, [], None)
+        inputFunc = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None, arrayDimensions=1), "input", None, [], None)
         inputFunc.scopeName = BUILTIN_PREFIX+"input"
         inputFunc.label = inputFunc.scopeName
-        inputFunc.type.arrayDimensions += 1
         # create signature for node
         signature = [f"{inputFunc.id}("]
         if len(inputFunc.params) > 0:
@@ -150,9 +149,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (printFunc, printFunc.id, Kind.FUNC)
 
         #  void print (int intToPrint);
-        param0 = ParameterNode(TypeSpecifierNode (Type.INT, "int", None), "intToPrint", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "intToPrint", None)
         printIntFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "print", None, [param0], None)
-        printIntFunc.scopeName = BUILTIN_PREFIX+"print__int"
+        printIntFunc.scopeName = BUILTIN_PREFIX+"print__int32"
         printIntFunc.label = printIntFunc.scopeName
         # create signature for node
         signature = [f"{printIntFunc.id}("]
@@ -166,9 +165,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (printIntFunc, printIntFunc.id, Kind.FUNC)
 
         #  void print (float floatToPrint);
-        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT, "float", None), "val", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None), "val", None)
         printFloatFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "print", None, [param0], None)
-        printFloatFunc.scopeName = BUILTIN_PREFIX+"print__float"
+        printFloatFunc.scopeName = BUILTIN_PREFIX+"print__float32"
         printFloatFunc.label = printFloatFunc.scopeName
         # create signature for node
         signature = [f"{printFloatFunc.id}("]
@@ -231,9 +230,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (printlnFunc, printlnFunc.id, Kind.FUNC)
 
         #  void println (int intToPrint);
-        param0 = ParameterNode(TypeSpecifierNode (Type.INT, "int", None), "intToPrint", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "intToPrint", None)
         printIntFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "println", None, [param0], None)
-        printIntFunc.scopeName = BUILTIN_PREFIX+"println__int"
+        printIntFunc.scopeName = BUILTIN_PREFIX+"println__int32"
         printIntFunc.label = printIntFunc.scopeName
         # create signature for node
         signature = [f"{printIntFunc.id}("]
@@ -247,9 +246,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (printIntFunc, printIntFunc.id, Kind.FUNC)
 
         #  void println (float floatToPrint);
-        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT, "float", None), "val", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None), "val", None)
         printFloatFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "println", None, [param0], None)
-        printFloatFunc.scopeName = BUILTIN_PREFIX+"println__float"
+        printFloatFunc.scopeName = BUILTIN_PREFIX+"println__float32"
         printFloatFunc.label = printFloatFunc.scopeName
         # create signature for node
         signature = [f"{printFloatFunc.id}("]
@@ -320,17 +319,17 @@ class CeruleanCompiler:
 
        #  void exit (int exit_status);
         # for x86 this directly calls the system exit
-        param0 = ParameterNode(TypeSpecifierNode (Type.INT, "int", None), "exit_status", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "exit_status", None)
         exitFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "exit", None, [param0], None)
-        exitFunc.scopeName = BUILTIN_PREFIX+"exit__int"
+        exitFunc.scopeName = BUILTIN_PREFIX+"exit__int32"
         exitFunc.label = exitFunc.scopeName
         # create signature for node
         exitFunc.signature = "exit(int)"
         symbolTableVisitor.table.insert (exitFunc, exitFunc.id, Kind.FUNC)
 
         #  float float ();
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT, "float", None, []), "float", None, [], None)
-        builtinFunction.scopeName = BUILTIN_PREFIX+"float"
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT32, "float32", None, []), "float", None, [], None)
+        builtinFunction.scopeName = BUILTIN_PREFIX+"float32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]
@@ -344,9 +343,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
         #  float intToFloat (int val);
-        param0 = ParameterNode(TypeSpecifierNode (Type.INT, "int", None), "val", None)
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT, "float", None), "intToFloat", None, [param0], None)
-        builtinFunction.scopeName = BUILTIN_PREFIX+"intToFloat__int"
+        param0 = ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "val", None)
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT32, "float32", None), "intToFloat", None, [param0], None)
+        builtinFunction.scopeName = BUILTIN_PREFIX+"intToFloat__int32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]
@@ -362,7 +361,7 @@ class CeruleanCompiler:
         #  float stringToFloat (char[]);
         param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
         param0.type.arrayDimensions = 1
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT, "float", None), "stringToFloat", None, [param0], None)
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.FLOAT32, "float32", None), "stringToFloat", None, [param0], None)
         builtinFunction.scopeName = BUILTIN_PREFIX+"stringToFloat__char__1"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
@@ -377,8 +376,8 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
         #  int int ();
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT, "int", None, []), "int", None, [], None)
-        builtinFunction.scopeName = BUILTIN_PREFIX+"int"
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT32, "int32", None, []), "int", None, [], None)
+        builtinFunction.scopeName = BUILTIN_PREFIX+"int32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]
@@ -407,9 +406,9 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
         #  int floatToInt (float);
-        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT, "float", None), "val", None)
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT, "int", None), "floatToInt", None, [param0], None)
-        builtinFunction.scopeName = BUILTIN_PREFIX+"floatToInt__float"
+        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None), "val", None)
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT32, "int32", None), "floatToInt", None, [param0], None)
+        builtinFunction.scopeName = BUILTIN_PREFIX+"floatToInt__float32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]
@@ -425,7 +424,7 @@ class CeruleanCompiler:
         #  int stringToInt (char[]);
         param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
         param0.type.arrayDimensions = 1
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT, "int", None), "stringToInt", None, [param0], None)
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT32, "int32", None), "stringToInt", None, [param0], None)
         builtinFunction.scopeName = BUILTIN_PREFIX+"stringToInt__char__1"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
@@ -441,7 +440,7 @@ class CeruleanCompiler:
 
         #  int charToInt (char);
         param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
-        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT, "int", None), "charToInt", None, [param0], None)
+        builtinFunction = FunctionNode (TypeSpecifierNode (Type.INT32, "int32", None), "charToInt", None, [param0], None)
         builtinFunction.scopeName = BUILTIN_PREFIX+"charToInt__char"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
@@ -456,10 +455,10 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
         #  char[] string (int);
-        param0 = ParameterNode(TypeSpecifierNode (Type.INT, "int", None), "val", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "val", None)
         builtinFunction = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None), "string", None, [param0], None)
         builtinFunction.type.arrayDimensions = 1
-        builtinFunction.scopeName = BUILTIN_PREFIX+"string__int"
+        builtinFunction.scopeName = BUILTIN_PREFIX+"string__int32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]
@@ -473,10 +472,10 @@ class CeruleanCompiler:
         symbolTableVisitor.table.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
         #  char[] string (float);
-        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT, "float", None), "val", None)
+        param0 = ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None), "val", None)
         builtinFunction = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None), "string", None, [param0], None)
         builtinFunction.type.arrayDimensions = 1
-        builtinFunction.scopeName = BUILTIN_PREFIX+"string__float"
+        builtinFunction.scopeName = BUILTIN_PREFIX+"string__float32"
         builtinFunction.label = builtinFunction.scopeName
         # create signature for node
         signature = [f"{builtinFunction.id}("]

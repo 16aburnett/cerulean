@@ -181,16 +181,22 @@ def tokenize(code, mainFilename, debugLines=[]):
             elif (lexeme == "null"):
                 kind = "NULL"
             # Types
-            elif (lexeme == "int32"):
-                kind = "INTTYPE"
-            elif (lexeme == "float32"):
-                kind = "FLOATTYPE"
             elif (lexeme == "bool"):
-                kind = "BOOLTYPE"
+                kind = "TYPE_BOOL"
+            elif (lexeme == "byte"):
+                kind = "TYPE_BYTE"
             elif (lexeme == "char"):
-                kind = "CHARTYPE"
+                kind = "TYPE_CHAR"
+            elif (lexeme == "int32"):
+                kind = "TYPE_INT32"
+            elif (lexeme == "int64"):
+                kind = "TYPE_INT64"
+            elif (lexeme == "float32"):
+                kind = "TYPE_FLOAT32"
+            elif (lexeme == "float64"):
+                kind = "TYPE_FLOAT64"
             elif (lexeme == "void"):
-                kind = "VOIDTYPE"
+                kind = "TYPE_VOID"
         # get original line numbers and filename
         originalFile = mainFilename
         originalLine = line_num

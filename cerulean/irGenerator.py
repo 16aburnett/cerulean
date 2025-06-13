@@ -46,7 +46,7 @@ class IRGeneratorVisitor (ASTVisitor):
         # for break and continue statements 
         self.parentLoops = []
         self.pushParent = False
-        self.scopeNames = ["__main"]
+        self.scopeNames = []
         self.indent = "".join ([' ' for i in range(INITIAL_INDENT_LENGTH)])
 
         self.floatNegOneLabel = ".floatNegOne"
@@ -152,13 +152,17 @@ class IRGeneratorVisitor (ASTVisitor):
     def visitTypeSpecifierNode (self, node):
         # Convert Cerulean type to CeruleanIR type
         # opaque points lose some type info
-        if   node.arrayDimensions > 0: [type, name] = [irast.Type.PTR, "ptr"]
-        elif node.type == Type.INT   : [type, name] = [irast.Type.INT32, "int32"]
-        elif node.type == Type.FLOAT : [type, name] = [irast.Type.FLOAT32, "float32"]
-        elif node.type == Type.CHAR  : [type, name] = [irast.Type.CHAR, "char"]
-        elif node.type == Type.BOOL  : [type, name] = [irast.Type.INT32, "int32"]
-        elif node.type == Type.VOID  : [type, name] = [irast.Type.VOID, "void"]
-        else                         : [type, name] = [irast.Type.UNKNOWN, "<unkown>"]
+        if   node.arrayDimensions > 0  : [type, name] = [irast.Type.PTR, "ptr"]
+        elif node.type == Type.BOOL    : [type, name] = [irast.Type.INT32, "int32"]
+        elif node.type == Type.BYTE    : [type, name] = [irast.Type.BYTE, "byte"]
+        elif node.type == Type.CHAR    : [type, name] = [irast.Type.CHAR, "char"]
+        elif node.type == Type.INT32   : [type, name] = [irast.Type.INT32, "int32"]
+        elif node.type == Type.INT64   : [type, name] = [irast.Type.INT64, "int64"]
+        elif node.type == Type.FLOAT32 : [type, name] = [irast.Type.FLOAT32, "float32"]
+        elif node.type == Type.FLOAT64 : [type, name] = [irast.Type.FLOAT64, "float64"]
+        elif node.type == Type.VOID    : [type, name] = [irast.Type.VOID, "void"]
+        elif node.type == Type.NULL    : [type, name] = [irast.Type.PTR, "ptr"]
+        else                           : [type, name] = [irast.Type.UNKNOWN, "<unkown>"]
         return irast.TypeSpecifierNode (type, name, None)
 
     def visitParameterNode (self, node):
@@ -206,21 +210,10 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitFunctionNode (self, node):
 
-        # variable names are modified by its scope 
-        scopeName = ["".join (self.scopeNames), "____", node.id]
-        # add template parameters if there are any 
-        if len(node.templateParams) > 0:
-            scopeName += [f"__{node.templateParams[0].id}"]
-            # add array dimensions
-            if node.templateParams[0].arrayDimensions > 0:
-                scopeName += [f"__{node.templateParams[0].arrayDimensions}"]
-            # add rest of template params 
-            for i in range(1, len(node.templateParams)):
-                scopeName += [f"__{node.templateParams[i].id}"]
-                # add array dimensions
-                if node.templateParams[i].arrayDimensions > 0:
-                    scopeName += [f"__{node.templateParams[i].arrayDimensions}"]
-            scopeName += ["__"]
+        # function names are mangled by its scope and argument types
+        # scopeName = ["".join (self.scopeNames), "____", node.id]
+        # functions should be top-level so no prepend
+        scopeName = [node.id]
         # add signature to scopeName for overloaded functions
         if len(node.params) > 0:
             scopeName += [f"__{node.params[0].type.id}"]
@@ -254,7 +247,7 @@ class IRGeneratorVisitor (ASTVisitor):
         self.scopeNames += [f"__{node.id}"]
 
         irReturnType = node.type.accept (self)
-        irFunction = irast.FunctionNode (irReturnType, f"@{node.id}", None, [], [])
+        irFunction = irast.FunctionNode (irReturnType, f"@{node.scopeName}", None, [], [])
         # Add function to program
         self.ast.codeunits += [irFunction]
         self.containingIRFunction = irFunction
@@ -270,6 +263,8 @@ class IRGeneratorVisitor (ASTVisitor):
         self.containingIRFunction.basicBlocks += [basicBlock]
         self.containingBasicBlock = basicBlock
         node.body.accept (self)
+
+        self.scopeNames.pop ()
 
     def visitClassDeclarationNode(self, node):
 

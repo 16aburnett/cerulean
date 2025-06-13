@@ -808,7 +808,7 @@ class SymbolTableVisitor (ASTVisitor):
         node.rhs.accept (self)
         
         # results in true/false which is an int 
-        node.type = TypeSpecifierNode (Type.INT, "int", None)
+        node.type = TypeSpecifierNode (Type.INT32, "int32", None)
 
         # ensure types work
         isLHSArray = node.lhs.type.arrayDimensions > 0
@@ -816,7 +816,7 @@ class SymbolTableVisitor (ASTVisitor):
         isLHSObject = node.lhs.type.type == Type.USERTYPE
         isRHSObject = node.rhs.type.type == Type.USERTYPE
         if (not isLHSArray and not isRHSArray and  not isLHSObject and not isRHSObject and (node.lhs.type.type != node.rhs.type.type
-            or (node.lhs.type.type != Type.INT)
+            or (node.lhs.type.type != Type.INT32)
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0)):
             print (f"Semantic Error: invalid/mismatching types types in ||")
@@ -830,7 +830,7 @@ class SymbolTableVisitor (ASTVisitor):
         node.rhs.accept (self)
         
         # results in true/false which is an int 
-        node.type = TypeSpecifierNode (Type.INT, "int", None)
+        node.type = TypeSpecifierNode (Type.INT32, "int32", None)
 
         # ensure types work
         isLHSArray = node.lhs.type.arrayDimensions > 0
@@ -838,7 +838,7 @@ class SymbolTableVisitor (ASTVisitor):
         isLHSObject = node.lhs.type.type == Type.USERTYPE
         isRHSObject = node.rhs.type.type == Type.USERTYPE
         if (not isLHSArray and not isRHSArray and not isLHSObject and not isRHSObject and (node.lhs.type.type != node.rhs.type.type
-            or (node.lhs.type.type != Type.INT)
+            or (node.lhs.type.type != Type.INT32)
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0)):
             print (f"Semantic Error: invalid/mismatching types types in &&")
@@ -852,7 +852,7 @@ class SymbolTableVisitor (ASTVisitor):
         node.rhs.accept (self)
         
         # results in true/false which is an int 
-        node.type = TypeSpecifierNode (Type.INT, "int", None)
+        node.type = TypeSpecifierNode (Type.INT32, "int32", None)
 
         # ensure types work 
         isArrayNullOp = node.lhs.type.arrayDimensions > 0 and node.rhs.type.type == Type.NULL
@@ -871,12 +871,12 @@ class SymbolTableVisitor (ASTVisitor):
         node.rhs.accept (self)
         
         # results in true/false which is an int 
-        node.type = TypeSpecifierNode (Type.INT, "int", None)
+        node.type = TypeSpecifierNode (Type.INT32, "int32", None)
 
         # ensure types work 
         if (node.lhs.type.type != node.rhs.type.type
-            or (node.lhs.type.type != Type.INT
-                and node.lhs.type.type != Type.FLOAT
+            or (node.lhs.type.type != Type.INT32
+                and node.lhs.type.type != Type.FLOAT32
                 and node.lhs.type.type != Type.CHAR)
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0):
@@ -902,8 +902,8 @@ class SymbolTableVisitor (ASTVisitor):
         hasOverloadedFunction = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs]) != None
         # print (f"__add__({node.lhs.type.__str__()}, {node.rhs.type.__str__()})", hasOverloadedMethod)
         if ((node.lhs.type.type != node.rhs.type.type
-            or (node.lhs.type.type != Type.INT
-                and node.lhs.type.type != Type.FLOAT)
+            or (node.lhs.type.type != Type.INT32
+                and node.lhs.type.type != Type.FLOAT32)
             or node.lhs.type.arrayDimensions > 0
             or node.rhs.type.arrayDimensions > 0)
             and not hasOverloadedMethod
@@ -959,8 +959,8 @@ class SymbolTableVisitor (ASTVisitor):
         hasOverloadedFunction = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs]) != None
 
         if ((node.lhs.type.type != node.rhs.type.type
-            or (node.lhs.type.type != Type.INT
-                and node.lhs.type.type != Type.FLOAT)
+            or (node.lhs.type.type != Type.INT32
+                and node.lhs.type.type != Type.FLOAT32)
             or node.lhs.type.arrayDimensions > 0
             or node.rhs.type.arrayDimensions > 0)
             and not hasOverloadedMethod
@@ -1008,8 +1008,8 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.rhs.type 
 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT
-                and node.rhs.type.type != Type.FLOAT)
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for unary left operator")
             printToken (node.op)
@@ -1022,8 +1022,8 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.lhs.type
 
         # ensure types work for ++
-        if ((node.lhs.type.type != Type.INT
-                and node.lhs.type.type != Type.FLOAT)
+        if ((node.lhs.type.type != Type.INT32
+                and node.lhs.type.type != Type.FLOAT32)
                 or node.lhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for increment operator")
             printToken (node.op)
@@ -1036,8 +1036,8 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.lhs.type
 
         # ensure types work for --
-        if ((node.lhs.type.type != Type.INT
-                and node.lhs.type.type != Type.FLOAT)
+        if ((node.lhs.type.type != Type.INT32
+                and node.lhs.type.type != Type.FLOAT32)
                 or node.lhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for decrement operator")
             printToken (node.op)
@@ -1075,7 +1075,7 @@ class SymbolTableVisitor (ASTVisitor):
             node.offset.accept (self)
 
             # ensure offset is type int or enum 
-            isInt = node.offset.type.type == Type.INT and node.offset.type.arrayDimensions == 0
+            isInt = node.offset.type.type == Type.INT32 and node.offset.type.arrayDimensions == 0
             isEnum = False
             typedecl = self.table.lookup(node.offset.type.id, Kind.TYPE)
             isEnum = typedecl and isinstance (typedecl, EnumDeclarationNode)

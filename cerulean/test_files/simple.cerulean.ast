@@ -1,64 +1,64 @@
 ProgramNode:
 |   GlobalVariableDeclaration: 
-|   |   Type: Type.FLOAT float
+|   |   Type: Type.FLOAT32 float32
 |   |   Name: pie
 |   |   RHS:
-|   |   |   Float Literal: 3.14 float
-|   Function: main void->int
+|   |   |   Float Literal: 3.14 float32
+|   Function: main void->int32
 |   |   ReturnType:
-|   |   |   Type: Type.INT int
+|   |   |   Type: Type.INT32 int32
 |   |   Body:
 |   |   |   CodeBlock:
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=3, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int
-|   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=3, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
-|   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: x
-|   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=3, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int
-|   |   |   |   |   |   |   Int Literal: 1 int
-|   |   |   |   |   |   |   Int Literal: 2 int
+|   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=3, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int32
+|   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   |   |   Int Literal: 2 int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
 |   |   |   |   |   |   Function Name:
 |   |   |   |   |   |   |   Identifier: println 
 |   |   |   |   |   |   Arguments:
-|   |   |   |   |   |   |   Identifier: x int
+|   |   |   |   |   |   |   Identifier: x int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int
-|   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
-|   |   |   |   |   |   |   Type: Type.INT int
+|   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: y
-|   |   |   |   |   |   MultiplicativeExpression: Token(type='TIMES', lexeme='*', value='*', line=5, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int
-|   |   |   |   |   |   |   Identifier: x int
-|   |   |   |   |   |   |   Int Literal: 10 int
+|   |   |   |   |   |   MultiplicativeExpression: Token(type='TIMES', lexeme='*', value='*', line=5, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int32
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
 |   |   |   |   |   |   Function Name:
 |   |   |   |   |   |   |   Identifier: println 
 |   |   |   |   |   |   Arguments:
-|   |   |   |   |   |   |   Identifier: y int
+|   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int
-|   |   |   |   |   |   Type: Type.INT int
-|   |   |   |   |   |   Identifier: y int
-|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int
-|   |   |   |   |   |   |   Type: Type.INT int
-|   |   |   |   |   |   |   Identifier: y int
-|   |   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=7, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int
-|   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=7, column=16, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int
-|   |   |   |   |   |   |   |   |   Identifier: x int
-|   |   |   |   |   |   |   |   |   Identifier: y int
-|   |   |   |   |   |   |   |   Int Literal: 3 int
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=7, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=7, column=16, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=8, column=9, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=8, includeChain=[], lineStr='    pie = 13.37;') float
-|   |   |   |   |   |   Type: Type.FLOAT float
-|   |   |   |   |   |   Identifier: pie float
-|   |   |   |   |   |   Float Literal: 13.37 float
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=8, column=9, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=8, includeChain=[], lineStr='    pie = 13.37;') float32
+|   |   |   |   |   |   Type: Type.FLOAT32 float32
+|   |   |   |   |   |   Identifier: pie float32
+|   |   |   |   |   |   Float Literal: 13.37 float32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
 |   |   |   |   |   |   Function Name:
 |   |   |   |   |   |   |   Identifier: println 
 |   |   |   |   |   |   Arguments:
-|   |   |   |   |   |   |   Identifier: pie float
+|   |   |   |   |   |   |   Identifier: pie float32

@@ -16,15 +16,17 @@ else:
 # ========================================================================
 
 class Type(Enum):
-    INT = 1
-    FLOAT = 2
-    CHAR = 3
-    BOOL = 4
-    STRING = 5
-    VOID = 6
-    USERTYPE = 7
-    NULL = 8
-    UNKNOWN = 9
+    BOOL     = 1
+    BYTE     = 2
+    CHAR     = 3
+    INT32    = 4
+    INT64    = 5
+    FLOAT32  = 6
+    FLOAT64  = 7
+    VOID     = 8
+    USERTYPE = 9
+    NULL     = 10
+    UNKNOWN  = 11
 
 class Security (Enum):
     PUBLIC = 1
@@ -48,11 +50,11 @@ class Node (ABC):
 
 class TypeSpecifierNode (Node):
     
-    def __init__(self, type:Type, id, token, templateParams=[]):
+    def __init__(self, type:Type, id, token, templateParams=[], arrayDimensions=0):
         self.type = type 
         self.id = id
         self.token = token
-        self.arrayDimensions = 0
+        self.arrayDimensions = arrayDimensions
 
         self.templateParams = templateParams
 
@@ -1273,7 +1275,7 @@ class IntLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, value:int):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.INT, "int", None)
+        self.type = TypeSpecifierNode (Type.INT32, "int32", None)
         self.value = value
 
         self.lineNumber = 0
@@ -1292,7 +1294,7 @@ class FloatLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, value:float):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.FLOAT, "float", None)
+        self.type = TypeSpecifierNode (Type.FLOAT32, "float32", None)
         self.value = value
 
         self.lineNumber = 0
@@ -1334,8 +1336,7 @@ class StringLiteralExpressionNode (ExpressionNode):
     def __init__(self, value:str):
         super ().__init__ ()
         # char[] instead of string
-        self.type = TypeSpecifierNode (Type.CHAR, "char", None)
-        self.type.arrayDimensions = 1
+        self.type = TypeSpecifierNode (Type.CHAR, "char", None, arrayDimensions=1)
         self.value = value
 
         self.lineNumber = 0

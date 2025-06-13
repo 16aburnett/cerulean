@@ -390,19 +390,24 @@ class Parser:
 
     def isType (self):
         # <typeSpecifier> -> INTTYPE
-        return self.tokens[self.currentToken].type == 'INTTYPE'   \
-            or self.tokens[self.currentToken].type == 'FLOATTYPE' \
-            or self.tokens[self.currentToken].type == 'CHARTYPE'  \
-            or self.tokens[self.currentToken].type == 'BOOLTYPE'  \
-            or self.tokens[self.currentToken].type == 'STRINGTYPE'\
-            or self.tokens[self.currentToken].type == 'VOIDTYPE'
+        return self.tokens[self.currentToken].type == 'TYPE_BYTE'   \
+            or self.tokens[self.currentToken].type == 'TYPE_CHAR'   \
+            or self.tokens[self.currentToken].type == 'TYPE_INT32'  \
+            or self.tokens[self.currentToken].type == 'TYPE_INT64'  \
+            or self.tokens[self.currentToken].type == 'TYPE_FLOAT32'\
+            or self.tokens[self.currentToken].type == 'TYPE_FLOAT64'\
+            or self.tokens[self.currentToken].type == 'TYPE_BOOL'   \
+            or self.tokens[self.currentToken].type == 'TYPE_VOID'
 
-    # <typeSpecifier> -> INTTYPE { '[' ']' }
-    #                  | FLOATTYPE { '[' ']' }
-    #                  | CHARTYPE { '[' ']' }
-    #                  | BOOLTYPE { '[' ']' }
-    #                  | STRINGTYPE { '[' ']' }
-    #                  | IDENTIFIER [ LTEMP <typeSpec> { COMMA <typeSpec> } RTEMP ] { '[' ']' }
+    # <typeSpecifier> -> TYPE_BYTE { '[' ']' }
+    #                  | TYPE_CHAR { '[' ']' }
+    #                  | TYPE_INT32 { '[' ']' }
+    #                  | TYPE_INT64 { '[' ']' }
+    #                  | TYPE_FLOAT32 { '[' ']' }
+    #                  | TYPE_FLOAT64 { '[' ']' }
+    #                  | TYPE_BOOL { '[' ']' }
+    #                  | TYPE_VOID { '[' ']' }
+    #                  | IDENTIFIER { '[' ']' }
     def typeSpecifier (self):
         self.enter ("typeSpecifier")
 
@@ -410,29 +415,37 @@ class Parser:
         type = None
         temp = self.currentToken
 
-        # <typeSpecifier> -> INTTYPE
-        if (self.tokens[self.currentToken].type == 'INTTYPE'):
-            self.match ("typeSpecifier", 'INTTYPE')
-            type = TypeSpecifierNode (Type.INT, "int", self.tokens[self.currentToken])
-        # <typeSpecifier> -> FLOATTYPE
-        elif (self.tokens[self.currentToken].type == 'FLOATTYPE'):
-            self.match ("typeSpecifier", 'FLOATTYPE')
-            type = TypeSpecifierNode (Type.FLOAT, "float", self.tokens[self.currentToken])
-        # <typeSpecifier> -> CHARTYPE
-        elif (self.tokens[self.currentToken].type == 'CHARTYPE'):
-            self.match ("typeSpecifier", 'CHARTYPE')
-            type = TypeSpecifierNode (Type.CHAR, "char", self.tokens[self.currentToken])
-        # <typeSpecifier> -> BOOLTYPE
-        elif (self.tokens[self.currentToken].type == 'BOOLTYPE'):
-            self.match ("typeSpecifier", 'BOOLTYPE')
+        # <typeSpecifier> -> TYPE_BOOL
+        if (self.tokens[self.currentToken].type == 'TYPE_BOOL'):
+            self.match ("typeSpecifier", 'TYPE_BOOL')
             type = TypeSpecifierNode (Type.BOOL, "bool", self.tokens[self.currentToken])
-        # <typeSpecifier> -> STRINGTYPE
-        elif (self.tokens[self.currentToken].type == 'STRINGTYPE'):
-            self.match ("typeSpecifier", 'STRINGTYPE')
-            type = TypeSpecifierNode (Type.STRING, "string", self.tokens[self.currentToken])
-        # <typeSpecifier> -> VOIDTYPE
-        elif (self.tokens[self.currentToken].type == 'VOIDTYPE'):
-            self.match ("typeSpecifier", 'VOIDTYPE')
+        # <typeSpecifier> -> TYPE_BYTE
+        elif (self.tokens[self.currentToken].type == 'TYPE_BYTE'):
+            self.match ("typeSpecifier", 'TYPE_BYTE')
+            type = TypeSpecifierNode (Type.BYTE, "byte", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_CHAR
+        elif (self.tokens[self.currentToken].type == 'TYPE_CHAR'):
+            self.match ("typeSpecifier", 'TYPE_CHAR')
+            type = TypeSpecifierNode (Type.CHAR, "char", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_INT32
+        elif (self.tokens[self.currentToken].type == 'TYPE_INT32'):
+            self.match ("typeSpecifier", 'TYPE_INT32')
+            type = TypeSpecifierNode (Type.INT32, "int32", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_INT64
+        elif (self.tokens[self.currentToken].type == 'TYPE_INT64'):
+            self.match ("typeSpecifier", 'TYPE_INT64')
+            type = TypeSpecifierNode (Type.INT64, "int64", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_FLOAT32
+        elif (self.tokens[self.currentToken].type == 'TYPE_FLOAT32'):
+            self.match ("typeSpecifier", 'TYPE_FLOAT32')
+            type = TypeSpecifierNode (Type.FLOAT32, "float32", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_FLOAT64
+        elif (self.tokens[self.currentToken].type == 'TYPE_FLOAT64'):
+            self.match ("typeSpecifier", 'TYPE_FLOAT64')
+            type = TypeSpecifierNode (Type.FLOAT64, "float64", self.tokens[self.currentToken])
+        # <typeSpecifier> -> TYPE_VOID
+        elif (self.tokens[self.currentToken].type == 'TYPE_VOID'):
+            self.match ("typeSpecifier", 'TYPE_VOID')
             type = TypeSpecifierNode (Type.VOID, "void", self.tokens[self.currentToken])
         # <typeSpecifier> -> IDENTIFIER
         elif (self.tokens[self.currentToken].type == 'IDENTIFIER'):
