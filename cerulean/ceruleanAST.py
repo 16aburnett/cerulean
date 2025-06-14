@@ -191,12 +191,14 @@ class ParameterNode (DeclarationNode):
 
     def __init__(self, type:TypeSpecifierNode, id, token):
         super().__init__(type, id, token)
+        # Parameters are always assigned
+        self.wasAssigned = True
+        # Parameter nodes are allocated on the stack
+        # Added this here for completion
+        self.assignCount = 1
 
         self.lineNumber = 0
         self.columnNumber = 0
-
-        # parameters are always assigned
-        self.wasAssigned = True
 
         # x86 fields
         self.stackOffset = 0

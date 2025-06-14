@@ -1,0 +1,601 @@
+ProgramNode:
+|   Function: @main (void)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %clt0
+|   |   |   |   |   Command: clt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%clt0 = clt (int32(7), int32(9)) = (7 <  9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %clt0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %clt1
+|   |   |   |   |   Command: clt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%clt1 = clt (int32(9), int32(7)) = (9 <  7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %clt1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %clt2
+|   |   |   |   |   Command: clt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%clt2 = clt (int32(7), int32(7)) = (7 <  7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %clt2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cle0
+|   |   |   |   |   Command: cle
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cle0 = cle (int32(7), int32(9)) = (7 <= 9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cle0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cle1
+|   |   |   |   |   Command: cle
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cle1 = cle (int32(9), int32(7)) = (9 <= 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cle1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cle2
+|   |   |   |   |   Command: cle
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cle2 = cle (int32(7), int32(7)) = (7 <= 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cle2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cgt0
+|   |   |   |   |   Command: cgt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cgt0 = cgt (int32(7), int32(9)) = (7 >  9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cgt0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cgt1
+|   |   |   |   |   Command: cgt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cgt1 = cgt (int32(9), int32(7)) = (9 >  7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cgt1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cgt2
+|   |   |   |   |   Command: cgt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cgt2 = cgt (int32(7), int32(7)) = (7 >  7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cgt2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cge0
+|   |   |   |   |   Command: cge
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cge0 = cge (int32(7), int32(9)) = (7 >= 9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cge0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cge1
+|   |   |   |   |   Command: cge
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cge1 = cge (int32(9), int32(7)) = (9 >= 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cge1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cge2
+|   |   |   |   |   Command: cge
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cge2 = cge (int32(7), int32(7)) = (7 >= 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cge2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %ceq0
+|   |   |   |   |   Command: ceq
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%ceq0 = ceq (int32(7), int32(9)) = (7 == 9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %ceq0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %ceq1
+|   |   |   |   |   Command: ceq
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%ceq1 = ceq (int32(9), int32(7)) = (9 == 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %ceq1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %ceq2
+|   |   |   |   |   Command: ceq
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%ceq2 = ceq (int32(7), int32(7)) = (7 == 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %ceq2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cne0
+|   |   |   |   |   Command: cne
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cne0 = cne (int32(7), int32(9)) = (7 != 9) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cne0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cne1
+|   |   |   |   |   Command: cne
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cne1 = cne (int32(9), int32(7)) = (9 != 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cne1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cne2
+|   |   |   |   |   Command: cne
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "%cne2 = cne (int32(7), int32(7)) = (7 != 7) = " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cne2
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println
+|   |   |   |   |   Arguments:
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %a
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %b
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 9 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %cmp
+|   |   |   |   |   Command: clt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jcmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %cmp
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_then
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: else
+|   |   |   Basic Block: if_then
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: " < " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: end_if
+|   |   |   Basic Block: else
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: " >= " ptr
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: end_if
+|   |   |   Basic Block: end_if
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32

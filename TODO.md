@@ -47,6 +47,10 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_ma
 python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_heap_arrays.ceruleanir.amyasm
 
+# test_cmp
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_cmp.ceruleanir -o backend/test_files/test_cmp.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cmp.ceruleanir.amyasm
+
 ```
 
 ### NOTES ################################################################

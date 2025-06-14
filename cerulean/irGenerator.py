@@ -829,25 +829,25 @@ class IRGeneratorVisitor (ASTVisitor):
 
         # Init
         # No need to create a block, just add code to current block
-        # node.init.accept (self)
+        node.init.accept (self)
 
         # Condition
         condBlock = irast.BasicBlockNode ("for_cond", [])
         self.containingIRFunction.basicBlocks += [condBlock]
         self.containingBasicBlock = condBlock
-        # node.cond.accept (self)
+        node.cond.accept (self)
 
         # Body
         bodyBlock = irast.BasicBlockNode ("for_body", [])
         self.containingIRFunction.basicBlocks += [bodyBlock]
         self.containingBasicBlock = bodyBlock
-        # node.body.accept (self)
+        node.body.accept (self)
 
         # Update
         updateBlock = irast.BasicBlockNode ("for_update", [])
         self.containingIRFunction.basicBlocks += [updateBlock]
         self.containingBasicBlock = updateBlock
-        # node.update.accept (self)
+        node.update.accept (self)
 
         # End of for
         endBlock = irast.BasicBlockNode ("for_end", [])
@@ -1206,88 +1206,40 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitEqualityExpressionNode (self, node):
+        lhsReg = node.lhs.accept (self)
+        rhsReg = node.rhs.accept (self)
+        destReg = self.newLocalReg ()
         if node.op.lexeme == "==":
-            self.printComment ("Equal")
-        elif node.op.lexeme == "!=":
-            self.printComment ("Not Equal")
-
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-        # calc rhs 
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-        # get rhs and lhs off the stack 
-        self.printCode ("pop rdx ; rhs")
-        self.printCode ("pop rax ; lhs")
-
-        if node.op.lexeme == "==":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("sete al")
-            self.printCode ("movzx eax, al")
-        elif node.op.lexeme == "!=":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("setne al")
-            self.printCode ("movzx eax, al")
-
-        # push result to the stack
-        self.printCode ("push rax")
-
-        self.indentation -= 1
+            command = "ceq"
+        else: # node.op.lexeme == "!=":
+            command = "cne"
+        lhsIRType = node.lhs.type.accept (self)
+        arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
+        rhsIRType = node.rhs.type.accept (self)
+        arg1 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (destReg, command, [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return destReg
 
     def visitInequalityExpressionNode (self, node):
+        lhsReg = node.lhs.accept (self)
+        rhsReg = node.rhs.accept (self)
+        destReg = self.newLocalReg ()
         if node.op.lexeme == "<":
-            self.printComment ("Less Than")
+            command = "clt"
         elif node.op.lexeme == "<=":
-            self.printComment ("Less Than or Equal to")
+            command = "cle"
         elif node.op.lexeme == ">":
-            self.printComment ("Greater Than")
-        elif node.op.lexeme == ">=":
-            self.printComment ("Greater Than or Equal to")
-
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-        # calc rhs 
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-        # get rhs and lhs off the stack 
-        self.printCode ("pop rdx ; rhs")
-        self.printCode ("pop rax ; lhs")
-
-        if node.op.lexeme == "<":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("setl al")
-            self.printCode ("movzx eax, al")
-        elif node.op.lexeme == "<=":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("setle al")
-            self.printCode ("movzx eax, al")
-        elif node.op.lexeme == ">":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("setg al")
-            self.printCode ("movzx eax, al")
-        elif node.op.lexeme == ">=":
-            self.printCode ("cmp rax, rdx")
-            self.printCode ("setge al")
-            self.printCode ("movzx eax, al")
-
-        # push result to the stack
-        self.printCode ("push rax")
-
-        self.indentation -= 1
+            command = "cgt"
+        else: # node.op.lexeme == ">=":
+            command = "cge"
+        lhsIRType = node.lhs.type.accept (self)
+        arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
+        rhsIRType = node.rhs.type.accept (self)
+        arg1 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (destReg, command, [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return destReg
 
     def visitAdditiveExpressionNode (self, node):
         lhsReg = node.lhs.accept (self)
@@ -1964,8 +1916,8 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitIdentifierExpressionNode (self, node):
         # Var is on the stack
-        # Global variables are stored on the stack
-        if node.decl.assignCount > 1 or isinstance(node.decl, GlobalVariableDeclarationNode):
+        # Global variables and Parameters are stored on the stack
+        if node.decl.assignCount > 1 or isinstance(node.decl, (GlobalVariableDeclarationNode, ParameterNode)):
             irType = node.type.accept (self)
             if isinstance(node.decl, GlobalVariableDeclarationNode):
                 ptr = irast.LocalVariableExpressionNode (f"@{node.id}", None, None, None)

@@ -38,6 +38,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
         # assume it is successful - generator will set to false
         # if an error is encountered
         self.wasSuccessful = True
+        self.cmpIndex = 0
 
     # === HELPER FUNCTIONS ===============================================
 
@@ -405,11 +406,70 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             offset = node.arguments[1].accept (self)
             value = node.arguments[2].accept (self)
             self.printCode (f"ASSIGN {pointer}[{offset}] {value}")
+        elif command_name == "clt":
+            # CeruleanIR : <dest> = clt (<arg0>, <arg1>)
+            # AmyAssembly: LT <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"LT {dest}, {arg0}, {arg1}")
+        elif command_name == "cle":
+            # CeruleanIR : <dest> = cle (<arg0>, <arg1>)
+            # AmyAssembly: LE <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"LE {dest}, {arg0}, {arg1}")
+        elif command_name == "cgt":
+            # CeruleanIR : <dest> = cgt (<arg0>, <arg1>)
+            # AmyAssembly: GT <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"GT {dest}, {arg0}, {arg1}")
+        elif command_name == "cge":
+            # CeruleanIR : <dest> = cge (<arg0>, <arg1>)
+            # AmyAssembly: GE <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"GE {dest}, {arg0}, {arg1}")
+        elif command_name == "ceq":
+            # CeruleanIR : <dest> = ceq (<arg0>, <arg1>)
+            # AmyAssembly: EQUAL <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"EQUAL {dest}, {arg0}, {arg1}")
+        elif command_name == "cne":
+            # CeruleanIR : <dest> = cne (<arg0>, <arg1>)
+            # AmyAssembly: NEQUAL <dest>, <arg0>, <arg1>
+            node.lhsVariable.accept (self)
+            dest = node.lhsVariable.scopeName
+            arg0 = node.arguments[0].accept (self)
+            arg1 = node.arguments[1].accept (self)
+            self.printCode (f"NEQUAL {dest}, {arg0}, {arg1}")
         elif command_name == "jmp":
             # CeruleanIR : jmp (<label>)
             # AmyAssembly: jump <label>
             label = node.arguments[0].accept (self)
             self.printCode (f"JUMP {label}")
+        elif command_name == "jcmp":
+            # CeruleanIR : jcmp (<cmp>, <label_if_true>, <label_if_false>)
+            # AmyAssembly: CMP <cmp>, 1
+            #              JEQ <label_if_true>
+            #              JUMP <label_if_false>
+            cmp = node.arguments[0].accept (self)
+            label_true = node.arguments[1].accept (self)
+            label_false = node.arguments[2].accept (self)
+            self.printCode (f"CMP {cmp}, 1 // set flag if cmp is true")
+            self.printCode (f"JEQ {label_true} // jump to true block")
+            self.printCode (f"JUMP {label_false} // otherwise jump to false block")
         elif command_name == "jg":
             # CeruleanIR : jg (<arg0>, <arg1>, <label>)
             # AmyAssembly: cmp <arg0> <arg1>
