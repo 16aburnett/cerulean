@@ -55,8 +55,8 @@ token_specification = [
     # ('CHARTYPE',  r'char'),
     # ('VOIDTYPE',  r'void'),
 # Identifier
-    ('LVARIABLE',r'%[A-Za-z_0-9]+'),    # local variables
-    ('GVARIABLE',r'@[A-Za-z_0-9]+'),    # global variables
+    ('LVARIABLE',r'%[A-Za-z_0-9.]+'),    # local variables
+    ('GVARIABLE',r'@[A-Za-z_0-9.]+'),    # global variables
     ('IDENTIFIER',r'[A-Za-z_][A-Za-z_0-9]*'),    # Identifiers - cmd or labels or types
 # Operators
     ('ASSIGN_ADD',r'\+\='),

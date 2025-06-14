@@ -317,8 +317,8 @@ __builtin__null:
 //========================================================================
 
 __endOfLibrary:
-   MALLOC __main__pie 1
-   ASSIGN __main__pie[0] 3.14
+   MALLOC __main__pie_ptr 1
+   ASSIGN __main__pie_ptr[0] 3.14
    JUMP __end____main____main
 __main____main:
 __main__main__entry:
@@ -328,19 +328,19 @@ __main__main__entry:
    CALL __builtin__println__int32
    POP _arg0
    MULTIPLY __main__main__2 __main__main__x 10
-   MALLOC __main__main__y 1
-   ASSIGN __main__main__y[0] __main__main__2
-   ASSIGN __main__main__3 __main__main__y[0]
+   MALLOC __main__main__y_ptr 1
+   ASSIGN __main__main__y_ptr[0] __main__main__2
+   ASSIGN __main__main__3 __main__main__y_ptr[0]
    PUSH __main__main__3
    CALL __builtin__println__int32
    POP _arg0
-   ASSIGN __main__main__5 __main__main__y[0]
+   ASSIGN __main__main__5 __main__main__y_ptr[0]
    ADD __main__main__6 __main__main__x __main__main__5
    MOD __main__main__7 __main__main__6 3
-   ASSIGN __main__main__y[0] __main__main__7
-   ASSIGN __main__main__y[0] __main__main__7
-   ASSIGN __main__pie[0] 13.37
-   ASSIGN __main__main__8 __main__pie[0]
+   ASSIGN __main__main__y_ptr[0] __main__main__7
+   ASSIGN __main__main__y_ptr[0] __main__main__7
+   ASSIGN __main__pie_ptr[0] 13.37
+   ASSIGN __main__main__8 __main__pie_ptr[0]
    PUSH __main__main__8
    CALL __builtin__println__float32
    POP _arg0

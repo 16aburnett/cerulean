@@ -171,6 +171,22 @@ class IRGeneratorVisitor (ASTVisitor):
         param = irast.ParameterNode (irType, f"%{node.id}", None)
         self.containingIRFunction.params += [param]
 
+        reg = irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+        # Use alloca to store on the stack to support reassignment
+        ptrReg = irast.LocalVariableExpressionNode (f"%{node.id}.ptr", None, None, None)
+        arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        instruction = irast.InstructionNode (ptrReg, "alloca", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        # Store param's value to the stack
+        offset = irast.IntLiteralExpressionNode (0)
+        arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), ptrReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+        arg2 = irast.ArgumentExpressionNode (irType, reg)
+        instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+        self.containingBasicBlock.instructions += [instruction]
+        return reg
+
     def visitCodeUnitNode (self, node):
         pass
 
@@ -186,7 +202,7 @@ class IRGeneratorVisitor (ASTVisitor):
             # If global wasnt assigned, default to 0
             literal = IntLiteralExpressionNode (0)
         arg0 = irast.ArgumentExpressionNode (literal.type, literal)
-        irNode = irast.GlobalVariableDeclarationNode (f"@{node.id}", None, command, [arg0])
+        irNode = irast.GlobalVariableDeclarationNode (f"@{node.id}.ptr", None, command, [arg0])
         self.ast.codeunits += [irNode]
 
     def visitVariableDeclarationNode (self, node):
@@ -196,7 +212,7 @@ class IRGeneratorVisitor (ASTVisitor):
         node.scopeName = scopeName
         # Reassigned variable
         if (node.assignCount > 1):
-            reg = irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+            reg = irast.LocalVariableExpressionNode (f"%{node.id}.ptr", None, None, None)
             # Use alloca to store on the stack to support reassignment
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), varIRType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
@@ -253,15 +269,14 @@ class IRGeneratorVisitor (ASTVisitor):
         self.containingIRFunction = irFunction
         self.newLocalRegIndex = 0
 
-        # load parameters 
-        for i in range(len(node.params)):
-            node.params[i].accept (self)
-
-        # Body
         # Create entry basic block
         basicBlock = irast.BasicBlockNode ("entry", [])
         self.containingIRFunction.basicBlocks += [basicBlock]
         self.containingBasicBlock = basicBlock
+        # load parameters - this will setup the parameters for the function
+        for i in range(len(node.params)):
+            node.params[i].accept (self)
+        # Body
         node.body.accept (self)
 
         self.scopeNames.pop ()
@@ -830,24 +845,53 @@ class IRGeneratorVisitor (ASTVisitor):
         # Init
         # No need to create a block, just add code to current block
         node.init.accept (self)
+        # unconditionally jump to for condition
+        condBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        condBlockExpr = irast.BasicBlockExpressionNode ("for_cond", None, None, None)
+        arg0 = irast.ArgumentExpressionNode (condBlockExprType, condBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
         # Condition
         condBlock = irast.BasicBlockNode ("for_cond", [])
         self.containingIRFunction.basicBlocks += [condBlock]
         self.containingBasicBlock = condBlock
-        node.cond.accept (self)
+        condReg = node.cond.accept (self)
+        # jump to body or end based on loop condition
+        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        bodyBlockExpr = irast.BasicBlockExpressionNode ("for_body", None, None, None)
+        endBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        endBlockExpr = irast.BasicBlockExpressionNode ("for_end", None, None, None)
+        arg0 = irast.ArgumentExpressionNode (condRegType, condReg)
+        arg1 = irast.ArgumentExpressionNode (bodyBlockExprType, bodyBlockExpr)
+        arg2 = irast.ArgumentExpressionNode (endBlockExprType, endBlockExpr)
+        instruction = irast.InstructionNode (None, "jcmp", [arg0, arg1, arg2])
+        self.containingBasicBlock.instructions += [instruction]
 
         # Body
         bodyBlock = irast.BasicBlockNode ("for_body", [])
         self.containingIRFunction.basicBlocks += [bodyBlock]
         self.containingBasicBlock = bodyBlock
         node.body.accept (self)
+        # unconditionally jump to update
+        updateBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        updateBlockExpr = irast.BasicBlockExpressionNode ("for_update", None, None, None)
+        arg0 = irast.ArgumentExpressionNode (updateBlockExprType, updateBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
         # Update
         updateBlock = irast.BasicBlockNode ("for_update", [])
         self.containingIRFunction.basicBlocks += [updateBlock]
         self.containingBasicBlock = updateBlock
         node.update.accept (self)
+        # Unconditionally jump back to the condition
+        condBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        condBlockExpr = irast.BasicBlockExpressionNode ("for_cond", None, None, None)
+        arg0 = irast.ArgumentExpressionNode (condBlockExprType, condBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
         # End of for
         endBlock = irast.BasicBlockNode ("for_end", [])
@@ -986,13 +1030,13 @@ class IRGeneratorVisitor (ASTVisitor):
                 isMem = True
                 # we dont want to visit lhs bc we dont want to load it from mem
                 # So just use the pointer as the register
-                lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}", None, None, None)
+                lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}.ptr", None, None, None)
             # alloca
             elif node.lhs.decl.assignCount > 1:
                 isMem = True
                 # we dont want to visit lhs bc we dont want to load it from mem
                 # So just use the pointer as the register
-                lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}", None, None, None)
+                lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}.ptr", None, None, None)
             # register
             else:
                 lhsReg = node.lhs.accept (self)
@@ -1710,44 +1754,16 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitSubscriptExpressionNode (self, node):
-        self.printComment ("Subscript")
-
-        self.indentation += 1
-
-        self.printComment ("LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-
-        self.printComment ("OFFSET")
-        self.indentation += 1
-        node.offset.accept (self)
-        self.indentation -= 1
-
-        self.printCode ("pop rdx ; __offset")
-        self.printCode ("pop rax ; __pointer")
-        
-        # simple subscript  
-        if node.overloadedFunctionCall == None:
-            # char - 1 byte 
-            # we still read qword because stack is in 64 bit mode 
-            if node.type.__str__() == "char":
-                self.printCode ("mov al, byte [rax + rdx] ; pointer + sizeof(data_t) * offset")
-                self.printCode ("movzx rax, al ; zero extend because we need to push 64bit to stack")
-                self.printCode ("push rax ; push char onto stack")
-            # int, float, pointer - 8 bytes
-            else:
-                self.printCode ("push qword [rax + 8*rdx] ; pointer + sizeof(data_t) * offset")
-        # overloaded function call 
-        else:
-            self.printComment (f"Using Overloaded Version - {node.overloadedFunctionCall.function.id}")
-            # push args in reverse order
-            self.printCode (f"push rdx ; __offset")
-            self.printCode (f"push rax ; __pointer")
-            self.printCode (f"call {node.overloadedFunctionCall.decl.scopeName}")
-            self.printCode (f"push rax ; __res, return value")
-
-        self.indentation -= 1
+        irType = node.type.accept (self)
+        ptrReg = node.lhs.accept (self)
+        offsetReg = node.offset.accept (self)
+        arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), irType)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR  , "ptr", None), ptrReg)
+        arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+        resultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (resultReg, "load", [arg0, arg1, arg2])
+        self.containingBasicBlock.instructions += [instruction]
+        return resultReg
 
     def visitFunctionCallExpressionNode (self, node):
         arguments = []
@@ -1920,9 +1936,9 @@ class IRGeneratorVisitor (ASTVisitor):
         if node.decl.assignCount > 1 or isinstance(node.decl, (GlobalVariableDeclarationNode, ParameterNode)):
             irType = node.type.accept (self)
             if isinstance(node.decl, GlobalVariableDeclarationNode):
-                ptr = irast.LocalVariableExpressionNode (f"@{node.id}", None, None, None)
+                ptr = irast.LocalVariableExpressionNode (f"@{node.id}.ptr", None, None, None)
             else:
-                ptr = irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
+                ptr = irast.LocalVariableExpressionNode (f"%{node.id}.ptr", None, None, None)
             offset = irast.IntLiteralExpressionNode (0)
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR  , "ptr", None), ptr)

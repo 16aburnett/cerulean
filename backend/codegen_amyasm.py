@@ -179,8 +179,8 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
         # declare the variable with default value
         # Moreso a requirement of CeruleanIR, global variables must be pointers to memory
-        self.printCode (f"MALLOC {scopeName} 1")
-        self.printCode (f"ASSIGN {scopeName}[0] {rhs_value}")
+        self.printCode (f"MALLOC {scopeName.replace(".", "_")} 1")
+        self.printCode (f"ASSIGN {scopeName.replace(".", "_")}[0] {rhs_value}")
         self.lhs = node.id
         node.scopeName = scopeName
 
@@ -248,7 +248,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             self.printComment (f"Param: {node.params[i].id}")
             node.params[i].accept (self)
             # keep the same parameter name 
-            self.printCode (f"STACKGET {node.params[i].scopeName} {i}")
+            self.printCode (f"STACKGET {node.params[i].scopeName.replace(".", "_")} {i}")
         self.indentation -= 1
 
         self.printComment ("Body")
@@ -302,7 +302,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"ADD {lhs_var} {arg0} {arg1}")
@@ -312,7 +312,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"SUBTRACT {lhs_var} {arg0} {arg1}")
@@ -322,7 +322,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"MULTIPLY {lhs_var} {arg0} {arg1}")
@@ -332,7 +332,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"DIVIDE {lhs_var} {arg0} {arg1}")
@@ -342,7 +342,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"MOD {lhs_var} {arg0} {arg1}")
@@ -351,7 +351,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # AmyAssembly: assign <dest> <arg0>
             # visit variabledecl to establish scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             # visit argument expression to get new argument
             rhs_value = node.arguments[0].accept (self)
             self.printCode (f"ASSIGN {lhs_var} {rhs_value}")
@@ -362,7 +362,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             type = node.arguments[0].accept (self)
             # AmyAsm allocates in terms of elements not bytes
             # so we can ignore the type
@@ -375,7 +375,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             type = node.arguments[0].accept (self)
             # AmyAsm allocates in terms of elements not bytes
             # so we can ignore the type
@@ -392,7 +392,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
             node.lhsVariable.accept (self)
-            lhs_var = node.lhsVariable.scopeName
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             # **NOTE** ignoring type arg
             pointer = node.arguments[1].accept (self)
             offset = node.arguments[2].accept (self)
@@ -410,7 +410,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = clt (<arg0>, <arg1>)
             # AmyAssembly: LT <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"LT {dest}, {arg0}, {arg1}")
@@ -418,7 +418,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = cle (<arg0>, <arg1>)
             # AmyAssembly: LE <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"LE {dest}, {arg0}, {arg1}")
@@ -426,7 +426,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = cgt (<arg0>, <arg1>)
             # AmyAssembly: GT <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"GT {dest}, {arg0}, {arg1}")
@@ -434,7 +434,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = cge (<arg0>, <arg1>)
             # AmyAssembly: GE <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"GE {dest}, {arg0}, {arg1}")
@@ -442,7 +442,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = ceq (<arg0>, <arg1>)
             # AmyAssembly: EQUAL <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"EQUAL {dest}, {arg0}, {arg1}")
@@ -450,7 +450,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             # CeruleanIR : <dest> = cne (<arg0>, <arg1>)
             # AmyAssembly: NEQUAL <dest>, <arg0>, <arg1>
             node.lhsVariable.accept (self)
-            dest = node.lhsVariable.scopeName
+            dest = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"NEQUAL {dest}, {arg0}, {arg1}")
@@ -583,13 +583,13 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
 
     def visitGlobalVariableExpressionNode (self, node):
         self.printComment (f"Global variable expression - {node.decl.scopeName}")
-        return node.decl.scopeName
+        return node.decl.scopeName.replace(".", "_")
 
     #=====================================================================
 
     def visitLocalVariableExpressionNode (self, node):
         self.printComment (f"Local Expression - {node.decl.scopeName}")
-        return node.decl.scopeName
+        return node.decl.scopeName.replace(".", "_")
 
     #=====================================================================
 

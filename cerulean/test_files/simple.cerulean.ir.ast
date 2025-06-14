@@ -1,6 +1,6 @@
 ProgramNode:
 |   GlobalVariableDeclaration: 
-|   |   Name: @pie
+|   |   Name: @pie.ptr
 |   |   Command: value
 |   |   Arguments:
 |   |   |   Argument: 
@@ -53,7 +53,7 @@ ProgramNode:
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Int Literal: 10 int32
 |   |   |   |   Instruction:
-|   |   |   |   |   LHS: %y
+|   |   |   |   |   LHS: %y.ptr
 |   |   |   |   |   Command: alloca
 |   |   |   |   |   Arguments:
 |   |   |   |   |   |   Argument: 
@@ -70,7 +70,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %y
+|   |   |   |   |   |   |   |   Local Variable: %y.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -90,7 +90,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %y
+|   |   |   |   |   |   |   |   Local Variable: %y.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -114,7 +114,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %y
+|   |   |   |   |   |   |   |   Local Variable: %y.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -149,7 +149,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %y
+|   |   |   |   |   |   |   |   Local Variable: %y.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -164,7 +164,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Local Variable: %y
+|   |   |   |   |   |   |   |   Local Variable: %y.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -179,7 +179,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Global Variable: @pie
+|   |   |   |   |   |   |   |   Global Variable: @pie.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
@@ -199,7 +199,7 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.PTR ptr
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Global Variable: @pie
+|   |   |   |   |   |   |   |   Global Variable: @pie.ptr
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
