@@ -1,5 +1,5 @@
 
-
+# Cerulean tests
 ```bash
 
 # run as a module for correct import between cerulean and ceruleanIR backend
@@ -8,10 +8,15 @@ python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --d
 python3 -m backend.ceruleanIRCompiler cerulean/test_files/helloworld.cerulean.ir -o cerulean/test_files/helloworld.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.cerulean.ir.amyasm
 
-
+# simple tests
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR
 python3 -m backend.ceruleanIRCompiler cerulean/test_files/simple.cerulean.ir -o cerulean/test_files/simple.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/simple.cerulean.ir.amyasm
+
+# test arrays and memory
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/arrays.cerulean --debug --emitTokens --emitAST --emitIR
+python3 -m backend.ceruleanIRCompiler cerulean/test_files/arrays.cerulean.ir -o cerulean/test_files/arrays.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/arrays.cerulean.ir.amyasm
 
 
 ```
@@ -57,6 +62,13 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cm
 
 
 - [TODO] rename localvariableexpression to register
+
+Memory allocation
+- deferred free (frees at scope exit)
+```c++
+int[] a = new int[10];
+defer delete a; // will be moved to the end of the scope (or func)
+```
 
 Ditch branch/jump instructions all  together?
 - if all blocks require a branch at the end, then should we just build that into the syntax??

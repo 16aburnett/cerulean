@@ -2,10 +2,42 @@
 // Author: Amy Burnett
 //========================================================================
 
+function void fill (int32[] array, int32 N, int32 value)
+{
+    for (int32 i = 0; i < N; i = i + 1)
+        array[i] = i * value;
+}
+
+//========================================================================
+
+function void print (int32[] array, int32 N)
+{
+    print ("[");
+    print (array[0]);
+    for (int32 i = 1; i < N; i = i + 1)
+    {
+        print (", ");
+        print (array[i]);
+    }
+    println ("]");
+}
+
+//========================================================================
+
 function int32 main ()
 {
+    // Allocating arrays on the heap
     int32 N = 10;
-    int32* values = new int32 (N);
+    int32[] values = heapalloc (int32, N);
+
+    // Assign array values
+    fill (values, N, 7);
+
+    // Read + print array values
+    print (values, N);
+
+    // Deallocate memory for array
+    free (values);
 
     return 0;
 }

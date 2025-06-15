@@ -1261,7 +1261,7 @@ class Parser:
     #          -> THIS
     #          -> IDENTIFIER
     #          -> '[' [ [ <assignExpression> { COMMA <assignExpression> } ] ] ']'
-    #          -> NEW ( TYPE | IDENTIFIER ) ( '[' <expr> ']' { '[' <expr> ']' } | '(' <args> ')' )
+    #          -> HEAPALLOC '(' <typeSpecifier>, <expr> ')'
     #          -> <literal>
 
     def factor (self):
@@ -1308,109 +1308,17 @@ class Parser:
                     items += [self.assignexpr ()]
             self.match ("factor", "RBRACKET")
             lhs = ListConstructorExpressionNode (opToken, items, line, column)
-        # <factor> -> NEW ( TYPE '[' <expr> ']' { '[' <expr> ']' } | IDENTIFIER ( '[' <expr> ']' { '[' <expr> ']' } | '(' <args> ')' ) ) 
-        elif self.tokens[self.currentToken].type == "NEW":
+        # <factor> -> HEAPALLOC '(' <typeSpecifier>, <expr> ')'
+        elif self.tokens[self.currentToken].type == "HEAPALLOC":
             line = self.tokens[self.currentToken].line
             column = self.tokens[self.currentToken].column
-            self.match ("factor", "NEW")
-            # primitive type array allocator 
-            if self.isType ():
-                type = None
-                # <typeSpecifier> -> INTTYPE
-                if (self.tokens[self.currentToken].type == 'INTTYPE'):
-                    type = TypeSpecifierNode (Type.INT, "int", self.tokens[self.currentToken])
-                    self.match ("factor", 'INTTYPE')
-                # <typeSpecifier> -> FLOATTYPE
-                elif (self.tokens[self.currentToken].type == 'FLOATTYPE'):
-                    type = TypeSpecifierNode (Type.FLOAT, "float", self.tokens[self.currentToken])
-                    self.match ("factor", 'FLOATTYPE')
-                # <typeSpecifier> -> CHARTYPE
-                elif (self.tokens[self.currentToken].type == 'CHARTYPE'):
-                    type = TypeSpecifierNode (Type.CHAR, "char", self.tokens[self.currentToken])
-                    self.match ("factor", 'CHARTYPE')
-                # <typeSpecifier> -> BOOLTYPE
-                elif (self.tokens[self.currentToken].type == 'BOOLTYPE'):
-                    type = TypeSpecifierNode (Type.BOOL, "bool", self.tokens[self.currentToken])
-                    self.match ("factor", 'BOOLTYPE')
-                # <typeSpecifier> -> STRINGTYPE
-                elif (self.tokens[self.currentToken].type == 'STRINGTYPE'):
-                    type = TypeSpecifierNode (Type.STRING, "string", self.tokens[self.currentToken])
-                    self.match ("factor", 'STRINGTYPE')
-                # <typeSpecifier> -> VOIDTYPE
-                elif (self.tokens[self.currentToken].type == 'VOIDTYPE'):
-                    type = TypeSpecifierNode (Type.VOID, "void", self.tokens[self.currentToken])
-                    self.match ("factor", 'VOIDTYPE')
-                else:
-                    self.error ("factor", "INTTYPE")
-
-                self.match ("factor", "LBRACKET")
-                offsets = [self.expression ()]
-                type.arrayDimensions += 1
-                self.match ("factor", "RBRACKET")
-
-                while (self.tokens[self.currentToken].type == "LBRACKET"):
-                    self.match ("factor", "LBRACKET")
-                    # higher than 1d arrays dont need sizes
-                    if (type.arrayDimensions < 1 or self.tokens[self.currentToken].type != "RBRACKET"):
-                        # offsets += [self.expression ()]
-                        self.expression()
-                    type.arrayDimensions += 1
-                    self.match ("factor", "RBRACKET")
-
-                lhs = ArrayAllocatorExpressionNode (type, offsets, [], line, column)
-            
-            # usertype array alloc or constructor call 
-            else:
-
-                type = TypeSpecifierNode (Type.USERTYPE, self.tokens[self.currentToken].lexeme, self.tokens[self.currentToken])
-                self.match ("factor", "IDENTIFIER")
-
-                # match template params 
-                # LTEMP <typeSpec> { COMMA <typeSpec> } RTEMP
-                # <: T, K :>
-                templateParams = []
-                if self.tokens[self.currentToken].type == "LTEMP":
-                    self.match ("factor", "LTEMP")
-                    templateParams += [self.typeSpecifier()]
-                    while self.tokens[self.currentToken].type == "COMMA":
-                        self.match ("factor", "COMMA")
-                        templateParams += [self.typeSpecifier()]
-                    self.match ("factor", "RTEMP")
-                type.templateParams = templateParams
-
-                # usertype array
-                if (self.tokens[self.currentToken].type == "LBRACKET"):
-                    self.match ("factor", "LBRACKET")
-                    offsets = [self.expression ()]
-                    type.arrayDimensions += 1
-                    self.match ("factor", "RBRACKET")
-
-                    while (self.tokens[self.currentToken].type == "LBRACKET"):
-                        self.match ("factor", "LBRACKET")
-                        offsets += [self.expression ()]
-                        type.arrayDimensions += 1
-                        self.match ("factor", "RBRACKET")
-
-                    lhs = ArrayAllocatorExpressionNode (type, offsets, templateParams, line, column)
-                # constructor call 
-                elif (self.tokens[self.currentToken].type == "LPAREN"):
-                    opToken = self.tokens[self.currentToken]
-                    self.match ("factor", "LPAREN")
-                    args = []
-                    # optional arguments 
-                    if self.tokens[self.currentToken].type != "RPAREN":
-                        args += [self.assignexpr ()]
-                        # 0 or more additional arguments 
-                        while self.tokens[self.currentToken].type == "COMMA":
-                            self.match ("factor", "COMMA")
-                            args += [self.assignexpr ()]
-                    self.match ("factor", "RPAREN")
-
-                    lhs = ConstructorCallExpressionNode (type, type.id, opToken, args, templateParams, line, column)
-
-                else:
-                    self.error ("factor", "LBRACKET", "Expecting an array allocator or class constructor call")
-
+            self.match ("factor", "HEAPALLOC")
+            self.match ("factor", "LPAREN")
+            elementType = self.typeSpecifier ()
+            self.match ("factor", "COMMA")
+            sizeExpr = self.expression ()
+            self.match ("factor", "RPAREN")
+            lhs = ArrayAllocatorExpressionNode (elementType, sizeExpr, [], line, column)
         # <factor> -> SIZEOF ( <expression> ) 
         elif self.tokens[self.currentToken].type == "SIZEOF":
             line = self.tokens[self.currentToken].line

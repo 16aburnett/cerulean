@@ -10,11 +10,13 @@ if __name__ == "irGenerator":
     from ceruleanAST import *
     from visitor import ASTVisitor
     from symbolTable import SymbolTable
+    from tokenizer import printToken
     import backend.ceruleanIRAST as irast
 else:
     from .ceruleanAST import *
     from .visitor import ASTVisitor
     from .symbolTable import SymbolTable
+    from .tokenizer import printToken
     import backend.ceruleanIRAST as irast
 
 # ========================================================================
@@ -1014,6 +1016,7 @@ class IRGeneratorVisitor (ASTVisitor):
     def visitAssignExpressionNode (self, node):
         rhsReg = node.rhs.accept (self)
         lhsReg = None
+        offsetReg = None
         isMem = False
         if isinstance(node.lhs, VariableDeclarationNode):
             # alloca
@@ -1021,6 +1024,7 @@ class IRGeneratorVisitor (ASTVisitor):
                 isMem = True
                 # Vardec should add the alloca instruction so we need to visit
                 lhsReg = node.lhs.accept (self)
+                offsetReg = irast.IntLiteralExpressionNode (0)
             # register
             else:
                 lhsReg = node.lhs.accept (self)
@@ -1031,31 +1035,33 @@ class IRGeneratorVisitor (ASTVisitor):
                 # we dont want to visit lhs bc we dont want to load it from mem
                 # So just use the pointer as the register
                 lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
             # alloca
             elif node.lhs.decl.assignCount > 1:
                 isMem = True
                 # we dont want to visit lhs bc we dont want to load it from mem
                 # So just use the pointer as the register
                 lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
             # register
             else:
                 lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, SubscriptExpressionNode):
-            # node.lhs.lhs.accept (self)
-            # node.lhs.offset.accept (self)
-            # NOTE: maybe make lhsReg the result of getelementptr? and mark as mem
-            pass
+            isMem = True
+            lhsReg = node.lhs.lhs.accept (self)
+            offsetReg = node.lhs.offset.accept (self)
+            # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
-            # node.lhs.lhs.accept (self)
-            pass
+            print("ERROR: Assigning to MemberAccessorExpressionNode not implemented")
+            printToken (node.lhs.op)
+            exit(1)
         # perform operation and save to lhsStr
         # =
         if node.op.type == "ASSIGN":
             if isMem:
                 rhsIRType = node.type.accept (self)
-                offset = irast.IntLiteralExpressionNode (0)
                 arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-                arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+                arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
                 arg2 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
                 instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
                 self.containingBasicBlock.instructions += [instruction]
@@ -1066,73 +1072,29 @@ class IRGeneratorVisitor (ASTVisitor):
                 self.containingBasicBlock.instructions += [instruction]
         # +=
         elif node.op.type == "ASSIGN_ADD":
-            # Add
-            # TODO
-            # Assign
-            rhsIRType = node.type.accept (self)
-            arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
-            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
-            # Add to the current basic block
-            self.containingBasicBlock.instructions += [instruction]
+            print("ERROR: ASSIGN_ADD not implemented")
+            printToken (node.op)
+            exit(1)
         # -=
         elif node.op.type == "ASSIGN_SUB":
-            print ("NOT IMPLMENTED")
+            print("ERROR: ASSIGN_SUB not implemented")
+            printToken (node.op)
+            exit(1)
         # *=
         elif node.op.type == "ASSIGN_MUL":
-            # floating point 
-            if node.type.__str__() == "float":
-                self.printCode (f"movq xmm0, {lhsStr} ; load lhs value, xmm0 = mem[0], zero")
-                self.printCode (f"movq xmm1, rdx ; load rhs value, xmm1 = mem[0], zero")
-                self.printCode (f"mulsd xmm0, xmm1 ; lhs = lhs * rhs")
-                self.printCode (f"movsd {lhsStr}, xmm0 ; write back to lhs")
-                self.printCode (f"movq rax, xmm0")
-                self.printCode (f"push rax          ; push result for other expressions")
-            # integer
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; read lhs value")
-                self.printCode (f"imul rax, rdx      ; lhs = lhs * rhs")
-                self.printCode (f"mov {lhsStr}, rax ; write back to lhs")
-                self.printCode (f"push rax          ; push result for other expressions")
+            print("ERROR: ASSIGN_MUL not implemented")
+            printToken (node.op)
+            exit(1)
         # /=
         elif node.op.type == "ASSIGN_DIV":
-            # floating point 
-            if node.type.__str__() == "float":
-                self.printCode (f"movq xmm0, {lhsStr} ; load lhs value, xmm0 = mem[0], zero")
-                self.printCode (f"movq xmm1, rdx      ; load rhs value, xmm1 = mem[0], zero")
-                self.printCode (f"divsd xmm0, xmm1    ; lhs = lhs / rhs")
-                self.printCode (f"movsd {lhsStr}, xmm0 ; write back to lhs")
-                self.printCode (f"movq rax, xmm0")
-                self.printCode (f"push rax          ; push result for other expressions")
-            # integer
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; read lhs value")
-                # rhs value in rdx already
-                self.printCode ("mov esi, edx")
-                self.printCode ("mov edx, 0")
-                self.printCode ("cdq")
-                self.printCode ("idiv esi ; lhs = lhs / rhs")
-                # rax now contains quotient
-                # rdx contains remainder
-                self.printCode (f"mov {lhsStr}, rax ; write back to lhs")
-                self.printCode (f"push rax          ; push result for other expressions")
+            print("ERROR: ASSIGN_DIV not implemented")
+            printToken (node.op)
+            exit(1)
         # %=
         elif node.op.type == "ASSIGN_MOD":
-            # floating point 
-            if node.type.__str__() == "float":
-                print ("[codegen] Error: mod operands cannot be floats")
-                exit (1)
-            # integer
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; read lhs value")
-                # rhs value in rdx already
-                self.printCode ("mov esi, edx")
-                self.printCode ("mov edx, 0")
-                self.printCode ("cdq")
-                self.printCode ("idiv esi ; lhs = lhs / rhs")
-                # rax now contains quotient
-                # rdx contains remainder
-                self.printCode (f"mov {lhsStr}, rdx ; write back to lhs")
-                self.printCode (f"push rdx          ; push result for other expressions")
+            print("ERROR: ASSIGN_MOD not implemented")
+            printToken (node.op)
+            exit(1)
         
         return rhsReg
 
@@ -1951,30 +1913,14 @@ class IRGeneratorVisitor (ASTVisitor):
         return irast.LocalVariableExpressionNode (f"%{node.id}", None, None, None)
 
     def visitArrayAllocatorExpressionNode (self, node):
-        self.printComment ("Array Allocator")
-
-        self.indentation += 1
-        for d in node.dimensions:
-            d.accept (self)
-        
-        # get array size 
-        self.printCode (f"pop rdx ; num elements for dimension[0]")
-
-        # determine element size in bytes
-        # char - 1 byte
-        # int, float, pointer - 8 bytes
-        if node.type.__str__() == "char[]":
-            self.printCode (f"mov rdi, rdx ; num bytes to allocate (1 byte per element)")
-        # int[] float[] x[][]
-        else:
-            self.printCode (f"imul rdx, 8 ; 8 bytes per element")
-            self.printCode (f"mov rdi, rdx ; num bytes to allocate")
-        
-        self.printCode (f"call malloc ; allocates edi bytes on heap and stores pointer in rax")
-
-        self.printCode (f"push rax ; __ptr")
-
-        self.indentation -= 1
+        elementType = node.elementType.accept (self)
+        sizeReg = node.sizeExpr.accept (self)
+        arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), elementType)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), sizeReg)
+        resultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (resultReg, "malloc", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return resultReg
 
     def visitConstructorCallExpressionNode (self, node):
         self.printComment (f"Constructor Call - {node.decl.signature} -> {node.decl.parentClass.type}")
@@ -2056,25 +2002,11 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
     
     def visitFreeExpressionNode (self, node):
-        self.printComment ("Free Operator")
-        self.indentation += 1
-
-        # calc rhs
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-
-        self.printComment ("Free pointer")
-        self.printCode ("pop rdi   ; pointer")
-        self.printCode ("call free ; free the pointer")
-        # we have to have this 
-        # otherwise the result of this expression
-        # will be popped making more pops
-        # than pushes
-        self.printCode ("push rax  ; undefined return value")
-
-        self.indentation -= 1
+        ptrReg = node.rhs.accept (self)
+        arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR , "ptr", None), ptrReg)
+        instruction = irast.InstructionNode (None, "free", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
+        return None
 
     def visitIntLiteralExpressionNode (self, node):
         return irast.IntLiteralExpressionNode (node.value)

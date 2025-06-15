@@ -1428,8 +1428,8 @@ class SymbolTableVisitor (ASTVisitor):
 
     def visitArrayAllocatorExpressionNode (self, node):
         node.type.accept (self)
-        for d in node.dimensions:
-            d.accept (self)
+        node.elementType.accept (self)
+        node.sizeExpr.accept (self)
 
     def visitConstructorCallExpressionNode (self, node):
         # print (f"checking type of constructor call")

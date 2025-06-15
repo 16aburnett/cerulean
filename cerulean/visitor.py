@@ -875,10 +875,11 @@ class PrintVisitor (ASTVisitor):
         self.outputstrings += [f"ArrayAllocator: {node.type}\n"]
         self.level += 1
         self.printSpaces (self.level)
-        self.outputstrings += [f"Dimensions: \n"]
+        self.outputstrings += [f"ElementType: {node.elementType}\n"]
+        self.printSpaces (self.level)
+        self.outputstrings += [f"SizeExpression: \n"]
         self.level += 1
-        for d in node.dimensions:
-            d.accept (self)
+        node.sizeExpr.accept (self)
         self.level -= 2
 
     def visitConstructorCallExpressionNode (self, node):

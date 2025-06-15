@@ -1190,10 +1190,13 @@ class IdentifierExpressionNode (ExpressionNode):
 
 class ArrayAllocatorExpressionNode (ExpressionNode):
 
-    def __init__(self, type, dimensions, templateParams, line, column):
+    def __init__(self, elementType, sizeExpr, templateParams, line, column):
         super ().__init__ ()
-        self.type = type
-        self.dimensions = dimensions
+        self.type = elementType.copy ()
+        # the allocator returns a pointer so turn type into a pointer
+        self.type.arrayDimensions += 1
+        self.elementType = elementType
+        self.sizeExpr = sizeExpr
 
         self.templateParams = templateParams
 

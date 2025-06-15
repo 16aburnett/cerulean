@@ -172,8 +172,8 @@ def tokenize(code, mainFilename, debugLines=[]):
                 kind = "FUNCTION"
             elif (lexeme == "struct"):
                 kind = "STRUCT"
-            elif (lexeme == "new"):
-                kind = "NEW"
+            elif (lexeme == "heapalloc"):
+                kind = "HEAPALLOC"
             elif (lexeme == "free"):
                 kind = "FREE"
             elif (lexeme == "sizeof"):

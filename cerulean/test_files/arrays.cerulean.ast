@@ -1,0 +1,157 @@
+ProgramNode:
+|   Function: fill int32[]:int32:int32->void
+|   |   ReturnType:
+|   |   |   Type: Type.VOID void
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32[]
+|   |   |   Name: array
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: N
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: value
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=7, includeChain=[], lineStr='    for (int32 i = 0; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: i
+|   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=7, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=7, includeChain=[], lineStr='    for (int32 i = 0; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=32, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=7, includeChain=[], lineStr='    for (int32 i = 0; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=7, column=36, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=7, includeChain=[], lineStr='    for (int32 i = 0; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=8, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=8, includeChain=[], lineStr='        array[i] = i * value;') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Subscript Operator: int32
+|   |   |   |   |   |   |   |   |   Array:
+|   |   |   |   |   |   |   |   |   |   Identifier: array int32[]
+|   |   |   |   |   |   |   |   |   Offset:
+|   |   |   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   |   MultiplicativeExpression: Token(type='TIMES', lexeme='*', value='*', line=8, column=22, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=8, includeChain=[], lineStr='        array[i] = i * value;') int32
+|   |   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   |   |   Identifier: value int32
+|   Function: print int32[]:int32->void
+|   |   ReturnType:
+|   |   |   Type: Type.VOID void
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32[]
+|   |   |   Name: array
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: N
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "[" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Subscript Operator: int32
+|   |   |   |   |   |   |   |   Array:
+|   |   |   |   |   |   |   |   |   Identifier: array int32[]
+|   |   |   |   |   |   |   |   Offset:
+|   |   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 1; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: i
+|   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=17, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 1; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=32, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 1; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=17, column=36, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 1; i < N; i = i + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   String Literal: ", " char[]
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Subscript Operator: int32
+|   |   |   |   |   |   |   |   |   |   |   Array:
+|   |   |   |   |   |   |   |   |   |   |   |   Identifier: array int32[]
+|   |   |   |   |   |   |   |   |   |   |   Offset:
+|   |   |   |   |   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "]" char[]
+|   Function: main void->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=30, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=30, includeChain=[], lineStr='    int32 N = 10;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: N
+|   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=31, column=20, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/arrays.cerulean', originalLine=31, includeChain=[], lineStr='    int32[] values = heapalloc (int32, N);') int32[]
+|   |   |   |   |   |   Type: Type.INT32 int32[]
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32[]
+|   |   |   |   |   |   |   Name: values
+|   |   |   |   |   |   ArrayAllocator: int32[]
+|   |   |   |   |   |   |   ElementType: int32
+|   |   |   |   |   |   |   SizeExpression: 
+|   |   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: fill 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: values int32[]
+|   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: values int32[]
+|   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Free Operator: void|   |   |   |   |   |   RHS:|   |   |   |   |   |   |   Identifier: values int32[]
+|   |   |   |   ReturnStatement:
+|   |   |   |   |   |   Int Literal: 0 int32
