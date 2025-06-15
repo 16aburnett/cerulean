@@ -15,6 +15,7 @@ if __name__ == "__main__":
     from .ceruleanAST import *
     from .parser import Parser
     from .visitor import *
+    from .printVisitor import PrintVisitor
     from .semanticAnalyzer import *
     from .codegen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
@@ -26,6 +27,7 @@ else:
     from .ceruleanAST import *
     from .parser import Parser
     from .visitor import *
+    from .printVisitor import PrintVisitor
     from .semanticAnalyzer import *
     from .codeGen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
