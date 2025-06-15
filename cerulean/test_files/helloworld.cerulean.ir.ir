@@ -39,6 +39,7 @@ function int32 @main () {
         %0 = load (type(ptr), ptr(@g_customary_greeting.ptr), int32(0))
         %1 = load (type(int32), ptr(@g_length.ptr), int32(0))
         %2 = call @print_greeting__char__1__int32 (ptr(%0), int32(%1))
+        return (int32(0))
     }
 }
 

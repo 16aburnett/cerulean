@@ -317,36 +317,132 @@ __builtin__null:
 //========================================================================
 
 __endOfLibrary:
-   MALLOC __main__pie_ptr 1
-   ASSIGN __main__pie_ptr[0] 3.14
+   JUMP __end____main____min__int32__int32__int32__int32
+__main____min__int32__int32__int32__int32:
+   STACKGET __main__min__int32__int32__a 0
+   STACKGET __main__min__int32__int32__b 1
+__main__min__int32__int32__entry:
+   MALLOC __main__min__int32__int32__a_ptr 1
+   ASSIGN __main__min__int32__int32__a_ptr[0] __main__min__int32__int32__a
+   MALLOC __main__min__int32__int32__b_ptr 1
+   ASSIGN __main__min__int32__int32__b_ptr[0] __main__min__int32__int32__b
+   ASSIGN __main__min__int32__int32__0 __main__min__int32__int32__a_ptr[0]
+   ASSIGN __main__min__int32__int32__1 __main__min__int32__int32__b_ptr[0]
+   LE __main__min__int32__int32__2, __main__min__int32__int32__0, __main__min__int32__int32__1
+   CMP __main__min__int32__int32__2, 1 // set flag if cmp is true
+   JEQ __main__min__int32__int32__if_body1 // jump to true block
+   JUMP __main__min__int32__int32__if_end1 // otherwise jump to false block
+__main__min__int32__int32__if_body1:
+   ASSIGN __main__min__int32__int32__3 __main__min__int32__int32__a_ptr[0]
+   RETURN __main__min__int32__int32__3
+   JUMP __main__min__int32__int32__if_end1
+__main__min__int32__int32__if_end1:
+   ASSIGN __main__min__int32__int32__4 __main__min__int32__int32__b_ptr[0]
+   RETURN __main__min__int32__int32__4
+   RETURN 0
+__end____main____min__int32__int32__int32__int32:
+   JUMP __end____main____max__int32__int32__int32__int32
+__main____max__int32__int32__int32__int32:
+   STACKGET __main__max__int32__int32__a 0
+   STACKGET __main__max__int32__int32__b 1
+__main__max__int32__int32__entry:
+   MALLOC __main__max__int32__int32__a_ptr 1
+   ASSIGN __main__max__int32__int32__a_ptr[0] __main__max__int32__int32__a
+   MALLOC __main__max__int32__int32__b_ptr 1
+   ASSIGN __main__max__int32__int32__b_ptr[0] __main__max__int32__int32__b
+   ASSIGN __main__max__int32__int32__0 __main__max__int32__int32__a_ptr[0]
+   ASSIGN __main__max__int32__int32__1 __main__max__int32__int32__b_ptr[0]
+   GE __main__max__int32__int32__2, __main__max__int32__int32__0, __main__max__int32__int32__1
+   CMP __main__max__int32__int32__2, 1 // set flag if cmp is true
+   JEQ __main__max__int32__int32__if_body3 // jump to true block
+   JUMP __main__max__int32__int32__if_end3 // otherwise jump to false block
+__main__max__int32__int32__if_body3:
+   ASSIGN __main__max__int32__int32__3 __main__max__int32__int32__a_ptr[0]
+   RETURN __main__max__int32__int32__3
+   JUMP __main__max__int32__int32__if_end3
+__main__max__int32__int32__if_end3:
+   ASSIGN __main__max__int32__int32__4 __main__max__int32__int32__b_ptr[0]
+   RETURN __main__max__int32__int32__4
+   RETURN 0
+__end____main____max__int32__int32__int32__int32:
    JUMP __end____main____main
 __main____main:
 __main__main__entry:
-   ADD __main__main__0 1 2
-   ASSIGN __main__main__x __main__main__0
-   PUSH __main__main__x
-   CALL __builtin__println__int32
+   ASSIGN __main__main__x 10
+   GT __main__main__0, __main__main__x, 10
+   CMP __main__main__0, 1 // set flag if cmp is true
+   JEQ __main__main__if_body5 // jump to true block
+   JUMP __main__main__elif_cond5x0 // otherwise jump to false block
+__main__main__if_body5:
+   MALLOC __str 7
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '>'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] '1'
+   ASSIGN __str[5] '0'
+   ASSIGN __str[6] '\0'
+   PUSH __str
+   CALL __builtin__println__char__1
    RESPONSE __main__main__1
    POP _arg0
-   MULTIPLY __main__main__2 __main__main__x 10
-   MALLOC __main__main__y_ptr 1
-   ASSIGN __main__main__y_ptr[0] __main__main__2
-   ASSIGN __main__main__3 __main__main__y_ptr[0]
-   PUSH __main__main__3
-   CALL __builtin__println__int32
+   JUMP __main__main__if_end5
+__main__main__elif_cond5x0:
+   EQUAL __main__main__2, __main__main__x, 10
+   CMP __main__main__2, 1 // set flag if cmp is true
+   JEQ __main__main__elif_body5x0 // jump to true block
+   JUMP __main__main__else_body5 // otherwise jump to false block
+__main__main__elif_body5x0:
+   MALLOC __str 8
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '='
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '1'
+   ASSIGN __str[6] '0'
+   ASSIGN __str[7] '\0'
+   PUSH __str
+   CALL __builtin__println__char__1
+   RESPONSE __main__main__3
+   POP _arg0
+   JUMP __main__main__if_end5
+__main__main__else_body5:
+   MALLOC __str 7
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '<'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] '1'
+   ASSIGN __str[5] '0'
+   ASSIGN __str[6] '\0'
+   PUSH __str
+   CALL __builtin__println__char__1
    RESPONSE __main__main__4
    POP _arg0
-   ASSIGN __main__main__5 __main__main__y_ptr[0]
-   ADD __main__main__6 __main__main__x __main__main__5
-   MOD __main__main__7 __main__main__6 3
-   ASSIGN __main__main__y_ptr[0] __main__main__7
-   ASSIGN __main__main__y_ptr[0] __main__main__7
-   ASSIGN __main__pie_ptr[0] 13.37
-   ASSIGN __main__main__8 __main__pie_ptr[0]
-   PUSH __main__main__8
-   CALL __builtin__println__float32
-   RESPONSE __main__main__9
+   JUMP __main__main__if_end5
+__main__main__if_end5:
+   PUSH 3
+   PUSH 7
+   CALL __main____min__int32__int32__int32__int32
+   RESPONSE __main__main__5
    POP _arg0
+   POP _arg1
+   PUSH __main__main__5
+   CALL __builtin__println__int32
+   RESPONSE __main__main__6
+   POP _arg0
+   PUSH 3
+   PUSH 7
+   CALL __main____max__int32__int32__int32__int32
+   RESPONSE __main__main__7
+   POP _arg0
+   POP _arg1
+   PUSH __main__main__7
+   CALL __builtin__println__int32
+   RESPONSE __main__main__8
+   POP _arg0
+   RETURN 0
    RETURN 0
 __end____main____main:
 __start:

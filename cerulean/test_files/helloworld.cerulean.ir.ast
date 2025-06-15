@@ -343,3 +343,10 @@ ProgramNode:
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Expression:
 |   |   |   |   |   |   |   |   Local Variable: %1
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32

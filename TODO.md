@@ -18,6 +18,11 @@ python3 -m cerulean.ceruleanCompiler cerulean/test_files/arrays.cerulean --debug
 python3 -m backend.ceruleanIRCompiler cerulean/test_files/arrays.cerulean.ir -o cerulean/test_files/arrays.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/arrays.cerulean.ir.amyasm
 
+# test conditionals
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_conditionals.cerulean --debug --emitTokens --emitAST --emitIR
+python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_conditionals.cerulean.ir -o cerulean/test_files/test_conditionals.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_conditionals.cerulean.ir.amyasm
+
 
 ```
 

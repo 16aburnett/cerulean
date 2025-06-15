@@ -1,0 +1,523 @@
+ProgramNode:
+|   Function: @min__int32__int32 (int32,int32)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: %a
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: %b
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %a.ptr
+|   |   |   |   |   Command: alloca
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: store
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %b.ptr
+|   |   |   |   |   Command: alloca
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: store
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %0
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %1
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %2
+|   |   |   |   |   Command: cle
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %0
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %1
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jcmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %2
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_body1
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end1
+|   |   |   Basic Block: if_body1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %3
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %3
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end1
+|   |   |   Basic Block: if_end1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %4
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %4
+|   Function: @max__int32__int32 (int32,int32)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: %a
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: %b
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %a.ptr
+|   |   |   |   |   Command: alloca
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: store
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %b.ptr
+|   |   |   |   |   Command: alloca
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: store
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %0
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %1
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %2
+|   |   |   |   |   Command: cge
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %0
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %1
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jcmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %2
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_body3
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end3
+|   |   |   Basic Block: if_body3
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %3
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %a.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %3
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end3
+|   |   |   Basic Block: if_end3
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %4
+|   |   |   |   |   Command: load
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.TYPE type
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %b.ptr
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %4
+|   Function: @main (void)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %x
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %0
+|   |   |   |   |   Command: cgt
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %x
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jcmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %0
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_body5
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: elif_cond5x0
+|   |   |   Basic Block: if_body5
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %1
+|   |   |   |   |   Called Function: @__builtin__println__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "x > 10" ptr
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end5
+|   |   |   Basic Block: elif_cond5x0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %2
+|   |   |   |   |   Command: ceq
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %x
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jcmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %2
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: elif_body5x0
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: else_body5
+|   |   |   Basic Block: elif_body5x0
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %3
+|   |   |   |   |   Called Function: @__builtin__println__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "x == 10" ptr
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end5
+|   |   |   Basic Block: else_body5
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %4
+|   |   |   |   |   Called Function: @__builtin__println__char__1
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.PTR ptr
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   String Literal: "x < 10" ptr
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: jmp
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.BLOCK block
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Block Name: if_end5
+|   |   |   Basic Block: if_end5
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %5
+|   |   |   |   |   Called Function: @min__int32__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %6
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %5
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %7
+|   |   |   |   |   Called Function: @max__int32__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   Call Instruction:
+|   |   |   |   |   LHS: %8
+|   |   |   |   |   Called Function: @__builtin__println__int32
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %7
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32

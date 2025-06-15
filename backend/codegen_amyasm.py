@@ -545,7 +545,7 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
         self.printComment (f"Call instruction - {node.function_name}")
         self.indentation += 1
         
-        # CeruleanIR : call <function_name> (<arg0>, <arg1>, ... <argN>)
+        # CeruleanIR : <retVal> = call <function_name> (<arg0>, <arg1>, ... <argN>)
         # AmyAssembly: PUSH <argN>
         #              ...
         #              PUSH <arg1>
@@ -560,6 +560,10 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             arg = node.arguments[i].accept (self)
             self.printCode (f"PUSH {arg}")
         self.printCode (f"CALL {node.decl.scopeName}")
+        # Get return value
+        if node.lhsVariable:
+            node.lhsVariable.accept (self)
+            self.printCode (f"RESPONSE {node.lhsVariable.scopeName}")
         # pop arguments off
         for i in range(len(node.arguments)):
             self.printCode (f"POP _arg{i}")

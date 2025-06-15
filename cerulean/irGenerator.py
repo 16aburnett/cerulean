@@ -284,535 +284,181 @@ class IRGeneratorVisitor (ASTVisitor):
         self.scopeNames.pop ()
 
     def visitClassDeclarationNode(self, node):
-
-        # variable names are modified by its scope 
-        scopeName = ["__", node.id]
-        # add template parameters if there are any 
-        if len(node.templateParams) > 0:
-            scopeName += [f"__{node.templateParams[0].id}"]
-            # add array dimensions
-            if node.templateParams[0].arrayDimensions > 0:
-                scopeName += [f"__{node.templateParams[0].arrayDimensions}"]
-            # add rest of template params 
-            for i in range(1, len(node.templateParams)):
-                scopeName += [f"__{node.templateParams[i].id}"]
-                # add array dimensions
-                if node.templateParams[i].arrayDimensions > 0:
-                    scopeName += [f"__{node.templateParams[i].arrayDimensions}"]
-        node.scopeName = "".join(scopeName)
-
-        # create new scope level 
-        self.scopeNames += [f"__{node.scopeName}"]
-
-        node.scopeName = "".join(self.scopeNames)
-
-        self.printDivider ()
-        if node.pDecl != None:
-            self.printComment (f"Class Declaration - {node.scopeName} inherits {node.pDecl.scopeName}")
-        else: 
-            self.printComment (f"Class Declaration - {node.scopeName}")
-
-        self.indentation += 1
-
-        # create scope names for methods
-        for method in node.methods:
-            # variable names are modified by its scope 
-            scopeName = ["__method__", "".join (self.scopeNames), "____", method.id]
-            # add signature to scopeName for overloaded functions
-            if len(method.params) > 0:
-                scopeName += [f"__{method.params[0].type.id}"]
-                # add array dimensions
-                if method.params[0].type.arrayDimensions > 0:
-                    scopeName += [f"__{method.params[0].type.arrayDimensions}"]
-            for i in range(1, len(method.params)):
-                scopeName += [f"__{method.params[i].type.id}"]
-                # add array dimensions
-                if method.params[i].type.arrayDimensions > 0:
-                    scopeName += [f"__{method.params[i].type.arrayDimensions}"]
-            method.scopeName = "".join(scopeName)
-        # create scope names for ctors 
-        for ctor in node.constructors:
-            # variable names are modified by its scope 
-            scopeName = ["__ctor__", "".join (self.scopeNames), "____", ctor.parentClass.id]
-            # add signature to scopeName for overloaded functions
-            if len(ctor.params) > 0:
-                scopeName += [f"__{ctor.params[0].type.id}"]
-                # add array dimensions
-                if ctor.params[0].type.arrayDimensions > 0:
-                    scopeName += [f"__{ctor.params[0].type.arrayDimensions}"]
-            for i in range(1, len(ctor.params)):
-                scopeName += [f"__{ctor.params[i].type.id}"]
-                # add array dimensions
-                if ctor.params[i].type.arrayDimensions > 0:
-                    scopeName += [f"__{ctor.params[i].type.arrayDimensions}"]
-            ctor.scopeName = "".join(scopeName)
-
-        self.printComment ("Class data")
-        self.printCode ("section .data")
-        self.indentation += 1
-        # dispatch table 
-        self.printComment ("Dispatch Table - this might need to be a malloc**")
-        node.dtableScopeName = ".__dtable__" + "".join (self.scopeNames)
-        numBytes = len(node.virtualMethods)
-        self.printCode (f"{node.dtableScopeName}:")
-        # self.printCode (f"mov rdi, {numBytes} ; numVirtualMethods * 8 bytes")
-        # self.printCode (f"call malloc ; allocate space for dtable")
-        # self.printCode (f" ; save pointer to {node.dtableScopeName}")
-        # populate dispatch table
-        self.printComment ("Dispatch Table Entries")
-        for i in range(len(node.functionPointerList)):
-            self.printCode (f"dq .{node.functionPointerList[i].scopeName} ; {i}")
-        self.indentation -= 1
-        self.printCode ("section .text")
-
-        # create scope names for fields 
-        for field in node.fields:
-            # variable names are modified by its scope 
-            fieldScopeName = ".__field__" + "".join (self.scopeNames) + "____" + field.id
-            field.scopeName = fieldScopeName
-
-        # dispatch table pointer is at i = 0 
-        i = 1
-        for field in node.fields:
-            field.parentClass = node
-            field.index = i 
-            field.accept (self)
-            i += 1
-
-        # add jump to skip over class dec  
-        self.indentation -= 1
-        self.printComment ("skip over class methods")
-        self.printCode (f"jmp .__endclass__{node.scopeName}")
-        self.indentation += 1
-
-        for ctor in node.constructors:
-            ctor.parentClass = node
-            ctor.accept (self)
-
-        for method in node.methods:
-            method.parentClass = node
-            method.accept (self)
-
-        self.indentation -= 1
-
-        self.printLabel (f".__endclass__{node.scopeName}:")
-
-        self.printComment (f"End Class Declaration - {node.scopeName}")
-        self.printDivider ()
-        self.printNewline ()
-
-        # remove scope level 
-        self.scopeNames.pop ()
+        print("ERROR: ClassDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitFieldDeclarationNode (self, node):
-        self.printSubDivider ()
-        self.printComment (f"Field - {node.type} {node.signature}")
-        if node.isInherited:
-            self.printComment (f"Inherited from {node.parentClass.pDecl.id}")
-
-        # fieldIndexVarname = f"__field__{node.id}__{field.id}"
-        self.printCode (f"section .data")
-        self.printCode (f"{node.scopeName}: dq {node.index}")
-        self.printCode (f"section .text")
-
-        self.printSubDivider ()
+        print("ERROR: FieldDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitMethodDeclarationNode (self, node):
-
-        # create new scope level 
-        self.scopeNames += [f"__{node.id}"]
-
-        self.printSubDivider ()
-        self.printComment (f"Method Declaration - {node.signature} -> {node.type}")
-        if node.isInherited:
-            self.printComment (f"Inherited from {node.parentClass.pDecl.id}")
-
-        endLabel = f".__end{node.scopeName}"
-        methodLabel = "."+node.scopeName
-        node.label = f".{node.scopeName}"
-
-        # add jump to skip over function 
-        self.printCode (f"jmp {endLabel}")
-
-        # place function jump-point label 
-        self.printCode (methodLabel + ":")
-
-        self.indentation += 1
-
-
-
-        # inherited methods
-        if node.isInherited:
-            self.printComment (f"Jump to {node.inheritedMethod.parentClass.id}'s version")
-            self.printCode (f"jmp .{node.inheritedMethod.scopeName}")
-        else:
-
-            # FUNCTION HEADER
-            self.printComment ("Function Header:")
-
-            # setup stack
-            self.printComment ("Setup stack frame")
-            self.indentation += 1 # start stack frame setup
-            self.printCode ("push rbp")
-            self.printCode ("mov rbp, rsp")
-            # this keyword
-            # local variables   
-            self.printComment ("Local Variables - Each variable is currently 64-bit (sorry not sorry)")
-            self.indentation += 1 # start locals
-            neededSpace = (len(node.localVariables)+1) * 8 # each var is 8-bytes
-            space = neededSpace if neededSpace % 16 == 0 else neededSpace + 8 # 16 byte aligned
-            self.printCode (f"sub rsp, {space} ; space for local variables (16-byte aligned)")    
-            self.printComment (f"[rbp - 8] - this - Reference to 'this' object instance")
-            self.printCode (f"mov rdx, qword [rbp + 16] ; param passed 'this'")
-            self.printCode (f"mov qword [rbp - 8], rdx ; save this to a local")
-            node.parentClass.thisStackOffset = 8
-            for i in range(len(node.localVariables)):
-                offset = i*8+8+8
-                self.printComment (f"[rbp - {offset}] - {node.localVariables[i].type} {node.localVariables[i].id} ({node.localVariables[i].scopeName})")
-                # save the address for future lookups 
-                node.localVariables[i].stackOffset = offset 
-            self.indentation -= 1 # end of local vars
-            self.indentation -= 1 # end stack frame setup
-
-            # load parameters - just for comments
-            self.printComment ("Parameters")
-            self.indentation += 1 # start parameters
-            # foreach parameter
-            for i in range(len(node.params)):
-                node.params[i].accept (self)
-                # +16 because retaddr (8-bytes) and prev_rbp (8-bytes)
-                # +8 more bytes because first param is 'this'
-                offset = i*8+16+8
-                self.printComment (f"Param: {node.params[i].id} [rbp + {offset}] ({node.params[i].scopeName})")
-                # * parameter offsets are made negative since they are accessed opposite to localVars
-                # could be weird, might want to flip localVars to be negative instead
-                node.params[i].stackOffset = -offset 
-            self.indentation -= 1  # end parameters      
-
-            self.printComment ("Body")
-            self.indentation += 1
-            node.body.accept (self)
-            self.indentation -= 1
-
-            # FUNCTION EPILOGUE
-            # extra return statement for if return is not provided 
-            self.printComment ("Function Epilogue")
-            self.printCode ("mov rsp, rbp ; remove local vars + unpopped pushes")
-            self.printCode ("pop rbp")
-            self.printCode ("ret")
-
-        self.indentation -= 1
-
-        self.printCode (f"{endLabel}:")
-
-        self.printComment (f"End Method Declaration - {methodLabel}")
-        self.printSubDivider ()
-        self.printNewline ()
-
-        # remove scope level 
-        self.scopeNames.pop ()
+        print("ERROR: MethodDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitConstructorDeclarationNode (self, node):
-
-        # create new scope level 
-        self.scopeNames += [f"__{node.parentClass.id}"]
-
-        self.printSubDivider ()
-        self.printComment (f"Constructor Declaration - {node.signature} -> {node.parentClass.type}")
-
-        endLabel = f".__end{node.scopeName}"
-        ctorLabel = f".{node.scopeName}"
-        node.label = f".{node.scopeName}"
-
-        # AD HOC CENTRAL!!
-        # fill in prereferences with scopename 
-        for i in range(len(self.code)):
-            if f"${node.signature}" in self.code[i]:
-                self.code[i] = self.code[i].replace(f"${node.signature}", node.scopeName)
-
-        # add jump to skip over function 
-        self.printCode (f"jmp {endLabel}")
-
-        # place function jump-point label 
-        self.printCode (ctorLabel + ":")
-
-        # FUNCTION HEADER
-        self.printComment ("Function Header:")
-        self.indentation += 1
-
-        # setup stack
-        self.printComment ("Setup stack frame")
-        self.indentation += 1 # start stack frame setup
-        self.printCode ("push rbp")
-        self.printCode ("mov rbp, rsp")
-        # this keyword
-        # local variables   
-        self.printComment ("Local Variables - Each variable is currently 64-bit (sorry not sorry)")
-        self.indentation += 1
-        neededSpace = (len(node.localVariables)+1) * 8 # each var is 8-bytes
-        space = neededSpace if neededSpace % 16 == 0 else neededSpace + 8 # 16 byte aligned
-        self.printCode (f"sub rsp, {space} ; space for local variables (16-byte aligned)")    
-        self.printComment (f"[rbp - 8] - this - Reference to 'this' object instance")
-        node.parentClass.thisStackOffset = 8
-        for i in range(len(node.localVariables)):
-            offset = i*8+8+8
-            self.printComment (f"[rbp - {offset}] - {node.localVariables[i].type} {node.localVariables[i].id} ({node.localVariables[i].scopeName})")
-            # save the address for future lookups 
-            node.localVariables[i].stackOffset = offset 
-        self.indentation -= 1 # end of local vars
-        self.indentation -= 1 # end stack frame setup
-
-        # create class instance 
-        self.printComment ("Creating Class Instance")
-        self.indentation += 1
-        # +1 because all classes start with a dispatch table 
-        self.printCode (f"mov rdi, {(len(node.parentClass.fields)+1)*8} ; [dtable, field0, field1, ..., fieldN] each 8 bytes")
-        self.printCode (f"call malloc")
-        self.printCode (f"mov qword [rbp - {node.parentClass.thisStackOffset}], rax ; save class instance as 'this'")
-
-        # add dispatch table to instance
-        self.printComment ("Add Dispatch Table")
-        self.printCode (f"mov rax, qword [rbp - {node.parentClass.thisStackOffset}] ; this")
-        self.printCode (f"mov qword [rax + 0], {node.parentClass.dtableScopeName} ; this[0] = &dtable")
-
-        # ** maybe initialize entries? or that might be inefficient
-        self.indentation -= 1
-
-        # load parameters - just for comments
-        self.printComment ("Parameters")
-        self.indentation += 1 # start parameters
-        # foreach parameter
-        for i in range(len(node.params)):
-            node.params[i].accept (self)
-            # +16 because retaddr (8-bytes) and prev_rbp (8-bytes)
-            offset = i*8+16
-            self.printComment (f"Param: {node.params[i].id} [rbp + {offset}]")
-            # * parameter offsets are made negative since they are accessed opposite to localVars
-            # could be weird, might want to flip localVars to be negative instead
-            node.params[i].stackOffset = -offset 
-        self.indentation -= 1  # end parameters
-
-        self.indentation -= 1  # end function header
-
-        self.printComment ("Body")
-        self.indentation += 1
-        node.body.accept (self)
-        self.indentation -= 1
-
-        # return constructed class instance
-        self.printCode (f"mov rax, qword [rbp - {node.parentClass.thisStackOffset}] ; __this")   
-
-        # FUNCTION EPILOGUE
-        # extra return statement for if return is not provided 
-        self.printComment ("Function Epilogue")
-        self.printCode ("mov rsp, rbp ; remove local vars + unpopped pushes")
-        self.printCode ("pop rbp")
-        self.printCode ("ret")
-
-        self.indentation -= 1
-
-        self.printCode (f"{endLabel}:")
-
-        self.printComment (f"End Constructor Declaration - {node.scopeName}")
-        self.printSubDivider ()
-        self.printNewline ()
-
-        # remove scope level 
-        self.scopeNames.pop ()
+        print("ERROR: ConstructorDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitEnumDeclarationNode (self, node):
-
-        self.printSubDivider ()
-        self.printComment (f"Enum Declaration - {node.scopeName}")
-
-        self.indentation += 1
-
-        i = 0
-        for field in node.fields:
-            # variable names are modified by its scope 
-            scopeName = ["__enum__", "".join (self.scopeNames), "____", node.id, "____", field.id]
-            field.scopeName = "".join(scopeName)
-            self.printCode (f"ASSIGN {field.scopeName} {i}")
-            i += 1
-
-        self.indentation -= 1
-
-        self.printComment (f"End Enum Declaration - {node.scopeName}")
-        self.printSubDivider ()
-        self.printNewline ()
+        print("ERROR: EnumDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitFunctionTemplateNode (self, node):
-        self.printDivider ()
-        self.printComment (f"Function Template - {node.scopeName}")
-
-        self.indentation += 1
-
-        self.printComment (f"Instances:")
-        self.indentation += 1
-        for instance in node.instantiations:
-            node.instantiations[instance].accept (self)
-
-        self.indentation -= 1
-        self.indentation -= 1
-
-        self.printComment (f"End Function Template - {node.scopeName}")
-        self.printDivider ()
-        self.printNewline ()
+        print("ERROR: FunctionTemplateNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitClassTemplateDeclarationNode (self, node):
-        self.printDivider ()
-        self.printComment (f"Class Template - {node.scopeName}")
-
-        self.indentation += 1
-
-        self.printComment (f"Instances:")
-        self.indentation += 1
-        for instance in node.instantiations:
-            node.instantiations[instance].accept (self)
-
-        self.indentation -= 1
-        self.indentation -= 1
-
-        self.printComment (f"End Class Template - {node.scopeName}")
-        self.printDivider ()
-        self.printNewline ()
+        print("ERROR: ClassTemplateDeclarationNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitStatementNode (self, node):
         pass
 
     def visitIfStatementNode (self, node):
-
-        self.printSubDivider ()
-        self.printComment ("If-Statement")
-
         # unique codes for jump labels 
         ifIndex = self.jumpIndex
-        elifIndex = 0
         self.jumpIndex += 1
+        elifIndex = 0
 
         # start with . because they are local to 
         # the function that they are contained in
         # * might be able to use this in more cases
-        elseLabel = f".__else__{ifIndex}"
-        endLabel = f".__endif__{ifIndex}"
+        ifBodyLabel = f"if_body{ifIndex}"
+        firstElifLabel = f"elif_cond{ifIndex}x{elifIndex}"
+        elseBodyLabel = f"else_body{ifIndex}"
+        ifEndLabel = f"if_end{ifIndex}"
 
         # create new scope level 
-        self.scopeNames += [f"__if__{ifIndex}"]
+        self.scopeNames += [ifBodyLabel]
 
-        self.indentation += 1
-
-        self.printComment ("Condition")
-        self.indentation += 1
-        # condition is an expression 
-        # that gets evaluated and the result 
-        # should be stored on the stack 
-        node.cond.accept (self)
-        # get condition result from stack
-        self.printCode ("pop rdx ; __cond")
-
-        # jump if false - negation of original condition
-        self.printCode ("cmp rdx, 0 ; ensure condition is true")
+        # if-statement Condition
+        # NOTE: No need to contain first if condition in a block
+        # just add to current block
+        condReg = node.cond.accept (self)
+        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
         # jump to next elif if there is one 
         if (len(node.elifs) > 0):
-            firstElif = f".__elif__{ifIndex}x{elifIndex}"
-            self.printCode (f"je {firstElif} ; jump to first elif")
-        # no elifs but has an else
+            falseBlockExpr = irast.BasicBlockExpressionNode (firstElifLabel, None, None, None)
+        # no elifs so jump to else if there is one
         elif node.elseStmt != None:
-            self.printCode (f"je {elseLabel} ; jump to else")
+            falseBlockExpr = irast.BasicBlockExpressionNode (elseBodyLabel, None, None, None)
         # no elif or else, jump to end of if-chain
         else:
-            self.printCode (f"je {endLabel} ; jump to end")
-        self.indentation -= 1
+            falseBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
+        # jcmp (int32(%cmp), block(if_body), block(<falseBlock>))
+        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        bodyBlockExpr = irast.BasicBlockExpressionNode (ifBodyLabel, None, None, None)
+        falseBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        arg0 = irast.ArgumentExpressionNode (condRegType, condReg)
+        arg1 = irast.ArgumentExpressionNode (bodyBlockExprType, bodyBlockExpr)
+        arg2 = irast.ArgumentExpressionNode (falseBlockExprType, falseBlockExpr)
+        instruction = irast.InstructionNode (None, "jcmp", [arg0, arg1, arg2])
+        self.containingBasicBlock.instructions += [instruction]
 
         # print the body of if 
-        self.printComment ("Body")
-        self.indentation += 1
+        bodyBlock = irast.BasicBlockNode (ifBodyLabel, [])
+        self.containingIRFunction.basicBlocks += [bodyBlock]
+        self.containingBasicBlock = bodyBlock
         node.body.accept (self)
-        self.indentation -= 1
-
-        # add jump to end of if 
-        # skips over elifs and else
-        self.printCode (f"jmp {endLabel} ; jump to end of condition chain")
+        # Unconditionally jump to the end of the if
+        # jmp (block(if_end))
+        ifEndBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        ifEndBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
+        arg0 = irast.ArgumentExpressionNode (ifEndBlockExprType, ifEndBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
         # exit if scope
         self.scopeNames.pop ()
 
-        # print elifs 
+        # print elifs
         for i in range(len(node.elifs)):
             elifNode = node.elifs[i]
 
-            self.printSubDivider ()
-            self.printComment ("Elif-Statement")
-            self.printLabel (f".__elif__{ifIndex}x{elifIndex}:")
-            elifIndex += 1
-
+            elifCondLabel = f"elif_cond{ifIndex}x{elifIndex}"
+            elifBodyLabel = f"elif_body{ifIndex}x{elifIndex}"
             # create new scope level 
             self.scopeNames += [f"__elif__{ifIndex}x{elifIndex}"]
 
-            self.indentation += 1
-
-            self.printComment ("Condition")
-            # condition is an expression 
-            # that gets evaluated and the result 
-            # should be stored on the stack 
-            elifNode.cond.accept (self)
-
-            # get condition result from stack
-            self.printCode ("pop rdx ; __cond")
-
-            # jump if false - negation of original condition
-            self.printCode ("cmp rdx, 0 ; ensure condition is true")
+            # Elif condition
+            condBlock = irast.BasicBlockNode (elifCondLabel, [])
+            self.containingIRFunction.basicBlocks += [condBlock]
+            self.containingBasicBlock = condBlock
+            condReg = elifNode.cond.accept (self)
+            condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
             # jump to next elif if there is one 
             if (i+1 < len(node.elifs)):
-                nextElif = f".__elif__{ifIndex}x{elifIndex}"
-                self.printCode (f"je {nextElif}")
-            # no more elifs but has an else
+                nextElifLabel = f"elif_cond{ifIndex}x{elifIndex+1}"
+                falseBlockExpr = irast.BasicBlockExpressionNode (nextElifLabel, None, None, None)
+            # no elifs so jump to else if there is one
             elif node.elseStmt != None:
-                self.printCode (f"je {elseLabel}")
-            # no more elif nor else, jump to end of if-chain
-            # skips over body 
+                falseBlockExpr = irast.BasicBlockExpressionNode (elseBodyLabel, None, None, None)
+            # no elif or else, jump to end of if-chain
             else:
-                self.printCode (f"je {endLabel}")
+                falseBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
+            # jcmp (int32(%cmp), block(elif_body), block(<falseBlock>))
+            condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+            bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+            bodyBlockExpr = irast.BasicBlockExpressionNode (elifBodyLabel, None, None, None)
+            falseBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+            arg0 = irast.ArgumentExpressionNode (condRegType, condReg)
+            arg1 = irast.ArgumentExpressionNode (bodyBlockExprType, bodyBlockExpr)
+            arg2 = irast.ArgumentExpressionNode (falseBlockExprType, falseBlockExpr)
+            instruction = irast.InstructionNode (None, "jcmp", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
 
-            # Body
-            self.printComment ("Body")
+            # Body of elif
+            bodyBlock = irast.BasicBlockNode (elifBodyLabel, [])
+            self.containingIRFunction.basicBlocks += [bodyBlock]
+            self.containingBasicBlock = bodyBlock
             elifNode.body.accept (self)
-
-            # add jump to end of if 
-            self.printCode (f"jmp {endLabel}")
-
-            self.indentation -= 1
-
-            self.printSubDivider ()
+            # Unconditionally jump to the end of the if
+            # jmp (block(if_end))
+            ifEndBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+            ifEndBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
+            arg0 = irast.ArgumentExpressionNode (ifEndBlockExprType, ifEndBlockExpr)
+            instruction = irast.InstructionNode (None, "jmp", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
 
             # exit scope
             self.scopeNames.pop ()
 
-        # print else 
+            # move to next elif
+            elifIndex += 1
+
+        # print else if there is one
         if node.elseStmt != None:
-            self.printSubDivider ()
-            self.printComment ("Else-Statement")
-            self.printLabel (f"{elseLabel}:")
+            # create new scope level
+            self.scopeNames += [elseBodyLabel]
 
-            # create new scope level 
-            self.scopeNames += [elseLabel]
-
+            # Body of else
+            bodyBlock = irast.BasicBlockNode (elseBodyLabel, [])
+            self.containingIRFunction.basicBlocks += [bodyBlock]
+            self.containingBasicBlock = bodyBlock
             node.elseStmt.body.accept (self)
-
-            # jump to endif not necessary since else is always at the end 
-
-            self.printSubDivider ()
+            # Unconditionally jump to the end of the if
+            # jmp (block(if_end))
+            ifEndBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+            ifEndBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
+            arg0 = irast.ArgumentExpressionNode (ifEndBlockExprType, ifEndBlockExpr)
+            instruction = irast.InstructionNode (None, "jmp", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
 
             # exit scope
             self.scopeNames.pop ()
 
-        # end of if 
-        self.printComment ("End of if")
-        self.printLabel (f"{endLabel}:")
-
-        self.indentation -= 1
-
-        self.printSubDivider ()
+        # End of if
+        endBlock = irast.BasicBlockNode (ifEndLabel, [])
+        self.containingIRFunction.basicBlocks += [endBlock]
+        self.containingBasicBlock = endBlock
 
     def visitElifStatementNode (self, node):
         self.printComment ("*** Compiler Error: Elif node should not be used ")
@@ -904,67 +550,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.scopeNames.pop ()
 
     def visitWhileStatementNode (self, node):
-        self.printSubDivider ()
-        self.printComment ("While-Loop")
-
-        # unique codes for jump labels 
-        whileIndex = self.jumpIndex
-        self.jumpIndex += 1
-
-        whileLabel = f"__while__{whileIndex}"
-        endLabel = f"__endwhile__{whileIndex}"
-
-        # create new scope level 
-        self.scopeNames += [whileLabel]
-
-        # save loop info for break and continue statements
-        node.startLabel = whileLabel
-        node.breakLabel = endLabel
-        node.endLabel = endLabel
-        self.parentLoops += [node]
-
-        self.printLabel (f".{whileLabel}:")
-
-        self.indentation += 1
-
-        self.printComment ("Condition")
-        self.indentation += 1
-        # condition is an expression 
-        # that gets evaluated and the result 
-        # should be stored on the stack 
-        node.cond.accept (self)
-        # get condition result from stack
-        self.printCode ("pop rax ; __cond")
-
-        # jump if false - negation of original condition
-        self.printCode ("cmp rax, 0 ; __cond")
-        self.printCode (f"je .{endLabel}")
-
-        self.indentation -= 1
-
-        # print the body 
-        self.printComment ("Body")
-        self.indentation += 1
-        node.body.accept (self)
-        self.indentation -= 1
-
-        # add repeating jump
-        self.printCode (f"jmp .{whileLabel}")
-
-        # end of while 
-        self.printComment ("End of While")
-        self.printLabel (f".{endLabel}:")
-
-        # end of loop context 
-        # remove from current loop context
-        self.parentLoops.pop ()
-
-        self.indentation -= 1
-
-        self.printSubDivider ()
-
-        # exit scope 
-        self.scopeNames.pop ()
+        print("ERROR: WhileStatementNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitExpressionStatementNode (self, node):
         # ignore variable decl
@@ -975,21 +563,25 @@ class IRGeneratorVisitor (ASTVisitor):
     def visitReturnStatementNode (self, node):
         # if there is a value provided 
         if node.expr != None:
-            # node.expr.accept (self)
-            pass
+            retValReg = node.expr.accept (self)
+            retValType = node.expr.type.accept (self)
+            arg0 = irast.ArgumentExpressionNode (retValType, retValReg)
+            instruction = irast.InstructionNode (None, "return", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
         # no value provided 
         else:
-            pass
+            instruction = irast.InstructionNode (None, "return", [])
+            self.containingBasicBlock.instructions += [instruction]
 
     def visitContinueStatementNode (self, node):
-        self.printComment (f"Continue in {self.parentLoops[-1].startLabel}")
-        # goes to the start of the loop (aka the condition)
-        self.printCode (f"jmp .{self.parentLoops[-1].startLabel}")
+        print("ERROR: ContinueStatementNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitBreakStatementNode (self, node):
-        self.printComment (f"Break out of {self.parentLoops[-1].startLabel}")
-        # goes to the end of the loop
-        self.printCode (f"jmp .{self.parentLoops[-1].breakLabel}")
+        print("ERROR: BreakStatementNode not implemented")
+        printToken (node.token)
+        exit(1)
 
     def visitCodeBlockNode (self, node):
         # create new scope level 
@@ -1099,6 +691,9 @@ class IRGeneratorVisitor (ASTVisitor):
         return rhsReg
 
     def visitLogicalOrExpressionNode (self, node):
+        print("ERROR: LogicalOrExpressionNode not implemented")
+        printToken (node.token)
+        exit(1)
         self.printComment ("OR")
 
         self.indentation += 1
@@ -1155,8 +750,10 @@ class IRGeneratorVisitor (ASTVisitor):
 
         self.indentation -= 1
 
-    # *** might need to edit this for short circuit eval***
     def visitLogicalAndExpressionNode (self, node):
+        print("ERROR: LogicalAndExpressionNode not implemented")
+        printToken (node.token)
+        exit(1)
         self.printComment ("AND")
 
         self.indentation += 1
@@ -1283,6 +880,9 @@ class IRGeneratorVisitor (ASTVisitor):
             
     #  ++ | -- | + | - | ! | ~
     def visitUnaryLeftExpressionNode (self, node):
+        print("ERROR: UnaryLeftExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         if node.op.lexeme == "++":
             self.printComment (f"Pre-Increment - {node.rhs.type}")
         elif node.op.lexeme == "--":
@@ -1520,6 +1120,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitPostIncrementExpressionNode(self, node):
+        print("ERROR: PostIncrementExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         self.printComment ("Post-Increment")
 
         self.indentation += 1
@@ -1618,6 +1221,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitPostDecrementExpressionNode (self, node):
+        print("ERROR: PostDecrementExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         self.printComment ("Post-Decrement")
 
         self.indentation += 1
@@ -1739,6 +1345,9 @@ class IRGeneratorVisitor (ASTVisitor):
         return retReg
 
     def visitMemberAccessorExpressionNode (self, node):
+        print("ERROR: MemberAccessorExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
 
         # static calls 
         # lhs is not an identifier 
@@ -1777,6 +1386,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitFieldAccessorExpressionNode (self, node):
+        print("ERROR: FieldAccessorExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         self.printComment ("Field Accessor")
 
         self.indentation += 1
@@ -1799,6 +1411,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitMethodAccessorExpressionNode (self, node):
+        print("ERROR: MethodAccessorExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         if node.decl.isVirtual:
             self.printComment (f"Virtual Method Call - {node.decl.signatureNoScope} -> {node.decl.type}")
         else:
@@ -1885,6 +1500,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
 
     def visitThisExpressionNode (self, node):
+        print("ERROR: ThisExpressionNode not implemented")
+        printToken (node.op)
+        exit(1)
         self.printComment (f"This keyword")
         self.indentation += 1
         # push [rbp - 8] ; this 
@@ -1923,6 +1541,9 @@ class IRGeneratorVisitor (ASTVisitor):
         return resultReg
 
     def visitConstructorCallExpressionNode (self, node):
+        print("ERROR: ConstructorCallExpressionNode not implemented")
+        printToken (node.token)
+        exit(1)
         self.printComment (f"Constructor Call - {node.decl.signature} -> {node.decl.parentClass.type}")
 
         self.indentation += 1
@@ -1982,6 +1603,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.indentation -= 1
     
     def visitSizeofExpressionNode(self, node):
+        print("ERROR: SizeofExpressionNode not implemented")
+        printToken (node.token)
+        exit(1)
         self.printComment ("Sizeof Operator")
         self.indentation += 1
 
@@ -2024,7 +1648,9 @@ class IRGeneratorVisitor (ASTVisitor):
         return irast.NullExpressionNode ()
 
     def visitListConstructorExpressionNode (self, node):
-
+        print("ERROR: ListConstructorExpressionNode not implemented")
+        printToken (node.token)
+        exit(1)
         self.printComment ("Array Constructor")
 
         self.indentation += 1

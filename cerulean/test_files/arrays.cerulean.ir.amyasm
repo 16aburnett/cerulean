@@ -369,11 +369,13 @@ __main__print__int32__1__int32__entry:
    ASSIGN __str[1] '\0'
    PUSH __str
    CALL __builtin__print__char__1
+   RESPONSE __main__print__int32__1__int32__0
    POP _arg0
    ASSIGN __main__print__int32__1__int32__1 __main__print__int32__1__int32__array_ptr[0]
    ASSIGN __main__print__int32__1__int32__2 __main__print__int32__1__int32__1[0]
    PUSH __main__print__int32__1__int32__2
    CALL __builtin__print__int32
+   RESPONSE __main__print__int32__1__int32__3
    POP _arg0
    MALLOC __main__print__int32__1__int32__i_ptr 1
    ASSIGN __main__print__int32__1__int32__i_ptr[0] 1
@@ -392,12 +394,14 @@ __main__print__int32__1__int32__for_body:
    ASSIGN __str[2] '\0'
    PUSH __str
    CALL __builtin__print__char__1
+   RESPONSE __main__print__int32__1__int32__7
    POP _arg0
    ASSIGN __main__print__int32__1__int32__8 __main__print__int32__1__int32__array_ptr[0]
    ASSIGN __main__print__int32__1__int32__9 __main__print__int32__1__int32__i_ptr[0]
    ASSIGN __main__print__int32__1__int32__10 __main__print__int32__1__int32__8[__main__print__int32__1__int32__9]
    PUSH __main__print__int32__1__int32__10
    CALL __builtin__print__int32
+   RESPONSE __main__print__int32__1__int32__11
    POP _arg0
    JUMP __main__print__int32__1__int32__for_update
 __main__print__int32__1__int32__for_update:
@@ -411,6 +415,7 @@ __main__print__int32__1__int32__for_end:
    ASSIGN __str[1] '\0'
    PUSH __str
    CALL __builtin__println__char__1
+   RESPONSE __main__print__int32__1__int32__14
    POP _arg0
    RETURN 0
 __end____main____print__int32__1__int32__ptr__int32:
@@ -424,15 +429,18 @@ __main__main__entry:
    PUSH __main__main__N
    PUSH __main__main__values
    CALL __main____fill__int32__1__int32__int32__ptr__int32__int32
+   RESPONSE __main__main__1
    POP _arg0
    POP _arg1
    POP _arg2
    PUSH __main__main__N
    PUSH __main__main__values
    CALL __main____print__int32__1__int32__ptr__int32
+   RESPONSE __main__main__2
    POP _arg0
    POP _arg1
    FREE __main__main__values
+   RETURN 0
    RETURN 0
 __end____main____main:
 __start:

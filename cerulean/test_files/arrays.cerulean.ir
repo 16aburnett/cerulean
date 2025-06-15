@@ -82,6 +82,7 @@ function int32 @main () {
         %1 = call @fill__int32__1__int32__int32 (ptr(%values), int32(%N), int32(7))
         %2 = call @print__int32__1__int32 (ptr(%values), int32(%N))
         free (ptr(%values))
+        return (int32(0))
     }
 }
 

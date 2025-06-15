@@ -1,0 +1,114 @@
+ProgramNode:
+|   Function: min int32:int32->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: a
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: b
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   If:
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LTE', lexeme='<=', value='<=', line=3, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_conditionals.cerulean', originalLine=3, includeChain=[], lineStr='    if (a <= b)') int32
+|   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   ReturnStatement:
+|   |   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   ReturnStatement:
+|   |   |   |   |   |   Identifier: b int32
+|   Function: max int32:int32->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: a
+|   |   Parameter: 
+|   |   |   Type: Type.INT32 int32
+|   |   |   Name: b
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   If:
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='GTE', lexeme='>=', value='>=', line=9, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_conditionals.cerulean', originalLine=9, includeChain=[], lineStr='    if (a >= b)') int32
+|   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   ReturnStatement:
+|   |   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   ReturnStatement:
+|   |   |   |   |   |   Identifier: b int32
+|   Function: main void->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=15, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_conditionals.cerulean', originalLine=15, includeChain=[], lineStr='    int32 x = 10;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: x
+|   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   If:
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='GT', lexeme='>', value='>', line=18, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_conditionals.cerulean', originalLine=18, includeChain=[], lineStr='    if (x > 10) {') int32
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   String Literal: "x > 10" char[]
+|   |   |   |   |   Elif:
+|   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   EqualityExpression: Token(type='EQ', lexeme='==', value='==', line=20, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_conditionals.cerulean', originalLine=20, includeChain=[], lineStr='    } elif (x == 10) {') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   String Literal: "x == 10" char[]
+|   |   |   |   |   Else:
+|   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   String Literal: "x < 10" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Function Call: int32
+|   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   Identifier: min 
+|   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Function Call: int32
+|   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   Identifier: max 
+|   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   Int Literal: 7 int32
+|   |   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ReturnStatement:
+|   |   |   |   |   |   Int Literal: 0 int32

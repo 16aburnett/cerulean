@@ -361,6 +361,7 @@ __main__print_greeting__char__1__int32__for_body:
    ASSIGN __main__print_greeting__char__1__int32__5 __main__print_greeting__char__1__int32__3[__main__print_greeting__char__1__int32__4]
    PUSH __main__print_greeting__char__1__int32__5
    CALL __builtin__print__char
+   RESPONSE __main__print_greeting__char__1__int32__6
    POP _arg0
    JUMP __main__print_greeting__char__1__int32__for_update
 __main__print_greeting__char__1__int32__for_update:
@@ -370,6 +371,7 @@ __main__print_greeting__char__1__int32__for_update:
    JUMP __main__print_greeting__char__1__int32__for_cond
 __main__print_greeting__char__1__int32__for_end:
    CALL __builtin__println
+   RESPONSE __main__print_greeting__char__1__int32__9
    RETURN 0
 __end____main____print_greeting__char__1__int32__ptr__int32:
    JUMP __end____main____main
@@ -380,8 +382,10 @@ __main__main__entry:
    PUSH __main__main__1
    PUSH __main__main__0
    CALL __main____print_greeting__char__1__int32__ptr__int32
+   RESPONSE __main__main__2
    POP _arg0
    POP _arg1
+   RETURN 0
    RETURN 0
 __end____main____main:
 __start:
