@@ -8,28 +8,28 @@ function void @print_greeting__char__1__int32 (ptr(%greeting), int32(%length)) {
         store (ptr(%length.ptr), int32(0), int32(%length))
         %i.ptr = alloca (type(int32), int32(1))
         store (ptr(%i.ptr), int32(0), int32(0))
-        jmp (block(for_cond))
+        jmp (block(for_cond1))
     }
-    block for_cond {
+    block for_cond1 {
         %0 = load (type(int32), ptr(%i.ptr), int32(0))
         %1 = load (type(int32), ptr(%length.ptr), int32(0))
         %2 = clt (int32(%0), int32(%1))
-        jcmp (int32(%2), block(for_body), block(for_end))
+        jcmp (int32(%2), block(for_body1), block(for_end1))
     }
-    block for_body {
+    block for_body1 {
         %3 = load (type(ptr), ptr(%greeting.ptr), int32(0))
         %4 = load (type(int32), ptr(%i.ptr), int32(0))
         %5 = load (type(char), ptr(%3), int32(%4))
         %6 = call @__builtin__print__char (char(%5))
-        jmp (block(for_update))
+        jmp (block(for_update1))
     }
-    block for_update {
+    block for_update1 {
         %7 = load (type(int32), ptr(%i.ptr), int32(0))
         %8 = add (int32(%7), int32(1))
         store (ptr(%i.ptr), int32(0), int32(%8))
-        jmp (block(for_cond))
+        jmp (block(for_cond1))
     }
-    block for_end {
+    block for_end1 {
         %9 = call @__builtin__println ()
     }
 }

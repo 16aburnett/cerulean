@@ -1406,6 +1406,7 @@ class SymbolTableVisitor (ASTVisitor):
                 printToken (node.token)
                 print ()
                 self.wasSuccessful = False
+                return
             # variable has declaration
             else:
                 # save declaration's type info

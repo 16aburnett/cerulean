@@ -1,0 +1,69 @@
+
+
+function int32 main () {
+    // For-loops are identical to C/C++ for-loops
+    for (int32 i = 0; i < 10; i = i + 1)
+    {
+        print (i);
+        print (' ');
+    }
+    println ();
+
+    // Using a different loop variable since scoping is not implemented yet
+    for (int32 j = 0; j < 10; j = j + 1)
+    {
+        print (j);
+        print (' ');
+    }
+    println ();
+
+    // While-loops are also identical to C/C++ while-loops
+    int32 k = 0;
+    while (k < 10) {
+        print (k);
+        print (' ');
+        k = k + 1;
+    }
+    println ();
+
+    // Nested loops
+    int32 N = 10;
+    for (int32 x = 0; x < N; x = x + 1)
+    {
+        for (int32 y = 0; y < N; y = y + 1)
+        {
+            if (x == y)
+                print ('.');
+            elif (N - 1 - y == x)
+                print ('.');
+            else
+                print ('x');
+            print (' ');
+        }
+        println ();
+    }
+
+    // Continue statement
+    println ("Continue when x is even:");
+    for (int32 a = 0; a < 10; a = a + 1)
+    {
+        if (a % 2 == 0)
+            continue;
+        print (a);
+        print (' ');
+    }
+    println ();
+
+    // Continue statement + infinite while loop condition
+    println ("Break when x > 5:");
+    int32 b = 0;
+    while (1)
+    {
+        if (b > 5)
+            break;
+        print (b);
+        print (' ');
+        b = b + 1;
+    }
+    println ();
+}

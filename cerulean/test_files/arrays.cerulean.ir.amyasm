@@ -331,28 +331,28 @@ __main__fill__int32__1__int32__int32__entry:
    ASSIGN __main__fill__int32__1__int32__int32__value_ptr[0] __main__fill__int32__1__int32__int32__value
    MALLOC __main__fill__int32__1__int32__int32__i_ptr 1
    ASSIGN __main__fill__int32__1__int32__int32__i_ptr[0] 0
-   JUMP __main__fill__int32__1__int32__int32__for_cond
-__main__fill__int32__1__int32__int32__for_cond:
+   JUMP __main__fill__int32__1__int32__int32__for_cond1
+__main__fill__int32__1__int32__int32__for_cond1:
    ASSIGN __main__fill__int32__1__int32__int32__0 __main__fill__int32__1__int32__int32__i_ptr[0]
    ASSIGN __main__fill__int32__1__int32__int32__1 __main__fill__int32__1__int32__int32__N_ptr[0]
    LT __main__fill__int32__1__int32__int32__2, __main__fill__int32__1__int32__int32__0, __main__fill__int32__1__int32__int32__1
    CMP __main__fill__int32__1__int32__int32__2, 1 // set flag if cmp is true
-   JEQ __main__fill__int32__1__int32__int32__for_body // jump to true block
-   JUMP __main__fill__int32__1__int32__int32__for_end // otherwise jump to false block
-__main__fill__int32__1__int32__int32__for_body:
+   JEQ __main__fill__int32__1__int32__int32__for_body1 // jump to true block
+   JUMP __main__fill__int32__1__int32__int32__for_end1 // otherwise jump to false block
+__main__fill__int32__1__int32__int32__for_body1:
    ASSIGN __main__fill__int32__1__int32__int32__3 __main__fill__int32__1__int32__int32__i_ptr[0]
    ASSIGN __main__fill__int32__1__int32__int32__4 __main__fill__int32__1__int32__int32__value_ptr[0]
    MULTIPLY __main__fill__int32__1__int32__int32__5 __main__fill__int32__1__int32__int32__3 __main__fill__int32__1__int32__int32__4
    ASSIGN __main__fill__int32__1__int32__int32__6 __main__fill__int32__1__int32__int32__array_ptr[0]
    ASSIGN __main__fill__int32__1__int32__int32__7 __main__fill__int32__1__int32__int32__i_ptr[0]
    ASSIGN __main__fill__int32__1__int32__int32__6[__main__fill__int32__1__int32__int32__7] __main__fill__int32__1__int32__int32__5
-   JUMP __main__fill__int32__1__int32__int32__for_update
-__main__fill__int32__1__int32__int32__for_update:
+   JUMP __main__fill__int32__1__int32__int32__for_update1
+__main__fill__int32__1__int32__int32__for_update1:
    ASSIGN __main__fill__int32__1__int32__int32__8 __main__fill__int32__1__int32__int32__i_ptr[0]
    ADD __main__fill__int32__1__int32__int32__9 __main__fill__int32__1__int32__int32__8 1
    ASSIGN __main__fill__int32__1__int32__int32__i_ptr[0] __main__fill__int32__1__int32__int32__9
-   JUMP __main__fill__int32__1__int32__int32__for_cond
-__main__fill__int32__1__int32__int32__for_end:
+   JUMP __main__fill__int32__1__int32__int32__for_cond1
+__main__fill__int32__1__int32__int32__for_end1:
    RETURN 0
 __end____main____fill__int32__1__int32__int32__ptr__int32__int32:
    JUMP __end____main____print__int32__1__int32__ptr__int32
@@ -379,15 +379,15 @@ __main__print__int32__1__int32__entry:
    POP _arg0
    MALLOC __main__print__int32__1__int32__i_ptr 1
    ASSIGN __main__print__int32__1__int32__i_ptr[0] 1
-   JUMP __main__print__int32__1__int32__for_cond
-__main__print__int32__1__int32__for_cond:
+   JUMP __main__print__int32__1__int32__for_cond3
+__main__print__int32__1__int32__for_cond3:
    ASSIGN __main__print__int32__1__int32__4 __main__print__int32__1__int32__i_ptr[0]
    ASSIGN __main__print__int32__1__int32__5 __main__print__int32__1__int32__N_ptr[0]
    LT __main__print__int32__1__int32__6, __main__print__int32__1__int32__4, __main__print__int32__1__int32__5
    CMP __main__print__int32__1__int32__6, 1 // set flag if cmp is true
-   JEQ __main__print__int32__1__int32__for_body // jump to true block
-   JUMP __main__print__int32__1__int32__for_end // otherwise jump to false block
-__main__print__int32__1__int32__for_body:
+   JEQ __main__print__int32__1__int32__for_body3 // jump to true block
+   JUMP __main__print__int32__1__int32__for_end3 // otherwise jump to false block
+__main__print__int32__1__int32__for_body3:
    MALLOC __str 3
    ASSIGN __str[0] ','
    ASSIGN __str[1] ' '
@@ -403,13 +403,13 @@ __main__print__int32__1__int32__for_body:
    CALL __builtin__print__int32
    RESPONSE __main__print__int32__1__int32__11
    POP _arg0
-   JUMP __main__print__int32__1__int32__for_update
-__main__print__int32__1__int32__for_update:
+   JUMP __main__print__int32__1__int32__for_update3
+__main__print__int32__1__int32__for_update3:
    ASSIGN __main__print__int32__1__int32__12 __main__print__int32__1__int32__i_ptr[0]
    ADD __main__print__int32__1__int32__13 __main__print__int32__1__int32__12 1
    ASSIGN __main__print__int32__1__int32__i_ptr[0] __main__print__int32__1__int32__13
-   JUMP __main__print__int32__1__int32__for_cond
-__main__print__int32__1__int32__for_end:
+   JUMP __main__print__int32__1__int32__for_cond3
+__main__print__int32__1__int32__for_end3:
    MALLOC __str 2
    ASSIGN __str[0] ']'
    ASSIGN __str[1] '\0'

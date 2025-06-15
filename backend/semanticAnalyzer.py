@@ -170,8 +170,19 @@ class SemanticAnalysisVisitor (ASTVisitor):
         # this is helpful for ensuring RETURN is in a function
         # and for ensuring the value being returned matches the function's return type 
         self.containingFunction += [node]
-        for basicBlock in node.basicBlocks:
+        for i in range (0, len (node.basicBlocks)):
+            basicBlock = node.basicBlocks[i]
             basicBlock.accept (self)
+            # Ensure this basic block name is unique
+            for j in range (i + 1, len(node.basicBlocks)):
+                if node.basicBlocks[i].name == node.basicBlocks[j].name:
+                    print (f"Semantic Error: Redeclaration of basic block '{node.basicBlocks[i].name}' in function '{node.signature}'")
+                    print (f"   Original:")
+                    printToken (node.basicBlocks[i].token, "      ")
+                    print (f"   Redeclaration:")
+                    printToken (node.basicBlocks[j].token, "      ")
+                    print ()
+                    self.wasSuccessful = False
         self.containingFunction.pop ()
         self.table.exitScope ()
 

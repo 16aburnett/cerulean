@@ -470,24 +470,20 @@ class IRGeneratorVisitor (ASTVisitor):
         # unique codes for jump labels 
         forIndex = self.jumpIndex
         self.jumpIndex += 1
-        forLabel = f"__for__{forIndex}"
-        condLabel = f"__forcond__{forIndex}"
-        elseLabel = f"__forelse__{forIndex}"
-        endLabel = f"__endfor__{forIndex}"
+        forLabel    = f"for{forIndex}"
+        condLabel   = f"for_cond{forIndex}"
+        bodyLabel   = f"for_body{forIndex}"
+        updateLabel = f"for_update{forIndex}"
+        endLabel    = f"for_end{forIndex}"
 
         # create new scope level 
         self.scopeNames += [forLabel]
 
         # save loop info for break and continue statements
-        node.startLabel = forLabel
-        # break label should be end of loop
+        node.startLabel = condLabel
+        node.continueLabel = updateLabel
         node.breakLabel = endLabel
-        # end label should be the location to go 
-        # when loop terminates normally
-        if (node.elseStmt != None):
-            node.endLabel = elseLabel
-        else:
-            node.endLabel = endLabel
+        node.endLabel = endLabel
         self.parentLoops += [node]
 
         # Init
@@ -495,22 +491,22 @@ class IRGeneratorVisitor (ASTVisitor):
         node.init.accept (self)
         # unconditionally jump to for condition
         condBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
-        condBlockExpr = irast.BasicBlockExpressionNode ("for_cond", None, None, None)
+        condBlockExpr = irast.BasicBlockExpressionNode (condLabel, None, None, None)
         arg0 = irast.ArgumentExpressionNode (condBlockExprType, condBlockExpr)
         instruction = irast.InstructionNode (None, "jmp", [arg0])
         self.containingBasicBlock.instructions += [instruction]
 
         # Condition
-        condBlock = irast.BasicBlockNode ("for_cond", [])
+        condBlock = irast.BasicBlockNode (condLabel, [])
         self.containingIRFunction.basicBlocks += [condBlock]
         self.containingBasicBlock = condBlock
         condReg = node.cond.accept (self)
         # jump to body or end based on loop condition
         condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
         bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
-        bodyBlockExpr = irast.BasicBlockExpressionNode ("for_body", None, None, None)
+        bodyBlockExpr = irast.BasicBlockExpressionNode (bodyLabel, None, None, None)
         endBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
-        endBlockExpr = irast.BasicBlockExpressionNode ("for_end", None, None, None)
+        endBlockExpr = irast.BasicBlockExpressionNode (endLabel, None, None, None)
         arg0 = irast.ArgumentExpressionNode (condRegType, condReg)
         arg1 = irast.ArgumentExpressionNode (bodyBlockExprType, bodyBlockExpr)
         arg2 = irast.ArgumentExpressionNode (endBlockExprType, endBlockExpr)
@@ -518,41 +514,97 @@ class IRGeneratorVisitor (ASTVisitor):
         self.containingBasicBlock.instructions += [instruction]
 
         # Body
-        bodyBlock = irast.BasicBlockNode ("for_body", [])
+        bodyBlock = irast.BasicBlockNode (bodyLabel, [])
         self.containingIRFunction.basicBlocks += [bodyBlock]
         self.containingBasicBlock = bodyBlock
         node.body.accept (self)
         # unconditionally jump to update
         updateBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
-        updateBlockExpr = irast.BasicBlockExpressionNode ("for_update", None, None, None)
+        updateBlockExpr = irast.BasicBlockExpressionNode (updateLabel, None, None, None)
         arg0 = irast.ArgumentExpressionNode (updateBlockExprType, updateBlockExpr)
         instruction = irast.InstructionNode (None, "jmp", [arg0])
         self.containingBasicBlock.instructions += [instruction]
 
         # Update
-        updateBlock = irast.BasicBlockNode ("for_update", [])
+        updateBlock = irast.BasicBlockNode (updateLabel, [])
         self.containingIRFunction.basicBlocks += [updateBlock]
         self.containingBasicBlock = updateBlock
         node.update.accept (self)
         # Unconditionally jump back to the condition
         condBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
-        condBlockExpr = irast.BasicBlockExpressionNode ("for_cond", None, None, None)
+        condBlockExpr = irast.BasicBlockExpressionNode (condLabel, None, None, None)
         arg0 = irast.ArgumentExpressionNode (condBlockExprType, condBlockExpr)
         instruction = irast.InstructionNode (None, "jmp", [arg0])
         self.containingBasicBlock.instructions += [instruction]
 
         # End of for
-        endBlock = irast.BasicBlockNode ("for_end", [])
+        endBlock = irast.BasicBlockNode (endLabel, [])
         self.containingIRFunction.basicBlocks += [endBlock]
         self.containingBasicBlock = endBlock
 
         # exit scope
+        self.parentLoops.pop ()
         self.scopeNames.pop ()
 
     def visitWhileStatementNode (self, node):
-        print("ERROR: WhileStatementNode not implemented")
-        printToken (node.token)
-        exit(1)
+        # Unique codes for jump labels
+        whileIndex = self.jumpIndex
+        self.jumpIndex += 1
+        whileLabel = f"while{whileIndex}"
+        condLabel  = f"while_cond{whileIndex}"
+        bodyLabel  = f"while_body{whileIndex}"
+        endLabel   = f"while_end{whileIndex}"
+
+        # create new scope level
+        # This will encasulate the variables in the condition and body
+        self.scopeNames += [whileLabel]
+
+        # save loop info for break and continue statements
+        node.startLabel = condLabel
+        node.continueLabel = condLabel
+        node.breakLabel = endLabel
+        node.endLabel = endLabel
+        self.parentLoops += [node]
+
+        # Condition
+        condBlock = irast.BasicBlockNode (condLabel, [])
+        self.containingIRFunction.basicBlocks += [condBlock]
+        self.containingBasicBlock = condBlock
+        condReg = node.cond.accept (self)
+        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        # jump to body or end based on loop condition
+        # jcmp (int32(%cond), block(while_body), block(while_end))
+        bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        bodyBlockExpr = irast.BasicBlockExpressionNode (bodyLabel, None, None, None)
+        endBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        endBlockExpr = irast.BasicBlockExpressionNode (endLabel, None, None, None)
+        arg0 = irast.ArgumentExpressionNode (condRegType, condReg)
+        arg1 = irast.ArgumentExpressionNode (bodyBlockExprType, bodyBlockExpr)
+        arg2 = irast.ArgumentExpressionNode (endBlockExprType, endBlockExpr)
+        instruction = irast.InstructionNode (None, "jcmp", [arg0, arg1, arg2])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # Body
+        bodyBlock = irast.BasicBlockNode (bodyLabel, [])
+        self.containingIRFunction.basicBlocks += [bodyBlock]
+        self.containingBasicBlock = bodyBlock
+        node.body.accept (self)
+        # unconditionally jump to cond
+        # jmp (block(while_cond))
+        condBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        condBlockExpr = irast.BasicBlockExpressionNode (condLabel, None, None, None)
+        arg0 = irast.ArgumentExpressionNode (condBlockExprType, condBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # End of while
+        endBlock = irast.BasicBlockNode (endLabel, [])
+        self.containingIRFunction.basicBlocks += [endBlock]
+        self.containingBasicBlock = endBlock
+
+        # Leave scope
+        self.parentLoops.pop ()
+        self.scopeNames.pop ()
 
     def visitExpressionStatementNode (self, node):
         # ignore variable decl
@@ -574,14 +626,22 @@ class IRGeneratorVisitor (ASTVisitor):
             self.containingBasicBlock.instructions += [instruction]
 
     def visitContinueStatementNode (self, node):
-        print("ERROR: ContinueStatementNode not implemented")
-        printToken (node.token)
-        exit(1)
+        continueLabel = self.parentLoops[-1].continueLabel
+        # jmp (block(<loop_continue>))
+        continueBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        continueBlockExpr = irast.BasicBlockExpressionNode (continueLabel, None, None, None)
+        arg0 = irast.ArgumentExpressionNode (continueBlockExprType, continueBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
     def visitBreakStatementNode (self, node):
-        print("ERROR: BreakStatementNode not implemented")
-        printToken (node.token)
-        exit(1)
+        breakLabel = self.parentLoops[-1].breakLabel
+        # jmp (block(<loop_end>))
+        breakBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
+        breakBlockExpr = irast.BasicBlockExpressionNode (breakLabel, None, None, None)
+        arg0 = irast.ArgumentExpressionNode (breakBlockExprType, breakBlockExpr)
+        instruction = irast.InstructionNode (None, "jmp", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
 
     def visitCodeBlockNode (self, node):
         # create new scope level 

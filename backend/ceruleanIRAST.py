@@ -231,9 +231,10 @@ class FunctionNode (Node):
 
 class BasicBlockNode (Node):
     
-    def __init__(self, name, instructions):
+    def __init__(self, name, instructions, token=None):
         self.name = name
         self.instructions = instructions
+        self.token = token
         self.lineNumber = 0
         self.columnNumber = 0
 

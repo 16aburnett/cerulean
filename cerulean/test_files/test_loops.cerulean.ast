@@ -1,0 +1,318 @@
+ProgramNode:
+|   Function: main void->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=5, includeChain=[], lineStr='    for (int32 i = 0; i < 10; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: i
+|   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=5, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=5, includeChain=[], lineStr='    for (int32 i = 0; i < 10; i = i + 1)') int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=33, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=5, includeChain=[], lineStr='    for (int32 i = 0; i < 10; i = i + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=5, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=5, includeChain=[], lineStr='    for (int32 i = 0; i < 10; i = i + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Identifier: i int32
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=13, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=13, includeChain=[], lineStr='    for (int32 j = 0; j < 10; j = j + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: j
+|   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=13, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=13, includeChain=[], lineStr='    for (int32 j = 0; j < 10; j = j + 1)') int32
+|   |   |   |   |   |   |   Identifier: j int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=13, column=33, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=13, includeChain=[], lineStr='    for (int32 j = 0; j < 10; j = j + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: j int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=13, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=13, includeChain=[], lineStr='    for (int32 j = 0; j < 10; j = j + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: j int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Identifier: j int32
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=21, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=21, includeChain=[], lineStr='    int32 k = 0;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: k
+|   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   While:
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=22, column=14, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=22, includeChain=[], lineStr='    while (k < 10) {') int32
+|   |   |   |   |   |   |   Identifier: k int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Identifier: k int32
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=25, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=25, includeChain=[], lineStr='        k = k + 1;') int32
+|   |   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   |   Identifier: k int32
+|   |   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=25, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=25, includeChain=[], lineStr='        k = k + 1;') int32
+|   |   |   |   |   |   |   |   |   |   Identifier: k int32
+|   |   |   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=30, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=30, includeChain=[], lineStr='    int32 N = 10;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: N
+|   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=31, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=31, includeChain=[], lineStr='    for (int32 x = 0; x < N; x = x + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: x
+|   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=31, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=31, includeChain=[], lineStr='    for (int32 x = 0; x < N; x = x + 1)') int32
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=31, column=32, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=31, includeChain=[], lineStr='    for (int32 x = 0; x < N; x = x + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=31, column=36, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=31, includeChain=[], lineStr='    for (int32 x = 0; x < N; x = x + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   For:
+|   |   |   |   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=33, column=22, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=33, includeChain=[], lineStr='        for (int32 y = 0; y < N; y = y + 1)') int32
+|   |   |   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   |   |   |   Name: y
+|   |   |   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=33, column=29, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=33, includeChain=[], lineStr='        for (int32 y = 0; y < N; y = y + 1)') int32
+|   |   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=33, column=36, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=33, includeChain=[], lineStr='        for (int32 y = 0; y < N; y = y + 1)') int32
+|   |   |   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=33, column=40, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=33, includeChain=[], lineStr='        for (int32 y = 0; y < N; y = y + 1)') int32
+|   |   |   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   |   |   |   If:
+|   |   |   |   |   |   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   |   |   |   |   |   EqualityExpression: Token(type='EQ', lexeme='==', value='==', line=35, column=19, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=35, includeChain=[], lineStr='            if (x == y)') int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Char Literal: . char
+|   |   |   |   |   |   |   |   |   |   |   Elif:
+|   |   |   |   |   |   |   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   |   |   |   |   |   |   EqualityExpression: Token(type='EQ', lexeme='==', value='==', line=37, column=29, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=37, includeChain=[], lineStr='            elif (N - 1 - y == x)') int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   AdditiveExpression: Token(type='MINUS', lexeme='-', value='-', line=37, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=37, includeChain=[], lineStr='            elif (N - 1 - y == x)') int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   AdditiveExpression: Token(type='MINUS', lexeme='-', value='-', line=37, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=37, includeChain=[], lineStr='            elif (N - 1 - y == x)') int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: N int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: y int32
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Char Literal: . char
+|   |   |   |   |   |   |   |   |   |   |   Else:
+|   |   |   |   |   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   Char Literal: x char
+|   |   |   |   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "Continue when x is even:" char[]
+|   |   |   |   For:
+|   |   |   |   |   Init: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=48, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=48, includeChain=[], lineStr='    for (int32 a = 0; a < 10; a = a + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Name: a
+|   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=48, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=48, includeChain=[], lineStr='    for (int32 a = 0; a < 10; a = a + 1)') int32
+|   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   |   Update: Type.INT32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=48, column=33, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=48, includeChain=[], lineStr='    for (int32 a = 0; a < 10; a = a + 1)') int32
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=48, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=48, includeChain=[], lineStr='    for (int32 a = 0; a < 10; a = a + 1)') int32
+|   |   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   If:
+|   |   |   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   |   |   EqualityExpression: Token(type='EQ', lexeme='==', value='==', line=50, column=19, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=50, includeChain=[], lineStr='        if (a % 2 == 0)') int32
+|   |   |   |   |   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=50, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=50, includeChain=[], lineStr='        if (a % 2 == 0)') int32
+|   |   |   |   |   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   |   |   |   |   Int Literal: 2 int32
+|   |   |   |   |   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   ContinueStatement:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Identifier: a int32
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "Break when x > 5:" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=59, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=59, includeChain=[], lineStr='    int32 b = 0;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: b
+|   |   |   |   |   |   Int Literal: 0 int32
+|   |   |   |   While:
+|   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   |   Body:
+|   |   |   |   |   |   CodeBlock:
+|   |   |   |   |   |   |   If:
+|   |   |   |   |   |   |   |   Condition: Type.INT32
+|   |   |   |   |   |   |   |   |   InequalityExpression: Token(type='GT', lexeme='>', value='>', line=62, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=62, includeChain=[], lineStr='        if (b > 5)') int32
+|   |   |   |   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   |   |   |   |   |   Int Literal: 5 int32
+|   |   |   |   |   |   |   |   Body:
+|   |   |   |   |   |   |   |   |   BreakStatement:
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   Function Call: void
+|   |   |   |   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   |   |   |   Char Literal:   char
+|   |   |   |   |   |   |   ExpressionStatement:
+|   |   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=66, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=66, includeChain=[], lineStr='        b = b + 1;') int32
+|   |   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=66, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_loops.cerulean', originalLine=66, includeChain=[], lineStr='        b = b + 1;') int32
+|   |   |   |   |   |   |   |   |   |   Identifier: b int32
+|   |   |   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:

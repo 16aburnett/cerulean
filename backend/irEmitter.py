@@ -151,7 +151,8 @@ class IREmitterVisitor (ASTVisitor):
     # ====================================================================
 
     def visitCharLiteralExpressionNode (self, node):
-        return node.value
+        # Single quotes are pruned so add them back
+        return f"'{node.value}'"
 
     # ====================================================================
 

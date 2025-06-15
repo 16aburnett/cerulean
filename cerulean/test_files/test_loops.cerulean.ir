@@ -1,0 +1,198 @@
+function int32 @main () {
+    block entry {
+        %i.ptr = alloca (type(int32), int32(1))
+        store (ptr(%i.ptr), int32(0), int32(0))
+        jmp (block(for_cond1))
+    }
+    block for_cond1 {
+        %0 = load (type(int32), ptr(%i.ptr), int32(0))
+        %1 = clt (int32(%0), int32(10))
+        jcmp (int32(%1), block(for_body1), block(for_end1))
+    }
+    block for_body1 {
+        %2 = load (type(int32), ptr(%i.ptr), int32(0))
+        %3 = call @__builtin__print__int32 (int32(%2))
+        %4 = call @__builtin__print__char (char(' '))
+        jmp (block(for_update1))
+    }
+    block for_update1 {
+        %5 = load (type(int32), ptr(%i.ptr), int32(0))
+        %6 = add (int32(%5), int32(1))
+        store (ptr(%i.ptr), int32(0), int32(%6))
+        jmp (block(for_cond1))
+    }
+    block for_end1 {
+        %7 = call @__builtin__println ()
+        %j.ptr = alloca (type(int32), int32(1))
+        store (ptr(%j.ptr), int32(0), int32(0))
+        jmp (block(for_cond3))
+    }
+    block for_cond3 {
+        %8 = load (type(int32), ptr(%j.ptr), int32(0))
+        %9 = clt (int32(%8), int32(10))
+        jcmp (int32(%9), block(for_body3), block(for_end3))
+    }
+    block for_body3 {
+        %10 = load (type(int32), ptr(%j.ptr), int32(0))
+        %11 = call @__builtin__print__int32 (int32(%10))
+        %12 = call @__builtin__print__char (char(' '))
+        jmp (block(for_update3))
+    }
+    block for_update3 {
+        %13 = load (type(int32), ptr(%j.ptr), int32(0))
+        %14 = add (int32(%13), int32(1))
+        store (ptr(%j.ptr), int32(0), int32(%14))
+        jmp (block(for_cond3))
+    }
+    block for_end3 {
+        %15 = call @__builtin__println ()
+        %k.ptr = alloca (type(int32), int32(1))
+        store (ptr(%k.ptr), int32(0), int32(0))
+    }
+    block while_cond5 {
+        %16 = load (type(int32), ptr(%k.ptr), int32(0))
+        %17 = clt (int32(%16), int32(10))
+        jcmp (int32(%17), block(while_body5), block(while_end5))
+    }
+    block while_body5 {
+        %18 = load (type(int32), ptr(%k.ptr), int32(0))
+        %19 = call @__builtin__print__int32 (int32(%18))
+        %20 = call @__builtin__print__char (char(' '))
+        %21 = load (type(int32), ptr(%k.ptr), int32(0))
+        %22 = add (int32(%21), int32(1))
+        store (ptr(%k.ptr), int32(0), int32(%22))
+        jmp (block(while_cond5))
+    }
+    block while_end5 {
+        %23 = call @__builtin__println ()
+        %N = value (int32(10))
+        %x.ptr = alloca (type(int32), int32(1))
+        store (ptr(%x.ptr), int32(0), int32(0))
+        jmp (block(for_cond7))
+    }
+    block for_cond7 {
+        %24 = load (type(int32), ptr(%x.ptr), int32(0))
+        %25 = clt (int32(%24), int32(%N))
+        jcmp (int32(%25), block(for_body7), block(for_end7))
+    }
+    block for_body7 {
+        %y.ptr = alloca (type(int32), int32(1))
+        store (ptr(%y.ptr), int32(0), int32(0))
+        jmp (block(for_cond9))
+    }
+    block for_cond9 {
+        %26 = load (type(int32), ptr(%y.ptr), int32(0))
+        %27 = clt (int32(%26), int32(%N))
+        jcmp (int32(%27), block(for_body9), block(for_end9))
+    }
+    block for_body9 {
+        %28 = load (type(int32), ptr(%x.ptr), int32(0))
+        %29 = load (type(int32), ptr(%y.ptr), int32(0))
+        %30 = ceq (int32(%28), int32(%29))
+        jcmp (int32(%30), block(if_body11), block(elif_cond11x0))
+    }
+    block if_body11 {
+        %31 = call @__builtin__print__char (char('.'))
+        jmp (block(if_end11))
+    }
+    block elif_cond11x0 {
+        %32 = sub (int32(%N), int32(1))
+        %33 = load (type(int32), ptr(%y.ptr), int32(0))
+        %34 = sub (int32(%32), int32(%33))
+        %35 = load (type(int32), ptr(%x.ptr), int32(0))
+        %36 = ceq (int32(%34), int32(%35))
+        jcmp (int32(%36), block(elif_body11x0), block(else_body11))
+    }
+    block elif_body11x0 {
+        %37 = call @__builtin__print__char (char('.'))
+        jmp (block(if_end11))
+    }
+    block else_body11 {
+        %38 = call @__builtin__print__char (char('x'))
+        jmp (block(if_end11))
+    }
+    block if_end11 {
+        %39 = call @__builtin__print__char (char(' '))
+        jmp (block(for_update9))
+    }
+    block for_update9 {
+        %40 = load (type(int32), ptr(%y.ptr), int32(0))
+        %41 = add (int32(%40), int32(1))
+        store (ptr(%y.ptr), int32(0), int32(%41))
+        jmp (block(for_cond9))
+    }
+    block for_end9 {
+        %42 = call @__builtin__println ()
+        jmp (block(for_update7))
+    }
+    block for_update7 {
+        %43 = load (type(int32), ptr(%x.ptr), int32(0))
+        %44 = add (int32(%43), int32(1))
+        store (ptr(%x.ptr), int32(0), int32(%44))
+        jmp (block(for_cond7))
+    }
+    block for_end7 {
+        %45 = call @__builtin__println__char__1 (ptr("Continue when x is even:"))
+        %a.ptr = alloca (type(int32), int32(1))
+        store (ptr(%a.ptr), int32(0), int32(0))
+        jmp (block(for_cond12))
+    }
+    block for_cond12 {
+        %46 = load (type(int32), ptr(%a.ptr), int32(0))
+        %47 = clt (int32(%46), int32(10))
+        jcmp (int32(%47), block(for_body12), block(for_end12))
+    }
+    block for_body12 {
+        %48 = load (type(int32), ptr(%a.ptr), int32(0))
+        %49 = mod (int32(%48), int32(2))
+        %50 = ceq (int32(%49), int32(0))
+        jcmp (int32(%50), block(if_body14), block(if_end14))
+    }
+    block if_body14 {
+        jmp (block(for_update12))
+        jmp (block(if_end14))
+    }
+    block if_end14 {
+        %51 = load (type(int32), ptr(%a.ptr), int32(0))
+        %52 = call @__builtin__print__int32 (int32(%51))
+        %53 = call @__builtin__print__char (char(' '))
+        jmp (block(for_update12))
+    }
+    block for_update12 {
+        %54 = load (type(int32), ptr(%a.ptr), int32(0))
+        %55 = add (int32(%54), int32(1))
+        store (ptr(%a.ptr), int32(0), int32(%55))
+        jmp (block(for_cond12))
+    }
+    block for_end12 {
+        %56 = call @__builtin__println ()
+        %57 = call @__builtin__println__char__1 (ptr("Break when x > 5:"))
+        %b.ptr = alloca (type(int32), int32(1))
+        store (ptr(%b.ptr), int32(0), int32(0))
+    }
+    block while_cond15 {
+        jcmp (int32(1), block(while_body15), block(while_end15))
+    }
+    block while_body15 {
+        %58 = load (type(int32), ptr(%b.ptr), int32(0))
+        %59 = cgt (int32(%58), int32(5))
+        jcmp (int32(%59), block(if_body17), block(if_end17))
+    }
+    block if_body17 {
+        jmp (block(while_end15))
+        jmp (block(if_end17))
+    }
+    block if_end17 {
+        %60 = load (type(int32), ptr(%b.ptr), int32(0))
+        %61 = call @__builtin__print__int32 (int32(%60))
+        %62 = call @__builtin__print__char (char(' '))
+        %63 = load (type(int32), ptr(%b.ptr), int32(0))
+        %64 = add (int32(%63), int32(1))
+        store (ptr(%b.ptr), int32(0), int32(%64))
+        jmp (block(while_cond15))
+    }
+    block while_end15 {
+        %65 = call @__builtin__println ()
+    }
+}
+

@@ -1,0 +1,606 @@
+// CeruleanIR Built-in library
+// Author: Amy Burnett
+//========================================================================
+// Global Builtin Variables
+
+    assign __null 0
+
+//========================================================================
+// skip over library functions 
+
+    jump __endOfLibrary
+
+//========================================================================
+// Prints a given string to the screen
+// void print (char[] stringToPrint);
+__builtin__print__char__1:
+    // grab string
+    stackget __str 0
+    // print each char
+    // init
+    assign __i 0
+__print__char__1__loop:
+    // cond
+    cmp __str[__i] 0
+    jeq __print__char__1__endloop
+    // Body
+    print __str[__i]
+    // update
+    add __i __i 1
+    // repeat
+    jump __print__char__1__loop
+__print__char__1__endloop:
+    return 0
+
+//========================================================================
+// Prints an int to the screen
+// void print (int32 intToPrint);
+__builtin__print__int32:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints an int to the screen
+// void print (int64 intToPrint);
+__builtin__print__int64:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen
+// void print (float32 floatToPrint);
+__builtin__print__float32:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen
+// void print (float64 floatToPrint);
+__builtin__print__float64:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a char to the screen
+// void print (char charToPrint);
+__builtin__print__char:
+    // grab char
+    stackget __char 0
+    print __char
+    return 0
+
+//========================================================================
+// Prints an enum's integer value 
+// void print (Enum e);
+__builtin__print__Enum:
+    stackget __e 0
+    print __e
+    return 0
+
+//========================================================================
+// Prints a given string to the screen with a newline at the end
+// void println (char[] stringToPrint);
+__builtin__println__char__1:
+    // grab string
+    stackget __str 0
+    // print each char
+    // init
+    assign __i 0
+__println__char__1__loop:
+    // cond
+    cmp __str[__i] 0
+    jeq __println__char__1__endloop
+    // Body
+    print __str[__i]
+    // update
+    add __i __i 1
+    // repeat
+    jump __println__char__1__loop
+__println__char__1__endloop:
+    println
+    return 0
+
+//========================================================================
+// Prints an int to the screen with a newline
+// void println (int32 intToPrint);
+__builtin__println__int32:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints an int to the screen with a newline
+// void println (int64 intToPrint);
+__builtin__println__int64:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen with a newline
+// void println (float32 floatToPrint);
+__builtin__println__float32:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen with a newline
+// void println (float64 floatToPrint);
+__builtin__println__float64:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a char to the screen with a newline
+// void println (char charToPrint);
+__builtin__println__char:
+    // grab string
+    stackget __char 0
+    println __char
+    return 0
+
+//========================================================================
+// Prints an enum's integer value with a newline
+// void println (Enum e);
+__builtin__println__Enum:
+    stackget __e 0
+    println __e
+    return 0
+
+//========================================================================
+// Prints a newline to the console
+// void println ();
+__builtin__println:
+    println 
+    return 0
+
+//========================================================================
+// grabs input from the console 
+// char[] input ();
+__builtin__input:
+    input __line
+    return __line
+
+//========================================================================
+// exits/stops the program 
+__builtin__exit:
+    halt
+
+//========================================================================
+
+// Exits the program with the given exit code 
+// void exit(int32 exit_code)
+// - exit_code : 
+__builtin__exit__int32:
+    // ** not implemented for amyasm
+    halt
+
+//========================================================================
+// returns default float32 value
+// float32 float32 ();
+__builtin__float32:
+    return 0.0
+
+//========================================================================
+// returns default float64 value
+// float64 float64 ();
+__builtin__float64:
+    return 0.0
+
+//========================================================================
+// converts int32 to float32
+// float32 int32ToFloat32 (int32);
+__builtin__int32ToFloat32__int32:
+    stackget val 0
+    itof res val
+    return res
+
+//========================================================================
+// converts int64 to float64
+// float64 int64ToFloat64 (int64);
+__builtin__int64ToFloat64__int64:
+    stackget val 0
+    itof res val
+    return res
+
+//========================================================================
+// parses a float32 from a given char[]
+// float32 stringToFloat32 (char[]);
+__builtin__stringToFloat32__char__1:
+    stackget val 0
+    stof res val
+    return res
+
+//========================================================================
+// parses a float64 from a given char[]
+// float64 stringToFloat64 (char[]);
+__builtin__stringToFloat64__char__1:
+    stackget val 0
+    stof res val
+    return res
+
+//========================================================================
+// returns default int32 value
+// int32 int32 ();
+__builtin__int32:
+    return 0
+
+//========================================================================
+// returns default int64 value
+// int64 int64 ();
+__builtin__int64:
+    return 0
+
+//========================================================================
+// returns default char value
+// char char ();
+__builtin__char:
+    return '0'
+
+//========================================================================
+// converts float32 to int32
+// int32 float32ToInt32 (float32);
+__builtin__float32ToInt32__float32:
+    stackget val 0
+    ftoi res val
+    return res
+
+//========================================================================
+// converts float64 to int64
+// int64 float64ToInt64 (float64);
+__builtin__float64ToInt64__float64:
+    stackget val 0
+    ftoi res val
+    return res
+
+//========================================================================
+// parses an int32 from a given char[]
+// int32 stringToInt32 (char[]);
+__builtin__stringToInt32__char__1:
+    stackget val 0
+    stoi res val
+    return res
+
+//========================================================================
+// parses an int64 from a given char[]
+// int64 stringToInt64 (char[]);
+__builtin__stringToInt64__char__1:
+    stackget val 0
+    stoi res val
+    return res
+
+//========================================================================
+// parses an int32 from a given char
+// int32 charToInt32 (char);
+__builtin__charToInt32__char:
+    stackget val 0
+    ctoi res val
+    return res
+
+//========================================================================
+// parses an int64 from a given char
+// int64 charToInt64 (char);
+__builtin__charToInt64__char:
+    stackget val 0
+    ctoi res val
+    return res
+
+//========================================================================
+// converts int to string
+// char[] string (int);
+__builtin__string__int:
+    stackget val 0
+    string res val
+    return res
+
+//========================================================================
+// converts float to string
+// char[] string (float);
+__builtin__string__float:
+    stackget val 0
+    string res val
+    return res
+
+//========================================================================
+
+// returns default value for array and object (null)
+// null null ();
+__builtin__null:
+    return __null
+
+//========================================================================
+
+__endOfLibrary:
+   JUMP __end____main____main
+__main____main:
+__main__main__entry:
+   MALLOC __main__main__i_ptr 1
+   ASSIGN __main__main__i_ptr[0] 0
+   JUMP __main__main__for_cond1
+__main__main__for_cond1:
+   ASSIGN __main__main__0 __main__main__i_ptr[0]
+   LT __main__main__1, __main__main__0, 10
+   CMP __main__main__1, 1 // set flag if cmp is true
+   JEQ __main__main__for_body1 // jump to true block
+   JUMP __main__main__for_end1 // otherwise jump to false block
+__main__main__for_body1:
+   ASSIGN __main__main__2 __main__main__i_ptr[0]
+   PUSH __main__main__2
+   CALL __builtin__print__int32
+   RESPONSE __main__main__3
+   POP _arg0
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__4
+   POP _arg0
+   JUMP __main__main__for_update1
+__main__main__for_update1:
+   ASSIGN __main__main__5 __main__main__i_ptr[0]
+   ADD __main__main__6 __main__main__5 1
+   ASSIGN __main__main__i_ptr[0] __main__main__6
+   JUMP __main__main__for_cond1
+__main__main__for_end1:
+   CALL __builtin__println
+   RESPONSE __main__main__7
+   MALLOC __main__main__j_ptr 1
+   ASSIGN __main__main__j_ptr[0] 0
+   JUMP __main__main__for_cond3
+__main__main__for_cond3:
+   ASSIGN __main__main__8 __main__main__j_ptr[0]
+   LT __main__main__9, __main__main__8, 10
+   CMP __main__main__9, 1 // set flag if cmp is true
+   JEQ __main__main__for_body3 // jump to true block
+   JUMP __main__main__for_end3 // otherwise jump to false block
+__main__main__for_body3:
+   ASSIGN __main__main__10 __main__main__j_ptr[0]
+   PUSH __main__main__10
+   CALL __builtin__print__int32
+   RESPONSE __main__main__11
+   POP _arg0
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__12
+   POP _arg0
+   JUMP __main__main__for_update3
+__main__main__for_update3:
+   ASSIGN __main__main__13 __main__main__j_ptr[0]
+   ADD __main__main__14 __main__main__13 1
+   ASSIGN __main__main__j_ptr[0] __main__main__14
+   JUMP __main__main__for_cond3
+__main__main__for_end3:
+   CALL __builtin__println
+   RESPONSE __main__main__15
+   MALLOC __main__main__k_ptr 1
+   ASSIGN __main__main__k_ptr[0] 0
+__main__main__while_cond5:
+   ASSIGN __main__main__16 __main__main__k_ptr[0]
+   LT __main__main__17, __main__main__16, 10
+   CMP __main__main__17, 1 // set flag if cmp is true
+   JEQ __main__main__while_body5 // jump to true block
+   JUMP __main__main__while_end5 // otherwise jump to false block
+__main__main__while_body5:
+   ASSIGN __main__main__18 __main__main__k_ptr[0]
+   PUSH __main__main__18
+   CALL __builtin__print__int32
+   RESPONSE __main__main__19
+   POP _arg0
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__20
+   POP _arg0
+   ASSIGN __main__main__21 __main__main__k_ptr[0]
+   ADD __main__main__22 __main__main__21 1
+   ASSIGN __main__main__k_ptr[0] __main__main__22
+   JUMP __main__main__while_cond5
+__main__main__while_end5:
+   CALL __builtin__println
+   RESPONSE __main__main__23
+   ASSIGN __main__main__N 10
+   MALLOC __main__main__x_ptr 1
+   ASSIGN __main__main__x_ptr[0] 0
+   JUMP __main__main__for_cond7
+__main__main__for_cond7:
+   ASSIGN __main__main__24 __main__main__x_ptr[0]
+   LT __main__main__25, __main__main__24, __main__main__N
+   CMP __main__main__25, 1 // set flag if cmp is true
+   JEQ __main__main__for_body7 // jump to true block
+   JUMP __main__main__for_end7 // otherwise jump to false block
+__main__main__for_body7:
+   MALLOC __main__main__y_ptr 1
+   ASSIGN __main__main__y_ptr[0] 0
+   JUMP __main__main__for_cond9
+__main__main__for_cond9:
+   ASSIGN __main__main__26 __main__main__y_ptr[0]
+   LT __main__main__27, __main__main__26, __main__main__N
+   CMP __main__main__27, 1 // set flag if cmp is true
+   JEQ __main__main__for_body9 // jump to true block
+   JUMP __main__main__for_end9 // otherwise jump to false block
+__main__main__for_body9:
+   ASSIGN __main__main__28 __main__main__x_ptr[0]
+   ASSIGN __main__main__29 __main__main__y_ptr[0]
+   EQUAL __main__main__30, __main__main__28, __main__main__29
+   CMP __main__main__30, 1 // set flag if cmp is true
+   JEQ __main__main__if_body11 // jump to true block
+   JUMP __main__main__elif_cond11x0 // otherwise jump to false block
+__main__main__if_body11:
+   PUSH '.'
+   CALL __builtin__print__char
+   RESPONSE __main__main__31
+   POP _arg0
+   JUMP __main__main__if_end11
+__main__main__elif_cond11x0:
+   SUBTRACT __main__main__32 __main__main__N 1
+   ASSIGN __main__main__33 __main__main__y_ptr[0]
+   SUBTRACT __main__main__34 __main__main__32 __main__main__33
+   ASSIGN __main__main__35 __main__main__x_ptr[0]
+   EQUAL __main__main__36, __main__main__34, __main__main__35
+   CMP __main__main__36, 1 // set flag if cmp is true
+   JEQ __main__main__elif_body11x0 // jump to true block
+   JUMP __main__main__else_body11 // otherwise jump to false block
+__main__main__elif_body11x0:
+   PUSH '.'
+   CALL __builtin__print__char
+   RESPONSE __main__main__37
+   POP _arg0
+   JUMP __main__main__if_end11
+__main__main__else_body11:
+   PUSH 'x'
+   CALL __builtin__print__char
+   RESPONSE __main__main__38
+   POP _arg0
+   JUMP __main__main__if_end11
+__main__main__if_end11:
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__39
+   POP _arg0
+   JUMP __main__main__for_update9
+__main__main__for_update9:
+   ASSIGN __main__main__40 __main__main__y_ptr[0]
+   ADD __main__main__41 __main__main__40 1
+   ASSIGN __main__main__y_ptr[0] __main__main__41
+   JUMP __main__main__for_cond9
+__main__main__for_end9:
+   CALL __builtin__println
+   RESPONSE __main__main__42
+   JUMP __main__main__for_update7
+__main__main__for_update7:
+   ASSIGN __main__main__43 __main__main__x_ptr[0]
+   ADD __main__main__44 __main__main__43 1
+   ASSIGN __main__main__x_ptr[0] __main__main__44
+   JUMP __main__main__for_cond7
+__main__main__for_end7:
+   MALLOC __str 25
+   ASSIGN __str[0] 'C'
+   ASSIGN __str[1] 'o'
+   ASSIGN __str[2] 'n'
+   ASSIGN __str[3] 't'
+   ASSIGN __str[4] 'i'
+   ASSIGN __str[5] 'n'
+   ASSIGN __str[6] 'u'
+   ASSIGN __str[7] 'e'
+   ASSIGN __str[8] ' '
+   ASSIGN __str[9] 'w'
+   ASSIGN __str[10] 'h'
+   ASSIGN __str[11] 'e'
+   ASSIGN __str[12] 'n'
+   ASSIGN __str[13] ' '
+   ASSIGN __str[14] 'x'
+   ASSIGN __str[15] ' '
+   ASSIGN __str[16] 'i'
+   ASSIGN __str[17] 's'
+   ASSIGN __str[18] ' '
+   ASSIGN __str[19] 'e'
+   ASSIGN __str[20] 'v'
+   ASSIGN __str[21] 'e'
+   ASSIGN __str[22] 'n'
+   ASSIGN __str[23] ':'
+   ASSIGN __str[24] '\0'
+   PUSH __str
+   CALL __builtin__println__char__1
+   RESPONSE __main__main__45
+   POP _arg0
+   MALLOC __main__main__a_ptr 1
+   ASSIGN __main__main__a_ptr[0] 0
+   JUMP __main__main__for_cond12
+__main__main__for_cond12:
+   ASSIGN __main__main__46 __main__main__a_ptr[0]
+   LT __main__main__47, __main__main__46, 10
+   CMP __main__main__47, 1 // set flag if cmp is true
+   JEQ __main__main__for_body12 // jump to true block
+   JUMP __main__main__for_end12 // otherwise jump to false block
+__main__main__for_body12:
+   ASSIGN __main__main__48 __main__main__a_ptr[0]
+   MOD __main__main__49 __main__main__48 2
+   EQUAL __main__main__50, __main__main__49, 0
+   CMP __main__main__50, 1 // set flag if cmp is true
+   JEQ __main__main__if_body14 // jump to true block
+   JUMP __main__main__if_end14 // otherwise jump to false block
+__main__main__if_body14:
+   JUMP __main__main__for_update12
+   JUMP __main__main__if_end14
+__main__main__if_end14:
+   ASSIGN __main__main__51 __main__main__a_ptr[0]
+   PUSH __main__main__51
+   CALL __builtin__print__int32
+   RESPONSE __main__main__52
+   POP _arg0
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__53
+   POP _arg0
+   JUMP __main__main__for_update12
+__main__main__for_update12:
+   ASSIGN __main__main__54 __main__main__a_ptr[0]
+   ADD __main__main__55 __main__main__54 1
+   ASSIGN __main__main__a_ptr[0] __main__main__55
+   JUMP __main__main__for_cond12
+__main__main__for_end12:
+   CALL __builtin__println
+   RESPONSE __main__main__56
+   MALLOC __str 18
+   ASSIGN __str[0] 'B'
+   ASSIGN __str[1] 'r'
+   ASSIGN __str[2] 'e'
+   ASSIGN __str[3] 'a'
+   ASSIGN __str[4] 'k'
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] 'w'
+   ASSIGN __str[7] 'h'
+   ASSIGN __str[8] 'e'
+   ASSIGN __str[9] 'n'
+   ASSIGN __str[10] ' '
+   ASSIGN __str[11] 'x'
+   ASSIGN __str[12] ' '
+   ASSIGN __str[13] '>'
+   ASSIGN __str[14] ' '
+   ASSIGN __str[15] '5'
+   ASSIGN __str[16] ':'
+   ASSIGN __str[17] '\0'
+   PUSH __str
+   CALL __builtin__println__char__1
+   RESPONSE __main__main__57
+   POP _arg0
+   MALLOC __main__main__b_ptr 1
+   ASSIGN __main__main__b_ptr[0] 0
+__main__main__while_cond15:
+   CMP 1, 1 // set flag if cmp is true
+   JEQ __main__main__while_body15 // jump to true block
+   JUMP __main__main__while_end15 // otherwise jump to false block
+__main__main__while_body15:
+   ASSIGN __main__main__58 __main__main__b_ptr[0]
+   GT __main__main__59, __main__main__58, 5
+   CMP __main__main__59, 1 // set flag if cmp is true
+   JEQ __main__main__if_body17 // jump to true block
+   JUMP __main__main__if_end17 // otherwise jump to false block
+__main__main__if_body17:
+   JUMP __main__main__while_end15
+   JUMP __main__main__if_end17
+__main__main__if_end17:
+   ASSIGN __main__main__60 __main__main__b_ptr[0]
+   PUSH __main__main__60
+   CALL __builtin__print__int32
+   RESPONSE __main__main__61
+   POP _arg0
+   PUSH ' '
+   CALL __builtin__print__char
+   RESPONSE __main__main__62
+   POP _arg0
+   ASSIGN __main__main__63 __main__main__b_ptr[0]
+   ADD __main__main__64 __main__main__63 1
+   ASSIGN __main__main__b_ptr[0] __main__main__64
+   JUMP __main__main__while_cond15
+__main__main__while_end15:
+   CALL __builtin__println
+   RESPONSE __main__main__65
+   RETURN 0
+__end____main____main:
+__start:
+   CALL __main____main
+   HALT

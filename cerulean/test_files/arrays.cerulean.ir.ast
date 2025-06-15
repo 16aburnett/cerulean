@@ -127,8 +127,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_cond
-|   |   |   Basic Block: for_cond
+|   |   |   |   |   |   |   |   Block Name: for_cond1
+|   |   |   Basic Block: for_cond1
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %0
 |   |   |   |   |   Command: load
@@ -183,12 +183,12 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_body
+|   |   |   |   |   |   |   |   Block Name: for_body1
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_end
-|   |   |   Basic Block: for_body
+|   |   |   |   |   |   |   |   Block Name: for_end1
+|   |   |   Basic Block: for_body1
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %3
 |   |   |   |   |   Command: load
@@ -286,8 +286,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_update
-|   |   |   Basic Block: for_update
+|   |   |   |   |   |   |   |   Block Name: for_update1
+|   |   |   Basic Block: for_update1
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %8
 |   |   |   |   |   Command: load
@@ -337,8 +337,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_cond
-|   |   |   Basic Block: for_end
+|   |   |   |   |   |   |   |   Block Name: for_cond1
+|   |   |   Basic Block: for_end1
 |   Function: @print__int32__1__int32 (ptr,int32)->void
 |   |   ReturnType:
 |   |   |   Type: Type.VOID void
@@ -485,8 +485,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_cond
-|   |   |   Basic Block: for_cond
+|   |   |   |   |   |   |   |   Block Name: for_cond3
+|   |   |   Basic Block: for_cond3
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %4
 |   |   |   |   |   Command: load
@@ -541,12 +541,12 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_body
+|   |   |   |   |   |   |   |   Block Name: for_body3
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_end
-|   |   |   Basic Block: for_body
+|   |   |   |   |   |   |   |   Block Name: for_end3
+|   |   |   Basic Block: for_body3
 |   |   |   |   Call Instruction:
 |   |   |   |   |   LHS: %7
 |   |   |   |   |   Called Function: @__builtin__print__char__1
@@ -617,8 +617,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_update
-|   |   |   Basic Block: for_update
+|   |   |   |   |   |   |   |   Block Name: for_update3
+|   |   |   Basic Block: for_update3
 |   |   |   |   Instruction:
 |   |   |   |   |   LHS: %12
 |   |   |   |   |   Command: load
@@ -668,8 +668,8 @@ ProgramNode:
 |   |   |   |   |   |   Argument: 
 |   |   |   |   |   |   |   Type: Type.BLOCK block
 |   |   |   |   |   |   |   Expression:
-|   |   |   |   |   |   |   |   Block Name: for_cond
-|   |   |   Basic Block: for_end
+|   |   |   |   |   |   |   |   Block Name: for_cond3
+|   |   |   Basic Block: for_end3
 |   |   |   |   Call Instruction:
 |   |   |   |   |   LHS: %14
 |   |   |   |   |   Called Function: @__builtin__println__char__1

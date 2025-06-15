@@ -240,7 +240,7 @@ class Parser:
 
         self.leave ("basicBlock")
 
-        return BasicBlockNode (blockName, instructions)
+        return BasicBlockNode (blockName, instructions, token)
 
     # ====================================================================
 
