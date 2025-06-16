@@ -155,7 +155,7 @@ class IRGeneratorVisitor (ASTVisitor):
         # Convert Cerulean type to CeruleanIR type
         # opaque points lose some type info
         if   node.arrayDimensions > 0  : [type, name] = [irast.Type.PTR, "ptr"]
-        elif node.type == Type.BOOL    : [type, name] = [irast.Type.INT32, "int32"]
+        elif node.type == Type.BOOL    : [type, name] = [irast.Type.BOOL, "bool"]
         elif node.type == Type.BYTE    : [type, name] = [irast.Type.BYTE, "byte"]
         elif node.type == Type.CHAR    : [type, name] = [irast.Type.CHAR, "char"]
         elif node.type == Type.INT32   : [type, name] = [irast.Type.INT32, "int32"]
@@ -667,6 +667,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitAssignExpressionNode (self, node):
         rhsReg = node.rhs.accept (self)
+        irType = node.type.accept (self)
         lhsReg = None
         offsetReg = None
         isMem = False
@@ -707,48 +708,73 @@ class IRGeneratorVisitor (ASTVisitor):
             print("ERROR: Assigning to MemberAccessorExpressionNode not implemented")
             printToken (node.lhs.op)
             exit(1)
-        # perform operation and save to lhsStr
-        # =
-        if node.op.type == "ASSIGN":
+
+        # Read lhs if we need it
+        if (node.op.type != "ASSIGN"):
             if isMem:
-                rhsIRType = node.type.accept (self)
-                arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-                arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
-                arg2 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
-                instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+                # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+                lhsValueReg = self.newLocalReg ()
+                arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+                arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+                arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+                instruction = irast.InstructionNode (lhsValueReg, "load", [arg0, arg1, arg2])
                 self.containingBasicBlock.instructions += [instruction]
             else:
-                rhsIRType = node.type.accept (self)
-                arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
-                instruction = irast.InstructionNode (lhsReg, "value", [arg0])
-                self.containingBasicBlock.instructions += [instruction]
+                lhsValueReg = lhsReg
+
+        # perform extra operation
+        # =
+        if node.op.type == "ASSIGN":
+            resultReg = rhsReg
         # +=
         elif node.op.type == "ASSIGN_ADD":
-            print("ERROR: ASSIGN_ADD not implemented")
-            printToken (node.op)
-            exit(1)
+            resultReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+            arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
+            instruction = irast.InstructionNode (resultReg, "add", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
         # -=
         elif node.op.type == "ASSIGN_SUB":
-            print("ERROR: ASSIGN_SUB not implemented")
-            printToken (node.op)
-            exit(1)
+            resultReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+            arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
+            instruction = irast.InstructionNode (resultReg, "sub", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
         # *=
         elif node.op.type == "ASSIGN_MUL":
-            print("ERROR: ASSIGN_MUL not implemented")
-            printToken (node.op)
-            exit(1)
+            resultReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+            arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
+            instruction = irast.InstructionNode (resultReg, "mul", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
         # /=
         elif node.op.type == "ASSIGN_DIV":
-            print("ERROR: ASSIGN_DIV not implemented")
-            printToken (node.op)
-            exit(1)
+            resultReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+            arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
+            instruction = irast.InstructionNode (resultReg, "div", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
         # %=
         elif node.op.type == "ASSIGN_MOD":
-            print("ERROR: ASSIGN_MOD not implemented")
-            printToken (node.op)
-            exit(1)
+            resultReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+            arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
+            instruction = irast.InstructionNode (resultReg, "mod", [arg0, arg1])
+            self.containingBasicBlock.instructions += [instruction]
+
+        # Perform assign
+        if isMem:
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            arg0 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
         
-        return rhsReg
+        return resultReg
 
     def visitLogicalOrExpressionNode (self, node):
         print("ERROR: LogicalOrExpressionNode not implemented")
@@ -937,449 +963,388 @@ class IRGeneratorVisitor (ASTVisitor):
         instruction = irast.InstructionNode (destReg, command, [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
         return destReg
-            
-    #  ++ | -- | + | - | ! | ~
-    def visitUnaryLeftExpressionNode (self, node):
-        print("ERROR: UnaryLeftExpressionNode not implemented")
+
+    def visitPreIncrementExpressionNode(self, node):
+        # Cerulean  : ++<rhs>
+        # CeruleanIR: %rhsValue = load (type(int32), ptr(<rhs>), int32(0))
+        #             %result = add (int32(%rhsValue), int32(1))
+        #             store (ptr(<rhs>), int32(0), int32(%result))
+        #             // return %result
+        # NOTE: Considering that preincrement means reassignment and reassigned variables are
+        # allocated on the stack, we can assume that rhs is a mem lookup
+        irType = node.type.accept (self)
+        rhsReg = None
+        offsetReg = None
+        isMem = False
+        if isinstance(node.rhs, VariableDeclarationNode):
+            # alloca
+            if node.rhs.assignCount > 1:
+                isMem = True
+                # Vardec should add the alloca instruction so we need to visit
+                rhsReg = node.rhs.accept (self)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                rhsReg = node.rhs.accept (self)
+        elif isinstance(node.rhs, IdentifierExpressionNode):            
+            # global var
+            if isinstance(node.rhs.decl, GlobalVariableDeclarationNode):
+                isMem = True
+                # we dont want to visit rhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                rhsReg = irast.LocalVariableExpressionNode (f"@{node.rhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # alloca
+            elif node.rhs.decl.assignCount > 1:
+                isMem = True
+                # we dont want to visit rhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                rhsReg = irast.LocalVariableExpressionNode (f"%{node.rhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                rhsReg = node.rhs.accept (self)
+        elif isinstance(node.rhs, SubscriptExpressionNode):
+            isMem = True
+            rhsReg = node.rhs.lhs.accept (self)
+            offsetReg = node.rhs.offset.accept (self)
+            # NOTE: we should probably use getelementptr here
+        elif isinstance (node.rhs, MemberAccessorExpressionNode):
+            print("ERROR: pre-increment to MemberAccessorExpressionNode not implemented")
+            printToken (node.rhs.op)
+            exit(1)
+        else:
+            print("ERROR: Invalid rhs to pre-increment")
+            printToken (node.rhs.op)
+            exit(1)
+
+        # Read rhs value
+        if isMem:
+            # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+            rhsValueReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            instruction = irast.InstructionNode (rhsValueReg, "load", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            rhsValueReg = rhsReg
+
+        # Perform increment
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (irType, rhsValueReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        instruction = irast.InstructionNode (resultReg, "add", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # Write back value
+        if isMem:
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            arg0 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (rhsReg, "value", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
+
+        return resultReg
+
+    # NOTE: I hate how much duplicated code there is between this and pre
+    def visitPreDecrementExpressionNode(self, node):
+        # Cerulean  : --<rhs>
+        # CeruleanIR: %rhsValue = load (type(int32), ptr(<rhs>), int32(0))
+        #             %result = sub (int32(%rhsValue), int32(1))
+        #             store (ptr(<rhs>), int32(0), int32(%result))
+        #             // return %result
+        # NOTE: Considering that predecrement means reassignment and reassigned variables are
+        # allocated on the stack, we can assume that rhs is a mem lookup
+        irType = node.type.accept (self)
+        rhsReg = None
+        offsetReg = None
+        isMem = False
+        if isinstance(node.rhs, VariableDeclarationNode):
+            # alloca
+            if node.rhs.assignCount > 1:
+                isMem = True
+                # Vardec should add the alloca instruction so we need to visit
+                rhsReg = node.rhs.accept (self)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                rhsReg = node.rhs.accept (self)
+        elif isinstance(node.rhs, IdentifierExpressionNode):            
+            # global var
+            if isinstance(node.rhs.decl, GlobalVariableDeclarationNode):
+                isMem = True
+                # we dont want to visit rhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                rhsReg = irast.LocalVariableExpressionNode (f"@{node.rhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # alloca
+            elif node.rhs.decl.assignCount > 1:
+                isMem = True
+                # we dont want to visit rhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                rhsReg = irast.LocalVariableExpressionNode (f"%{node.rhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                rhsReg = node.rhs.accept (self)
+        elif isinstance(node.rhs, SubscriptExpressionNode):
+            isMem = True
+            rhsReg = node.rhs.lhs.accept (self)
+            offsetReg = node.rhs.offset.accept (self)
+            # NOTE: we should probably use getelementptr here
+        elif isinstance (node.rhs, MemberAccessorExpressionNode):
+            print("ERROR: pre-decrement to MemberAccessorExpressionNode not implemented")
+            printToken (node.rhs.op)
+            exit(1)
+        else:
+            print("ERROR: Invalid rhs to pre-decrement")
+            printToken (node.rhs.op)
+            exit(1)
+
+        # Read rhs value
+        if isMem:
+            # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+            rhsValueReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            instruction = irast.InstructionNode (rhsValueReg, "load", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            rhsValueReg = rhsReg
+
+        # Perform decrement
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (irType, rhsValueReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        instruction = irast.InstructionNode (resultReg, "sub", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # Write back value
+        if isMem:
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            arg0 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (rhsReg, "value", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
+
+        return resultReg
+
+    def visitNegativeExpressionNode(self, node):
+        # Cerulean  : -<rhs>
+        # CeruleanIR: %negatedValue = sub (<type>(0), <type>(<rhs>))
+        #             // return %negatedValue from expression
+        rhsReg = node.rhs.accept (self)
+        rhsIRType = node.rhs.type.accept (self)
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (rhsIRType, irast.IntLiteralExpressionNode(0))
+        arg1 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (resultReg, "sub", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+        return resultReg
+
+    def visitLogicalNotExpressionNode(self, node):
+        # Cerulean  : !<rhs>
+        # CeruleanIR: %negatedValue = lnot (bool(<rhs>))
+        #             // This might need a zext as well
+        #             // return %negatedValue from expression
+        rhsReg = node.rhs.accept (self)
+        rhsIRType = node.rhs.type.accept (self)
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (rhsIRType, rhsReg)
+        instruction = irast.InstructionNode (resultReg, "lnot", [arg0])
+        self.containingBasicBlock.instructions += [instruction]
+        return resultReg
+
+    def visitBitwiseNegatationExpressionNode(self, node):
+        print("ERROR: BitwiseNegatationExpressionNode not implemented")
         printToken (node.op)
         exit(1)
-        if node.op.lexeme == "++":
-            self.printComment (f"Pre-Increment - {node.rhs.type}")
-        elif node.op.lexeme == "--":
-            self.printComment (f"Pre-Decrement - {node.rhs.type}")
-        elif node.op.lexeme == "+":
-            self.printComment (f"Positive - {node.rhs.type}")
-        elif node.op.lexeme == "-":
-            self.printComment (f"Negative - {node.rhs.type}")
-        elif node.op.lexeme == "!":
-            self.printComment (f"Negate - {node.rhs.type}")
-        elif node.op.lexeme == "~":
-            self.printComment (f"Bitwise Negation - {node.rhs.type}")
-
-        self.indentation += 1
-
-        # calc rhs 
-        self.printComment ("RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-        # get rhs off the stack 
-        self.printCode ("pop rdx")
-    
-        # pre-increment
-        if node.op.lexeme == "++":
-            if isinstance(node.rhs, VariableDeclarationNode) or isinstance(node.rhs, IdentifierExpressionNode) or isinstance(node.rhs, ThisExpressionNode):
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatOneLabel}] ; xmm0 = 1.0, zero")
-                    self.printCode (f"addsd xmm0, qword [rbp - {node.rhs.decl.stackOffset}] ; rhs + 1.0")
-                    self.printCode (f"movsd qword [rbp - {node.rhs.decl.stackOffset}], xmm0 ; update rhs")
-                    self.printCode (f"mov rax, qword [rbp - {node.rhs.decl.stackOffset}] ; return rhs")
-                else:
-                    self.printCode (f"add qword [rbp - {node.rhs.decl.stackOffset}], 1")
-                    self.printCode (f"mov rax, qword [rbp - {node.rhs.decl.stackOffset}]")
-            elif isinstance(node.rhs, SubscriptExpressionNode):
-                self.printComment ("RHS")
-                self.indentation += 1
-                self.printComment ("Subscript assignment")
-
-                self.indentation += 1
-
-                self.printComment ("LHS")
-                self.indentation += 1
-                node.rhs.lhs.accept (self)
-                self.indentation -= 1
-
-                self.printComment ("OFFSET")
-                self.indentation += 1
-                node.rhs.offset.accept (self)
-                self.indentation -= 1
-
-                self.printCode ("pop rdi ; rhs")
-                self.printCode ("pop rbx ; lhs")
-                
-                lhsStr = f"qword [rbx + 8*rdi]"
-
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatOneLabel}] ; xmm0 = 1.0")
-                    self.printCode (f"addsd xmm0, {lhsStr} ; rhs + 1.0")
-                    self.printCode (f"movsd {lhsStr}, xmm0 ; update rhs")
-                    self.printCode (f"mov rax, {lhsStr} ; return rhs")
-                else:
-                    self.printCode (f"mov rax, {lhsStr}")
-                    self.printCode (f"add rax, 1")
-                    self.printCode (f"mov {lhsStr}, rax")
-
-                self.indentation -= 1
-                self.indentation -= 1 # end subscript assign
-
-            elif isinstance (node.rhs, MemberAccessorExpressionNode):
-                self.printComment ("LHS")
-                self.indentation += 1
-                self.printComment ("Member Accessor Assignment")
-
-                self.indentation += 1
-
-                self.printComment ("LHS")
-                self.indentation += 1
-                node.rhs.lhs.accept (self)
-                self.indentation -= 1
-
-                self.printComment ("RHS")
-                self.indentation += 1
-                # construct field index var 
-                # fieldIndex = f"__field__{node.rhs.lhs.type.id}__{node.rhs.rhs.id}"
-                self.printCode (f"push qword [{node.rhs.decl.scopeName}] ; {node.rhs.rhs.id}")
-                self.indentation -= 1
-
-                self.printCode ("pop rdi ; rhs")
-                self.printCode ("pop rbx ; lhs")
-                
-                lhsStr = f"qword [rbx + 8*rdi]"
-
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatOneLabel}] ; xmm0 = 1.0, zero")
-                    self.printCode (f"addsd xmm0, {lhsStr} ; rhs + 1.0")
-                    self.printCode (f"movsd {lhsStr}, xmm0 ; update rhs")
-                    self.printCode (f"mov rax, {lhsStr} ; return rhs")
-                else:
-                    self.printCode (f"mov rax, {lhsStr}")
-                    self.printCode (f"add rax, 1")
-                    self.printCode (f"mov {lhsStr}, rax")
-
-                self.indentation -= 1
-                self.indentation -= 1
-            else:
-                print ("yikes!")
-                exit (1)
-        # pre-decrement
-        elif node.op.lexeme == "--":
-            if isinstance(node.rhs, VariableDeclarationNode) or isinstance(node.rhs, IdentifierExpressionNode) or isinstance(node.rhs, ThisExpressionNode):
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatNegOneLabel}] ; xmm0 = -1.0, zero")
-                    self.printCode (f"addsd xmm0, qword [rbp - {node.rhs.decl.stackOffset}] ; rhs + -1.0")
-                    self.printCode (f"movsd qword [rbp - {node.rhs.decl.stackOffset}], xmm0 ; update rhs")
-                    self.printCode (f"mov rax, qword [rbp - {node.rhs.decl.stackOffset}] ; return rhs")
-                else:
-                    self.printCode (f"sub qword [rbp - {node.rhs.decl.stackOffset}], 1")
-                    self.printCode (f"mov rax, qword [rbp - {node.rhs.decl.stackOffset}]")
-            elif isinstance(node.rhs, SubscriptExpressionNode):
-                self.printComment ("RHS")
-                self.indentation += 1
-
-                self.printComment ("Subscript assignment")
-                self.indentation += 1
-
-                self.printComment ("LHS")
-                self.indentation += 1
-                node.rhs.lhs.accept (self)
-                self.indentation -= 1
-
-                self.printComment ("OFFSET")
-                self.indentation += 1
-                node.rhs.offset.accept (self)
-                self.indentation -= 1
-
-                self.printCode ("pop rdi ; rhs")
-                self.printCode ("pop rbx ; lhs")
-                
-                lhsStr = f"qword [rbx + 8*rdi]"
-
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatNegOneLabel}] ; xmm0 = -1.0")
-                    self.printCode (f"addsd xmm0, {lhsStr} ; rhs + -1.0")
-                    self.printCode (f"movsd {lhsStr}, xmm0 ; update rhs")
-                    self.printCode (f"mov rax, {lhsStr} ; return rhs")
-                else:
-                    self.printCode (f"mov rax, {lhsStr}")
-                    self.printCode (f"sub rax, 1")
-                    self.printCode (f"mov {lhsStr}, rax")
-
-                self.indentation -= 1
-                self.indentation -= 1 # end subscript assign
-
-            elif isinstance (node.rhs, MemberAccessorExpressionNode):
-                self.printComment ("LHS")
-                self.indentation += 1
-                self.printComment ("Member Accessor Assignment")
-
-                self.indentation += 1
-
-                self.printComment ("LHS")
-                self.indentation += 1
-                node.rhs.lhs.accept (self)
-                self.indentation -= 1
-
-                self.printComment ("RHS")
-                self.indentation += 1
-                # construct field index var 
-                # fieldIndex = f"__field__{node.rhs.lhs.type.id}__{node.rhs.rhs.id}"
-                self.printCode (f"push qword [{node.rhs.decl.scopeName}] ; {node.rhs.rhs.id}")
-                self.indentation -= 1
-
-                self.printCode ("pop rdi ; rhs")
-                self.printCode ("pop rbx ; lhs")
-                
-                lhsStr = f"qword [rbx + 8*rdi]"
-
-                # floating point
-                if node.rhs.type.__str__() == "float":
-                    self.printCode (f"movsd xmm0, qword [{self.floatNegOneLabel}] ; xmm0 = -1.0")
-                    self.printCode (f"addsd xmm0, {lhsStr} ; rhs + -1.0")
-                    self.printCode (f"movsd {lhsStr}, xmm0 ; update rhs")
-                    self.printCode (f"mov rax, {lhsStr} ; return rhs")
-                else:
-                    self.printCode (f"mov rax, {lhsStr}")
-                    self.printCode (f"sub rax, 1")
-                    self.printCode (f"mov {lhsStr}, rax")
-
-                self.indentation -= 1
-                self.indentation -= 1
-            else:
-                print ("yikes!")
-                exit (1)
-        # positive
-        elif node.op.lexeme == "+":
-            # floating point
-            if node.rhs.type.__str__() == "float":
-                self.printComment ("Just a no op for now")
-                self.printCode ("mov rax, rdx")
-            # integer
-            else:
-                self.printComment ("val = 0 + val")
-                self.printCode ("mov rax, 0")
-                self.printCode ("add rax, rdx")
-        elif node.op.lexeme == "-":
-            # floating point
-            if node.rhs.type.__str__() == "float":
-                self.printComment ("Implemented as multiplying by -1.0")
-                self.printCode ("movsd xmm1, qword [__builtin__neg] ; -1.0")
-                self.printCode ("movq xmm0, rdx")
-                self.printCode ("mulsd xmm0, xmm1 ; v = v * -1.0")
-                self.printCode ("movq rax, xmm0")
-            # integer
-            else:
-                self.printComment ("val = 0 - val")
-                self.printCode ("mov rax, 0")
-                self.printCode ("sub rax, rdx")
-        elif node.op.lexeme == "!":
-            self.printCode ("cmp rdx, 0")
-            self.printCode ("sete al")
-            self.printCode ("movzx eax, al")
-        elif node.op.lexeme == "~":
-            self.printCode ("not rdx")
-            self.printCode ("mov rax, rdx")
-
-        # push result to the stack
-        self.printCode ("push rax ; push result")
-
-        self.indentation -= 1
 
     def visitPostIncrementExpressionNode(self, node):
-        print("ERROR: PostIncrementExpressionNode not implemented")
-        printToken (node.op)
-        exit(1)
-        self.printComment ("Post-Increment")
-
-        self.indentation += 1
-
-        if isinstance(node.lhs, VariableDeclarationNode) or isinstance(node.lhs, IdentifierExpressionNode) or isinstance(node.lhs, ThisExpressionNode):
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, qword [rbp - {node.lhs.decl.stackOffset}] ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatOneLabel}] ; xmm2 = 1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd qword [rbp - {node.lhs.decl.stackOffset}], xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
+        # Cerulean  : <lhs>++
+        # CeruleanIR: %lhsValue = load (type(int32), ptr(<lhs>), int32(0))
+        #             %result = add (int32(%lhsValue), int32(1))
+        #             store (ptr(<lhs>), int32(0), int32(%result))
+        #             // return %lhsValue
+        # NOTE: Considering that postincrement means reassignment and reassigned variables are
+        # allocated on the stack, we can assume that lhs is a mem lookup
+        irType = node.type.accept (self)
+        lhsReg = None
+        offsetReg = None
+        isMem = False
+        if isinstance(node.lhs, VariableDeclarationNode):
+            # alloca
+            if node.lhs.assignCount > 1:
+                isMem = True
+                # Vardec should add the alloca instruction so we need to visit
+                lhsReg = node.lhs.accept (self)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
             else:
-                self.printCode (f"mov rax, qword [rbp - {node.lhs.decl.stackOffset}]")
-                self.printCode (f"add qword [rbp - {node.lhs.decl.stackOffset}], 1")
+                lhsReg = node.lhs.accept (self)
+        elif isinstance(node.lhs, IdentifierExpressionNode):            
+            # global var
+            if isinstance(node.lhs.decl, GlobalVariableDeclarationNode):
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # alloca
+            elif node.lhs.decl.assignCount > 1:
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, SubscriptExpressionNode):
-            self.printComment ("RHS")
-            self.indentation += 1
-            self.printComment ("Subscript assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("OFFSET")
-            self.indentation += 1
-            node.lhs.offset.accept (self)
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; rhs")
-            self.printCode ("pop rbx ; lhs")
-            
-            lhsStr = f"qword [rbx + 8*rdi]"
-
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, {lhsStr} ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatOneLabel}] ; xmm2 = 1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd {lhsStr}, xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; save original value")
-                self.printCode (f"add {lhsStr}, 1   ; increment")
-
-            self.indentation -= 1
-            self.indentation -= 1
+            isMem = True
+            lhsReg = node.lhs.lhs.accept (self)
+            offsetReg = node.lhs.offset.accept (self)
+            # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
-            self.printComment ("LHS")
-            self.indentation += 1
-            self.printComment ("Member Accessor Assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("RHS")
-            self.indentation += 1
-            self.printCode (f"push qword [{node.lhs.decl.scopeName}] ; {node.lhs.rhs.id}")
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; rhs")
-            self.printCode ("pop rbx ; lhs")
-            
-            lhsStr = f"qword [rbx + 8*rdi]"
-            
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, {lhsStr} ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatOneLabel}] ; xmm2 = 1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd {lhsStr}, xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; save original value")
-                self.printCode (f"add {lhsStr}, 1   ; increment")
-
-            self.indentation -= 1
-            self.indentation -= 1
+            print("ERROR: post-increment to MemberAccessorExpressionNode not implemented")
+            printToken (node.lhs.op)
+            exit(1)
         else:
-            print ("yikes!")
-            exit (1)
+            print("ERROR: Invalid lhs to post-increment")
+            printToken (node.lhs.op)
+            exit(1)
 
-        # push result to the stack
-        self.printCode ("push rax")
+        # Read lhs value
+        if isMem:
+            # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+            lhsValueReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            instruction = irast.InstructionNode (lhsValueReg, "load", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            lhsValueReg = lhsReg
 
-        self.indentation -= 1
+        # Perform increment
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        instruction = irast.InstructionNode (resultReg, "add", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # Write back value
+        if isMem:
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            arg0 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
+
+        # Return the register that has the previous value of lhs
+        return lhsValueReg
 
     def visitPostDecrementExpressionNode (self, node):
-        print("ERROR: PostDecrementExpressionNode not implemented")
-        printToken (node.op)
-        exit(1)
-        self.printComment ("Post-Decrement")
-
-        self.indentation += 1
-
-        if isinstance(node.lhs, VariableDeclarationNode) or isinstance(node.lhs, IdentifierExpressionNode) or isinstance(node.lhs, ThisExpressionNode):
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, qword [rbp - {node.lhs.decl.stackOffset}] ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatNegOneLabel}] ; xmm2 = -1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd qword [rbp - {node.lhs.decl.stackOffset}], xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
+        # Cerulean  : <lhs>++
+        # CeruleanIR: %lhsValue = load (type(int32), ptr(<lhs>), int32(0))
+        #             %result = sub (int32(%lhsValue), int32(1))
+        #             store (ptr(<lhs>), int32(0), int32(%result))
+        #             // return %lhsValue
+        # NOTE: Considering that postdecrement means reassignment and reassigned variables are
+        # allocated on the stack, we can assume that lhs is a mem lookup
+        irType = node.type.accept (self)
+        lhsReg = None
+        offsetReg = None
+        isMem = False
+        if isinstance(node.lhs, VariableDeclarationNode):
+            # alloca
+            if node.lhs.assignCount > 1:
+                isMem = True
+                # Vardec should add the alloca instruction so we need to visit
+                lhsReg = node.lhs.accept (self)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
             else:
-                self.printCode (f"mov rax, qword [rbp - {node.lhs.decl.stackOffset}]")
-                self.printCode (f"sub qword [rbp - {node.lhs.decl.stackOffset}], 1")
+                lhsReg = node.lhs.accept (self)
+        elif isinstance(node.lhs, IdentifierExpressionNode):            
+            # global var
+            if isinstance(node.lhs.decl, GlobalVariableDeclarationNode):
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"@{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # alloca
+            elif node.lhs.decl.assignCount > 1:
+                isMem = True
+                # we dont want to visit lhs bc we dont want to load it from mem
+                # So just use the pointer as the register
+                lhsReg = irast.LocalVariableExpressionNode (f"%{node.lhs.id}.ptr", None, None, None)
+                offsetReg = irast.IntLiteralExpressionNode (0)
+            # register
+            else:
+                lhsReg = node.lhs.accept (self)
         elif isinstance(node.lhs, SubscriptExpressionNode):
-            self.printComment ("RHS")
-            self.indentation += 1
-            self.printComment ("Subscript assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("OFFSET")
-            self.indentation += 1
-            node.lhs.offset.accept (self)
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; rhs")
-            self.printCode ("pop rbx ; lhs")
-            
-            lhsStr = f"qword [rbx + 8*rdi]"
-
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, {lhsStr} ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatNegOneLabel}] ; xmm2 = -1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd {lhsStr}, xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; save original value")
-                self.printCode (f"sub {lhsStr}, 1   ; decrement")
-
-            self.indentation -= 1
-            self.indentation -= 1
+            isMem = True
+            lhsReg = node.lhs.lhs.accept (self)
+            offsetReg = node.lhs.offset.accept (self)
+            # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
-            self.printComment ("LHS")
-            self.indentation += 1
-            self.printComment ("Member Accessor Assignment")
-
-            self.indentation += 1
-
-            self.printComment ("LHS")
-            self.indentation += 1
-            node.lhs.lhs.accept (self)
-            self.indentation -= 1
-
-            self.printComment ("RHS")
-            self.indentation += 1
-            self.printCode (f"push qword [{node.lhs.decl.scopeName}] ; {node.lhs.rhs.id}")
-            self.indentation -= 1
-
-            self.printCode ("pop rdi ; rhs")
-            self.printCode ("pop rbx ; lhs")
-            
-            lhsStr = f"qword [rbx + 8*rdi]"
-
-            # floating point
-            if node.lhs.type.__str__() == "float":
-                self.printCode (f"movsd xmm0, {lhsStr} ; xmm0 = mem[0], zero")
-                self.printCode (f"movsd xmm2, qword [{self.floatNegOneLabel}] ; xmm2 = -1.0, zero")
-                self.printCode (f"movaps xmm1, xmm0")
-                self.printCode (f"addsd xmm1, xmm2")
-                self.printCode (f"movsd {lhsStr}, xmm1 ; update lhs")
-                self.printCode (f"movq rax, xmm0 ; return lhs")
-            else:
-                self.printCode (f"mov rax, {lhsStr} ; save original value")
-                self.printCode (f"sub {lhsStr}, 1   ; decrement")
-
-            self.indentation -= 1
-            self.indentation -= 1
+            print("ERROR: post-decrement to MemberAccessorExpressionNode not implemented")
+            printToken (node.lhs.op)
+            exit(1)
         else:
-            print ("yikes!")
-            exit (1)
+            print("ERROR: Invalid lhs to post-decrement")
+            printToken (node.lhs.op)
+            exit(1)
 
-        # push result to the stack
-        self.printCode ("push rax")
+        # Read lhs value
+        if isMem:
+            # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+            lhsValueReg = self.newLocalReg ()
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            instruction = irast.InstructionNode (lhsValueReg, "load", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            lhsValueReg = lhsReg
 
-        self.indentation -= 1
+        # Perform decrement
+        resultReg = self.newLocalReg ()
+        arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        instruction = irast.InstructionNode (resultReg, "sub", [arg0, arg1])
+        self.containingBasicBlock.instructions += [instruction]
+
+        # Write back value
+        if isMem:
+            arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
+            self.containingBasicBlock.instructions += [instruction]
+        else:
+            arg0 = irast.ArgumentExpressionNode (irType, resultReg)
+            instruction = irast.InstructionNode (lhsReg, "value", [arg0])
+            self.containingBasicBlock.instructions += [instruction]
+
+        # Return the register that has the previous value of lhs
+        return lhsValueReg
 
     def visitSubscriptExpressionNode (self, node):
         irType = node.type.accept (self)

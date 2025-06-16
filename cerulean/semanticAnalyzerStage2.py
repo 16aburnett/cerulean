@@ -853,24 +853,69 @@ class SymbolTableVisitor2 (ASTVisitor):
             print ("^")
             print ()
             self.wasSuccessful = False
-            
 
-    def visitUnaryLeftExpressionNode (self, node):
+    def visitPreIncrementExpressionNode (self, node):
         node.rhs.accept (self)
         node.type = node.rhs.type 
-
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT
-                and node.rhs.type.type != Type.FLOAT)
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
-            print (f"Semantic Error: invalid type for unary left operator")
-            print (f"   Located on line {node.lineNumber}: column {node.columnNumber}")
-            print (f"   line:")
-            print (f"      {self.lines[node.lineNumber-1][:-1]}")
-            print (f"      ",end="")
-            for i in range(node.columnNumber-1):
-                print (" ", end="")
-            print ("^")
+            print (f"Semantic Error: invalid type for pre-increment operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitPreDecrementExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for pre-decrement operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitNegativeExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for negation operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitLogicalNotExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for logical not operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitBitwiseNegatationExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for bitwise negation operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
 

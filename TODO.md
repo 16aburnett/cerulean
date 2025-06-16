@@ -27,6 +27,11 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_c
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_loops.cerulean --debug --emitTokens --emitAST --emitIR
 python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_loops.cerulean.ir -o cerulean/test_files/test_loops.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_loops.cerulean.ir.amyasm
+
+# test operators
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_operators.cerulean --debug --emitTokens --emitAST --emitIR
+python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_operators.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_operators.cerulean.ir.amyasm
 ```
 
 

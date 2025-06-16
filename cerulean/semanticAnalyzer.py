@@ -1003,15 +1003,80 @@ class SymbolTableVisitor (ASTVisitor):
             print ()
             self.wasSuccessful = False
 
-    def visitUnaryLeftExpressionNode (self, node):
+    def visitPreIncrementExpressionNode (self, node):
         node.rhs.accept (self)
         node.type = node.rhs.type 
-
         # ensure types work 
         if ((node.rhs.type.type != Type.INT32
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
-            print (f"Semantic Error: invalid type for unary left operator")
+            print (f"Semantic Error: invalid type for pre-increment operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+        # mark variable as assigned to
+        if isinstance (node.rhs, (VariableDeclarationNode, GlobalVariableDeclarationNode)):
+            node.rhs.wasAssigned = True
+            node.rhs.assignCount += 1
+        elif isinstance (node.rhs, IdentifierExpressionNode):
+            node.rhs.decl.wasAssigned = True
+            node.rhs.decl.assignCount += 1
+
+    def visitPreDecrementExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for pre-decrement operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+        # mark variable as assigned to
+        if isinstance (node.rhs, (VariableDeclarationNode, GlobalVariableDeclarationNode)):
+            node.rhs.wasAssigned = True
+            node.rhs.assignCount += 1
+        elif isinstance (node.rhs, IdentifierExpressionNode):
+            node.rhs.decl.wasAssigned = True
+            node.rhs.decl.assignCount += 1
+
+    def visitNegativeExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for negation operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitLogicalNotExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for logical not operator")
+            printToken (node.op)
+            print (f"   RHS type: {node.rhs.type}")
+            print ()
+            self.wasSuccessful = False
+
+    def visitBitwiseNegatationExpressionNode (self, node):
+        node.rhs.accept (self)
+        node.type = node.rhs.type 
+        # ensure types work 
+        if ((node.rhs.type.type != Type.INT32
+                and node.rhs.type.type != Type.FLOAT32)
+                or node.rhs.type.arrayDimensions > 0):
+            print (f"Semantic Error: invalid type for bitwise negation operator")
             printToken (node.op)
             print (f"   RHS type: {node.rhs.type}")
             print ()
@@ -1020,7 +1085,6 @@ class SymbolTableVisitor (ASTVisitor):
     def visitPostIncrementExpressionNode(self, node):
         node.lhs.accept (self)
         node.type = node.lhs.type
-
         # ensure types work for ++
         if ((node.lhs.type.type != Type.INT32
                 and node.lhs.type.type != Type.FLOAT32)
@@ -1030,11 +1094,17 @@ class SymbolTableVisitor (ASTVisitor):
             print (f"   LHS type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
+        # mark variable as assigned to
+        if isinstance (node.lhs, (VariableDeclarationNode, GlobalVariableDeclarationNode)):
+            node.lhs.wasAssigned = True
+            node.lhs.assignCount += 1
+        elif isinstance (node.lhs, IdentifierExpressionNode):
+            node.lhs.decl.wasAssigned = True
+            node.lhs.decl.assignCount += 1
 
     def visitPostDecrementExpressionNode (self, node):
         node.lhs.accept (self)
         node.type = node.lhs.type
-
         # ensure types work for --
         if ((node.lhs.type.type != Type.INT32
                 and node.lhs.type.type != Type.FLOAT32)
@@ -1044,6 +1114,13 @@ class SymbolTableVisitor (ASTVisitor):
             print (f"   LHS type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
+        # mark variable as assigned to
+        if isinstance (node.lhs, (VariableDeclarationNode, GlobalVariableDeclarationNode)):
+            node.lhs.wasAssigned = True
+            node.lhs.assignCount += 1
+        elif isinstance (node.lhs, IdentifierExpressionNode):
+            node.lhs.decl.wasAssigned = True
+            node.lhs.decl.assignCount += 1
 
     def visitSubscriptExpressionNode (self, node):
 

@@ -528,14 +528,39 @@ class PrintVisitor (ASTVisitor):
 
         self.level -= 1
 
-    def visitUnaryLeftExpressionNode (self, node):
+    def visitPreIncrementExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"UnaryLeftExpression: {node.op} {node.type}\n"]
-
+        self.outputstrings += [f"PreIncrementExpressionNode: {node.op} {node.type}\n"]
         self.level += 1
-
         node.rhs.accept (self)
+        self.level -= 1
 
+    def visitPreDecrementExpressionNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"PreDecrementExpressionNode: {node.op} {node.type}\n"]
+        self.level += 1
+        node.rhs.accept (self)
+        self.level -= 1
+
+    def visitNegativeExpressionNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"NegativeExpressionNode: {node.op} {node.type}\n"]
+        self.level += 1
+        node.rhs.accept (self)
+        self.level -= 1
+
+    def visitLogicalNotExpressionNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"LogicalNotExpressionNode: {node.op} {node.type}\n"]
+        self.level += 1
+        node.rhs.accept (self)
+        self.level -= 1
+
+    def visitBitwiseNegatationExpressionNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"BitwiseNegatationExpressionNode: {node.op} {node.type}\n"]
+        self.level += 1
+        node.rhs.accept (self)
         self.level -= 1
 
     def visitPostIncrementExpressionNode(self, node):

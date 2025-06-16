@@ -346,6 +346,16 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
             self.printCode (f"MOD {lhs_var} {arg0} {arg1}")
+        elif command_name == "lnot":
+            # Logical Negation
+            # CeruleanIR : <dest> = lnot (<src0>)
+            # AmyAssembly: NOT <dest> <src0>
+            # visit variabledecl to establish scopename
+            # **lhsvariable should probably return scopename
+            node.lhsVariable.accept (self)
+            lhs_var = node.lhsVariable.scopeName.replace(".", "_")
+            arg0 = node.arguments[0].accept (self)
+            self.printCode (f"NOT {lhs_var}, {arg0}")
         elif command_name == "value": # just an assignment
             # CeruleanIR : <dest> = value (<arg0>)
             # AmyAssembly: assign <dest> <arg0>

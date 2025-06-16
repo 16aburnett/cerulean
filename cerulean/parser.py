@@ -1125,23 +1125,53 @@ class Parser:
         op = None
         line = 0
         column = 0
-        if     self.tokens[self.currentToken].type == "INCR"  \
-            or self.tokens[self.currentToken].type == "DECR"  \
-            or self.tokens[self.currentToken].type == "PLUS"  \
-            or self.tokens[self.currentToken].type == "MINUS" \
-            or self.tokens[self.currentToken].type == "LNOT"  \
-            or self.tokens[self.currentToken].type == "BNOT":
+        if self.tokens[self.currentToken].type == "INCR":
             op = self.tokens[self.currentToken]
             line = self.tokens[self.currentToken].line
             column = self.tokens[self.currentToken].column
             self.match ("unaryleft", self.tokens[self.currentToken].type)
-
-        rhs = self.unaryright ()
+            rhs = self.unaryright ()
+            rhs = PreIncrementExpressionNode (op, rhs, line, column)
+        elif self.tokens[self.currentToken].type == "DECR":
+            op = self.tokens[self.currentToken]
+            line = self.tokens[self.currentToken].line
+            column = self.tokens[self.currentToken].column
+            self.match ("unaryleft", self.tokens[self.currentToken].type)
+            rhs = self.unaryright ()
+            rhs = PreDecrementExpressionNode (op, rhs, line, column)
+        elif self.tokens[self.currentToken].type == "PLUS":
+            # Just ignore the plus since it doesnt do anything
+            # op = self.tokens[self.currentToken]
+            # line = self.tokens[self.currentToken].line
+            # column = self.tokens[self.currentToken].column
+            self.match ("unaryleft", self.tokens[self.currentToken].type)
+            rhs = self.unaryright ()
+            # rhs = UnaryLeftExpressionNode (op, rhs, line, column)
+        elif self.tokens[self.currentToken].type == "MINUS":
+            op = self.tokens[self.currentToken]
+            line = self.tokens[self.currentToken].line
+            column = self.tokens[self.currentToken].column
+            self.match ("unaryleft", self.tokens[self.currentToken].type)
+            rhs = self.unaryright ()
+            rhs = NegativeExpressionNode (op, rhs, line, column)
+        elif self.tokens[self.currentToken].type == "LNOT":
+            op = self.tokens[self.currentToken]
+            line = self.tokens[self.currentToken].line
+            column = self.tokens[self.currentToken].column
+            self.match ("unaryleft", self.tokens[self.currentToken].type)
+            rhs = self.unaryright ()
+            rhs = LogicalNotExpressionNode (op, rhs, line, column)
+        elif self.tokens[self.currentToken].type == "BNOT":
+            op = self.tokens[self.currentToken]
+            line = self.tokens[self.currentToken].line
+            column = self.tokens[self.currentToken].column
+            self.match ("unaryleft", self.tokens[self.currentToken].type)
+            rhs = self.unaryright ()
+            rhs = BitwiseNegatationExpressionNode (op, rhs, line, column)
+        else:
+            rhs = self.unaryright ()
 
         self.leave ("unaryleft")
-
-        if (op != None):
-            return UnaryLeftExpressionNode (op, rhs, line, column)
         return rhs
 
     # ====================================================================

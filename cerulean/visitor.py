@@ -140,7 +140,23 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitUnaryLeftExpressionNode (self, node):
+    def visitPreIncrementExpressionNode (self, node):
+        pass
+
+    @abstractmethod
+    def visitPreDecrementExpressionNode (self, node):
+        pass
+
+    @abstractmethod
+    def visitNegativeExpressionNode (self, node):
+        pass
+
+    @abstractmethod
+    def visitLogicalNotExpressionNode (self, node):
+        pass
+
+    @abstractmethod
+    def visitBitwiseNegatationExpressionNode (self, node):
         pass
 
     @abstractmethod

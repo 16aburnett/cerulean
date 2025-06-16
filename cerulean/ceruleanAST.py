@@ -953,10 +953,11 @@ class MultiplicativeExpressionNode (ExpressionNode):
         return MultiplicativeExpressionNode(self.lhs.copy(), self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
 
 # ========================================================================
-# op  - unaryleft op  
+# ++<rhs>
+# op  - pre-increment op token
 # rhs - ExpressionNode
 
-class UnaryLeftExpressionNode (ExpressionNode):
+class PreIncrementExpressionNode (ExpressionNode):
 
     def __init__(self, op, rhs, line, column):
         super ().__init__ ()
@@ -968,10 +969,98 @@ class UnaryLeftExpressionNode (ExpressionNode):
         self.columnNumber = column
 
     def accept (self, visitor):
-        return visitor.visitUnaryLeftExpressionNode (self)
+        return visitor.visitPreIncrementExpressionNode (self)
 
     def copy (self):
-        return UnaryLeftExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
+        return PreIncrementExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
+
+# ========================================================================
+# --<rhs>
+# op - pre-decrement op token
+# rhs - ExpressionNode
+
+class PreDecrementExpressionNode (ExpressionNode):
+
+    def __init__(self, op, rhs, line, column):
+        super ().__init__ ()
+        self.type = TypeSpecifierNode (Type.UNKNOWN, "", None)
+        self.op = op
+        self.rhs = rhs 
+
+        self.lineNumber = line
+        self.columnNumber = column
+
+    def accept (self, visitor):
+        return visitor.visitPreDecrementExpressionNode (self)
+
+    def copy (self):
+        return PreDecrementExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
+
+# ========================================================================
+# -<rhs>
+# op - negative op token
+# rhs - ExpressionNode
+
+class NegativeExpressionNode (ExpressionNode):
+
+    def __init__(self, op, rhs, line, column):
+        super ().__init__ ()
+        self.type = TypeSpecifierNode (Type.UNKNOWN, "", None)
+        self.op = op
+        self.rhs = rhs 
+
+        self.lineNumber = line
+        self.columnNumber = column
+
+    def accept (self, visitor):
+        return visitor.visitNegativeExpressionNode (self)
+
+    def copy (self):
+        return NegativeExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
+
+# ========================================================================
+# !<rhs>
+# op - logical not op token
+# rhs - ExpressionNode
+
+class LogicalNotExpressionNode (ExpressionNode):
+
+    def __init__(self, op, rhs, line, column):
+        super ().__init__ ()
+        self.type = TypeSpecifierNode (Type.UNKNOWN, "", None)
+        self.op = op
+        self.rhs = rhs 
+
+        self.lineNumber = line
+        self.columnNumber = column
+
+    def accept (self, visitor):
+        return visitor.visitLogicalNotExpressionNode (self)
+
+    def copy (self):
+        return LogicalNotExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
+
+# ========================================================================
+# ~<rhs>
+# op - bitwise negation op token
+# rhs - ExpressionNode
+
+class BitwiseNegatationExpressionNode (ExpressionNode):
+
+    def __init__(self, op, rhs, line, column):
+        super ().__init__ ()
+        self.type = TypeSpecifierNode (Type.UNKNOWN, "", None)
+        self.op = op
+        self.rhs = rhs 
+
+        self.lineNumber = line
+        self.columnNumber = column
+
+    def accept (self, visitor):
+        return visitor.visitBitwiseNegatationExpressionNode (self)
+
+    def copy (self):
+        return BitwiseNegatationExpressionNode(self.op, self.rhs.copy(), self.lineNumber, self.columnNumber)
 
 # ========================================================================
 # lhs - ExpressionNode

@@ -13,6 +13,7 @@ from .visitor import *
 # ========================================================================
 
 class Type(Enum):
+    BOOL     = 0
     BYTE     = 1
     CHAR     = 2
     INT32    = 3

@@ -1,0 +1,378 @@
+ProgramNode:
+|   Function: main void->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   CodeBlock:
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=5, includeChain=[], lineStr='    int32 x = 10;') int32
+|   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   VariableDeclaration: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Name: x
+|   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x = 10 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=6, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=6, includeChain=[], lineStr='    print ("x = 10 =>"); println (x =  10);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 10 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x += 3 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN_ADD', lexeme='+=', value='+=', line=9, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=9, includeChain=[], lineStr='    print ("x += 3 =>"); println (x += 3);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x -= 3 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN_SUB', lexeme='-=', value='-=', line=12, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=12, includeChain=[], lineStr='    print ("x -= 3 =>"); println (x -= 3);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x *= 3 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN_MUL', lexeme='*=', value='*=', line=15, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=15, includeChain=[], lineStr='    print ("x *= 3 =>"); println (x *= 3);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x /= 3 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN_DIV', lexeme='/=', value='/=', line=18, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=18, includeChain=[], lineStr='    print ("x /= 3 =>"); println (x /= 3);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x %= 3 =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   AssignExpression: Token(type='ASSIGN_MOD', lexeme='%=', value='%=', line=21, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=21, includeChain=[], lineStr='    print ("x %= 3 =>"); println (x %= 3);') int32
+|   |   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   Int Literal: 3 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "++x    =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=25, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=25, includeChain=[], lineStr='    print ("++x    =>"); println (++x);') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "--x    =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   PreDecrementExpressionNode: Token(type='DECR', lexeme='--', value='--', line=28, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=28, includeChain=[], lineStr='    print ("--x    =>"); println (--x);') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x++    =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   PostIncrement: int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x--    =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   PostDecrement: int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "+x     =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "-x     =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   NegativeExpressionNode: Token(type='MINUS', lexeme='-', value='-', line=40, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=40, includeChain=[], lineStr='    print ("-x     =>"); println (-x);') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "-(-x)  =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   NegativeExpressionNode: Token(type='MINUS', lexeme='-', value='-', line=41, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=41, includeChain=[], lineStr='    print ("-(-x)  =>"); println (-(-x));') int32
+|   |   |   |   |   |   |   |   NegativeExpressionNode: Token(type='MINUS', lexeme='-', value='-', line=41, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=41, includeChain=[], lineStr='    print ("-(-x)  =>"); println (-(-x));') int32
+|   |   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "!x     =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   LogicalNotExpressionNode: Token(type='LNOT', lexeme='!', value='!', line=44, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=44, includeChain=[], lineStr='    print ("!x     =>"); println (!x);') int32
+|   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "!(x-1) =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   LogicalNotExpressionNode: Token(type='LNOT', lexeme='!', value='!', line=45, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=45, includeChain=[], lineStr='    print ("!(x-1) =>"); println (!(x-1));') int32
+|   |   |   |   |   |   |   |   AdditiveExpression: Token(type='MINUS', lexeme='-', value='-', line=45, column=38, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_operators.cerulean', originalLine=45, includeChain=[], lineStr='    print ("!(x-1) =>"); println (!(x-1));') int32
+|   |   |   |   |   |   |   |   |   Identifier: x int32
+|   |   |   |   |   |   |   |   |   Int Literal: 1 int32
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: print 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   String Literal: "x      =>" char[]
+|   |   |   |   ExpressionStatement:
+|   |   |   |   |   Function Call: void
+|   |   |   |   |   |   Function Name:
+|   |   |   |   |   |   |   Identifier: println 
+|   |   |   |   |   |   Arguments:
+|   |   |   |   |   |   |   Identifier: x int32

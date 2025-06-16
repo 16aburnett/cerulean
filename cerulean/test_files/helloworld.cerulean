@@ -14,7 +14,7 @@ int32 g_length = 13;
 function void print_greeting (char[] greeting, int32 length)
 {
     // C/C++ for loop syntax all the way!!
-    for (int32 i = 0; i < length; i = i + 1)
+    for (int32 i = 0; i < length; ++i)
     {
         // instead of gross C++ cout, we have the overloaded print
         // function - similar to python. and you can print anything

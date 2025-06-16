@@ -22,23 +22,19 @@ ProgramNode:
 |   |   |   CodeBlock:
 |   |   |   |   For:
 |   |   |   |   |   Init: Type.INT32
-|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; i = i + 1)') int32
+|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=18, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int32
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   |   Name: i
 |   |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   |   Condition: Type.INT32
-|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=17, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; i = i + 1)') int32
+|   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=17, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int32
 |   |   |   |   |   |   |   Identifier: i int32
 |   |   |   |   |   |   |   Identifier: length int32
 |   |   |   |   |   Update: Type.INT32
-|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=37, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; i = i + 1)') int32
-|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=17, column=35, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; ++i)') int32
 |   |   |   |   |   |   |   Identifier: i int32
-|   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=17, column=41, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/helloworld.cerulean', originalLine=17, includeChain=[], lineStr='    for (int32 i = 0; i < length; i = i + 1)') int32
-|   |   |   |   |   |   |   |   Identifier: i int32
-|   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   |   Body:
 |   |   |   |   |   |   CodeBlock:
 |   |   |   |   |   |   |   ExpressionStatement:

@@ -1,0 +1,47 @@
+
+
+function int32 main() {
+    // Assign
+    int32 x = 10;
+    print ("x = 10 =>"); println (x =  10);
+    print ("x      =>"); println (x);
+    // Assign: add
+    print ("x += 3 =>"); println (x += 3);
+    print ("x      =>"); println (x);
+    // Assign: sub
+    print ("x -= 3 =>"); println (x -= 3);
+    print ("x      =>"); println (x);
+    // Assign: mul
+    print ("x *= 3 =>"); println (x *= 3);
+    print ("x      =>"); println (x);
+    // Assign: div
+    print ("x /= 3 =>"); println (x /= 3);
+    print ("x      =>"); println (x);
+    // Assign: mod
+    print ("x %= 3 =>"); println (x %= 3);
+    print ("x      =>"); println (x);
+
+    // Pre-increment
+    print ("++x    =>"); println (++x);
+    print ("x      =>"); println (x);
+    // Pre-decrement
+    print ("--x    =>"); println (--x);
+    print ("x      =>"); println (x);
+    // Post-increment
+    print ("x++    =>"); println (x++);
+    print ("x      =>"); println (x);
+    // Post-decrement
+    print ("x--    =>"); println (x--);
+    print ("x      =>"); println (x);
+    // Positive - does not assign
+    print ("+x     =>"); println (+x);
+    print ("x      =>"); println (x);
+    // Negative - does not assign
+    print ("-x     =>"); println (-x);
+    print ("-(-x)  =>"); println (-(-x));
+    print ("x      =>"); println (x);
+    // Negate - does not assign
+    print ("!x     =>"); println (!x);
+    print ("!(x-1) =>"); println (!(x-1));
+    print ("x      =>"); println (x);
+}
