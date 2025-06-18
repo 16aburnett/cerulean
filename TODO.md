@@ -1,4 +1,11 @@
 
+# Testing framework
+```bash
+python3 -m testing.runner --frontend all
+
+
+```
+
 # Cerulean tests
 ```bash
 
