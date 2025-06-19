@@ -11,34 +11,34 @@ python3 -m testing.runner --frontend all
 
 # run as a module for correct import between cerulean and ceruleanIR backend
 # needs to run from root of repo
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/helloworld.cerulean.ir -o cerulean/test_files/helloworld.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/helloworld.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/helloworld.cerulean.ir -o cerulean/test_files/helloworld.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
 
 # simple tests
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/simple.cerulean.ir -o cerulean/test_files/simple.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/simple.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/simple.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/simple.cerulean.ir -o cerulean/test_files/simple.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/simple.amyasm
 
 # test arrays and memory
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/arrays.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/arrays.cerulean.ir -o cerulean/test_files/arrays.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/arrays.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/arrays.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/arrays.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/arrays.cerulean.ir -o cerulean/test_files/arrays.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/arrays.amyasm
 
 # test conditionals
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_conditionals.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_conditionals.cerulean.ir -o cerulean/test_files/test_conditionals.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_conditionals.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_conditionals.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_conditionals.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_conditionals.cerulean.ir -o cerulean/test_files/test_conditionals.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_conditionals.amyasm
 
 # test loops
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_loops.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_loops.cerulean.ir -o cerulean/test_files/test_loops.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_loops.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_loops.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_loops.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_loops.cerulean.ir -o cerulean/test_files/test_loops.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_loops.amyasm
 
 # test operators
-python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_operators.cerulean --debug --emitTokens --emitAST --emitIR
-python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_operators.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_operators.cerulean.ir.amyasm
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_operators.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_operators.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_operators.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_operators.amyasm
 ```
 
 
@@ -82,6 +82,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cm
 
 
 - [TODO] rename localvariableexpression to register
+- [] IR could have required extern? use an external function - must declare extern and linker will handle symbol finding?
 
 Memory allocation
 - deferred free (frees at scope exit)

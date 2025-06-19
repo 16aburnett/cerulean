@@ -1,0 +1,913 @@
+// CeruleanIR Built-in library
+// Author: Amy Burnett
+//========================================================================
+// Global Builtin Variables
+
+    assign __null 0
+
+//========================================================================
+// skip over library functions 
+
+    jump __endOfLibrary
+
+//========================================================================
+// Prints a given string to the screen
+// void print (char[] stringToPrint);
+__builtin__print__char__1:
+    // grab string
+    stackget __str 0
+    // print each char
+    // init
+    assign __i 0
+__print__char__1__loop:
+    // cond
+    cmp __str[__i] 0
+    jeq __print__char__1__endloop
+    // Body
+    print __str[__i]
+    // update
+    add __i __i 1
+    // repeat
+    jump __print__char__1__loop
+__print__char__1__endloop:
+    return 0
+
+//========================================================================
+// Prints an int to the screen
+// void print (int32 intToPrint);
+__builtin__print__int32:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints an int to the screen
+// void print (int64 intToPrint);
+__builtin__print__int64:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen
+// void print (float32 floatToPrint);
+__builtin__print__float32:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen
+// void print (float64 floatToPrint);
+__builtin__print__float64:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
+// Prints a char to the screen
+// void print (char charToPrint);
+__builtin__print__char:
+    // grab char
+    stackget __char 0
+    print __char
+    return 0
+
+//========================================================================
+// Prints an enum's integer value 
+// void print (Enum e);
+__builtin__print__Enum:
+    stackget __e 0
+    print __e
+    return 0
+
+//========================================================================
+// Prints a given string to the screen with a newline at the end
+// void println (char[] stringToPrint);
+__builtin__println__char__1:
+    // grab string
+    stackget __str 0
+    // print each char
+    // init
+    assign __i 0
+__println__char__1__loop:
+    // cond
+    cmp __str[__i] 0
+    jeq __println__char__1__endloop
+    // Body
+    print __str[__i]
+    // update
+    add __i __i 1
+    // repeat
+    jump __println__char__1__loop
+__println__char__1__endloop:
+    println
+    return 0
+
+//========================================================================
+// Prints an int to the screen with a newline
+// void println (int32 intToPrint);
+__builtin__println__int32:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints an int to the screen with a newline
+// void println (int64 intToPrint);
+__builtin__println__int64:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen with a newline
+// void println (float32 floatToPrint);
+__builtin__println__float32:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a float to the screen with a newline
+// void println (float64 floatToPrint);
+__builtin__println__float64:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a char to the screen with a newline
+// void println (char charToPrint);
+__builtin__println__char:
+    // grab string
+    stackget __char 0
+    println __char
+    return 0
+
+//========================================================================
+// Prints an enum's integer value with a newline
+// void println (Enum e);
+__builtin__println__Enum:
+    stackget __e 0
+    println __e
+    return 0
+
+//========================================================================
+// Prints a newline to the console
+// void println ();
+__builtin__println:
+    println 
+    return 0
+
+//========================================================================
+// grabs input from the console 
+// char[] input ();
+__builtin__input:
+    input __line
+    return __line
+
+//========================================================================
+// exits/stops the program 
+__builtin__exit:
+    halt
+
+//========================================================================
+
+// Exits the program with the given exit code 
+// void exit(int32 exit_code)
+// - exit_code : 
+__builtin__exit__int32:
+    // ** not implemented for amyasm
+    halt
+
+//========================================================================
+// returns default float32 value
+// float32 float32 ();
+__builtin__float32:
+    return 0.0
+
+//========================================================================
+// returns default float64 value
+// float64 float64 ();
+__builtin__float64:
+    return 0.0
+
+//========================================================================
+// converts int32 to float32
+// float32 int32ToFloat32 (int32);
+__builtin__int32ToFloat32__int32:
+    stackget val 0
+    itof res val
+    return res
+
+//========================================================================
+// converts int64 to float64
+// float64 int64ToFloat64 (int64);
+__builtin__int64ToFloat64__int64:
+    stackget val 0
+    itof res val
+    return res
+
+//========================================================================
+// parses a float32 from a given char[]
+// float32 stringToFloat32 (char[]);
+__builtin__stringToFloat32__char__1:
+    stackget val 0
+    stof res val
+    return res
+
+//========================================================================
+// parses a float64 from a given char[]
+// float64 stringToFloat64 (char[]);
+__builtin__stringToFloat64__char__1:
+    stackget val 0
+    stof res val
+    return res
+
+//========================================================================
+// returns default int32 value
+// int32 int32 ();
+__builtin__int32:
+    return 0
+
+//========================================================================
+// returns default int64 value
+// int64 int64 ();
+__builtin__int64:
+    return 0
+
+//========================================================================
+// returns default char value
+// char char ();
+__builtin__char:
+    return '0'
+
+//========================================================================
+// converts float32 to int32
+// int32 float32ToInt32 (float32);
+__builtin__float32ToInt32__float32:
+    stackget val 0
+    ftoi res val
+    return res
+
+//========================================================================
+// converts float64 to int64
+// int64 float64ToInt64 (float64);
+__builtin__float64ToInt64__float64:
+    stackget val 0
+    ftoi res val
+    return res
+
+//========================================================================
+// parses an int32 from a given char[]
+// int32 stringToInt32 (char[]);
+__builtin__stringToInt32__char__1:
+    stackget val 0
+    stoi res val
+    return res
+
+//========================================================================
+// parses an int64 from a given char[]
+// int64 stringToInt64 (char[]);
+__builtin__stringToInt64__char__1:
+    stackget val 0
+    stoi res val
+    return res
+
+//========================================================================
+// parses an int32 from a given char
+// int32 charToInt32 (char);
+__builtin__charToInt32__char:
+    stackget val 0
+    ctoi res val
+    return res
+
+//========================================================================
+// parses an int64 from a given char
+// int64 charToInt64 (char);
+__builtin__charToInt64__char:
+    stackget val 0
+    ctoi res val
+    return res
+
+//========================================================================
+// converts int to string
+// char[] string (int);
+__builtin__string__int:
+    stackget val 0
+    string res val
+    return res
+
+//========================================================================
+// converts float to string
+// char[] string (float);
+__builtin__string__float:
+    stackget val 0
+    string res val
+    return res
+
+//========================================================================
+
+// returns default value for array and object (null)
+// null null ();
+__builtin__null:
+    return __null
+
+//========================================================================
+
+__endOfLibrary:
+   JUMP __end____main____main
+__main____main:
+__main__main__entry:
+   MALLOC __main__main__x_ptr 1
+   ASSIGN __main__main__x_ptr[0] 10
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '='
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] '1'
+   ASSIGN __str[5] '0'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__0
+   POP _arg0
+   ASSIGN __main__main__x_ptr[0] 10
+   PUSH 10
+   CALL __builtin__println__int32
+   RESPONSE __main__main__1
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__2
+   POP _arg0
+   ASSIGN __main__main__3 __main__main__x_ptr[0]
+   PUSH __main__main__3
+   CALL __builtin__println__int32
+   RESPONSE __main__main__4
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '+'
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '3'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__5
+   POP _arg0
+   ASSIGN __main__main__6 __main__main__x_ptr[0]
+   ADD __main__main__7 __main__main__6 3
+   ASSIGN __main__main__x_ptr[0] __main__main__7
+   PUSH __main__main__7
+   CALL __builtin__println__int32
+   RESPONSE __main__main__8
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__9
+   POP _arg0
+   ASSIGN __main__main__10 __main__main__x_ptr[0]
+   PUSH __main__main__10
+   CALL __builtin__println__int32
+   RESPONSE __main__main__11
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '-'
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '3'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__12
+   POP _arg0
+   ASSIGN __main__main__13 __main__main__x_ptr[0]
+   SUBTRACT __main__main__14 __main__main__13 3
+   ASSIGN __main__main__x_ptr[0] __main__main__14
+   PUSH __main__main__14
+   CALL __builtin__println__int32
+   RESPONSE __main__main__15
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__16
+   POP _arg0
+   ASSIGN __main__main__17 __main__main__x_ptr[0]
+   PUSH __main__main__17
+   CALL __builtin__println__int32
+   RESPONSE __main__main__18
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '*'
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '3'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__19
+   POP _arg0
+   ASSIGN __main__main__20 __main__main__x_ptr[0]
+   MULTIPLY __main__main__21 __main__main__20 3
+   ASSIGN __main__main__x_ptr[0] __main__main__21
+   PUSH __main__main__21
+   CALL __builtin__println__int32
+   RESPONSE __main__main__22
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__23
+   POP _arg0
+   ASSIGN __main__main__24 __main__main__x_ptr[0]
+   PUSH __main__main__24
+   CALL __builtin__println__int32
+   RESPONSE __main__main__25
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '/'
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '3'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__26
+   POP _arg0
+   ASSIGN __main__main__27 __main__main__x_ptr[0]
+   DIVIDE __main__main__28 __main__main__27 3
+   ASSIGN __main__main__x_ptr[0] __main__main__28
+   PUSH __main__main__28
+   CALL __builtin__println__int32
+   RESPONSE __main__main__29
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__30
+   POP _arg0
+   ASSIGN __main__main__31 __main__main__x_ptr[0]
+   PUSH __main__main__31
+   CALL __builtin__println__int32
+   RESPONSE __main__main__32
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] '%'
+   ASSIGN __str[3] '='
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] '3'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__33
+   POP _arg0
+   ASSIGN __main__main__34 __main__main__x_ptr[0]
+   MOD __main__main__35 __main__main__34 3
+   ASSIGN __main__main__x_ptr[0] __main__main__35
+   PUSH __main__main__35
+   CALL __builtin__println__int32
+   RESPONSE __main__main__36
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__37
+   POP _arg0
+   ASSIGN __main__main__38 __main__main__x_ptr[0]
+   PUSH __main__main__38
+   CALL __builtin__println__int32
+   RESPONSE __main__main__39
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '+'
+   ASSIGN __str[1] '+'
+   ASSIGN __str[2] 'x'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__40
+   POP _arg0
+   ASSIGN __main__main__41 __main__main__x_ptr[0]
+   ADD __main__main__42 __main__main__41 1
+   ASSIGN __main__main__x_ptr[0] __main__main__42
+   PUSH __main__main__42
+   CALL __builtin__println__int32
+   RESPONSE __main__main__43
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__44
+   POP _arg0
+   ASSIGN __main__main__45 __main__main__x_ptr[0]
+   PUSH __main__main__45
+   CALL __builtin__println__int32
+   RESPONSE __main__main__46
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '-'
+   ASSIGN __str[1] '-'
+   ASSIGN __str[2] 'x'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__47
+   POP _arg0
+   ASSIGN __main__main__48 __main__main__x_ptr[0]
+   SUBTRACT __main__main__49 __main__main__48 1
+   ASSIGN __main__main__x_ptr[0] __main__main__49
+   PUSH __main__main__49
+   CALL __builtin__println__int32
+   RESPONSE __main__main__50
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__51
+   POP _arg0
+   ASSIGN __main__main__52 __main__main__x_ptr[0]
+   PUSH __main__main__52
+   CALL __builtin__println__int32
+   RESPONSE __main__main__53
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] '+'
+   ASSIGN __str[2] '+'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__54
+   POP _arg0
+   ASSIGN __main__main__55 __main__main__x_ptr[0]
+   ADD __main__main__56 __main__main__55 1
+   ASSIGN __main__main__x_ptr[0] __main__main__56
+   PUSH __main__main__55
+   CALL __builtin__println__int32
+   RESPONSE __main__main__57
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__58
+   POP _arg0
+   ASSIGN __main__main__59 __main__main__x_ptr[0]
+   PUSH __main__main__59
+   CALL __builtin__println__int32
+   RESPONSE __main__main__60
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] '-'
+   ASSIGN __str[2] '-'
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__61
+   POP _arg0
+   ASSIGN __main__main__62 __main__main__x_ptr[0]
+   SUBTRACT __main__main__63 __main__main__62 1
+   ASSIGN __main__main__x_ptr[0] __main__main__63
+   PUSH __main__main__62
+   CALL __builtin__println__int32
+   RESPONSE __main__main__64
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__65
+   POP _arg0
+   ASSIGN __main__main__66 __main__main__x_ptr[0]
+   PUSH __main__main__66
+   CALL __builtin__println__int32
+   RESPONSE __main__main__67
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '+'
+   ASSIGN __str[1] 'x'
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__68
+   POP _arg0
+   ASSIGN __main__main__69 __main__main__x_ptr[0]
+   PUSH __main__main__69
+   CALL __builtin__println__int32
+   RESPONSE __main__main__70
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__71
+   POP _arg0
+   ASSIGN __main__main__72 __main__main__x_ptr[0]
+   PUSH __main__main__72
+   CALL __builtin__println__int32
+   RESPONSE __main__main__73
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '-'
+   ASSIGN __str[1] 'x'
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__74
+   POP _arg0
+   ASSIGN __main__main__75 __main__main__x_ptr[0]
+   SUBTRACT __main__main__76 0 __main__main__75
+   PUSH __main__main__76
+   CALL __builtin__println__int32
+   RESPONSE __main__main__77
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '-'
+   ASSIGN __str[1] '('
+   ASSIGN __str[2] '-'
+   ASSIGN __str[3] 'x'
+   ASSIGN __str[4] ')'
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__78
+   POP _arg0
+   ASSIGN __main__main__79 __main__main__x_ptr[0]
+   SUBTRACT __main__main__80 0 __main__main__79
+   SUBTRACT __main__main__81 0 __main__main__80
+   PUSH __main__main__81
+   CALL __builtin__println__int32
+   RESPONSE __main__main__82
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__83
+   POP _arg0
+   ASSIGN __main__main__84 __main__main__x_ptr[0]
+   PUSH __main__main__84
+   CALL __builtin__println__int32
+   RESPONSE __main__main__85
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '!'
+   ASSIGN __str[1] 'x'
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__86
+   POP _arg0
+   ASSIGN __main__main__87 __main__main__x_ptr[0]
+   NOT __main__main__88, __main__main__87
+   PUSH __main__main__88
+   CALL __builtin__println__int32
+   RESPONSE __main__main__89
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] '!'
+   ASSIGN __str[1] '('
+   ASSIGN __str[2] 'x'
+   ASSIGN __str[3] '-'
+   ASSIGN __str[4] '1'
+   ASSIGN __str[5] ')'
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__90
+   POP _arg0
+   ASSIGN __main__main__91 __main__main__x_ptr[0]
+   SUBTRACT __main__main__92 __main__main__91 1
+   NOT __main__main__93, __main__main__92
+   PUSH __main__main__93
+   CALL __builtin__println__int32
+   RESPONSE __main__main__94
+   POP _arg0
+   MALLOC __str 10
+   ASSIGN __str[0] 'x'
+   ASSIGN __str[1] ' '
+   ASSIGN __str[2] ' '
+   ASSIGN __str[3] ' '
+   ASSIGN __str[4] ' '
+   ASSIGN __str[5] ' '
+   ASSIGN __str[6] ' '
+   ASSIGN __str[7] '='
+   ASSIGN __str[8] '>'
+   ASSIGN __str[9] '\0'
+   PUSH __str
+   CALL __builtin__print__char__1
+   RESPONSE __main__main__95
+   POP _arg0
+   ASSIGN __main__main__96 __main__main__x_ptr[0]
+   PUSH __main__main__96
+   CALL __builtin__println__int32
+   RESPONSE __main__main__97
+   POP _arg0
+   RETURN 0
+__end____main____main:
+__start:
+   CALL __main____main
+   HALT

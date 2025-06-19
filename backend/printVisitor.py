@@ -88,8 +88,6 @@ class PrintVisitor (ASTVisitor):
 
         self.level += 1
 
-        node.type.accept (self)
-
         self.printSpaces (self.level)
         self.outputstrings += [f"Name: {node.id}\n"]
 

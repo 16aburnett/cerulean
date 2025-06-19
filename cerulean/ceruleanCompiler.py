@@ -22,6 +22,7 @@ if __name__ == "__main__":
     from .irGenerator import IRGeneratorVisitor
     from backend.irEmitter import IREmitterVisitor
     from backend.ceruleanIRBuilder import CeruleanIRBuilder
+    from backend.ceruleanIRCompiler import printAST, analyzeSemantics, generateCode
 else:
     from .preprocessor import CeruleanPreprocessor
     from .tokenizer import tokenize
@@ -45,7 +46,7 @@ TARGET_CPP    = "cpp"
 
 class CeruleanCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitIRAST=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
@@ -60,6 +61,8 @@ class CeruleanCompiler:
         self.astFilename = mainFilename + ".ast"
         self.emitIR = emitIR
         self.irFilename = mainFilename + ".ir"
+        self.emitIRAST = emitIRAST
+        self.irASTFilename = mainFilename + ".irast"
 
         self.debugLines = []
 
@@ -152,14 +155,29 @@ class CeruleanCompiler:
         irAST = irGeneratorVisitor.ast
         
         if self.emitIR:
+            print (f"Emitting IR...")
             irEmitterVisitor = IREmitterVisitor ()
             irAST.accept (irEmitterVisitor)
+            print (f"Writing IR to \"{self.irFilename}\"...")
             irFile = open (self.irFilename, "w")
-            if (self.debug): print (f"Writing IR to '{self.irFilename}'...")
             irFile.write (irEmitterVisitor.getIRCode ())
             irFile.close ()
 
-        return ''
+        if self.emitIRAST:
+            print (f"Printing IR AST...")
+            irASTString = printAST (irAST)
+            print (f"Writing IR AST to \"{self.irASTFilename}\"...")
+            astFile = open (self.irASTFilename, "w")
+            astFile.write (irASTString)
+            astFile.close ()
+
+        #=== IR SEMANTICS ANALYSIS ===============================================
+
+        print ("Analyzing IR semantics...")
+        wasSuccessful = analyzeSemantics (irAST, lines)
+        if (not wasSuccessful):
+            exit (1)
+        print ("IR semantic analysis passes successfully")
 
         #=== CODEGEN =============================================================
 
@@ -175,18 +193,14 @@ class CeruleanCompiler:
             # codeGenVisitor = CodeGenVisitor_cpp (lines)
 
         # generate code
-        # ast.accept (codeGenVisitor)
+        print (f"Generating code...")
+        code = generateCode (irAST, lines, TARGET_AMYASM)
 
         #=== OUTPUT ==============================================================
 
-        # destCode = "".join(codeGenVisitor.code)
-
-        # output generated/compiled code to separate file
-        # print (f"Writing compiled code to \"{self.destFilename}\"")
-        # file = open(self.destFilename, "w")
-        # file.write (destCode)
-
-        # return destCode
+        print (f"Writing compiled code to \"{destFilename}\"")
+        file = open(destFilename, "w")
+        file.write (code)
 
         #=== END =================================================================
 
@@ -204,6 +218,7 @@ if __name__ == "__main__":
     argparser.add_argument("--emitTokens", dest="emitTokens", action="store_true", help="output the lexed tokens")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the ast")
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the generated IR")
+    argparser.add_argument("--emitIRAST", dest="emitIRAST", action="store_true", help="output the AST of the generated IR")
     argparser.add_argument("--preprocess", dest="preprocess", action="store_true", help="only run preprocessor")
     argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm | x86 | python | cpp)")
 
@@ -241,6 +256,7 @@ if __name__ == "__main__":
         emitTokens=args.emitTokens,
         emitAST=args.emitAST,
         emitIR=args.emitIR,
+        emitIRAST=args.emitIRAST,
         emitPreprocessed=args.emitPreprocessed, 
         preprocess=args.preprocess,
         target=target
