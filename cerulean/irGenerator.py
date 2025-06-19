@@ -777,122 +777,192 @@ class IRGeneratorVisitor (ASTVisitor):
         return resultReg
 
     def visitLogicalOrExpressionNode (self, node):
-        print("ERROR: LogicalOrExpressionNode not implemented")
-        printToken (node.token)
-        exit(1)
-        self.printComment ("OR")
+        # Cerulean  : lhs || rhs
+        # CeruleanIR: <eval_lhs>
+        #             %lorLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
+        #             %lorResult.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
+        #             store (ptr(%lorResult.ptr), int32(0), int32(%lorLHSResult))
+        #             jcmp (int32(%lorLHSResult), block(lor_end0), block(lor_rhs0)) // skip rhs of lor if true
+        #          lor_rhs0:
+        #             <eval_rhs>
+        #             %lorRHSResult = value (int32(rhs_reg))
+        #             store (ptr(%lorResult.ptr), int32(0), int32(%lorRHSResult))
+        #             jmp (block(lor_end0))
+        #          lor_end0:
+        #             %result = load (type(int32), ptr(%lorResult.ptr), int32(0))
+        #             // return %result
+        # NOTE: if we had phi instructions, we'd be able to do this without the alloca
+        #             %result = phi (int32(true), block(<prev_block>), int32(%lorRHSResult), block(lor_rhs0))
 
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("Eval LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-
-        # generate unique labels
-        # this is done after eval LHS so the jumpIndexes increase top-down
-        short_circuit_state_label = f".OR_SHORT_CIRCUIT{self.jumpIndex}"
-        false_label = f".OR_FALSE{self.jumpIndex}"
-        end_label = f".OR_END{self.jumpIndex}"
+        lorIndex = self.jumpIndex
         self.jumpIndex += 1
+        rhsLabel = f"lor_rhs{lorIndex}"
+        endLabel = f"lor_end{lorIndex}"
+        resultPtrName = f"%lor_result{lorIndex}.ptr"
 
-        # short-circuit if true 
-        self.printComment ("Check if we need to short-circuit")
-        self.indentation += 1
-        self.printCode ("pop rax ; __lhs")
-        self.printCode ("test rax, rax")
-        self.printCode (f"jne {short_circuit_state_label}")
-        self.indentation -= 1
-
-        # calc rhs 
-        self.printComment ("Eval RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-
-        # short-circuit if false 
-        self.printComment ("Check rhs")
-        self.indentation += 1
-        self.printCode ("pop rax ; __rhs")
-        self.printCode ("test rax, rax")
-        self.printCode (f"je {false_label} ; skip true state if false (rax == 0)")
-        self.indentation -= 1
-
-        # short cicuit state
-        self.printLabel (f"{short_circuit_state_label}:")
-        self.printCode ("mov rax, 1 ; result = True")
-        self.printCode (f"jmp {end_label} ; skip false state")
-
-        # false state
-        self.printComment ("False state")
-        self.printLabel (f"{false_label}:")
-        self.printCode ("mov rax, 0 ; result = False")
-
-        # end state
-        self.printLabel (f"{end_label}:")
-        self.printCode ("movzx eax, al")
-        self.printCode ("push rax ; result")
-
-        self.indentation -= 1
+        lhsReg = node.lhs.accept (self)
+        #             %lorLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
+        lorLHSResult = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorLHSResult.id, None), "cne", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        # Alloca space for result
+        #             %lorResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
+        lorResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.op, None, None)
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorResultPtr.id, None), "alloca", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (1))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        # Set result to LHS
+        #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorLHSResult))
+        instruction = irast.InstructionNode (None, "store", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorLHSResult)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             jcmp (int32(%lorLHSResult), block(lor_end0), block(lor_rhs0)) // skip rhs of lor if true
+        instruction = irast.InstructionNode (None, "jcmp", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (rhsLabel, None, None, None))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #          lor_rhs0:
+        rhsBlock = irast.BasicBlockNode (rhsLabel, [])
+        self.containingIRFunction.basicBlocks += [rhsBlock]
+        self.containingBasicBlock = rhsBlock
+        #             <eval_rhs>
+        rhsReg = node.rhs.accept (self)
+        #             %lorRHSResult = value (int32(rhs_reg))
+        lorRHSResultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorRHSResultReg.id, None), "value", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), rhsReg)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorRHSResult))
+        instruction = irast.InstructionNode (None, "store", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorRHSResultReg)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             jmp (block(lor_end0))
+        instruction = irast.InstructionNode (None, "jmp", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #          lor_end0:
+        endBlock = irast.BasicBlockNode (endLabel, [])
+        self.containingIRFunction.basicBlocks += [endBlock]
+        self.containingBasicBlock = endBlock
+        #             %result = load (type(int32), ptr(%lorResult.ptr), int32(0))
+        resultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             // return %result
+        return resultReg
 
     def visitLogicalAndExpressionNode (self, node):
-        print("ERROR: LogicalAndExpressionNode not implemented")
-        printToken (node.token)
-        exit(1)
-        self.printComment ("AND")
+        # Cerulean  : lhs && rhs
+        # CeruleanIR: <eval_lhs>
+        #             %landLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
+        #             %landResult.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
+        #             store (ptr(%landResult.ptr), int32(0), int32(%landLHSResult))
+        #             jcmp (int32(%landLHSResult), block(land_rhs0), block(land_end0)) // run rhs IFF lhs is true
+        #          land_rhs0:
+        #             <eval_rhs>
+        #             %landRHSResult = value (int32(rhs_reg))
+        #             store (ptr(%landResult.ptr), int32(0), int32(%landRHSResult))
+        #             jmp (block(land_end0))
+        #          land_end0:
+        #             %result = load (type(int32), ptr(%landResult.ptr), int32(0))
+        #             // return %result
+        # NOTE: if we had phi instructions, we'd be able to do this without the alloca
+        #             %result = phi (int32(false), block(<prev_block>), int32(%landRHSResult), block(land_rhs0))
 
-        self.indentation += 1
-
-        # calc lhs 
-        self.printComment ("Eval LHS")
-        self.indentation += 1
-        node.lhs.accept (self)
-        self.indentation -= 1
-
-        # generate unique labels
-        # this is done after eval LHS so the jumpIndexes increase top-down
-        short_circuit_state_label = f".AND_SHORT_CIRCUIT{self.jumpIndex}"
-        end_label = f".AND_END{self.jumpIndex}"
+        landIndex = self.jumpIndex
         self.jumpIndex += 1
+        rhsLabel = f"land_rhs{landIndex}"
+        endLabel = f"land_end{landIndex}"
+        resultPtrName = f"%land_result{landIndex}.ptr"
 
-        # short-circuit if false 
-        self.printComment ("Check if we need to short-circuit")
-        self.indentation += 1
-        self.printCode ("pop rax ; __lhs")
-        self.printCode ("test rax, rax")
-        self.printCode (f"je {short_circuit_state_label}")
-        self.indentation -= 1
-
-        # calc rhs 
-        self.printComment ("Eval RHS")
-        self.indentation += 1
-        node.rhs.accept (self)
-        self.indentation -= 1
-
-        # short-circuit if false 
-        self.printComment ("Check RHS")
-        self.indentation += 1
-        self.printCode ("pop rax ; __rhs")
-        self.printCode ("test rax, rax")
-        self.printCode (f"je {short_circuit_state_label}")
-        self.indentation -= 1
-
-        # success state
-        self.printComment ("Success state")
-        self.printCode ("mov rax, 1 ; result = True")
-        self.printCode (f"jmp {end_label}")
-
-        # short cicuit state
-        self.printLabel (f"{short_circuit_state_label}:")
-        self.printCode ("mov rax, 0 ; result = False")
-
-        # end state
-        self.printLabel (f"{end_label}:")
-        self.printCode ("movzx eax, al")
-        self.printCode ("push rax ; result")
-
-        self.indentation -= 1
+        lhsReg = node.lhs.accept (self)
+        #             %landLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
+        landLHSResult = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (landLHSResult.id, None), "cne", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        # Alloca space for result
+        #             %landResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
+        landResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.op, None, None)
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (landResultPtr.id, None), "alloca", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (1))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        # Set result to LHS
+        #             store (ptr(%landResult0.ptr), int32(0), int32(%landLHSResult))
+        instruction = irast.InstructionNode (None, "store", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landLHSResult)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             jcmp (int32(%landLHSResult), block(land_rhs0), block(land_end0)) // run rhs IFF lhs is true
+        instruction = irast.InstructionNode (None, "jcmp", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (rhsLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #          land_rhs0:
+        rhsBlock = irast.BasicBlockNode (rhsLabel, [])
+        self.containingIRFunction.basicBlocks += [rhsBlock]
+        self.containingBasicBlock = rhsBlock
+        #             <eval_rhs>
+        rhsReg = node.rhs.accept (self)
+        #             %landRHSResult = value (int32(rhs_reg))
+        landRHSResultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (landRHSResultReg.id, None), "value", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), rhsReg)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             store (ptr(%landResult0.ptr), int32(0), int32(%landRHSResult))
+        instruction = irast.InstructionNode (None, "store", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landRHSResultReg)
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             jmp (block(land_end0))
+        instruction = irast.InstructionNode (None, "jmp", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #          land_end0:
+        endBlock = irast.BasicBlockNode (endLabel, [])
+        self.containingIRFunction.basicBlocks += [endBlock]
+        self.containingBasicBlock = endBlock
+        #             %result = load (type(int32), ptr(%landResult.ptr), int32(0))
+        resultReg = self.newLocalReg ()
+        instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+        ])
+        self.containingBasicBlock.instructions += [instruction]
+        #             // return %result
+        return resultReg
 
     def visitEqualityExpressionNode (self, node):
         lhsReg = node.lhs.accept (self)

@@ -39,6 +39,11 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_l
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_operators.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_operators.amyasm
 # python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_operators.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_operators.amyasm
+
+# test logical operators
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_logicals.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_logicals.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_logicals.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_logicals.amyasm
 ```
 
 
