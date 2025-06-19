@@ -452,7 +452,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitAssignExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"AssignExpression: {node.op} {node.type}\n"]
+        self.outputstrings += [f"AssignExpression: {node.token.lexeme} {node.type}\n"]
 
         self.level += 1
 
@@ -486,7 +486,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitEqualityExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"EqualityExpression: {node.op} {node.type}\n"]
+        self.outputstrings += [f"EqualityExpression: {node.token.lexeme} {node.type}\n"]
 
         self.level += 1
 
@@ -497,7 +497,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitInequalityExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"InequalityExpression: {node.op} {node.type}\n"]
+        self.outputstrings += [f"InequalityExpression: {node.token.lexeme} {node.type}\n"]
 
         self.level += 1
 
@@ -508,7 +508,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitAdditiveExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"AdditiveExpression: {node.op} {node.type}\n"]
+        self.outputstrings += [f"AdditiveExpression: {node.token.lexeme} {node.type}\n"]
 
         self.level += 1
 
@@ -519,7 +519,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitMultiplicativeExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"MultiplicativeExpression: {node.op} {node.type}\n"]
+        self.outputstrings += [f"MultiplicativeExpression: {node.token.lexeme} {node.type}\n"]
 
         self.level += 1
 
@@ -530,35 +530,35 @@ class PrintVisitor (ASTVisitor):
 
     def visitPreIncrementExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"PreIncrementExpressionNode: {node.op} {node.type}\n"]
+        self.outputstrings += [f"PreIncrementExpressionNode: {node.token.lexeme} {node.type}\n"]
         self.level += 1
         node.rhs.accept (self)
         self.level -= 1
 
     def visitPreDecrementExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"PreDecrementExpressionNode: {node.op} {node.type}\n"]
+        self.outputstrings += [f"PreDecrementExpressionNode: {node.token.lexeme} {node.type}\n"]
         self.level += 1
         node.rhs.accept (self)
         self.level -= 1
 
     def visitNegativeExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"NegativeExpressionNode: {node.op} {node.type}\n"]
+        self.outputstrings += [f"NegativeExpressionNode: {node.token.lexeme} {node.type}\n"]
         self.level += 1
         node.rhs.accept (self)
         self.level -= 1
 
     def visitLogicalNotExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"LogicalNotExpressionNode: {node.op} {node.type}\n"]
+        self.outputstrings += [f"LogicalNotExpressionNode: {node.token.lexeme} {node.type}\n"]
         self.level += 1
         node.rhs.accept (self)
         self.level -= 1
 
     def visitBitwiseNegatationExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"BitwiseNegatationExpressionNode: {node.op} {node.type}\n"]
+        self.outputstrings += [f"BitwiseNegatationExpressionNode: {node.token.lexeme} {node.type}\n"]
         self.level += 1
         node.rhs.accept (self)
         self.level -= 1

@@ -706,11 +706,11 @@ class IRGeneratorVisitor (ASTVisitor):
             # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
             print("ERROR: Assigning to MemberAccessorExpressionNode not implemented")
-            printToken (node.lhs.op)
+            printToken (node.lhs.token)
             exit(1)
 
         # Read lhs if we need it
-        if (node.op.type != "ASSIGN"):
+        if (node.token.type != "ASSIGN"):
             if isMem:
                 # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
                 lhsValueReg = self.newLocalReg ()
@@ -724,38 +724,38 @@ class IRGeneratorVisitor (ASTVisitor):
 
         # perform extra operation
         # =
-        if node.op.type == "ASSIGN":
+        if node.token.type == "ASSIGN":
             resultReg = rhsReg
         # +=
-        elif node.op.type == "ASSIGN_ADD":
+        elif node.token.type == "ASSIGN_ADD":
             resultReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
             arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "add", [arg0, arg1])
             self.containingBasicBlock.instructions += [instruction]
         # -=
-        elif node.op.type == "ASSIGN_SUB":
+        elif node.token.type == "ASSIGN_SUB":
             resultReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
             arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "sub", [arg0, arg1])
             self.containingBasicBlock.instructions += [instruction]
         # *=
-        elif node.op.type == "ASSIGN_MUL":
+        elif node.token.type == "ASSIGN_MUL":
             resultReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
             arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "mul", [arg0, arg1])
             self.containingBasicBlock.instructions += [instruction]
         # /=
-        elif node.op.type == "ASSIGN_DIV":
+        elif node.token.type == "ASSIGN_DIV":
             resultReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
             arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "div", [arg0, arg1])
             self.containingBasicBlock.instructions += [instruction]
         # %=
-        elif node.op.type == "ASSIGN_MOD":
+        elif node.token.type == "ASSIGN_MOD":
             resultReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
             arg1 = irast.ArgumentExpressionNode (irType, rhsReg)
@@ -804,31 +804,31 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %lorLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
         lorLHSResult = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorLHSResult.id, None), "cne", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lhsReg),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Alloca space for result
         #             %lorResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
-        lorResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.op, None, None)
+        lorResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.token, None, None)
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorResultPtr.id, None), "alloca", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (1))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (1))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Set result to LHS
         #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorLHSResult))
         instruction = irast.InstructionNode (None, "store", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorLHSResult)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorLHSResult)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jcmp (int32(%lorLHSResult), block(lor_end0), block(lor_rhs0)) // skip rhs of lor if true
         instruction = irast.InstructionNode (None, "jcmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorLHSResult),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (rhsLabel, None, None, None))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (rhsLabel, None, None, None))
         ])
         self.containingBasicBlock.instructions += [instruction]
         #          lor_rhs0:
@@ -840,19 +840,19 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %lorRHSResult = value (int32(rhs_reg))
         lorRHSResultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorRHSResultReg.id, None), "value", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), rhsReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), rhsReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorRHSResult))
         instruction = irast.InstructionNode (None, "store", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lorRHSResultReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorRHSResultReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jmp (block(lor_end0))
         instruction = irast.InstructionNode (None, "jmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
         ])
         self.containingBasicBlock.instructions += [instruction]
         #          lor_end0:
@@ -862,9 +862,9 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %result = load (type(int32), ptr(%lorResult.ptr), int32(0))
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             // return %result
@@ -898,31 +898,31 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %landLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
         landLHSResult = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landLHSResult.id, None), "cne", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), lhsReg),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Alloca space for result
         #             %landResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
-        landResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.op, None, None)
+        landResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.token, None, None)
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landResultPtr.id, None), "alloca", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (1))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (1))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Set result to LHS
         #             store (ptr(%landResult0.ptr), int32(0), int32(%landLHSResult))
         instruction = irast.InstructionNode (None, "store", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landLHSResult)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landLHSResult)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jcmp (int32(%landLHSResult), block(land_rhs0), block(land_end0)) // run rhs IFF lhs is true
         instruction = irast.InstructionNode (None, "jcmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landLHSResult),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (rhsLabel, None, None, None)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (rhsLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
         ])
         self.containingBasicBlock.instructions += [instruction]
         #          land_rhs0:
@@ -934,19 +934,19 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %landRHSResult = value (int32(rhs_reg))
         landRHSResultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landRHSResultReg.id, None), "value", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), rhsReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), rhsReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             store (ptr(%landResult0.ptr), int32(0), int32(%landRHSResult))
         instruction = irast.InstructionNode (None, "store", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), landRHSResultReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landRHSResultReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jmp (block(land_end0))
         instruction = irast.InstructionNode (None, "jmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.op), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
         ])
         self.containingBasicBlock.instructions += [instruction]
         #          land_end0:
@@ -956,9 +956,9 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %result = load (type(int32), ptr(%landResult.ptr), int32(0))
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.op), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.op), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.op), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             // return %result
@@ -968,9 +968,9 @@ class IRGeneratorVisitor (ASTVisitor):
         lhsReg = node.lhs.accept (self)
         rhsReg = node.rhs.accept (self)
         destReg = self.newLocalReg ()
-        if node.op.lexeme == "==":
+        if node.token.lexeme == "==":
             command = "ceq"
-        else: # node.op.lexeme == "!=":
+        else: # node.token.lexeme == "!=":
             command = "cne"
         lhsIRType = node.lhs.type.accept (self)
         arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
@@ -984,13 +984,13 @@ class IRGeneratorVisitor (ASTVisitor):
         lhsReg = node.lhs.accept (self)
         rhsReg = node.rhs.accept (self)
         destReg = self.newLocalReg ()
-        if node.op.lexeme == "<":
+        if node.token.lexeme == "<":
             command = "clt"
-        elif node.op.lexeme == "<=":
+        elif node.token.lexeme == "<=":
             command = "cle"
-        elif node.op.lexeme == ">":
+        elif node.token.lexeme == ">":
             command = "cgt"
-        else: # node.op.lexeme == ">=":
+        else: # node.token.lexeme == ">=":
             command = "cge"
         lhsIRType = node.lhs.type.accept (self)
         arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
@@ -1004,9 +1004,9 @@ class IRGeneratorVisitor (ASTVisitor):
         lhsReg = node.lhs.accept (self)
         rhsReg = node.rhs.accept (self)
         destReg = self.newLocalReg ()
-        if node.op.lexeme == '+':
+        if node.token.lexeme == '+':
             command = "add"
-        else: # node.op.lexeme == '-':
+        else: # node.token.lexeme == '-':
             command = "sub"
         lhsIRType = node.lhs.type.accept (self)
         arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
@@ -1020,11 +1020,11 @@ class IRGeneratorVisitor (ASTVisitor):
         lhsReg = node.lhs.accept (self)
         rhsReg = node.rhs.accept (self)
         destReg = self.newLocalReg ()
-        if node.op.lexeme == '*':
+        if node.token.lexeme == '*':
             command = "mul"
-        elif node.op.lexeme == '/':
+        elif node.token.lexeme == '/':
             command = "div"
-        else: # node.op.lexeme == '%':
+        else: # node.token.lexeme == '%':
             command = "mod"
         lhsIRType = node.lhs.type.accept (self)
         arg0 = irast.ArgumentExpressionNode (lhsIRType, lhsReg)
@@ -1081,11 +1081,11 @@ class IRGeneratorVisitor (ASTVisitor):
             # NOTE: we should probably use getelementptr here
         elif isinstance (node.rhs, MemberAccessorExpressionNode):
             print("ERROR: pre-increment to MemberAccessorExpressionNode not implemented")
-            printToken (node.rhs.op)
+            printToken (node.rhs.token)
             exit(1)
         else:
             print("ERROR: Invalid rhs to pre-increment")
-            printToken (node.rhs.op)
+            printToken (node.rhs.token)
             exit(1)
 
         # Read rhs value
@@ -1169,11 +1169,11 @@ class IRGeneratorVisitor (ASTVisitor):
             # NOTE: we should probably use getelementptr here
         elif isinstance (node.rhs, MemberAccessorExpressionNode):
             print("ERROR: pre-decrement to MemberAccessorExpressionNode not implemented")
-            printToken (node.rhs.op)
+            printToken (node.rhs.token)
             exit(1)
         else:
             print("ERROR: Invalid rhs to pre-decrement")
-            printToken (node.rhs.op)
+            printToken (node.rhs.token)
             exit(1)
 
         # Read rhs value
@@ -1237,7 +1237,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitBitwiseNegatationExpressionNode(self, node):
         print("ERROR: BitwiseNegatationExpressionNode not implemented")
-        printToken (node.op)
+        printToken (node.token)
         exit(1)
 
     def visitPostIncrementExpressionNode(self, node):
@@ -1287,11 +1287,11 @@ class IRGeneratorVisitor (ASTVisitor):
             # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
             print("ERROR: post-increment to MemberAccessorExpressionNode not implemented")
-            printToken (node.lhs.op)
+            printToken (node.lhs.token)
             exit(1)
         else:
             print("ERROR: Invalid lhs to post-increment")
-            printToken (node.lhs.op)
+            printToken (node.lhs.token)
             exit(1)
 
         # Read lhs value
@@ -1375,11 +1375,11 @@ class IRGeneratorVisitor (ASTVisitor):
             # NOTE: we should probably use getelementptr here
         elif isinstance (node.lhs, MemberAccessorExpressionNode):
             print("ERROR: post-decrement to MemberAccessorExpressionNode not implemented")
-            printToken (node.lhs.op)
+            printToken (node.lhs.token)
             exit(1)
         else:
             print("ERROR: Invalid lhs to post-decrement")
-            printToken (node.lhs.op)
+            printToken (node.lhs.token)
             exit(1)
 
         # Read lhs value
@@ -1441,7 +1441,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitMemberAccessorExpressionNode (self, node):
         print("ERROR: MemberAccessorExpressionNode not implemented")
-        printToken (node.op)
+        printToken (node.token)
         exit(1)
 
         # static calls 
@@ -1482,7 +1482,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitFieldAccessorExpressionNode (self, node):
         print("ERROR: FieldAccessorExpressionNode not implemented")
-        printToken (node.op)
+        printToken (node.token)
         exit(1)
         self.printComment ("Field Accessor")
 
@@ -1507,7 +1507,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitMethodAccessorExpressionNode (self, node):
         print("ERROR: MethodAccessorExpressionNode not implemented")
-        printToken (node.op)
+        printToken (node.token)
         exit(1)
         if node.decl.isVirtual:
             self.printComment (f"Virtual Method Call - {node.decl.signatureNoScope} -> {node.decl.type}")
@@ -1596,7 +1596,7 @@ class IRGeneratorVisitor (ASTVisitor):
 
     def visitThisExpressionNode (self, node):
         print("ERROR: ThisExpressionNode not implemented")
-        printToken (node.op)
+        printToken (node.token)
         exit(1)
         self.printComment (f"This keyword")
         self.indentation += 1

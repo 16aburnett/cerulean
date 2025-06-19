@@ -96,6 +96,10 @@ int[] a = new int[10];
 defer delete a; // will be moved to the end of the scope (or func)
 ```
 
+ Template Metaprogramming (C++)
+- The compiler executes logic via template instantiations (like type traits or SFINAE). This is Turing-complete, so you can basically compute anything—if you're brave enough.
+
+
 Ditch branch/jump instructions all  together?
 - if all blocks require a branch at the end, then should we just build that into the syntax??
 - 

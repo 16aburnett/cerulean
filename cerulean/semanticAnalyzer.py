@@ -744,7 +744,7 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.lhs.type
 
         # ensure types work for overloaded operators
-        if node.op.lexeme == '=':
+        if node.token.lexeme == '=':
             overloadedFunctionName = "__assign__"
         hasOverloadedMethod = node.lhs.type.type == Type.USERTYPE and node.lhs.type.arrayDimensions == 0 and self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs]) != None
         # hasOverloadedFunction = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs]) != None
@@ -775,16 +775,16 @@ class SymbolTableVisitor (ASTVisitor):
                 parent = parent.pDecl
             isDiffType = not isSubtype
         if (not isArrayNullOp and not isObjectNullOp and (isDiffType or isDiffDimensions)) and not hasOverloadedMethod:
-            print (f"Semantic Error: mismatching types in assign, \"{node.op.lexeme}\"")
-            printToken (node.op)
+            print (f"Semantic Error: mismatching types in assign, \"{node.token.lexeme}\"")
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
                     
         # ensure operands arent floats if operator is mod 
-        elif (node.op.lexeme == '%=' and (node.lhs.type.__str__() == 'float' or node.rhs.type.__str__() == 'float')) and not hasOverloadedMethod:
-            print (f"Semantic Error: float values cannot be used with the mod operator ({node.op.lexeme})")
-            printToken (node.op)
+        elif (node.token.lexeme == '%=' and (node.lhs.type.__str__() == 'float' or node.rhs.type.__str__() == 'float')) and not hasOverloadedMethod:
+            print (f"Semantic Error: float values cannot be used with the mod operator ({node.token.lexeme})")
+            printToken (node.token)
             print (f"   LHS: {node.lhs.type}")
             print (f"   RHS: {node.rhs.type}")
             print ()
@@ -792,7 +792,7 @@ class SymbolTableVisitor (ASTVisitor):
 
         # method operator overload
         if hasOverloadedMethod:
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.op, 0, 0), [node.lhs, node.rhs], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.token, 0, 0), [node.lhs, node.rhs], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
 
         # mark variable as assigned to
@@ -820,7 +820,7 @@ class SymbolTableVisitor (ASTVisitor):
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0)):
             print (f"Semantic Error: invalid/mismatching types types in ||")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -842,7 +842,7 @@ class SymbolTableVisitor (ASTVisitor):
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0)):
             print (f"Semantic Error: invalid/mismatching types types in &&")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -861,7 +861,7 @@ class SymbolTableVisitor (ASTVisitor):
                 or node.lhs.type.arrayDimensions != node.rhs.type.arrayDimensions
                 or node.lhs.type.id != node.rhs.type.id)):
             print (f"Semantic Error: invalid/mismatching types in equality")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -881,7 +881,7 @@ class SymbolTableVisitor (ASTVisitor):
                 or node.lhs.type.arrayDimensions > 0
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid/mismatching types in inequality")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -894,9 +894,9 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.lhs.type
 
         # ensure types work for add/sub
-        if node.op.lexeme == '+':
+        if node.token.lexeme == '+':
             overloadedFunctionName = "__add__"
-        elif node.op.lexeme == '-':
+        elif node.token.lexeme == '-':
             overloadedFunctionName = "__sub__"
         hasOverloadedMethod = node.lhs.type.type == Type.USERTYPE and node.lhs.type.arrayDimensions == 0 and self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs]) != None
         hasOverloadedFunction = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs]) != None
@@ -908,22 +908,22 @@ class SymbolTableVisitor (ASTVisitor):
             or node.rhs.type.arrayDimensions > 0)
             and not hasOverloadedMethod
             and not hasOverloadedFunction):
-            print (f"Semantic Error: invalid/mismatching types for \"{node.op.lexeme}\"")
-            printToken (node.op)
+            print (f"Semantic Error: invalid/mismatching types for \"{node.token.lexeme}\"")
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
             
         # function operator overload 
         elif hasOverloadedFunction and not hasOverloadedMethod:
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (overloadedFunctionName, node.op, 0, 0), [node.lhs, node.rhs], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (overloadedFunctionName, node.token, 0, 0), [node.lhs, node.rhs], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs])
             # this additive's type becomes the return type of the overloaded function call
             node.type = node.overloadedFunctionCall.decl.type
         
         # method operator overload
         elif hasOverloadedMethod and not hasOverloadedFunction:
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.op, 0, 0), [node.lhs, node.rhs], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.token, 0, 0), [node.lhs, node.rhs], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
             # this additive's type becomes the return type of the overloaded function call
             node.type = node.overloadedFunctionCall.decl.type
@@ -933,7 +933,7 @@ class SymbolTableVisitor (ASTVisitor):
             overloadedMethodDecl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
             overloadedFunctionDecl = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs])
             print (f"Semantic Error: Ambiguous overload for subscript operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   Candidate: {overloadedMethodDecl.signature}")
             printToken (overloadedMethodDecl.token)
             print (f"   Candidate: {overloadedFunctionDecl.signature}")
@@ -948,11 +948,11 @@ class SymbolTableVisitor (ASTVisitor):
         node.type = node.lhs.type
 
         # ensure types work for mult/div/mod 
-        if node.op.lexeme == '*':
+        if node.token.lexeme == '*':
             overloadedFunctionName = "__mult__"
-        elif node.op.lexeme == '/':
+        elif node.token.lexeme == '/':
             overloadedFunctionName = "__div__"
-        elif node.op.lexeme == '%':
+        elif node.token.lexeme == '%':
             overloadedFunctionName = "__mod__"
 
         hasOverloadedMethod = node.lhs.type.type == Type.USERTYPE and node.lhs.type.arrayDimensions == 0 and self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs]) != None
@@ -965,16 +965,16 @@ class SymbolTableVisitor (ASTVisitor):
             or node.rhs.type.arrayDimensions > 0)
             and not hasOverloadedMethod
             and not hasOverloadedFunction):
-            print (f"Semantic Error: invalid/mismatching types for \"{node.op.lexeme}\"")
-            printToken (node.op)
+            print (f"Semantic Error: invalid/mismatching types for \"{node.token.lexeme}\"")
+            printToken (node.token)
             print (f"   {node.lhs.type} != {node.rhs.type}")
             print ()
             self.wasSuccessful = False
         
         # ensure operands arent floats if operator is mod 
-        elif node.op.lexeme == '%' and (node.lhs.type.__str__() == 'float' or node.rhs.type.__str__() == 'float'):
-            print (f"Semantic Error: float values cannot be used with the mod operator ({node.op.lexeme})")
-            printToken (node.op)
+        elif node.token.lexeme == '%' and (node.lhs.type.__str__() == 'float' or node.rhs.type.__str__() == 'float'):
+            print (f"Semantic Error: float values cannot be used with the mod operator ({node.token.lexeme})")
+            printToken (node.token)
             print (f"   LHS: {node.lhs.type}")
             print (f"   RHS: {node.rhs.type}")
             print ()
@@ -982,12 +982,12 @@ class SymbolTableVisitor (ASTVisitor):
             
         # function operator overload 
         elif hasOverloadedFunction and not hasOverloadedMethod:
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (overloadedFunctionName, node.op, 0, 0), [node.lhs, node.rhs], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (overloadedFunctionName, node.token, 0, 0), [node.lhs, node.rhs], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs])
         
         # method operator overload
         elif hasOverloadedMethod and not hasOverloadedFunction:
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.op, 0, 0), [node.lhs, node.rhs], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::{overloadedFunctionName}", node.token, 0, 0), [node.lhs, node.rhs], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
         
         # ambiguous 
@@ -995,7 +995,7 @@ class SymbolTableVisitor (ASTVisitor):
             overloadedMethodDecl = self.table.lookup (f"{node.lhs.type}::{overloadedFunctionName}", Kind.FUNC, [node.rhs])
             overloadedFunctionDecl = self.table.lookup (overloadedFunctionName, Kind.FUNC, [node.lhs, node.rhs])
             print (f"Semantic Error: Ambiguous overload for \"{overloadedFunctionName}\" operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   Candidate: {overloadedMethodDecl.signature}")
             printToken (overloadedMethodDecl.token)
             print (f"   Candidate: {overloadedFunctionDecl.signature}")
@@ -1011,7 +1011,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for pre-increment operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1031,7 +1031,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for pre-decrement operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1051,7 +1051,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for negation operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1064,7 +1064,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for logical not operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1077,7 +1077,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.rhs.type.type != Type.FLOAT32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for bitwise negation operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   RHS type: {node.rhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1090,7 +1090,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.lhs.type.type != Type.FLOAT32)
                 or node.lhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for increment operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   LHS type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1110,7 +1110,7 @@ class SymbolTableVisitor (ASTVisitor):
                 and node.lhs.type.type != Type.FLOAT32)
                 or node.lhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for decrement operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   LHS type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1136,7 +1136,7 @@ class SymbolTableVisitor (ASTVisitor):
                and not hasOverloadedMethod
                and not hasOverloadedFunction):
                 print (f"Semantic Error: lhs must be an array")
-                printToken (node.op)
+                printToken (node.token)
                 print (f"   LHS type: {node.lhs.type}")
                 print ()
                 self.wasSuccessful = False
@@ -1158,7 +1158,7 @@ class SymbolTableVisitor (ASTVisitor):
             isEnum = typedecl and isinstance (typedecl, EnumDeclarationNode)
             if not (isInt or isEnum):
                 print (f"Semantic Error: Offset of subscript operator must be an integer or enum")
-                printToken (node.op)
+                printToken (node.token)
                 print (f"   Offset type: {node.offset.type}")
                 print ()
                 self.wasSuccessful = False
@@ -1174,7 +1174,7 @@ class SymbolTableVisitor (ASTVisitor):
 
             # just using a function call for simplicity
             # NOTE: implicit object parameter is also passed as an arg
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::__subscript__", node.op, 0, 0), [node.lhs, node.offset], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode (f"{node.lhs.type}::__subscript__", node.token, 0, 0), [node.lhs, node.offset], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = overloadedFunctionDecl
         # overloaded function
         elif hasOverloadedFunction and not hasOverloadedMethod:
@@ -1186,14 +1186,14 @@ class SymbolTableVisitor (ASTVisitor):
             node.type.accept (self)
             node.offset.accept (self)
 
-            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode ("__subscript__", node.op, 0, 0), [node.lhs, node.offset], [], node.op, 0, 0)
+            node.overloadedFunctionCall = FunctionCallExpressionNode (IdentifierExpressionNode ("__subscript__", node.token, 0, 0), [node.lhs, node.offset], [], node.token, 0, 0)
             node.overloadedFunctionCall.decl = overloadedFunctionDecl
         # ambiguous 
         elif hasOverloadedFunction and hasOverloadedMethod:
             overloadedMethodDecl = self.table.lookup (f"{node.lhs.type}::__subscript__", Kind.FUNC, [node.offset])
             overloadedFunctionDecl = self.table.lookup ("__subscript__", Kind.FUNC, [node.lhs, node.offset])
             print (f"Semantic Error: Ambiguous overload for \"__subscript__\" operator")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   Candidate: {overloadedMethodDecl.signature}")
             printToken (overloadedMethodDecl.token)
             print (f"   Candidate: {overloadedFunctionDecl.signature}")
@@ -1235,7 +1235,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure the function declaration exists and its a function or constructor 
         if (decl == None or not isinstance (decl,(FunctionNode, ConstructorDeclarationNode))):
             print (f"Semantic Error: No function matching signature {signature}")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
             return 
@@ -1261,7 +1261,7 @@ class SymbolTableVisitor (ASTVisitor):
                     # ensure rhs is an identifier
                     if not isinstance (node.rhs, IdentifierExpressionNode):
                         print (f"Semantic Error: RHS of dot operator must be an identifier")
-                        printToken (node.op)
+                        printToken (node.token)
                         print ()
                         self.wasSuccessful = False
                         return
@@ -1276,7 +1276,7 @@ class SymbolTableVisitor (ASTVisitor):
                     # did not find member
                     else:
                         print (f"Semantic Error: '{node.rhs.id}' is not a member of '{node.lhs.id}'")
-                        printToken (node.op)
+                        printToken (node.token)
                         print ()
                         self.wasSuccessful = False
                         return
@@ -1293,7 +1293,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure lhs is a class dec
         if not isinstance (lhsdecl, ClassDeclarationNode):
             print (f"Semantic Error: LHS of dot operator must be of class type")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   LHS Type: {node.lhs.type}")
             print (f"   LHS Decl: {lhsdecl}")
             print ()
@@ -1328,7 +1328,7 @@ class SymbolTableVisitor (ASTVisitor):
                     break
         if not isMember:
             print (f"Semantic Error: '{rhsid}' is not a member of '{lhsdecl.id}'")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
 
@@ -1343,7 +1343,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure lhs is a class dec
         if not isinstance (lhsdecl, ClassDeclarationNode):
             print (f"Semantic Error: LHS of dot operator must be of class type")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   LHS Type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1374,7 +1374,7 @@ class SymbolTableVisitor (ASTVisitor):
                     break
         if not isMember:
             print (f"Semantic Error: '{rhsid}' is not a member of '{lhsdecl.id}'")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
 
@@ -1389,7 +1389,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure lhs is a class dec
         if not isinstance (lhsdecl, ClassDeclarationNode):
             print (f"Semantic Error: LHS of dot operator must be of class type")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   LHS Type: {node.lhs.type}")
             print ()
             self.wasSuccessful = False
@@ -1401,7 +1401,7 @@ class SymbolTableVisitor (ASTVisitor):
             rhsid = node.rhs.lhs.id
         else:
             print (f"Semantic Error: Invalid RHS of dot operator")
-            printToken (node.op)
+            printToken (node.token)
             return
         # make sure rhs is a member of lhs
         isMember = False
@@ -1418,7 +1418,7 @@ class SymbolTableVisitor (ASTVisitor):
             print (f"'{lhsdecl.id}' is incomplete")
         if not isMember:
             print (f"Semantic Error: '{rhsid}' is not a member of '{lhsdecl.id}'")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
 
@@ -1450,7 +1450,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure the function declaration exists and its a function
         if (decl == None or not isinstance (decl, MethodDeclarationNode)):
             print (f"Semantic Error: No method matching signature {signature}")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
             return 
@@ -1534,7 +1534,7 @@ class SymbolTableVisitor (ASTVisitor):
         # make sure the function declaration exists and its a function
         if (decl == None or not isinstance (decl, ConstructorDeclarationNode)):
             print (f"Semantic Error: No method matching signature {signature}")
-            printToken (node.op)
+            printToken (node.token)
             print ()
             self.wasSuccessful = False
             return 
@@ -1544,14 +1544,14 @@ class SymbolTableVisitor (ASTVisitor):
     def visitSizeofExpressionNode(self, node):
         node.rhs.accept (self)
         print ("Semantic Error: sizeof keyword is deprecated")
-        printToken (node.op)
+        printToken (node.token)
         print ()
         self.wasSuccessful = False
         return
         # ensure RHS is an array
         if node.rhs.type.arrayDimensions == 0:
             print (f"Semantic Error: Sizeof requires an array")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   Expected: <type>[]")
             print (f"   But got:  {node.rhs.type}")
             print ()
@@ -1563,7 +1563,7 @@ class SymbolTableVisitor (ASTVisitor):
         # ensure RHS is an array
         if node.rhs.type.arrayDimensions == 0 and node.rhs.type.type != Type.USERTYPE:
             print (f"Semantic Error: Free requires an array or object")
-            printToken (node.op)
+            printToken (node.token)
             print (f"   Expected: <type>[] or <userType>")
             print (f"   But got:  {node.rhs.type}")
             print ()
@@ -1607,7 +1607,7 @@ class SymbolTableVisitor (ASTVisitor):
         for elem in node.elems:
             if elem.type.type != firstType.type or elem.type.arrayDimensions != firstType.arrayDimensions:
                 print (f"Semantic Error: All elements in a list constructor must have the same type")
-                printToken (node.op)
+                printToken (node.token)
                 print ()
                 self.wasSuccessful = False
                 return 

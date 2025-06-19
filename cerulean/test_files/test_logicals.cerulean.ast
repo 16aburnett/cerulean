@@ -67,28 +67,28 @@ ProgramNode:
 |   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=13, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=13, includeChain=[], lineStr='    int32 x = 1;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: x
 |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=14, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=14, includeChain=[], lineStr='    int32 y = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: y
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=15, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=15, includeChain=[], lineStr='    int32 z = x || ++y;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: z
 |   |   |   |   |   |   LogicalOR Expression: || int32
 |   |   |   |   |   |   |   Identifier: x int32
-|   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=15, column=20, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=15, includeChain=[], lineStr='    int32 z = x || ++y;') int32
+|   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
@@ -103,22 +103,22 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=17, includeChain=[], lineStr='    x = 0; y = 0; z = x || ++y;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: x int32
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=14, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=17, includeChain=[], lineStr='    x = 0; y = 0; z = x || ++y;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=17, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=17, includeChain=[], lineStr='    x = 0; y = 0; z = x || ++y;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: z int32
 |   |   |   |   |   |   LogicalOR Expression: || int32
 |   |   |   |   |   |   |   Identifier: x int32
-|   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=17, column=28, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=17, includeChain=[], lineStr='    x = 0; y = 0; z = x || ++y;') int32
+|   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
@@ -195,28 +195,28 @@ ProgramNode:
 |   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=25, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=25, includeChain=[], lineStr='    int32 a = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: a
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=26, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=26, includeChain=[], lineStr='    int32 b = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: b
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=27, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=27, includeChain=[], lineStr='    int32 c = a && ++b;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: c
 |   |   |   |   |   |   LogicalAND Expression: && int32
 |   |   |   |   |   |   |   Identifier: a int32
-|   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=27, column=20, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=27, includeChain=[], lineStr='    int32 c = a && ++b;') int32
+|   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   Identifier: b int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
@@ -231,22 +231,22 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   Identifier: b int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=29, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=29, includeChain=[], lineStr='    a = 1; b = 0; c = a && ++b;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: a int32
 |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=29, column=14, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=29, includeChain=[], lineStr='    a = 1; b = 0; c = a && ++b;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: b int32
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=29, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=29, includeChain=[], lineStr='    a = 1; b = 0; c = a && ++b;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: c int32
 |   |   |   |   |   |   LogicalAND Expression: && int32
 |   |   |   |   |   |   |   Identifier: a int32
-|   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=29, column=28, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=29, includeChain=[], lineStr='    a = 1; b = 0; c = a && ++b;') int32
+|   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   Identifier: b int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
@@ -261,14 +261,14 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   Identifier: b int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=33, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=33, includeChain=[], lineStr='    int32 i = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: i
 |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=34, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=34, includeChain=[], lineStr='    int32 j = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -277,10 +277,10 @@ ProgramNode:
 |   |   |   |   While:
 |   |   |   |   |   Condition: Type.INT32
 |   |   |   |   |   |   LogicalAND Expression: && int32
-|   |   |   |   |   |   |   InequalityExpression: Token(type='LT', lexeme='<', value='<', line=36, column=14, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=36, includeChain=[], lineStr='    while (i < 10 && j != 3)') int32
+|   |   |   |   |   |   |   InequalityExpression: < int32
 |   |   |   |   |   |   |   |   Identifier: i int32
 |   |   |   |   |   |   |   |   Int Literal: 10 int32
-|   |   |   |   |   |   |   EqualityExpression: Token(type='NE', lexeme='!=', value='!=', line=36, column=24, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=36, includeChain=[], lineStr='    while (i < 10 && j != 3)') int32
+|   |   |   |   |   |   |   EqualityExpression: != int32
 |   |   |   |   |   |   |   |   Identifier: j int32
 |   |   |   |   |   |   |   |   Int Literal: 3 int32
 |   |   |   |   |   Body:
@@ -299,17 +299,17 @@ ProgramNode:
 |   |   |   |   |   |   |   |   |   |   Char Literal:   char
 |   |   |   |   |   |   |   If:
 |   |   |   |   |   |   |   |   Condition: Type.INT32
-|   |   |   |   |   |   |   |   |   EqualityExpression: Token(type='EQ', lexeme='==', value='==', line=39, column=19, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=39, includeChain=[], lineStr='        if (i % 2 == 0) ++j;') int32
-|   |   |   |   |   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=39, column=15, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=39, includeChain=[], lineStr='        if (i % 2 == 0) ++j;') int32
+|   |   |   |   |   |   |   |   |   EqualityExpression: == int32
+|   |   |   |   |   |   |   |   |   |   MultiplicativeExpression: % int32
 |   |   |   |   |   |   |   |   |   |   |   Identifier: i int32
 |   |   |   |   |   |   |   |   |   |   |   Int Literal: 2 int32
 |   |   |   |   |   |   |   |   |   |   Int Literal: 0 int32
 |   |   |   |   |   |   |   |   Body:
 |   |   |   |   |   |   |   |   |   ExpressionStatement:
-|   |   |   |   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=39, column=25, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=39, includeChain=[], lineStr='        if (i % 2 == 0) ++j;') int32
+|   |   |   |   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   |   |   |   Identifier: j int32
 |   |   |   |   |   |   |   ExpressionStatement:
-|   |   |   |   |   |   |   |   PreIncrementExpressionNode: Token(type='INCR', lexeme='++', value='++', line=40, column=9, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=40, includeChain=[], lineStr='        ++i;') int32
+|   |   |   |   |   |   |   |   PreIncrementExpressionNode: ++ int32
 |   |   |   |   |   |   |   |   |   Identifier: i int32
 |   |   |   |   ExpressionStatement:
 |   |   |   |   |   Function Call: void
@@ -323,7 +323,7 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   String Literal: "Logical NOT" char[]
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=45, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=45, includeChain=[], lineStr='    int32 r = 0;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
@@ -352,10 +352,10 @@ ProgramNode:
 |   |   |   |   |   |   Function Name:
 |   |   |   |   |   |   |   Identifier: println 
 |   |   |   |   |   |   Arguments:
-|   |   |   |   |   |   |   LogicalNotExpressionNode: Token(type='LNOT', lexeme='!', value='!', line=47, column=39, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=47, includeChain=[], lineStr='    print ("r = 0; !r => "); println (!r);') int32
+|   |   |   |   |   |   |   LogicalNotExpressionNode: ! int32
 |   |   |   |   |   |   |   |   Identifier: r int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=48, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=48, includeChain=[], lineStr='    r = 1;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: r int32
 |   |   |   |   |   |   Int Literal: 1 int32
@@ -382,7 +382,7 @@ ProgramNode:
 |   |   |   |   |   |   Function Name:
 |   |   |   |   |   |   |   Identifier: println 
 |   |   |   |   |   |   Arguments:
-|   |   |   |   |   |   |   LogicalNotExpressionNode: Token(type='LNOT', lexeme='!', value='!', line=50, column=39, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/test_logicals.cerulean', originalLine=50, includeChain=[], lineStr='    print ("r = 1; !r => "); println (!r);') int32
+|   |   |   |   |   |   |   LogicalNotExpressionNode: ! int32
 |   |   |   |   |   |   |   |   Identifier: r int32
 |   |   |   |   ReturnStatement:
 |   |   |   |   |   |   Int Literal: 0 int32

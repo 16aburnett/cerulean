@@ -10,12 +10,12 @@ ProgramNode:
 |   |   Body:
 |   |   |   CodeBlock:
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=3, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: x
-|   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=3, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=3, includeChain=[], lineStr='    int32 x = 1 + 2;') int32
+|   |   |   |   |   |   AdditiveExpression: + int32
 |   |   |   |   |   |   |   Int Literal: 1 int32
 |   |   |   |   |   |   |   Int Literal: 2 int32
 |   |   |   |   ExpressionStatement:
@@ -25,12 +25,12 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   Identifier: x int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=5, column=13, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   VariableDeclaration: 
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Name: y
-|   |   |   |   |   |   MultiplicativeExpression: Token(type='TIMES', lexeme='*', value='*', line=5, column=17, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=5, includeChain=[], lineStr='    int32 y = x * 10;') int32
+|   |   |   |   |   |   MultiplicativeExpression: * int32
 |   |   |   |   |   |   |   Identifier: x int32
 |   |   |   |   |   |   |   Int Literal: 10 int32
 |   |   |   |   ExpressionStatement:
@@ -40,19 +40,19 @@ ProgramNode:
 |   |   |   |   |   |   Arguments:
 |   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=7, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   Identifier: y int32
-|   |   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=7, column=11, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   AssignExpression: = int32
 |   |   |   |   |   |   |   Type: Type.INT32 int32
 |   |   |   |   |   |   |   Identifier: y int32
-|   |   |   |   |   |   |   MultiplicativeExpression: Token(type='MOD', lexeme='%', value='%', line=7, column=21, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
-|   |   |   |   |   |   |   |   AdditiveExpression: Token(type='PLUS', lexeme='+', value='+', line=7, column=16, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=7, includeChain=[], lineStr='    y = y = (x + y) % 3;') int32
+|   |   |   |   |   |   |   MultiplicativeExpression: % int32
+|   |   |   |   |   |   |   |   AdditiveExpression: + int32
 |   |   |   |   |   |   |   |   |   Identifier: x int32
 |   |   |   |   |   |   |   |   |   Identifier: y int32
 |   |   |   |   |   |   |   |   Int Literal: 3 int32
 |   |   |   |   ExpressionStatement:
-|   |   |   |   |   AssignExpression: Token(type='ASSIGN', lexeme='=', value='=', line=8, column=9, originalFilename='/mnt/c/Users/16abu/Desktop/projects/cerulean/cerulean/test_files/simple.cerulean', originalLine=8, includeChain=[], lineStr='    pie = 13.37;') float32
+|   |   |   |   |   AssignExpression: = float32
 |   |   |   |   |   |   Type: Type.FLOAT32 float32
 |   |   |   |   |   |   Identifier: pie float32
 |   |   |   |   |   |   Float Literal: 13.37 float32
