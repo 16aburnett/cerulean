@@ -44,6 +44,11 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_o
 python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_logicals.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_logicals.amyasm
 # python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_logicals.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_logicals.amyasm
+
+# test stdin input
+python3 -m cerulean.ceruleanCompiler cerulean/test_files/test_input.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_input.amyasm
+# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_logicals.amyasm --debug --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_input.amyasm
 ```
 
 

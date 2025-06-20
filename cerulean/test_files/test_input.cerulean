@@ -1,0 +1,17 @@
+function int32 main ()
+{
+    print ("Enter your name => ");
+    // Strings are null terminated so we dont need the size - hopefully
+    char[] name = input ();
+    print ("Hello, "); println (name);
+
+    print ("Enter an integer => ");
+    int32 intNumber = stringToInt32 (input ());
+    print (intNumber); print (" * 2 = "); println (intNumber * 2);
+
+    print ("Enter a floating point number => ");
+    float32 floatNumber = stringToFloat32 (input ());
+    print (floatNumber); print (" * 2.0 = "); println (floatNumber * 2.0);
+
+    return 0;
+}

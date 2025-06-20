@@ -1,0 +1,27 @@
+function int32 @main () {
+    block entry {
+        %0 = call @__builtin__print__char__1 (ptr("Enter your name => "))
+        %1 = call @__builtin__input ()
+        %name = value (ptr(%1))
+        %2 = call @__builtin__print__char__1 (ptr("Hello, "))
+        %3 = call @__builtin__println__char__1 (ptr(%name))
+        %4 = call @__builtin__print__char__1 (ptr("Enter an integer => "))
+        %5 = call @__builtin__input ()
+        %6 = call @__builtin__stringToInt32__char__1 (ptr(%5))
+        %intNumber = value (int32(%6))
+        %7 = call @__builtin__print__int32 (int32(%intNumber))
+        %8 = call @__builtin__print__char__1 (ptr(" * 2 = "))
+        %9 = mul (int32(%intNumber), int32(2))
+        %10 = call @__builtin__println__int32 (int32(%9))
+        %11 = call @__builtin__print__char__1 (ptr("Enter a floating point number => "))
+        %12 = call @__builtin__input ()
+        %13 = call @__builtin__stringToFloat32__char__1 (ptr(%12))
+        %floatNumber = value (float32(%13))
+        %14 = call @__builtin__print__float32 (float32(%floatNumber))
+        %15 = call @__builtin__print__char__1 (ptr(" * 2.0 = "))
+        %16 = mul (float32(%floatNumber), float32(2.0))
+        %17 = call @__builtin__println__float32 (float32(%16))
+        return (int32(0))
+    }
+}
+
