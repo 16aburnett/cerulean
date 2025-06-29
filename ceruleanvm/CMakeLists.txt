@@ -9,7 +9,7 @@ include_directories(${PROJECT_SOURCE_DIR}/lib)
 # Add the executable
 add_executable(ceruleanvm
     src/main.cpp
-    src/vm.cpp
+    src/ceruleanvm.cpp
 	src/loader.cpp
 )
 
