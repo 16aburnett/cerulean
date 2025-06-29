@@ -10,4 +10,7 @@ include_directories(${PROJECT_SOURCE_DIR}/lib)
 add_executable(ceruleanvm
     src/main.cpp
     src/vm.cpp
+	src/loader.cpp
 )
+
+add_executable(emit_helloworld tools/emit_helloworld.cpp)
