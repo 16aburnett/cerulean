@@ -5,7 +5,9 @@
 
 // Helloworld2 - Prints Hello world string that is stored in the code
 int main (int argc, char* argv[]) {
-
+    bool debug = false;
+    if (argc > 1 && argv[1][0] == 'd')
+        debug = true;
     std::vector<uint8_t> bytecode = {
         Opcode::LUI,     0x00, 0xc8, 0x00, // [0x00] r0.0 <- string_addr
         Opcode::LLI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr
@@ -63,7 +65,7 @@ int main (int argc, char* argv[]) {
         '!',             '\n', 0x00, 0x00, // [0xd4]
     };
 
-    CeruleanVM vm (bytecode);
+    CeruleanVM vm (bytecode, debug);
     vm.run ();
 
     return 0;

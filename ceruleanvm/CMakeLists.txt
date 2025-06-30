@@ -16,6 +16,7 @@ add_executable(ceruleanvm
 # Testing
 add_executable(test_helloworld tests/test_helloworld.cpp src/ceruleanvm.cpp)
 add_executable(test_helloworld2 tests/test_helloworld2.cpp src/ceruleanvm.cpp)
+add_executable(test_helloworld3 tests/test_helloworld3.cpp src/ceruleanvm.cpp)
 
 # Tooling
 add_executable(emit_helloworld tools/emit_helloworld.cpp)

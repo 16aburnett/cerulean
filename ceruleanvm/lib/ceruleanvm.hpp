@@ -243,7 +243,7 @@ enum Register : uint8_t {
 
 class CeruleanVM {
 public:
-    CeruleanVM (const std::vector<uint8_t>& bytecode);
+    CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_ = false);
     ~CeruleanVM ();
     void run ();
     uint64_t get_register (uint8_t index) const;
@@ -273,4 +273,5 @@ private:
     const uint8_t bp = 14;
     // r15    0xf - stack pointer (sp)
     const uint8_t sp = 15;
+    bool debug = false;
 };

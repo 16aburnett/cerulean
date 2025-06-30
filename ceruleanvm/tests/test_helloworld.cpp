@@ -4,7 +4,9 @@
 #include <cstdint>
 
 int main (int argc, char* argv[]) {
-
+    bool debug = false;
+    if (argc > 1 && argv[1][0] == 'd')
+        debug = true;
     std::vector<uint8_t> bytecode = {
         Opcode::LUI,     0x90,  'H', 0x00, // [0x00] r9 <- 'H'
         Opcode::LLI,     0x90, 0x00, 0x00, // [0x04] r9 <- 'H'
@@ -38,7 +40,7 @@ int main (int argc, char* argv[]) {
         Opcode::HALT
     };
 
-    CeruleanVM vm (bytecode);
+    CeruleanVM vm (bytecode, debug);
     vm.run ();
 
     return 0;

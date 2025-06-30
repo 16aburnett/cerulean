@@ -2,10 +2,8 @@
 #include <iostream>
 #include <cstring>
 
-bool DEBUG = false;
-
-CeruleanVM::CeruleanVM (const std::vector<uint8_t>& bytecode)
-    : memory(bytecode.size(), STACK_SIZE, HEAP_SIZE) {
+CeruleanVM::CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_)
+    : memory(bytecode.size(), STACK_SIZE, HEAP_SIZE), debug(debug_) {
     code = bytecode;
     // Shift program counter to the start of the code
     pc = 0;
@@ -38,7 +36,7 @@ void CeruleanVM::execute_instruction () {
         (code[pc + 2] << 8)  |
         (code[pc + 3]);
     Opcode opcode = static_cast<Opcode> ((0b11111111000000000000000000000000 & instruction) >> 24);
-    if (DEBUG)
+    if (debug)
     {
         // print address
         printf (
@@ -449,8 +447,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] >= *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] >= registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // JMP addr - pc <- addr
@@ -559,9 +557,9 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX ssss00000 00000000 00000000
         case Opcode::PUTCHAR: {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            if (DEBUG) printf ("Output = '");
+            if (debug) printf ("Output = '");
             putchar(registers[src1]);
-            if (DEBUG) printf ("'\n");
+            if (debug) printf ("'\n");
             break;
         }
         // unknown instruction
