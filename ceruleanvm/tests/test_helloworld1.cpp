@@ -1,12 +1,16 @@
+#include "test_framework.hpp"
 #include "ceruleanvm.hpp"
+#include "tee_buf.hpp"
 #include <fstream>
 #include <vector>
 #include <cstdint>
+#include <sstream>
+#include <iostream>
 
-int main (int argc, char* argv[]) {
-    bool debug = false;
-    if (argc > 1 && argv[1][0] == 'd')
-        debug = true;
+extern bool g_debug;
+
+// Helloworld - Super simple Hello World program
+TEST_CASE(test_helloworld1) {
     std::vector<uint8_t> bytecode = {
         Opcode::LUI,     0x90,  'H', 0x00, // [0x00] r9 <- 'H'
         Opcode::LLI,     0x90, 0x00, 0x00, // [0x04] r9 <- 'H'
@@ -40,8 +44,19 @@ int main (int argc, char* argv[]) {
         Opcode::HALT
     };
 
-    CeruleanVM vm (bytecode, debug);
+    // Temporarily redirect std::cout to dualOut
+    std::ostringstream captured;
+    TeeBuf tee(std::cout.rdbuf(), captured);
+    std::ostream dualOut(&tee);
+    auto* originalBuf = std::cout.rdbuf();
+    std::cout.rdbuf(dualOut.rdbuf());
+
+    CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    return 0;
+    // Restore std::cout
+    std::cout.rdbuf(originalBuf);
+
+    // Ensure stdout matches expected output
+    REQUIRE(captured.str() == "Hello, World!\n");
 }

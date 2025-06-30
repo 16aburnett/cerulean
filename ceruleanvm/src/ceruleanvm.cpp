@@ -566,7 +566,8 @@ void CeruleanVM::execute_instruction () {
         case Opcode::PUTCHAR: {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             if (debug) printf ("Output = '");
-            putchar(registers[src1]);
+            // Using std::cout so unit tests can capture output
+            std::cout << (char)registers[src1];
             if (debug) printf ("'\n");
             break;
         }

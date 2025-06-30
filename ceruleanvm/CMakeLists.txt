@@ -14,10 +14,10 @@ add_executable(ceruleanvm
 )
 
 # Testing
-add_executable(test_helloworld tests/test_helloworld.cpp src/ceruleanvm.cpp)
-add_executable(test_helloworld2 tests/test_helloworld2.cpp src/ceruleanvm.cpp)
-add_executable(test_helloworld3 tests/test_helloworld3.cpp src/ceruleanvm.cpp)
-add_executable(test_helloworld4 tests/test_helloworld4.cpp src/ceruleanvm.cpp)
+option(BUILD_TESTS "Build unit tests" OFF)
+if(BUILD_TESTS)
+    add_executable(run_tests tests/main.cpp src/ceruleanvm.cpp)
+endif()
 
 # Tooling
 add_executable(emit_helloworld tools/emit_helloworld.cpp)
