@@ -23,3 +23,10 @@ Hello World Example:
 ```bash
 ./build/ceruleanvm test_files/helloworld.ceruleanbc
 ```
+
+# Unit testing
+
+```bash
+./build/test_helloworld
+./build/test_helloworld2
+```
