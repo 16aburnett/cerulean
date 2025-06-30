@@ -23,6 +23,8 @@ uint64_t CeruleanVM::get_register (uint8_t index) const {
 }
 
 void CeruleanVM::run () {
+    if (debug) 
+        printf ("%8s | %11s | %s\n", "pc", "instruction", "registers");
     while (pc < code.size ()) {
         execute_instruction ();
     }
@@ -52,7 +54,7 @@ void CeruleanVM::execute_instruction () {
         );
         // print instruction
         printf (
-            "%x%x %x%x %x%x %x%x\n", 
+            "%x%x %x%x %x%x %x%x | ", 
             (0b11110000000000000000000000000000 & instruction) >> 28,
             (0b00001111000000000000000000000000 & instruction) >> 24,
             (0b00000000111100000000000000000000 & instruction) >> 20,
@@ -62,6 +64,12 @@ void CeruleanVM::execute_instruction () {
             (0b00000000000000000000000011110000 & instruction) >>  4,
             (0b00000000000000000000000000001111 & instruction) >>  0
         );
+        // Print registers
+        for (int i = 0; i < 16; ++i)
+        {
+            printf ("%lx, ", registers[i]);
+        }
+        printf ("\n");
     }
     switch (opcode) {
         // LUI dest, imm        - loads upper immediate 16 bits into given register
@@ -397,8 +405,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] == *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] == registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // BNE src1, src2, addr - if src1 != src2 then pc <- addr
@@ -407,8 +415,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] != *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] != registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // BLT src1, src2, addr - if src1 <  src2 then pc <- addr
@@ -417,8 +425,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] < *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] < registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // BLE src1, src2, addr - if src1 <= src2 then pc <- addr
@@ -427,8 +435,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] <= *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] <= registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // BGT src1, src2, addr - if src1 >  src2 then pc <- addr
@@ -437,8 +445,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (*(int*)&registers[src1] > *(int*)&registers[src2])
-                pc = (*(int*)&registers[addr])-4;
+            if (registers[src1] > registers[src2])
+                pc = registers[addr] - 4;
             break;
         }
         // BGE src1, src2, addr - if src1 >= src2 then pc <- addr
@@ -455,7 +463,7 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX aaaa0000 00000000 00000000
         case Opcode::JMP: {
             uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            pc = (*(int*)&registers[addr])-4;
+            pc = registers[addr] - 4;
             break;
         }
 
@@ -485,7 +493,7 @@ void CeruleanVM::execute_instruction () {
         case Opcode::CALL: {
             uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
             // push return address onto stack 
-            registers[sp] -= 4; // stack grows towards 0
+            registers[sp] -= 8; // stack grows towards 0
             memory.write64 (registers[sp], pc);
             // change program counter to addr
             // -4 to point to the previous instruction since VM will increment later
@@ -508,27 +516,27 @@ void CeruleanVM::execute_instruction () {
         case Opcode::RET: {
             // pop return address from stack into 
             pc = memory.read64 (registers[sp]);
-            registers[sp] += 4; // stack shrinks towards MEM_SIZE
+            registers[sp] += 8; // stack shrinks towards MEM_SIZE
             break;
         }
-        // PUSH src - sp -= 4 ; [sp] <- src
-        // 1. decrements sp by 4 (bytes)
+        // PUSH src - sp -= 8 ; [sp] <- src
+        // 1. decrements sp by 8 (bytes)
         // 2. places src onto stack at [sp]
         // XXXXXXXX ssss0000 00000000 00000000
         case Opcode::PUSH: {
             uint8_t src    = (0b00000000111100000000000000000000 & instruction) >> 20;
-            *(int*)&registers[sp] -= 4; // stack grows towards 0
+            registers[sp] -= 8; // stack grows towards 0
             memory.write64 (registers[sp], registers[src]);
             break;
         }
-        // POP dest - dest <- [sp] ; sp += 4
+        // POP dest - dest <- [sp] ; sp += 8
         // 1. moves [sp] into dest 
-        // 2. increments sp by 4 (bytes)
+        // 2. increments sp by 8 (bytes)
         // XXXXXXXX dddd0000 00000000 00000000
         case Opcode::POP: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             registers[dest] = memory.read64 (registers[sp]); 
-            registers[sp] += 4; // stack shrinks towards MEM_SIZE
+            registers[sp] += 8; // stack shrinks towards MEM_SIZE
             break;
         }
 
