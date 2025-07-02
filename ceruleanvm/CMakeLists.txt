@@ -11,6 +11,7 @@ add_executable(ceruleanvm
     src/main.cpp
     src/ceruleanvm.cpp
 	src/loader.cpp
+	src/memory_manager.cpp
 )
 
 # Debugger
@@ -19,12 +20,17 @@ add_executable(ceruleandbg
     src/debugger.cpp
 	src/ceruleanvm.cpp
 	src/loader.cpp
+	src/memory_manager.cpp
 )
 
 # Testing
 option(BUILD_TESTS "Build unit tests" OFF)
 if(BUILD_TESTS)
-    add_executable(run_tests tests/main.cpp src/ceruleanvm.cpp)
+    add_executable(run_tests
+		tests/main.cpp
+		src/ceruleanvm.cpp
+		src/memory_manager.cpp
+	)
 endif()
 
 # Tooling
