@@ -13,6 +13,14 @@ add_executable(ceruleanvm
 	src/loader.cpp
 )
 
+# Debugger
+add_executable(ceruleandbg
+    tools/ceruleanvm_dbg.cpp
+    src/debugger.cpp
+	src/ceruleanvm.cpp
+	src/loader.cpp
+)
+
 # Testing
 option(BUILD_TESTS "Build unit tests" OFF)
 if(BUILD_TESTS)

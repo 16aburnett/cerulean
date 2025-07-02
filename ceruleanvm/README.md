@@ -24,6 +24,13 @@ Hello World Example:
 ./build/ceruleanvm test_files/helloworld.ceruleanbc
 ```
 
+# Debugger
+
+CeruleanVM comes with a debugger that gives similar control over a program as something like `gdb`.
+```bash
+./build/ceruleandbg test_files/helloworld.ceruleanbc
+```
+
 # Unit testing
 
 To use the unit tests, they need to be enabled while building:

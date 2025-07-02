@@ -22,12 +22,24 @@ uint64_t CeruleanVM::get_register (uint8_t index) const {
     return registers[index];
 }
 
+uint64_t CeruleanVM::getPC () const {
+    return pc;
+}
+
 void CeruleanVM::run () {
     if (debug) 
         printf ("%8s | %11s | %s\n", "pc", "instruction", "registers");
-    while (pc < code.size ()) {
+    while (!isHalted ()) {
         execute_instruction ();
     }
+}
+
+void CeruleanVM::step () {
+    execute_instruction ();
+}
+
+bool CeruleanVM::isHalted () {
+    return pc >= code.size ();
 }
 
 void CeruleanVM::execute_instruction () {

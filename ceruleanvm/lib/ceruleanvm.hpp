@@ -246,7 +246,10 @@ public:
     CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_ = false);
     ~CeruleanVM ();
     void run ();
+    void step ();
+    bool isHalted ();
     uint64_t get_register (uint8_t index) const;
+    uint64_t getPC () const;
 
 private:
     void execute_instruction ();
