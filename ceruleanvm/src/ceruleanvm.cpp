@@ -1,6 +1,7 @@
 #include "ceruleanvm.hpp"
 #include <iostream>
 #include <cstring>
+#include <cmath>
 
 CeruleanVM::CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_)
     : memory(bytecode.size(), STACK_SIZE, HEAP_SIZE), debug(debug_) {
@@ -145,6 +146,20 @@ void CeruleanVM::execute_instruction () {
             registers[dest] = memory.read32 (address + offset);
             break;
         }
+        // LD dest, offset(src) - load double word (8 bytes)
+        // XXXXXXXX ddddssss oooooooo oooooooo
+        case Opcode::LD: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint64_t address = registers[src1];
+            // read offset in little endian
+            uint64_t offset = *(int16_t*)&code[pc + 2];
+            // clear register bytes
+            registers[dest] = 0;
+            // read in double word (8 bytes) 
+            registers[dest] = memory.read64 (address + offset);
+            break;
+        }
         // SB offset(dest), src - store byte
         // XXXXXXXX ddddssss oooooooo oooooooo
         case Opcode::SB: {
@@ -179,6 +194,18 @@ void CeruleanVM::execute_instruction () {
             int offset = *(int16_t*)&code[pc + 2];
             // store word (4 bytes)
             memory.write32 (address + offset, (uint32_t)registers[src1]);
+            break;
+        }
+        // SD offset(dest), src - store double word (8 bytes)
+        // XXXXXXXX ddddssss oooooooo oooooooo
+        case Opcode::SD: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint64_t address = registers[dest];
+            // read offset in little endian
+            int offset = *(int16_t*)&code[pc + 2];
+            // store double word (8 bytes)
+            memory.write64 (address + offset, (uint64_t)registers[src1]);
             break;
         }
 
@@ -231,6 +258,177 @@ void CeruleanVM::execute_instruction () {
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // read in word (4 bytes) 
             *(int*)&(registers[dest]) = *(int*)&registers[src1] % *(int*)&registers[src2];
+            break;
+        }
+        // Floating Point Arithmetic Instructions
+        case Opcode::ADDF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            // Perform instruction
+            float c = a + b;
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::ADDF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            double b = std::bit_cast<double>(registers[src2]);
+            // Perform instruction
+            double c = a + b;
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::SUBF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            // Perform instruction
+            float c = a - b;
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::SUBF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            double b = std::bit_cast<double>(registers[src2]);
+            // Perform instruction
+            double c = a - b;
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::MULF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            // Perform instruction
+            float c = a * b;
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::MULF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            double b = std::bit_cast<double>(registers[src2]);
+            // Perform instruction
+            double c = a * b;
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::DIVF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            // Perform instruction
+            float c = a / b;
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::DIVF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            double b = std::bit_cast<double>(registers[src2]);
+            // Perform instruction
+            double c = a / b;
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::SQRTF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            // Perform instruction
+            float c = std::sqrt (a);
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::SQRTF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            // Perform instruction
+            double c = std::sqrt (a);
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::ABSF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            // Perform instruction
+            float c = std::fabs (a);
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::ABSF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            // Perform instruction
+            double c = std::fabs (a);
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
+            break;
+        }
+        case Opcode::NEGF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            // Perform instruction
+            float c = -a;
+            // Write to register
+            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            break;
+        }
+        case Opcode::NEGF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from registers
+            double a = std::bit_cast<double>(registers[src1]);
+            // Perform instruction
+            double c = -a;
+            // Write to register
+            registers[dest] = std::bit_cast<uint64_t>(c);
             break;
         }
         // SLL dest, src1, src2 - shift left logical

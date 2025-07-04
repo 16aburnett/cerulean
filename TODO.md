@@ -90,6 +90,24 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cm
 
 ### NOTES ################################################################
 
+#### Casting
+casting a pointer of one type to another is UNDEFINED BEHAVIOR in c++
+this means that while the following might work, we should avoid it:
+```cpp
+*(double*)&(registers[dest]) = *(double*)&registers[src1] + *(double*)&registers[src2];
+```
+and Instead we should do the following:
+```cpp
+// Read from registers
+double a = std::bit_cast<double>(registers[src1]);
+double b = std::bit_cast<double>(registers[src2]);
+// Perform instruction
+double c = a + b;
+// Write to register
+registers[dest] = std::bit_cast<uint64_t>(c);
+```
+
+
 
 - [TODO] rename localvariableexpression to register
 - [] IR could have required extern? use an external function - must declare extern and linker will handle symbol finding?
@@ -108,6 +126,9 @@ defer delete a; // will be moved to the end of the scope (or func)
 Ditch branch/jump instructions all  together?
 - if all blocks require a branch at the end, then should we just build that into the syntax??
 - 
+
+Try/Catch Try/Except
+- Im not a fan of the common syntax so if we do this (prob Cerulean++), then come up with a better syntax
 
 Optimizations
 - dead code elimination
