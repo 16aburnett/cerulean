@@ -169,10 +169,10 @@ enum Opcode : const uint8_t {
     // SLL dest, src1, src2 - shift left logical
     // XXXXXXXX ddddssss ssss0000 00000000
     SLL = 0x50,
-    // SRL dest, src1, src2 - shift right logical
+    // SRL dest, src1, src2 - shift right logical (fills with 0s)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRL = 0x51,
-    // SRA dest, src1, src2 - shift right arithmetic
+    // SRA dest, src1, src2 - shift right arithmetic (fills with sign bit)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRA = 0x52,
     // OR  dest, src1, src2 - bitwise or

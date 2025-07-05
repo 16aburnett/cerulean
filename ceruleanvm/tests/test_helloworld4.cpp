@@ -12,11 +12,11 @@ extern bool g_debug;
 // Helloworld4 - Encasulates string printing to a function
 TEST_CASE(test_helloworld4) {
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0xcc, 0x00, // [0x00] r0.0 <- string_addr
-        Opcode::LLI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr
+        Opcode::LLI,     0x00, 0xcc, 0x00, // [0x00] r0.0 <- string_addr
+        Opcode::LUI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr
         // Call print_string
         Opcode::PUSH,    0x00, 0x00, 0x00, // [0x08] push r0
-        Opcode::LUI,     0x90, 0x2c, 0x00, // [0x0c] lui r9, print_string
+        Opcode::LLI,     0x90, 0x2c, 0x00, // [0x0c] lli r9, print_string
         Opcode::CALL,    0x90, 0x00, 0x00, // [0x10] call r9(print_string)
         Opcode::POP,     0x00, 0x00, 0x00, // [0x14] pop
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x18]
@@ -41,11 +41,11 @@ TEST_CASE(test_helloworld4) {
         Opcode::PUSH,    0x90, 0x00, 0x00, // [0x58] push r9 - save caller's r9 
         // function_body:
         Opcode::LW,      0x0e, 0x10, 0x00, // [0x5c] r0 <- [bp + 16] - get param string_addr
-        Opcode::LUI,     0x30, 0x74, 0x00, // [0x60] r3.0 <- loop_cond
-        Opcode::LLI,     0x30, 0x00, 0x00, // [0x64] r3.1 <- loop_cond
-        Opcode::LUI,     0x40, 0x88, 0x00, // [0x68] r4.0 <- loop_end
-        Opcode::LLI,     0x40, 0x00, 0x00, // [0x6c] r4.1 <- loop_end
-        Opcode::LUI,     0x50, 0x00, 0x00, // [0x70] r5.0 <- 0 ; null-byte
+        Opcode::LLI,     0x30, 0x74, 0x00, // [0x60] r3.0 <- loop_cond
+        Opcode::LUI,     0x30, 0x00, 0x00, // [0x64] r3.1 <- loop_cond
+        Opcode::LLI,     0x40, 0x88, 0x00, // [0x68] r4.0 <- loop_end
+        Opcode::LUI,     0x40, 0x00, 0x00, // [0x6c] r4.1 <- loop_end
+        Opcode::LLI,     0x50, 0x00, 0x00, // [0x70] r5.0 <- 0 ; null-byte
         // loop_cond:
         Opcode::LB,      0x20, 0x00, 0x00, // [0x74] lb r2, r0, 0x00 ; load char from mem
         Opcode::BEQ,     0x25, 0x40, 0x00, // [0x78] beq r2, r5, r4(loop_end) ; *str == null

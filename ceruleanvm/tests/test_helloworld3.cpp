@@ -12,14 +12,14 @@ extern bool g_debug;
 // Helloworld3 - Uses a loop to print the Hello World string
 TEST_CASE(test_helloworld3) {
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x50, 0x00, // [0x00] r0.0 <- string_addr ; our iterator
-        Opcode::LLI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr ; out iterator
-        Opcode::LUI,     0x10, 0x5e, 0x00, // [0x08] r1.0 <- string_end_addr ; end condition
-        Opcode::LLI,     0x10, 0x00, 0x00, // [0x0c] r1.1 <- string_end_addr ; end condition
-        Opcode::LUI,     0x30, 0x20, 0x00, // [0x10] r3.0 <- loop_cond
-        Opcode::LLI,     0x30, 0x00, 0x00, // [0x14] r3.1 <- loop_cond
-        Opcode::LUI,     0x40, 0x34, 0x00, // [0x18] r4.0 <- loop_end
-        Opcode::LLI,     0x40, 0x00, 0x00, // [0x1c] r4.1 <- loop_end
+        Opcode::LLI,     0x00, 0x50, 0x00, // [0x00] r0.0 <- string_addr ; our iterator
+        Opcode::LUI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr ; out iterator
+        Opcode::LLI,     0x10, 0x5e, 0x00, // [0x08] r1.0 <- string_end_addr ; end condition
+        Opcode::LUI,     0x10, 0x00, 0x00, // [0x0c] r1.1 <- string_end_addr ; end condition
+        Opcode::LLI,     0x30, 0x20, 0x00, // [0x10] r3.0 <- loop_cond
+        Opcode::LUI,     0x30, 0x00, 0x00, // [0x14] r3.1 <- loop_cond
+        Opcode::LLI,     0x40, 0x34, 0x00, // [0x18] r4.0 <- loop_end
+        Opcode::LUI,     0x40, 0x00, 0x00, // [0x1c] r4.1 <- loop_end
         // loop_cond:
         Opcode::BGE,     0x01, 0x40, 0x00, // [0x20] bge r0, r1, loop_end; iter >= end
         // loop_body:

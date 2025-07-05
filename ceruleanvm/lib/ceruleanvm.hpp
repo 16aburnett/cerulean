@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include "register_file.hpp"
 #include "memory_manager.hpp"
 #include "opcode.hpp"
 #include "syscall.hpp"
@@ -18,7 +19,7 @@ public:
     void run ();
     void step ();
     bool isHalted ();
-    uint64_t get_register (uint8_t index) const;
+    uint64_t getRegister (uint8_t index) const;
     uint64_t getPC () const;
 
 private:
@@ -36,9 +37,7 @@ private:
     // Registers
     // Program counter - the address of the current instruction being processed
     uint64_t pc = 0;
-    // Registers are specified via 4-bits which allows for 16 unique registers
-    // Registers are 64-bit and can be used to store ints, chars, floats, bools, addresses, etc
-    uint64_t registers[16] = {0};
+    RegisterFile registers;
     // r0-r12  - general purpose registers (Callee Saved - saved on stack)
     // r13    0xd - return value  (ra)
     const uint8_t ra = 13;

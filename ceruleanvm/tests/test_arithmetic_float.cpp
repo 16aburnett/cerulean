@@ -21,8 +21,8 @@ TEST_CASE (test_arithmetic_float_add32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::ADDF32,  0x20, 0x00, 0x00, // [0x] r2 <- r0 + r0
         Opcode::HALT
     };
@@ -30,7 +30,7 @@ TEST_CASE (test_arithmetic_float_add32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == (f0 + f0)); // 3.1415927f + 3.1415927f
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == (f0 + f0)); // 3.1415927f + 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_add64) {
@@ -48,7 +48,7 @@ TEST_CASE (test_arithmetic_float_add64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::ADDF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 + r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -59,7 +59,7 @@ TEST_CASE (test_arithmetic_float_add64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == (f0 + f0)); // 3.1415927f + 3.1415927f
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == (f0 + f0)); // 3.1415927f + 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_sub32) {
@@ -73,8 +73,8 @@ TEST_CASE (test_arithmetic_float_sub32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::SUBF32,  0x20, 0x00, 0x00, // [0x] r2 <- r0 - r0
         Opcode::HALT
     };
@@ -82,7 +82,7 @@ TEST_CASE (test_arithmetic_float_sub32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == (f0 - f0)); // 3.1415927f - 3.1415927f
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == (f0 - f0)); // 3.1415927f - 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_sub64) {
@@ -100,7 +100,7 @@ TEST_CASE (test_arithmetic_float_sub64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::SUBF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 - r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -111,7 +111,7 @@ TEST_CASE (test_arithmetic_float_sub64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == (f0 - f0)); // 3.1415927f - 3.1415927f
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == (f0 - f0)); // 3.1415927f - 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_mul32) {
@@ -125,8 +125,8 @@ TEST_CASE (test_arithmetic_float_mul32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::MULF32,  0x20, 0x00, 0x00, // [0x] r2 <- r0 * r0
         Opcode::HALT
     };
@@ -134,7 +134,7 @@ TEST_CASE (test_arithmetic_float_mul32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == (f0 * f0)); // 3.1415927f * 3.1415927f
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == (f0 * f0)); // 3.1415927f * 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_mul64) {
@@ -152,7 +152,7 @@ TEST_CASE (test_arithmetic_float_mul64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::MULF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 * r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -163,7 +163,7 @@ TEST_CASE (test_arithmetic_float_mul64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == (f0 * f0)); // 3.1415927f * 3.1415927f
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == (f0 * f0)); // 3.1415927f * 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_div32) {
@@ -177,8 +177,8 @@ TEST_CASE (test_arithmetic_float_div32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::DIVF32,  0x20, 0x00, 0x00, // [0x] r2 <- r0 / r0
         Opcode::HALT
     };
@@ -186,7 +186,7 @@ TEST_CASE (test_arithmetic_float_div32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == (f0 / f0)); // 3.1415927f / 3.1415927f
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == (f0 / f0)); // 3.1415927f / 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_div64) {
@@ -204,7 +204,7 @@ TEST_CASE (test_arithmetic_float_div64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::DIVF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 / r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -215,7 +215,7 @@ TEST_CASE (test_arithmetic_float_div64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == (f0 / f0)); // 3.1415927f / 3.1415927f
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == (f0 / f0)); // 3.1415927f / 3.1415927f
 }
 
 TEST_CASE (test_arithmetic_float_sqrt32) {
@@ -229,8 +229,8 @@ TEST_CASE (test_arithmetic_float_sqrt32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::SQRTF32, 0x20, 0x00, 0x00, // [0x] r2 <- sqrt(r0)
         Opcode::HALT
     };
@@ -238,7 +238,7 @@ TEST_CASE (test_arithmetic_float_sqrt32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == std::sqrt(f0));
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == std::sqrt(f0));
 }
 
 TEST_CASE (test_arithmetic_float_sqrt64) {
@@ -256,7 +256,7 @@ TEST_CASE (test_arithmetic_float_sqrt64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::SQRTF64, 0x21, 0x10, 0x00, // [0x08] r2 <- sqrt(r1)
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -267,7 +267,7 @@ TEST_CASE (test_arithmetic_float_sqrt64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == std::sqrt(f0));
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == std::sqrt(f0));
 }
 
 TEST_CASE (test_arithmetic_float_abs32) {
@@ -281,8 +281,8 @@ TEST_CASE (test_arithmetic_float_abs32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- -3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- -3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- -3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- -3.14
         Opcode::ABSF32,  0x20, 0x00, 0x00, // [0x] r2 <- abs(r0)
         Opcode::HALT
     };
@@ -290,7 +290,7 @@ TEST_CASE (test_arithmetic_float_abs32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == std::fabs(f0));
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == std::fabs(f0));
 }
 
 TEST_CASE (test_arithmetic_float_abs64) {
@@ -308,7 +308,7 @@ TEST_CASE (test_arithmetic_float_abs64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::ABSF64,  0x21, 0x10, 0x00, // [0x08] r2 <- abs(r1)
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -319,7 +319,7 @@ TEST_CASE (test_arithmetic_float_abs64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == std::fabs(f0));
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == std::fabs(f0));
 }
 
 TEST_CASE (test_arithmetic_float_neg32) {
@@ -333,8 +333,8 @@ TEST_CASE (test_arithmetic_float_neg32) {
     uint8_t f0b3 = (f0bits >> 24) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
-        Opcode::LLI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
+        Opcode::LLI,     0x00, f0b0, f0b1, // [0x] r0.01 <- 3.14
+        Opcode::LUI,     0x00, f0b2, f0b3, // [0x] r0.23 <- 3.14
         Opcode::NEGF32,  0x20, 0x00, 0x00, // [0x] r2 <- -r0
         Opcode::HALT
     };
@@ -342,7 +342,7 @@ TEST_CASE (test_arithmetic_float_neg32) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.get_register (2))) == -f0);
+    REQUIRE (std::bit_cast<float>(static_cast<uint32_t>(vm.getRegister (2))) == -f0);
 }
 
 TEST_CASE (test_arithmetic_float_neg64) {
@@ -360,7 +360,7 @@ TEST_CASE (test_arithmetic_float_neg64) {
     uint8_t f0b7 = (f0bits >> 56) & 0xFF;
 
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
+        Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
         Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::NEGF64,  0x21, 0x10, 0x00, // [0x08] r2 <- -r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
@@ -371,5 +371,5 @@ TEST_CASE (test_arithmetic_float_neg64) {
     CeruleanVM vm (bytecode, g_debug);
     vm.run ();
 
-    REQUIRE (std::bit_cast<double>(vm.get_register (2)) == -f0);
+    REQUIRE (std::bit_cast<double>(vm.getRegister (2)) == -f0);
 }

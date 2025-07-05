@@ -12,8 +12,8 @@ extern bool g_debug;
 // Helloworld2 - Hello world string is stored in code memory
 TEST_CASE(test_helloworld2) {
     std::vector<uint8_t> bytecode = {
-        Opcode::LUI,     0x00, 0xc8, 0x00, // [0x00] r0.0 <- string_addr
-        Opcode::LLI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr
+        Opcode::LLI,     0x00, 0xc8, 0x00, // [0x00] r0.0 <- string_addr
+        Opcode::LUI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr
         Opcode::LB,      0x10, 0x00, 0x00, // [0x08] lb r1, r0, 0x00 ; load char from mem
         Opcode::PUTCHAR, 0x10, 0x00, 0x00, // [0x0c] putchar(r1)
         Opcode::ADDI,    0x00, 0x01, 0x00, // [0x10] addi r0, r0, 1 ; move to next char

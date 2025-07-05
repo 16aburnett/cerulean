@@ -8,19 +8,18 @@ CeruleanVM::CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_)
     code = bytecode;
     // Shift program counter to the start of the code
     pc = 0;
-    std::memset (registers, 0, sizeof(registers));
 
     // Setup memory
     // bytecode is added to memory incase there is any static data
     memory.loadCode (bytecode);
-    registers[bp] = MemoryManager::STACK_BASE;
-    registers[sp] = MemoryManager::STACK_BASE;
+    registers.set<uint64_t>(bp, MemoryManager::STACK_BASE);
+    registers.set<uint64_t>(sp, MemoryManager::STACK_BASE);
 }
 
 CeruleanVM::~CeruleanVM () {}
 
-uint64_t CeruleanVM::get_register (uint8_t index) const {
-    return registers[index];
+uint64_t CeruleanVM::getRegister (uint8_t index) const {
+    return registers.get<uint64_t>(index);
 }
 
 uint64_t CeruleanVM::getPC () const {
@@ -78,9 +77,9 @@ void CeruleanVM::execute_instruction () {
             (0b00000000000000000000000000001111 & instruction) >>  0
         );
         // Print registers
-        for (int i = 0; i < 16; ++i)
+        for (int32_t i = 0; i < 16; ++i)
         {
-            printf ("%lx, ", registers[i]);
+            printf ("%lx, ", registers.get<uint64_t>(i));
         }
         printf ("\n");
     }
@@ -89,18 +88,22 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
         case Opcode::LUI: {
             uint8_t dest = (0b00000000111100000000000000000000 & instruction) >> 20;
-            // imm acts as the upper 16 bits of the register 
-            reinterpret_cast<uint8_t*>(&registers[dest])[0] = (0b00000000000000001111111100000000 & instruction) >> 8;
-            reinterpret_cast<uint8_t*>(&registers[dest])[1] = (0b00000000000000000000000011111111 & instruction) >> 0; 
+            int16_t imm  = *(int16_t*)&code[pc+2];
+            // imm acts as the upper 16 bits of the register
+            uint64_t regContents = registers.get<uint64_t>(dest);
+            regContents = (regContents & 0xFFFFFFFF0000FFFFULL) | (static_cast<uint64_t>(imm & 0xFFFF) << 16);
+            registers.set<uint64_t>(dest, regContents);
             break;
         }
         // LLI dest, imm        - loads lower immediate 16 bits into given register
         // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
         case Opcode::LLI: {
             uint8_t dest = (0b00000000111100000000000000000000 & instruction) >> 20;
-            // imm acts as the lower 16 bits of the register 
-            reinterpret_cast<uint8_t*>(&registers[dest])[2] = (0b00000000000000001111111100000000 & instruction) >> 8; 
-            reinterpret_cast<uint8_t*>(&registers[dest])[3] = (0b00000000000000000000000011111111 & instruction) >> 0; 
+            int16_t imm  = *(int16_t*)&code[pc+2];
+            // imm acts as the lower 16 bits of the register
+            uint64_t regContents = registers.get<uint64_t>(dest);
+            regContents = (regContents & 0xFFFFFFFFFFFF0000ULL) | (static_cast<uint64_t>(imm & 0xFFFF) << 0);
+            registers.set<uint64_t>(dest, regContents);
             break;
         }
         // LB dest, offset(src) - load byte
@@ -109,13 +112,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::LB: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[src1];
+            uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
             uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes
-            registers[dest] = 0;
+            // clear register bytes - this is probably not needed
+            registers.set<uint64_t>(dest, 0);
             // read in byte
-            registers[dest] = memory.read8 (address + offset);
+            registers.set<uint8_t>(dest, memory.read8 (address + offset));
             break;
         }
         // LH dest, offset(src) - load half (2 bytes)
@@ -123,13 +126,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::LH: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[src1];
+            uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
             uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes
-            registers[dest] = 0; 
+            // clear register bytes - this is probably not needed
+            registers.set<uint64_t>(dest, 0);
             // read in half word (2 bytes) 
-            registers[dest] = memory.read16 (address + offset);
+            registers.set<uint16_t>(dest, memory.read16 (address + offset));
             break;
         }
         // LW dest, offset(src) - load word (4 bytes)
@@ -137,13 +140,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::LW: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[src1];
+            uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
             uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes
-            registers[dest] = 0;
+            // clear register bytes - this is probably not needed
+            registers.set<uint64_t>(dest, 0);
             // read in word (4 bytes) 
-            registers[dest] = memory.read32 (address + offset);
+            registers.set<uint32_t>(dest, memory.read32 (address + offset));
             break;
         }
         // LD dest, offset(src) - load double word (8 bytes)
@@ -151,13 +154,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::LD: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[src1];
+            uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
             uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes
-            registers[dest] = 0;
+            // clear register bytes - this is probably not needed
+            registers.set<uint64_t>(dest, 0);
             // read in double word (8 bytes) 
-            registers[dest] = memory.read64 (address + offset);
+            registers.set<uint64_t>(dest, memory.read64 (address + offset));
             break;
         }
         // SB offset(dest), src - store byte
@@ -165,11 +168,11 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SB: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[dest];
+            uint64_t address = registers.get<uint64_t>(dest);
             // read offset in little endian
             uint64_t offset = *(int16_t*)&code[pc + 2];
             // store byte
-            memory.write8 (address + offset, (uint8_t)registers[src1]);
+            memory.write8 (address + offset, registers.get<uint8_t>(src1));
             break;
         }
         // SH offset(dest), src - store half (2 bytes)
@@ -177,11 +180,11 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SH: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[dest];
+            uint64_t address = registers.get<uint64_t>(dest);
             // read offset in little endian
-            int offset = *(int16_t*)&code[pc + 2];
+            int32_t offset = *(int16_t*)&code[pc + 2];
             // store half word (2 bytes)
-            memory.write16 (address + offset, (uint16_t)registers[src1]);
+            memory.write16 (address + offset, registers.get<uint16_t>(src1));
             break;
         }
         // SW offset(dest), src - store word (4 bytes)
@@ -189,11 +192,11 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SW: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[dest];
+            uint64_t address = registers.get<uint64_t>(dest);
             // read offset in little endian
-            int offset = *(int16_t*)&code[pc + 2];
+            int32_t offset = *(int16_t*)&code[pc + 2];
             // store word (4 bytes)
-            memory.write32 (address + offset, (uint32_t)registers[src1]);
+            memory.write32 (address + offset, registers.get<uint32_t>(src1));
             break;
         }
         // SD offset(dest), src - store double word (8 bytes)
@@ -201,11 +204,11 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SD: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t address = registers[dest];
+            uint64_t address = registers.get<uint64_t>(dest);
             // read offset in little endian
-            int offset = *(int16_t*)&code[pc + 2];
+            int32_t offset = *(int16_t*)&code[pc + 2];
             // store double word (8 bytes)
-            memory.write64 (address + offset, (uint64_t)registers[src1]);
+            memory.write64 (address + offset, registers.get<uint64_t>(src1));
             break;
         }
 
@@ -216,8 +219,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] + *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a + b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // SUB dest, src1, src2 - integer subtraction
@@ -226,8 +234,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] - *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a - b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // MUL dest, src1, src2 - integer multiplication
@@ -236,8 +249,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] * *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a * b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // DIV dest, src1, src2 - integer division
@@ -246,8 +264,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] / *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a / b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // MOD dest, src1, src2 - integer division remainder
@@ -256,8 +279,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] % *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a % b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // Floating Point Arithmetic Instructions
@@ -266,12 +294,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
-            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
             // Perform instruction
             float c = a + b;
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::ADDF64: {
@@ -279,12 +307,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
-            double b = std::bit_cast<double>(registers[src2]);
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
             // Perform instruction
             double c = a + b;
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::SUBF32: {
@@ -292,12 +320,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
-            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
             // Perform instruction
             float c = a - b;
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::SUBF64: {
@@ -305,12 +333,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
-            double b = std::bit_cast<double>(registers[src2]);
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
             // Perform instruction
             double c = a - b;
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::MULF32: {
@@ -318,12 +346,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
-            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
             // Perform instruction
             float c = a * b;
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::MULF64: {
@@ -331,12 +359,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
-            double b = std::bit_cast<double>(registers[src2]);
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
             // Perform instruction
             double c = a * b;
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::DIVF32: {
@@ -344,12 +372,12 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
-            float b = std::bit_cast<float>(static_cast<uint32_t>(registers[src2]));
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
             // Perform instruction
             float c = a / b;
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::DIVF64: {
@@ -357,78 +385,78 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
-            double b = std::bit_cast<double>(registers[src2]);
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
             // Perform instruction
             double c = a / b;
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::SQRTF32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float a = registers.get<float>(src1);
             // Perform instruction
             float c = std::sqrt (a);
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::SQRTF64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
+            double a = registers.get<double>(src1);
             // Perform instruction
             double c = std::sqrt (a);
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::ABSF32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float a = registers.get<float>(src1);
             // Perform instruction
             float c = std::fabs (a);
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::ABSF64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
+            double a = registers.get<double>(src1);
             // Perform instruction
             double c = std::fabs (a);
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         case Opcode::NEGF32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            float a = std::bit_cast<float>(static_cast<uint32_t>(registers[src1]));
+            float a = registers.get<float>(src1);
             // Perform instruction
             float c = -a;
             // Write to register
-            registers[dest] = static_cast<uint64_t>(std::bit_cast<uint32_t>(c));
+            registers.set<float>(dest, c);
             break;
         }
         case Opcode::NEGF64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             // Read from registers
-            double a = std::bit_cast<double>(registers[src1]);
+            double a = registers.get<double>(src1);
             // Perform instruction
             double c = -a;
             // Write to register
-            registers[dest] = std::bit_cast<uint64_t>(c);
+            registers.set<double>(dest, c);
             break;
         }
         // SLL dest, src1, src2 - shift left logical
@@ -437,28 +465,43 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] << *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a << b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
-        // SRL dest, src1, src2 - shift right logical
+        // SRL dest, src1, src2 - shift right logical (fills with 0s)
         // XXXXXXXX ddddssss ssss0000 00000000
         case Opcode::SRL: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(unsigned int*)&registers[src1] >> *(unsigned int*)&registers[src2];
+            // Read from registers
+            uint32_t a = registers.get<uint32_t>(src1);
+            uint32_t b = registers.get<uint32_t>(src2);
+            // Perform instruction
+            uint32_t c = a >> b;
+            // Write to register
+            registers.set<uint32_t>(dest, c);
             break;
         }
-        // SRA dest, src1, src2 - shift right arithmetic
+        // SRA dest, src1, src2 - shift right arithmetic (fills with sign bit)
         // XXXXXXXX ddddssss ssss0000 00000000
         case Opcode::SRA: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] >> *(int*)&registers[src2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            int32_t b = registers.get<int32_t>(src2);
+            // Perform instruction
+            int32_t c = a >> b;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // OR  dest, src1, src2 - bitwise or
@@ -467,8 +510,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] | *(int*)&registers[src2];
+            // Read from registers
+            uint32_t a = registers.get<uint32_t>(src1);
+            uint32_t b = registers.get<uint32_t>(src2);
+            // Perform instruction
+            uint32_t c = a | b;
+            // Write to register
+            registers.set<uint32_t>(dest, c);
             break;
         }
         // AND dest, src1, src2 - bitwise and
@@ -477,8 +525,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] & *(int*)&registers[src2];
+            // Read from registers
+            uint32_t a = registers.get<uint32_t>(src1);
+            uint32_t b = registers.get<uint32_t>(src2);
+            // Perform instruction
+            uint32_t c = a & b;
+            // Write to register
+            registers.set<uint32_t>(dest, c);
             break;
         }
         // XOR dest, src1, src2 - bitwise xor 
@@ -487,8 +540,13 @@ void CeruleanVM::execute_instruction () {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] ^ *(int*)&registers[src2];
+            // Read from registers
+            uint32_t a = registers.get<uint32_t>(src1);
+            uint32_t b = registers.get<uint32_t>(src2);
+            // Perform instruction
+            uint32_t c = a ^ b;
+            // Write to register
+            registers.set<uint32_t>(dest, c);
             break;
         }
 
@@ -502,9 +560,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::ADDI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] + imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a + imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // SUBI dest, src1, imm - integer subtraction with immediate
@@ -512,9 +574,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SUBI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] - imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a - imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // MULI dest, src1, src2 - integer multiplication with immediate
@@ -522,9 +588,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::MULI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] * imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a * imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // DIVI dest, src1, src2 - integer division with immediate
@@ -532,9 +602,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::DIVI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] / imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a / imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // MODI dest, src1, src2 - integer division remainder with immediate
@@ -542,9 +616,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::MODI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] % imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a % imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // SLLI dest, src1, imm - shift left logical with immediate
@@ -552,9 +630,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SLLI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] << imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a << imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // SRLI dest, src1, imm - shift right logical with immediate
@@ -562,9 +644,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SRLI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            unsigned int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(unsigned int*)&registers[src1] >> imm;
+            uint32_t imm   = *(int16_t*)&code[pc+2];
+            // Read from registers
+            uint32_t a = registers.get<uint32_t>(src1);
+            // Perform instruction
+            uint32_t c = a >> imm;
+            // Write to register
+            registers.set<uint32_t>(dest, c);
             break;
         }
         // SRAI dest, src1, imm - shift right arithmetic with immediate
@@ -572,9 +658,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::SRAI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] >> imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a >> imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // ORI  dest, src1, imm - bitwise or with immediate
@@ -582,9 +672,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::ORI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] | imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a | imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // ANDI dest, src1, imm - bitwise and with immediate
@@ -592,9 +686,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::ANDI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] & imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a & imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
         // XORI dest, src1, imm - bitwise xor  with immediate
@@ -602,9 +700,13 @@ void CeruleanVM::execute_instruction () {
         case Opcode::XORI: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int  imm    = *(int16_t*)&code[pc+2];
-            // read in word (4 bytes) 
-            *(int*)&(registers[dest]) = *(int*)&registers[src1] ^ imm;
+            int32_t imm    = *(int16_t*)&code[pc+2];
+            // Read from registers
+            int32_t a = registers.get<int32_t>(src1);
+            // Perform instruction
+            int32_t c = a ^ imm;
+            // Write to register
+            registers.set<int32_t>(dest, c);
             break;
         }
 
@@ -615,8 +717,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] == registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) == registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // BNE src1, src2, addr - if src1 != src2 then pc <- addr
@@ -625,8 +727,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] != registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) != registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // BLT src1, src2, addr - if src1 <  src2 then pc <- addr
@@ -635,8 +737,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] < registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) < registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // BLE src1, src2, addr - if src1 <= src2 then pc <- addr
@@ -645,8 +747,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] <= registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) <= registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // BGT src1, src2, addr - if src1 >  src2 then pc <- addr
@@ -655,8 +757,8 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] > registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) > registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // BGE src1, src2, addr - if src1 >= src2 then pc <- addr
@@ -665,15 +767,15 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers[src1] >= registers[src2])
-                pc = registers[addr] - 4;
+            if (registers.get<uint32_t>(src1) >= registers.get<uint32_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // JMP addr - pc <- addr
         // XXXXXXXX aaaa0000 00000000 00000000
         case Opcode::JMP: {
             uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            pc = registers[addr] - 4;
+            pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
 
@@ -703,11 +805,11 @@ void CeruleanVM::execute_instruction () {
         case Opcode::CALL: {
             uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
             // push return address onto stack 
-            registers[sp] -= 8; // stack grows towards 0
-            memory.write64 (registers[sp], pc);
+            registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) - 8); // stack grows towards 0
+            memory.write64 (registers.get<uint64_t>(sp), pc);
             // change program counter to addr
             // -4 to point to the previous instruction since VM will increment later
-            pc = registers[addr] - 4;
+            pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         // RET - pc <- [bp]
@@ -725,8 +827,8 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX 00000000 00000000 00000000
         case Opcode::RET: {
             // pop return address from stack into 
-            pc = memory.read64 (registers[sp]);
-            registers[sp] += 8; // stack shrinks towards MEM_SIZE
+            pc = memory.read64 (registers.get<uint64_t>(sp));
+            registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) + 8); // stack shrinks towards MEM_SIZE
             break;
         }
         // PUSH src - sp -= 8 ; [sp] <- src
@@ -735,8 +837,8 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX ssss0000 00000000 00000000
         case Opcode::PUSH: {
             uint8_t src    = (0b00000000111100000000000000000000 & instruction) >> 20;
-            registers[sp] -= 8; // stack grows towards 0
-            memory.write64 (registers[sp], registers[src]);
+            registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) - 8); // stack grows towards 0
+            memory.write64 (registers.get<uint64_t>(sp), registers.get<uint64_t>(src));
             break;
         }
         // POP dest - dest <- [sp] ; sp += 8
@@ -745,8 +847,8 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX dddd0000 00000000 00000000
         case Opcode::POP: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            registers[dest] = memory.read64 (registers[sp]); 
-            registers[sp] += 8; // stack shrinks towards MEM_SIZE
+            registers.set<uint64_t>(dest, memory.read64 (registers.get<uint64_t>(sp))); 
+            registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) + 8); // stack shrinks towards MEM_SIZE
             break;
         }
 
@@ -768,7 +870,7 @@ void CeruleanVM::execute_instruction () {
         // XXXXXXXX dddd00000 00000000 00000000
         case Opcode::GETCHAR: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            registers[dest] = getchar();
+            registers.set<uint8_t>(dest, getchar ());
             break;
         }
         // PUTCHAR - outputs (to stdout) a char (1-byte) from the given register
@@ -777,7 +879,7 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             if (debug) printf ("Output = '");
             // Using std::cout so unit tests can capture output
-            std::cout << (char)registers[src1];
+            std::cout << registers.get<uint8_t>(src1);
             if (debug) printf ("'\n");
             break;
         }
@@ -794,14 +896,14 @@ void CeruleanVM::execute_instruction () {
 }
 
 void CeruleanVM::handle_syscall (uint8_t sym_id) {
-    switch (sym_id) {
-        case SYSCALL_PUTS: {
-            const char* str = reinterpret_cast<const char*> (registers[0]);
-            puts(str);
-            break;
-        }
-        default:
-            std::cerr << "Unknown syscall: " << static_cast<int> (sym_id) << "\n";
-            break;
-    }
+    // switch (sym_id) {
+    //     case SYSCALL_PUTS: {
+    //         const char* str = reinterpret_cast<const char*> (registers.get<uint64_t>(0));
+    //         puts(str);
+    //         break;
+    //     }
+    //     default:
+    //         std::cerr << "Unknown syscall: " << static_cast<int32_t> (sym_id) << "\n";
+    //         break;
+    // }
 }

@@ -118,22 +118,22 @@ void Debugger::cmdList () {
 
 void Debugger::cmdPrint (const std::string& arg) {
     uint64_t value = 0;
-    if      (arg == "r0") value = vm.get_register (0);
-    else if (arg == "r1") value = vm.get_register (1);
-    else if (arg == "r2") value = vm.get_register (2);
-    else if (arg == "r3") value = vm.get_register (3);
-    else if (arg == "r4") value = vm.get_register (4);
-    else if (arg == "r5") value = vm.get_register (5);
-    else if (arg == "r6") value = vm.get_register (6);
-    else if (arg == "r7") value = vm.get_register (7);
-    else if (arg == "r8") value = vm.get_register (8);
-    else if (arg == "r9") value = vm.get_register (9);
-    else if (arg == "r10") value = vm.get_register (10);
-    else if (arg == "r11") value = vm.get_register (11);
-    else if (arg == "r12") value = vm.get_register (12);
-    else if (arg == "r13" || arg == "ra") value = vm.get_register (13);
-    else if (arg == "r14" || arg == "bp") value = vm.get_register (14);
-    else if (arg == "r15" || arg == "sp") value = vm.get_register (15);
+    if      (arg == "r0") value = vm.getRegister (0);
+    else if (arg == "r1") value = vm.getRegister (1);
+    else if (arg == "r2") value = vm.getRegister (2);
+    else if (arg == "r3") value = vm.getRegister (3);
+    else if (arg == "r4") value = vm.getRegister (4);
+    else if (arg == "r5") value = vm.getRegister (5);
+    else if (arg == "r6") value = vm.getRegister (6);
+    else if (arg == "r7") value = vm.getRegister (7);
+    else if (arg == "r8") value = vm.getRegister (8);
+    else if (arg == "r9") value = vm.getRegister (9);
+    else if (arg == "r10") value = vm.getRegister (10);
+    else if (arg == "r11") value = vm.getRegister (11);
+    else if (arg == "r12") value = vm.getRegister (12);
+    else if (arg == "r13" || arg == "ra") value = vm.getRegister (13);
+    else if (arg == "r14" || arg == "bp") value = vm.getRegister (14);
+    else if (arg == "r15" || arg == "sp") value = vm.getRegister (15);
     else {
         std::cout << "Unknown register. Type 'help'.\n";
         return;
