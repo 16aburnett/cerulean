@@ -40,14 +40,14 @@ TEST_CASE(test_helloworld4) {
         Opcode::PUSH,    0x80, 0x00, 0x00, // [0x54] push r8 - save caller's r8 
         Opcode::PUSH,    0x90, 0x00, 0x00, // [0x58] push r9 - save caller's r9 
         // function_body:
-        Opcode::LW,      0x0e, 0x10, 0x00, // [0x5c] r0 <- [bp + 16] - get param string_addr
+        Opcode::LOAD32,  0x0e, 0x10, 0x00, // [0x5c] r0 <- [bp + 16] - get param string_addr
         Opcode::LLI,     0x30, 0x74, 0x00, // [0x60] r3.0 <- loop_cond
         Opcode::LUI,     0x30, 0x00, 0x00, // [0x64] r3.1 <- loop_cond
         Opcode::LLI,     0x40, 0x88, 0x00, // [0x68] r4.0 <- loop_end
         Opcode::LUI,     0x40, 0x00, 0x00, // [0x6c] r4.1 <- loop_end
         Opcode::LLI,     0x50, 0x00, 0x00, // [0x70] r5.0 <- 0 ; null-byte
         // loop_cond:
-        Opcode::LB,      0x20, 0x00, 0x00, // [0x74] lb r2, r0, 0x00 ; load char from mem
+        Opcode::LOAD8,   0x20, 0x00, 0x00, // [0x74] lb r2, r0, 0x00 ; load char from mem
         Opcode::BEQ,     0x25, 0x40, 0x00, // [0x78] beq r2, r5, r4(loop_end) ; *str == null
         // loop_body:
         Opcode::PUTCHAR, 0x20, 0x00, 0x00, // [0x7c] putchar(r2)

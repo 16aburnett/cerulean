@@ -49,7 +49,7 @@ TEST_CASE (test_arithmetic_float_add64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::ADDF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 + r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -101,7 +101,7 @@ TEST_CASE (test_arithmetic_float_sub64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::SUBF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 - r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -153,7 +153,7 @@ TEST_CASE (test_arithmetic_float_mul64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::MULF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 * r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -205,7 +205,7 @@ TEST_CASE (test_arithmetic_float_div64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::DIVF64,  0x21, 0x10, 0x00, // [0x08] r2 <- r1 / r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -257,7 +257,7 @@ TEST_CASE (test_arithmetic_float_sqrt64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::SQRTF64, 0x21, 0x10, 0x00, // [0x08] r2 <- sqrt(r1)
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -309,7 +309,7 @@ TEST_CASE (test_arithmetic_float_abs64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::ABSF64,  0x21, 0x10, 0x00, // [0x08] r2 <- abs(r1)
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const
@@ -361,7 +361,7 @@ TEST_CASE (test_arithmetic_float_neg64) {
 
     std::vector<uint8_t> bytecode = {
         Opcode::LLI,     0x00, 0x10, 0x00, // [0x00] r0 <- float_const
-        Opcode::LD,      0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
+        Opcode::LOAD64,  0x10, 0x00, 0x00, // [0x04] r1 <- r0[0]
         Opcode::NEGF64,  0x21, 0x10, 0x00, // [0x08] r2 <- -r1
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x0c] halt
         f0b0,            f0b1, f0b2, f0b3, // [0x10] float_const

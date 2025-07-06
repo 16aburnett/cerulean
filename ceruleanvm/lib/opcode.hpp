@@ -14,30 +14,30 @@ enum Opcode : const uint8_t {
     // LLI dest, imm        - loads lower immediate 16 bits into given register
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LLI = 0x02,
-    // LB dest, offset(src) - load 
+    // LOAD8 dest, offset(src) - load 
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LB = 0x03,
-    // LH dest, offset(src) - load half (2 bytes)
+    LOAD8 = 0x03,
+    // LOAD16 dest, offset(src) - load half (2 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LH = 0x04,
-    // LW dest, offset(src) - load word (4 bytes)
+    LOAD16 = 0x04,
+    // LOAD32 dest, offset(src) - load word (4 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LW = 0x05,
-    // LD dest, offset(src) - load double word (8 bytes)
+    LOAD32 = 0x05,
+    // LOAD64 dest, offset(src) - load double word (8 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LD = 0x06,
-    // SB offset(dest), src - store byte
+    LOAD64 = 0x06,
+    // STORE8 offset(dest), src - store byte
     // XXXXXXXX ddddssss oooooooo oooooooo
-    SB = 0x07,
-    // SH offset(dest), src - store half (2 bytes)
+    STORE8 = 0x07,
+    // STORE16 offset(dest), src - store half (2 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    SH = 0x08,
-    // SW offset(dest), src - store word (4 bytes)
+    STORE16 = 0x08,
+    // STORE32 offset(dest), src - store word (4 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    SW = 0x09,
-    // SD offset(dest), src - store double word (8 bytes)
+    STORE32 = 0x09,
+    // STORE64 offset(dest), src - store double word (8 bytes)
     // XXXXXXXX ddddssss oooooooo oooooooo
-    SD = 0x0a,
+    STORE64 = 0x0a,
 
     // ============================================================================================
     // Integer Arithmetic - 0x10-0x20

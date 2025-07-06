@@ -105,7 +105,7 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint64_t>(dest, regContents);
             break;
         }
-        case Opcode::LB: {
+        case Opcode::LOAD8: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
@@ -117,7 +117,7 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint8_t>(dest, memory.read8 (address + offset));
             break;
         }
-        case Opcode::LH: {
+        case Opcode::LOAD16: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
@@ -129,7 +129,7 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint16_t>(dest, memory.read16 (address + offset));
             break;
         }
-        case Opcode::LW: {
+        case Opcode::LOAD32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
@@ -141,7 +141,7 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint32_t>(dest, memory.read32 (address + offset));
             break;
         }
-        case Opcode::LD: {
+        case Opcode::LOAD64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
@@ -153,7 +153,7 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint64_t>(dest, memory.read64 (address + offset));
             break;
         }
-        case Opcode::SB: {
+        case Opcode::STORE8: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(dest);
@@ -163,7 +163,7 @@ void CeruleanVM::execute_instruction () {
             memory.write8 (address + offset, registers.get<uint8_t>(src1));
             break;
         }
-        case Opcode::SH: {
+        case Opcode::STORE16: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(dest);
@@ -173,7 +173,7 @@ void CeruleanVM::execute_instruction () {
             memory.write16 (address + offset, registers.get<uint16_t>(src1));
             break;
         }
-        case Opcode::SW: {
+        case Opcode::STORE32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(dest);
@@ -183,7 +183,7 @@ void CeruleanVM::execute_instruction () {
             memory.write32 (address + offset, registers.get<uint32_t>(src1));
             break;
         }
-        case Opcode::SD: {
+        case Opcode::STORE64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(dest);

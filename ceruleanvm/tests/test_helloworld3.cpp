@@ -23,7 +23,7 @@ TEST_CASE(test_helloworld3) {
         // loop_cond:
         Opcode::BGE,     0x01, 0x40, 0x00, // [0x20] bge r0, r1, loop_end; iter >= end
         // loop_body:
-        Opcode::LB,      0x20, 0x00, 0x00, // [0x24] lb r2, r0, 0x00 ; load char from mem
+        Opcode::LOAD8,   0x20, 0x00, 0x00, // [0x24] lb r2, r0, 0x00 ; load char from mem
         Opcode::PUTCHAR, 0x20, 0x00, 0x00, // [0x28] putchar(r2)
         // loop_update:
         Opcode::ADD32I,  0x00, 0x01, 0x00, // [0x2c] addi r0, r0, 1 ; move to next char
