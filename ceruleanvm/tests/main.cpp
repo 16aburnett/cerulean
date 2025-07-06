@@ -10,6 +10,7 @@
 #include "test_helloworld2.cpp"
 #include "test_helloworld3.cpp"
 #include "test_helloworld4.cpp"
+#include "test_loadstore.cpp"
 #include "test_arithmetic.cpp"
 #include "test_arithmetic_float.cpp"
 #include "test_control_flow.cpp"

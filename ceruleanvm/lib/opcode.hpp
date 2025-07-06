@@ -9,9 +9,15 @@ enum Opcode : const uint8_t {
     // ============================================================================================
     // Memory Instructions - 0x01-0x10
     // LUI dest, imm        - loads upper immediate 16 bits into given register
+    // NOTE: This assumes 32-bit register and ignores endian-ness
+    // loads upper 16-bits: 0x[1234]5678
+    // Example: LUI r0, 0x1234
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LUI = 0x01,
     // LLI dest, imm        - loads lower immediate 16 bits into given register
+    // NOTE: This assumes 32-bit register and ignores endian-ness
+    // loads lower 16-bits: 0x1234[5678]
+    // Example: LLI r0, 0x5678
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LLI = 0x02,
     // LOAD8 dest, offset(src) - load 
