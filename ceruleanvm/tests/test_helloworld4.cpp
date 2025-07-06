@@ -28,7 +28,7 @@ TEST_CASE(test_helloworld4) {
         // Function void print_string (ptr string_addr)
         // function_prologue: 
         Opcode::PUSH,    0xe0, 0x00, 0x00, // [0x2c] push bp - save caller's bp 
-        Opcode::ADDI,    0xef, 0x00, 0x00, // [0x30] bp <- sp + 0
+        Opcode::ADD64I,  0xef, 0x00, 0x00, // [0x30] bp <- sp + 0
         Opcode::PUSH,    0x00, 0x00, 0x00, // [0x34] push r0 - save caller's r0
         Opcode::PUSH,    0x10, 0x00, 0x00, // [0x38] push r1 - save caller's r1 
         Opcode::PUSH,    0x20, 0x00, 0x00, // [0x3c] push r2 - save caller's r2 
@@ -52,7 +52,7 @@ TEST_CASE(test_helloworld4) {
         // loop_body:
         Opcode::PUTCHAR, 0x20, 0x00, 0x00, // [0x7c] putchar(r2)
         // loop_update:
-        Opcode::ADDI,    0x00, 0x01, 0x00, // [0x80] addi r0, r0, 1 ; move to next char
+        Opcode::ADD32I,  0x00, 0x01, 0x00, // [0x80] addi r0, r0, 1 ; move to next char
         Opcode::JMP,     0x30, 0x00, 0x00, // [0x84] jmp r3 ; jmp loop_cond
         // loop_end:
         // function_epilogue: 
@@ -66,7 +66,7 @@ TEST_CASE(test_helloworld4) {
         Opcode::POP,     0x20, 0x00, 0x00, // [0xa4] pop r2 - restore caller's r2
         Opcode::POP,     0x10, 0x00, 0x00, // [0xa8] pop r1 - restore caller's r1
         Opcode::POP,     0x00, 0x00, 0x00, // [0xac] pop r0 - restore caller's r0 
-        Opcode::ADDI,    0xfe, 0x00, 0x00, // [0xb0] sp <- bp - remove local vars 
+        Opcode::ADD64I,  0xfe, 0x00, 0x00, // [0xb0] sp <- bp - remove local vars 
         Opcode::POP,     0xe0, 0x00, 0x00, // [0xb4] bp <- [sp] - restore caller bp
         Opcode::RET,     0x00, 0x00, 0x00, // [0xb8] return from function
         // End function

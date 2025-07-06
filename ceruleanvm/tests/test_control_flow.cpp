@@ -49,7 +49,7 @@ TEST_CASE (test_control_flow_loop) {
         // loop_body:
         Opcode::PUTCHAR, 0x40, 0x00, 0x00, // [0x34] putchar(r4) ; print '*'
         // loop_update:
-        Opcode::ADDI,    0x00, 0x01, 0x00, // [0x38] addi r0, r0, 1 ; i = i + 1
+        Opcode::ADD32I,  0x00, 0x01, 0x00, // [0x38] addi r0, r0, 1 ; i = i + 1
         Opcode::JMP,     0x30, 0x00, 0x00, // [0x3c] jmp r3 ; jmp loop_cond
         // loop_end:
         Opcode::PUTCHAR, 0x50, 0x00, 0x00, // [0x40] putchar(r5) ; print '\n'

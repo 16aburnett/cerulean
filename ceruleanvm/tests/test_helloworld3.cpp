@@ -26,7 +26,7 @@ TEST_CASE(test_helloworld3) {
         Opcode::LB,      0x20, 0x00, 0x00, // [0x24] lb r2, r0, 0x00 ; load char from mem
         Opcode::PUTCHAR, 0x20, 0x00, 0x00, // [0x28] putchar(r2)
         // loop_update:
-        Opcode::ADDI,    0x00, 0x01, 0x00, // [0x2c] addi r0, r0, 1 ; move to next char
+        Opcode::ADD32I,  0x00, 0x01, 0x00, // [0x2c] addi r0, r0, 1 ; move to next char
         Opcode::JMP,     0x30, 0x00, 0x00, // [0x30] jmp r3 ; jmp loop_cond
         // loop_end:
         Opcode::HALT,    0x00, 0x00, 0x00, // [0x34]
