@@ -1,4 +1,28 @@
 Program:
+|   Label("_start")
+|   Instruction: "lui"
+|   |   Register("r0")
+|   |   Label("main")
+|   Instruction: "lli"
+|   |   Register("r0")
+|   |   Label("main")
+|   Instruction: "sll64i"
+|   |   Register("r0")
+|   |   Register("r0")
+|   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Register("r0")
+|   |   Label("main")
+|   Instruction: "sll64i"
+|   |   Register("r0")
+|   |   Register("r0")
+|   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Register("r0")
+|   |   Label("main")
+|   Instruction: "call"
+|   |   Register("r0")
+|   Instruction: "halt"
 |   Label("main")
 |   Instruction: "lli"
 |   |   Register("r0")

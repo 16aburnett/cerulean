@@ -1,4 +1,13 @@
 // Super simple Hello World CeruleanASM Program
+_start:
+    lui       r0, %hi(main)
+    lli       r0, %mh(main)
+    sll64i    r0, r0, 16
+    lli       r0, %ml(main)
+    sll64i    r0, r0, 16
+    lli       r0, %lo(main)
+    call      r0
+    halt
 main:
     lli       r0, 'H'
     putchar   r0

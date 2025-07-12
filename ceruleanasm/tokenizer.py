@@ -47,7 +47,8 @@ token_specification = [
     ('CHAR',     r'\'(\\[A-Za-z_0-9\'\"]*|.)\''),   # '0' '\n' '\101'
     ('STRING',   r'\"([^"\\]|\\.)*\"'),
 # Identifier
-    ('IDENTIFIER',r'[A-Za-z_][A-Za-z_0-9]*'),    # Identifiers
+    ('MODIFIER'  ,r'%[A-Za-z_][A-Za-z_0-9]*'), # %hi, %lo
+    ('IDENTIFIER',r'[A-Za-z_][A-Za-z_0-9]*'),  # Identifiers
 # Operators
     ('ASSIGN_ADD',r'\+\='),
     ('ASSIGN_SUB',r'\-\='),

@@ -13,6 +13,7 @@ from .AST import *
 from .parser import Parser
 from .visitor import *
 from .printVisitor import PrintVisitor
+from .semanticAnalysis import SemanticAnalysisVisitor
 from .addressAssigner import AddressAssignerVisitor
 from .referenceResolver import ReferenceResolverVisitor
 from .bytecodeGenerator import BytecodeGeneratorVisitor
@@ -91,6 +92,16 @@ class CeruleanAssembler:
             astFile = open (self.astFilename, "w")
             astFile.write (output)
             astFile.close ()
+
+        # -----------------------------------------------------------------------------------------
+        # Semantic analysis
+
+        semanticAnalyzer = SemanticAnalysisVisitor ()
+        ast.accept (semanticAnalyzer)
+
+        if not semanticAnalyzer.wasSuccessful:
+            print ("ERROR: Semantic Analysis failed")
+            exit (1)
 
         # -----------------------------------------------------------------------------------------
         # Assign addresses to instructions

@@ -40,6 +40,10 @@ class BytecodeGeneratorVisitor (ASTVisitor):
         return REGISTER_MAP.get (node.id)
 
     def visitLabelExpressionNode (self, node):
+        if node.modifier == "hi": return (node.address >> 48) & 0xFFFF
+        if node.modifier == "mh": return (node.address >> 32) & 0xFFFF
+        if node.modifier == "ml": return (node.address >> 16) & 0xFFFF
+        if node.modifier == "lo": return (node.address      ) & 0xFFFF
         return node.address
 
     def visitIntLiteralExpressionNode (self, node):

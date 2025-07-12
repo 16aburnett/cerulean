@@ -107,9 +107,14 @@ class RegisterExpressionNode (Node):
 
 class LabelExpressionNode (Node):
 
-    def __init__ (self, token, id):
+    def __init__ (self, token, id, modifierToken=None):
         self.token = token
         self.id = id
+        self.modifierToken = modifierToken
+        if self.modifierToken:
+            self.modifier = self.modifierToken.lexeme[1:]
+        else:
+            self.modifier = None
         self.address = None
 
     def accept (self, visitor):

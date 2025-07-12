@@ -6,13 +6,22 @@ from abc import ABC, abstractmethod
 from sys import exit
 
 from .visitor import ASTVisitor
+from .modifiers import MODIFIERS
+from .tokenizer import printToken, Token
 
 # ========================================================================
 
 class SemanticAnalysisVisitor (ASTVisitor):
 
     def __init__(self):
-        pass
+        # Assume semantics pass initially and try to break this assumption
+        self.wasSuccessful = True
+
+    def error (self, msg, debugToken:Token):
+        print ("Semantic Analysis ERROR:", msg)
+        if debugToken:
+            printToken (debugToken)
+        self.wasSuccessful = False
 
     def visitProgramNode (self, node):
         for codeunit in node.codeunits:
@@ -30,7 +39,9 @@ class SemanticAnalysisVisitor (ASTVisitor):
         pass
 
     def visitLabelExpressionNode (self, node):
-        pass
+        # Ensure the modifier is correct if it has one
+        if node.modifier != None and node.modifier not in MODIFIERS:
+            self.error (f"'{node.modifier}' is not a valid modifier", node.modifierToken)
 
     def visitIntLiteralExpressionNode (self, node):
         pass

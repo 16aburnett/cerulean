@@ -180,6 +180,7 @@ class Parser:
     #            -> NULL
     #            -> <register>
     #            -> IDENTIFIER
+    #            -> MODIFIER '(' IDENTIFIER ')'
 
     def argument (self):
         self.enter ("argument")
@@ -213,6 +214,14 @@ class Parser:
             token = self.tokens[self.currentToken]
             node = LabelExpressionNode (token, token.lexeme)
             self.match ("argument", "IDENTIFIER")
+        elif self.tokens[self.currentToken].type == "MODIFIER":
+            modifierToken = self.tokens[self.currentToken]
+            self.match ("argument", "MODIFIER")
+            self.match ("argument", "LPAREN")
+            token = self.tokens[self.currentToken]
+            self.match ("argument", "IDENTIFIER")
+            self.match ("argument", "RPAREN")
+            node = LabelExpressionNode (token, token.lexeme, modifierToken)
         # expected argument but didnt get one 
         else:
             self.error ("argument", "IDENTIFIER")

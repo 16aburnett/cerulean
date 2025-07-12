@@ -1,0 +1,49 @@
+// Super simple Hello World CeruleanASM Program
+main:
+    lui       r0, %hi(string_addr)
+    lli       r0, %lo(string_addr)
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    add32i    r0, r0, 1         // move to next char
+    load8     r1, r0, 0x00      // load char from mem
+    putchar   r1
+    HALT
+
+string_addr:
+    .ascii 'Hello, World!\n'
