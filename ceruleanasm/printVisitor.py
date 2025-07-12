@@ -39,7 +39,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitInstructionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"Instruction: \"{node.opcode}\"\n"]
+        self.outputstrings += [f"Instruction: \"{node.id}\"\n"]
         self.level += 1
         for argument in node.args:
             argument.accept (self)

@@ -7,6 +7,7 @@ from sys import exit
 
 from .tokenizer import printToken
 from .AST import *
+from .registers import REGISTER_MAP
 
 # ========================================================================
 
@@ -223,8 +224,7 @@ class Parser:
     # ====================================================================
 
     def isRegister (self):
-        string = self.tokens[self.currentToken].lexeme.lower ()
-        registers = ["r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "ra", "bp", "sp"]
-        return string in registers
+        reg = self.tokens[self.currentToken].lexeme.lower ()
+        return reg in REGISTER_MAP
 
 # ========================================================================

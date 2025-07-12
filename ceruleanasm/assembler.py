@@ -13,7 +13,9 @@ from .AST import *
 from .parser import Parser
 from .visitor import *
 from .printVisitor import PrintVisitor
-# from .codegen import CodeGenVisitor
+from .addressAssigner import AddressAssignerVisitor
+from .referenceResolver import ReferenceResolverVisitor
+from .bytecodeGenerator import BytecodeGeneratorVisitor
 
 # ========================================================================
 
@@ -40,7 +42,8 @@ class CeruleanAssembler:
 
     def assemble (self):
 
-        #=== READING  =======================================================
+        # -----------------------------------------------------------------------------------------
+        # READING
 
         # Ensure source file exists
         if not os.path.isfile (self.sourceFilename):
@@ -51,7 +54,8 @@ class CeruleanAssembler:
             rawSourceCode = f.read ()
             lines = rawSourceCode.split ("\n")
 
-        #=== TOKENIZATION ========================================================
+        # -----------------------------------------------------------------------------------------
+        # TOKENIZATION
 
         self.printDebug ("Tokenizing...")
         # tokens = tokenize (rawSourceCode, self.sourceFilename, self.debugLines)
@@ -69,13 +73,15 @@ class CeruleanAssembler:
             file = open (self.tokensFilename, "w")
             file.write ("".join (tokenStrings))
 
-        #=== PARSING =============================================================
+        # -----------------------------------------------------------------------------------------
+        # PARSING
 
         self.printDebug ("Parsing...")    
         parser = Parser (tokens, lines, False)
         ast = parser.parse ()
 
-        #=== PRINT AST ===================================================
+        # -----------------------------------------------------------------------------------------
+        # PRINT AST
 
         # DEBUG - print AST to file
         if self.emitAST:
@@ -85,6 +91,55 @@ class CeruleanAssembler:
             astFile = open (self.astFilename, "w")
             astFile.write (output)
             astFile.close ()
+
+        # -----------------------------------------------------------------------------------------
+        # Assign addresses to instructions
+
+        symbolTable = {}
+        addressAssigner = AddressAssignerVisitor (symbolTable)
+        ast.accept (addressAssigner)
+
+        print ("symbolTable: ", symbolTable)
+
+        # for instruction in ast.codeunits:
+        #     if isinstance (instruction, InstructionNode):
+        #         print (f"{hex (instruction.address)}: {instruction.opcode}")
+
+        # -----------------------------------------------------------------------------------------
+        # Resolve labels
+
+        referenceResolver = ReferenceResolverVisitor (symbolTable)
+        ast.accept (referenceResolver)
+
+        print ("relocationTable: ", referenceResolver.relocationTable)
+
+        # for instruction in ast.codeunits:
+        #     if isinstance (instruction, InstructionNode):
+        #         for arg in instruction.args:
+        #             if isinstance (arg, LabelExpressionNode):
+        #                 print (arg.id, ":", arg.address)
+
+        # -----------------------------------------------------------------------------------------
+        # Bytecode encoding/generation
+
+        codegenerator = BytecodeGeneratorVisitor (symbolTable)
+        ast.accept (codegenerator)
+
+        # print ("bytecode:", codegenerator.bytecode)
+        # for i in range (0, len(codegenerator.bytecode), 4):
+        #     print (
+        #         f"{codegenerator.bytecode[i+0]:02x}",
+        #         f"{codegenerator.bytecode[i+1]:02x}",
+        #         f"{codegenerator.bytecode[i+2]:02x}",
+        #         f"{codegenerator.bytecode[i+3]:02x}"
+        #         )
+
+        # -----------------------------------------------------------------------------------------
+        # Output bytecode
+
+        print (f"Writing bytecode to \"{self.destFilename}\"")
+        with open (self.destFilename, "wb") as f:
+            f.write (codegenerator.bytecode)
 
         #=== END =================================================================
 

@@ -73,16 +73,21 @@ class LabelNode (Node):
 
 class InstructionNode (Node):
 
-    def __init__(self, token, opcode, args):
+    def __init__(self, token, id, args):
         self.token = token
-        self.opcode = opcode
+        self.id = id
         self.args = args
+        self.address = None
+        # Size of the instruction in bytes
+        # Currently all instructions are 4 bytes, but in the future
+        # we might want to support larger instructions
+        self.size = 4
 
     def accept (self, visitor):
         return visitor.visitInstructionNode (self)
 
     def copy (self):
-        return InstructionNode (self.token, self.opcode, self.args.copy())
+        return InstructionNode (self.token, self.id, self.args.copy())
 
 # ========================================================================
 
@@ -105,6 +110,7 @@ class LabelExpressionNode (Node):
     def __init__ (self, token, id):
         self.token = token
         self.id = id
+        self.address = None
 
     def accept (self, visitor):
         return visitor.visitLabelExpressionNode (self)
