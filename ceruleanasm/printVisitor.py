@@ -37,6 +37,14 @@ class PrintVisitor (ASTVisitor):
         self.printSpaces (self.level)
         self.outputstrings += [f"Label(\"{node.id}\")\n"]
 
+    def visitDataDirectiveNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"DataDirective: \"{node.id}\"\n"]
+        self.level += 1
+        for argument in node.args:
+            argument.accept (self)
+        self.level -= 1
+
     def visitInstructionNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += [f"Instruction: \"{node.id}\"\n"]

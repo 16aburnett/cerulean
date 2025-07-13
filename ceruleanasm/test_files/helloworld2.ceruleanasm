@@ -1,49 +1,71 @@
-// Super simple Hello World CeruleanASM Program
-main:
-    lui       r0, %hi(string_addr)
-    lli       r0, %lo(string_addr)
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    add32i    r0, r0, 1         // move to next char
-    load8     r1, r0, 0x00      // load char from mem
-    putchar   r1
-    HALT
+// Simple Hello World with data directives
+_start:
+    lui       r0, %hi(main)
+    lli       r0, %mh(main)
+    sll64i    r0, r0, 16
+    lli       r0, %ml(main)
+    sll64i    r0, r0, 16
+    lli       r0, %lo(main)
+    call      r0
+    halt
 
 string_addr:
-    .ascii 'Hello, World!\n'
+    .ascii "Hello, World!\n"
+    .float32 3.1415
+    .int64 1337
+    .addr main
+    // .int8 16   // currently this fails - we need to align to 4 bytes for labels
+
+// This should be correctly aligned, despite above not ending at a 32bit alignment
+main:
+    // Load string_addr into r0
+    // Currently this takes 6 instructions
+    lui       r0, %hi(string_addr)
+    lli       r0, %mh(string_addr)
+    sll64i    r0, r0, 16
+    lli       r0, %ml(string_addr)
+    sll64i    r0, r0, 16
+    lli       r0, %lo(string_addr)
+
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    add64i    r0, r0, 1
+    load8     r1, r0, 0
+    putchar   r1
+    ret

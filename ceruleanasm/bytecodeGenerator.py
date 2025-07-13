@@ -11,6 +11,7 @@ from .visitor import ASTVisitor
 from .registers import REGISTER_MAP
 from .opcodes import INSTRUCTION_MAPPING
 from .encoders import *
+from .dataDirectives import *
 
 # ========================================================================
 
@@ -27,6 +28,16 @@ class BytecodeGeneratorVisitor (ASTVisitor):
     def visitLabelNode (self, node):
         pass
 
+    def visitDataDirectiveNode (self, node):
+        # Assuming only a single argument - this might need to change to support multiple values
+        argValue = node.args[0].accept (self)
+        encodedDataDirectiveBytes = encodeDataDirective (node.id, argValue)
+        # Add padding bytes for alignment if needed
+        while len (self.bytecode) < node.address:
+            self.bytecode.extend ([0x00])
+            # print (f"Adding padding byte for '{node.id}'")
+        self.bytecode.extend (encodedDataDirectiveBytes)
+
     def visitInstructionNode (self, node):
         instructionData = INSTRUCTION_MAPPING[node.id.upper ()]
         opcode = instructionData["opcode"]
@@ -34,6 +45,10 @@ class BytecodeGeneratorVisitor (ASTVisitor):
         encoder = FORMAT_ENCODERS[format]
         encodedArgs = [arg.accept (self) for arg in node.args]
         encodedInstructionBytes = encoder (opcode, *encodedArgs)
+        # Add padding bytes for alignment if needed
+        while len (self.bytecode) < node.address:
+            self.bytecode.extend ([0x00])
+            # print (f"Adding padding byte for '{node.id}'")
         self.bytecode.extend (encodedInstructionBytes)
 
     def visitRegisterExpressionNode (self, node):
@@ -57,7 +72,8 @@ class BytecodeGeneratorVisitor (ASTVisitor):
         return ord (codecs.decode (node.value, 'unicode_escape'))
 
     def visitStringLiteralExpressionNode (self, node):
-        return node.value
+        decodedString = codecs.decode (node.value.strip ('"'), 'unicode_escape')
+        return bytearray (ord (c) for c in decodedString)
 
     def visitNullExpressionNode (self, node):
         return node.value

@@ -93,14 +93,20 @@ class Parser:
         # <codeunit> -> <label>
         if (self.tokens[self.currentToken].type == 'IDENTIFIER' and self.tokens[self.currentToken+1].type == 'COLON'):
             node = self.label ()
+            self.match ("codeunit", "NEWLINE")
         # <codeunit> -> <data_directive>
         elif (self.tokens[self.currentToken].type == "DATA_DIRECTIVE"):
             node = self.dataDirective ()
+            self.match ("codeunit", "NEWLINE")
+        # <codeunit> -> NEWLINE
+        elif (self.tokens[self.currentToken].type == "NEWLINE"):
+            # Skip newlines
+            self.match ("codeunit", "NEWLINE")
         # <codeunit> -> <instruction>
         else:
             node = self.instruction ()
+            self.match ("codeunit", "NEWLINE")
         
-        self.match ("codeunit", "NEWLINE")
         self.leave ("codeunit")
         return node
 
@@ -119,21 +125,23 @@ class Parser:
         return node
 
     # ====================================================================
-    # data directive 
+    # <dataDirective> -> DATA_DIRECTIVE [<argument_list>]
 
     def dataDirective (self):
-        # self.enter ("dataDirective")
+        self.enter ("dataDirective")
 
-        # token = self.tokens[self.currentToken]
-        # self.match ("dataDirective", "IDENTIFIER")
-        # node = LabelNode (token, token.lexeme, token.line, token.column)
-        # self.match ("dataDirective", "COLON")
+        token = self.tokens[self.currentToken]
+        directive = token.lexeme[1:]
+        self.match ("dataDirective", "DATA_DIRECTIVE")
+        # match arguments, if there are any
+        if self.tokens[self.currentToken].type != "NEWLINE":
+            arguments = self.argumentList ()
+        else:
+            arguments = []
+        node = DataDirectiveNode (token, directive, arguments)
 
-        # self.leave ("dataDirective")
-        # return node
-        print ("ERROR: DataDirectives not yet implemented")
-        exit (1)
-        return None
+        self.leave ("dataDirective")
+        return node
 
     # ====================================================================
     # <instruction> -> IDENTIFIER [<argument_list>]

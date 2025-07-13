@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from sys import exit
 
 from .visitor import ASTVisitor
+from .dataDirectives import *
 
 # ========================================================================
 
@@ -25,9 +26,24 @@ class AddressAssignerVisitor (ASTVisitor):
     def visitLabelNode (self, node):
         self.symbolTable[node.id] = self.currentAddress
 
+    def visitDataDirectiveNode (self, node):
+        for argument in node.args:
+            argument.accept (self)
+        # Add padding to ensure correct alignment for the data
+        alignment = DATA_DIRECTIVES[node.id]["alignment"]
+        while self.currentAddress % alignment != 0:
+            self.currentAddress += 1
+        node.size = getDirectiveSize (node.id, node.args[0].value)
+        node.address = self.currentAddress
+        self.currentAddress += node.size
+
     def visitInstructionNode (self, node):
         for argument in node.args:
             argument.accept (self)
+        # Add padding to ensure correct alignment for the instruction
+        alignment = 4
+        while self.currentAddress % alignment != 0:
+            self.currentAddress += 1
         node.address = self.currentAddress
         self.currentAddress += node.size
 

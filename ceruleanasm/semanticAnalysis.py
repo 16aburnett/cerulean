@@ -8,6 +8,7 @@ from sys import exit
 from .visitor import ASTVisitor
 from .modifiers import MODIFIERS
 from .tokenizer import printToken, Token
+from .dataDirectives import *
 
 # ========================================================================
 
@@ -31,7 +32,17 @@ class SemanticAnalysisVisitor (ASTVisitor):
     def visitLabelNode (self, node):
         pass
 
+    def visitDataDirectiveNode (self, node):
+        # Ensure it is a valid data directive
+        if node.id not in DATA_DIRECTIVES:
+            self.error (f"'{node.id}' is not a valid data directive", node.token)
+        # TODO: Ensure argument matches directive
+        for argument in node.args:
+            argument.accept (self)
+
     def visitInstructionNode (self, node):
+        # TODO: Ensure it is a valid instruction/opcode
+        # TODO: Ensure arguments match instruction format
         for argument in node.args:
             argument.accept (self)
 

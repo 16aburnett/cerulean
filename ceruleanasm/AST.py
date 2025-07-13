@@ -71,9 +71,28 @@ class LabelNode (Node):
 
 # ========================================================================
 
+class DataDirectiveNode (Node):
+
+    def __init__ (self, token, id, args):
+        self.token = token
+        self.id = id
+        self.args = args
+        self.address = None
+        # Size of the data in bytes
+        # To be filled in later
+        self.size = None
+
+    def accept (self, visitor):
+        return visitor.visitDataDirectiveNode (self)
+
+    def copy (self):
+        return DataDirectiveNode (self.token, self.id, self.args.copy ())
+
+# ========================================================================
+
 class InstructionNode (Node):
 
-    def __init__(self, token, id, args):
+    def __init__ (self, token, id, args):
         self.token = token
         self.id = id
         self.args = args
@@ -87,7 +106,7 @@ class InstructionNode (Node):
         return visitor.visitInstructionNode (self)
 
     def copy (self):
-        return InstructionNode (self.token, self.id, self.args.copy())
+        return InstructionNode (self.token, self.id, self.args.copy ())
 
 # ========================================================================
 
@@ -96,6 +115,7 @@ class RegisterExpressionNode (Node):
     def __init__ (self, token, id):
         self.token = token
         self.id = id
+        self.value = None
 
     def accept (self, visitor):
         return visitor.visitRegisterExpressionNode (self)
@@ -116,6 +136,7 @@ class LabelExpressionNode (Node):
         else:
             self.modifier = None
         self.address = None
+        self.value = None
 
     def accept (self, visitor):
         return visitor.visitLabelExpressionNode (self)
