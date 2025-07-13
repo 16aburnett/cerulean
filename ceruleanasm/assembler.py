@@ -22,17 +22,8 @@ from .bytecodeGenerator import BytecodeGeneratorVisitor
 
 class CeruleanAssembler:
 
-    def __init__(self, sourceFilename, destFilename, debug=False, emitTokens=False, emitAST=False):
-        self.sourceFilename = sourceFilename
-        self.destFilename = destFilename
+    def __init__(self, debug=False):
         self.shouldPrintDebug = debug
-
-        self.emitTokens = emitTokens
-        self.tokensFilename = sourceFilename + ".tokens"
-        self.emitAST = emitAST
-        self.astFilename = sourceFilename + ".ast"
-
-        self.debugLines = []
 
     def printDebug (self, *args, **kwargs):
         """Custom debug print function."""
@@ -41,27 +32,19 @@ class CeruleanAssembler:
 
     #---------------------------------------------------------------------
 
-    def assemble (self):
+    def assemble (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False):
 
-        # -----------------------------------------------------------------------------------------
-        # READING
-
-        # Ensure source file exists
-        if not os.path.isfile (self.sourceFilename):
-            print (f"Error: '{self.sourceFilename}' does not exist or is not a file")
-            exit (1)
-
-        with open (self.sourceFilename, "r") as f:
-            rawSourceCode = f.read ()
-            lines = rawSourceCode.split ("\n")
+        lines = rawSourceCode.split ("\n")
 
         # -----------------------------------------------------------------------------------------
         # TOKENIZATION
 
         self.printDebug ("Tokenizing...")
-        # tokens = tokenize (rawSourceCode, self.sourceFilename, self.debugLines)
-        tokens = tokenize (rawSourceCode, self.sourceFilename, lines)
-        if self.emitTokens:
+        tokens = tokenize (rawSourceCode, sourceFilename, lines)
+
+        # Printing tokens
+        if emitTokens:
+            tokensFilename = sourceFilename + ".tokens"
             tokenStrings = [""]
             currline = 1
             for token in tokens:
@@ -70,8 +53,8 @@ class CeruleanAssembler:
                     tokenStrings.append ("\n")
                 else:
                     tokenStrings.append (f"{token.type}({token.lexeme}) ")
-            self.printDebug (f"Writing Tokens to \"{self.tokensFilename}\"")
-            file = open (self.tokensFilename, "w")
+            self.printDebug (f"Writing Tokens to \"{tokensFilename}\"")
+            file = open (tokensFilename, "w")
             file.write ("".join (tokenStrings))
 
         # -----------------------------------------------------------------------------------------
@@ -85,11 +68,12 @@ class CeruleanAssembler:
         # PRINT AST
 
         # DEBUG - print AST to file
-        if self.emitAST:
-            self.printDebug (f"Printing AST to '{self.astFilename}'...")
+        if emitAST:
+            astFilename = sourceFilename + ".ast"
+            self.printDebug (f"Printing AST to '{astFilename}'...")
             printVisitor = PrintVisitor ()
             output = printVisitor.print (ast)
-            astFile = open (self.astFilename, "w")
+            astFile = open (astFilename, "w")
             astFile.write (output)
             astFile.close ()
 
@@ -110,7 +94,7 @@ class CeruleanAssembler:
         addressAssigner = AddressAssignerVisitor (symbolTable)
         ast.accept (addressAssigner)
 
-        print ("symbolTable: ", symbolTable)
+        self.printDebug ("symbolTable: ", symbolTable)
 
         # for instruction in ast.codeunits:
         #     if isinstance (instruction, InstructionNode):
@@ -122,7 +106,7 @@ class CeruleanAssembler:
         referenceResolver = ReferenceResolverVisitor (symbolTable)
         ast.accept (referenceResolver)
 
-        print ("relocationTable: ", referenceResolver.relocationTable)
+        self.printDebug ("relocationTable: ", referenceResolver.relocationTable)
 
         # for instruction in ast.codeunits:
         #     if isinstance (instruction, InstructionNode):
@@ -145,12 +129,7 @@ class CeruleanAssembler:
         #         f"{codegenerator.bytecode[i+3]:02x}"
         #         )
 
-        # -----------------------------------------------------------------------------------------
-        # Output bytecode
-
-        print (f"Writing bytecode to \"{self.destFilename}\"")
-        with open (self.destFilename, "wb") as f:
-            f.write (codegenerator.bytecode)
+        return codegenerator.bytecode
 
         #=== END =================================================================
 
@@ -160,7 +139,7 @@ class CeruleanAssembler:
 if __name__ == "__main__":
 
     argparser = argparse.ArgumentParser(description="CeruleanASM Assembler")
-    argparser.add_argument(dest="sourceFile", help="CeruleanASM file to assemble")
+    argparser.add_argument(dest="sourceFilename", help="CeruleanASM file to assemble")
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name to give the outputted assembled file")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="enable debug output")
     argparser.add_argument("--emitTokens", dest="emitTokens", action="store_true", help="output the lexed tokens")
@@ -168,16 +147,32 @@ if __name__ == "__main__":
 
     args = argparser.parse_args()
 
+    sourceFilename = args.sourceFilename
     if args.outputFilename:
         destFilename = args.outputFilename
     else:
-        destFilename = os.path.splitext(args.sourceFile)[0] + ".ceruleanobj"
+        destFilename = os.path.splitext(args.sourceFilename)[0] + ".ceruleanobj"
+
+    # Ensure source file exists
+    if not os.path.isfile (sourceFilename):
+        print (f"Error: '{sourceFilename}' does not exist or is not a file")
+        exit (1)
+
+    # Read source code
+    with open (sourceFilename, "r") as f:
+        rawSourceCode = f.read ()
 
     assembler = CeruleanAssembler (
-        args.sourceFile,
-        destFilename=destFilename,
         debug=args.debug,
-        emitTokens=args.emitTokens,
-        emitAST=args.emitAST,
     )
-    destCode = assembler.assemble ()
+    bytecode = assembler.assemble (
+        rawSourceCode,
+        sourceFilename,
+        emitTokens=args.emitTokens,
+        emitAST=args.emitAST
+    )
+
+    # Write target code
+    print (f"Writing bytecode to \"{destFilename}\"")
+    with open (destFilename, "wb") as f:
+        f.write (bytecode)

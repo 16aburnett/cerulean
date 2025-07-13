@@ -264,9 +264,6 @@ Program:
 |   Instruction: "call"
 |   |   Args:
 |   |   |   Register("r1")
-|   Instruction: "call"
-|   |   Args:
-|   |   |   Register("r1")
 |   Instruction: "pop"
 |   |   Args:
 |   |   |   Register("r0")

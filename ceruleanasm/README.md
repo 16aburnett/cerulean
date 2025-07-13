@@ -48,3 +48,10 @@ python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld4.ceruleanasm 
 hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld4.ceruleanbc
 ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld4.ceruleanbc
 ```
+
+# Unit testing
+
+CeruleanASM unit tests use the python unittest package. The following command can run all of the tests for CeruleanASM.
+```bash
+python3 -m unittest discover -s ceruleanasm/unittests -p "test_*.py"
+```
