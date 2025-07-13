@@ -41,3 +41,10 @@ python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld3.ceruleanasm 
 hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld3.ceruleanbc
 ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld3.ceruleanbc
 ```
+
+### Hello World 4: function calls, stack push and pop
+```bash
+python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld4.ceruleanasm -o ceruleanasm/test_files/helloworld4.ceruleanbc --debug --emitTokens --emitAST
+hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld4.ceruleanbc
+ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld4.ceruleanbc
+```

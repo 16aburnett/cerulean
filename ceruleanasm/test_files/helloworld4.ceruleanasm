@@ -1,0 +1,88 @@
+// Simple Hello world program including function calls, and push/pop
+_start:
+    lui       r0, %hi(main) // 0x0000000012340000
+    lli       r0, %mh(main) // 0x0000000012345678
+    sll64i    r0, r0, 16    // 0x0000123456780000
+    lli       r0, %ml(main) // 0x0000123456789abc
+    sll64i    r0, r0, 16    // 0x123456789abc0000
+    lli       r0, %lo(main) // 0x123456789abcdef0
+    call      r0
+    halt
+
+print_string: // print_string(ptr string_addr)
+function_prologue:
+    push      bp        // save caller's bp
+    add64i    bp, sp, 0 // bp = sp
+    push      r0        // save caller's r0
+    push      r1        // save caller's r1
+    push      r2        // save caller's r2
+    push      r3        // save caller's r3
+    push      r4        // save caller's r4
+    push      r5        // save caller's r5
+    push      r6        // save caller's r6
+    push      r7        // save caller's r7
+    push      r8        // save caller's r8
+    push      r9        // save caller's r9
+function_body:
+    load64    r0, bp, 16 // r0 <- [bp + 16] - get param ptr string_addr from stack
+    // load loop_cond
+    lui       r3, %hi(loop_cond) // 0x0000000012340000
+    lli       r3, %mh(loop_cond) // 0x0000000012345678
+    sll64i    r3, r3, 16         // 0x0000123456780000
+    lli       r3, %ml(loop_cond) // 0x0000123456789abc
+    sll64i    r3, r3, 16         // 0x123456789abc0000
+    lli       r3, %lo(loop_cond) // 0x123456789abcdef0
+    // load loop_end
+    lui       r4, %hi(loop_end) // 0x0000000012340000
+    lli       r4, %mh(loop_end) // 0x0000000012345678
+    sll64i    r4, r4, 16        // 0x0000123456780000
+    lli       r4, %ml(loop_end) // 0x0000123456789abc
+    sll64i    r4, r4, 16        // 0x123456789abc0000
+    lli       r4, %lo(loop_end) // 0x123456789abcdef0
+    lli       r5, 0 // null-byte
+loop_cond:
+    load8     r2, r0, 0  // load char from mem
+    beq       r2, r5, r4 // if *str == null then jmp loop_end
+loop_body:
+    putchar   r2         // putchar(r2)
+loop_update:
+    add32i    r0, r0, 1  // move to next char
+    jmp       r3         // jmp loop_cond
+loop_end:
+function_epilogue:
+    pop       r9         // restore caller's r9
+    pop       r8         // restore caller's r8
+    pop       r7         // restore caller's r7
+    pop       r6         // restore caller's r6
+    pop       r5         // restore caller's r5
+    pop       r4         // restore caller's r4
+    pop       r3         // restore caller's r3
+    pop       r2         // restore caller's r2
+    pop       r1         // restore caller's r1
+    pop       r0         // restore caller's r0 
+    add64i    sp, bp, 0  // sp = bp ; remove local vars 
+    pop       bp         // bp = [sp] ; restore caller bp
+    ret                  // return from function
+
+main:
+    // load string_addr
+    lui       r0, %hi(string_addr) // 0x0000000012340000
+    lli       r0, %mh(string_addr) // 0x0000000012345678
+    sll64i    r0, r0, 16           // 0x0000123456780000
+    lli       r0, %ml(string_addr) // 0x0000123456789abc
+    sll64i    r0, r0, 16           // 0x123456789abc0000
+    lli       r0, %lo(string_addr) // 0x123456789abcdef0
+    // load print_string
+    lui       r1, %hi(print_string) // 0x0000000012340000
+    lli       r1, %mh(print_string) // 0x0000000012345678
+    sll64i    r1, r1, 16            // 0x0000123456780000
+    lli       r1, %ml(print_string) // 0x0000123456789abc
+    sll64i    r1, r1, 16            // 0x123456789abc0000
+    lli       r1, %lo(print_string) // 0x123456789abcdef0
+    push r0
+    call r1
+    pop r0
+    ret
+
+string_addr:
+    .string "Hello, World!\n"
