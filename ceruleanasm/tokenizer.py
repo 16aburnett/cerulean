@@ -116,7 +116,10 @@ def tokenize(code, mainFilename, debugLines):
         elif kind == 'COMMENT':
             line_start = mo.end()
             line_num += 1
-            continue
+            # continue
+            # Just treat the comment as a newline
+            # since the parser expects a newline to end an instruction
+            kind = 'NEWLINE'
         elif kind == 'NEWLINE':
             line_start = mo.end()
             line_num += 1

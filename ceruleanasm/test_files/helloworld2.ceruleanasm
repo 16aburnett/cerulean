@@ -1,12 +1,12 @@
 // Simple Hello World with data directives
 letsgoooo:
 _start:
-    lui       r0, %hi(main)
-    lli       r0, %mh(main)
-    sll64i    r0, r0, 16
-    lli       r0, %ml(main)
-    sll64i    r0, r0, 16
-    lli       r0, %lo(main)
+    lui       r0, %hi(main) // 0x0000000012340000
+    lli       r0, %mh(main) // 0x0000000012345678
+    sll64i    r0, r0, 16    // 0x0000123456780000
+    lli       r0, %ml(main) // 0x0000123456789abc
+    sll64i    r0, r0, 16    // 0x123456789abc0000
+    lli       r0, %lo(main) // 0x123456789abcdef0
     call      r0
     halt
 
