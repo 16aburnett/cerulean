@@ -40,18 +40,48 @@ class PrintVisitor (ASTVisitor):
     def visitDataDirectiveNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += [f"DataDirective: \"{node.id}\"\n"]
-        self.level += 1
-        for argument in node.args:
-            argument.accept (self)
-        self.level -= 1
+        if len (node.labels) > 0:
+            self.level += 1
+            self.printSpaces (self.level)
+            self.outputstrings += [f"Labels:\n"]
+            self.level += 1
+            for label in node.labels:
+                label.accept (self)
+            self.level -= 1
+            self.level -= 1
+
+        if len (node.args) > 0:
+            self.level += 1
+            self.printSpaces (self.level)
+            self.outputstrings += [f"Args:\n"]
+            self.level += 1
+            for argument in node.args:
+                argument.accept (self)
+            self.level -= 1
+            self.level -= 1
 
     def visitInstructionNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += [f"Instruction: \"{node.id}\"\n"]
-        self.level += 1
-        for argument in node.args:
-            argument.accept (self)
-        self.level -= 1
+        if len (node.labels) > 0:
+            self.level += 1
+            self.printSpaces (self.level)
+            self.outputstrings += [f"Labels:\n"]
+            self.level += 1
+            for label in node.labels:
+                label.accept (self)
+            self.level -= 1
+            self.level -= 1
+
+        if len (node.args) > 0:
+            self.level += 1
+            self.printSpaces (self.level)
+            self.outputstrings += [f"Args:\n"]
+            self.level += 1
+            for argument in node.args:
+                argument.accept (self)
+            self.level -= 1
+            self.level -= 1
 
     def visitRegisterExpressionNode (self, node):
         self.printSpaces (self.level)
@@ -59,7 +89,7 @@ class PrintVisitor (ASTVisitor):
 
     def visitLabelExpressionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"Label(\"{node.id}\")\n"]
+        self.outputstrings += [f"LabelExpression(\"{node.id}\")\n"]
 
     def visitIntLiteralExpressionNode (self, node):
         self.printSpaces (self.level)

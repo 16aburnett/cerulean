@@ -45,6 +45,8 @@ class ReferenceResolverVisitor (ASTVisitor):
                     "type": "absolute",
                     "arg_index": i
                 })
+        for label in node.labels:
+            label.accept (self)
 
     def visitInstructionNode (self, node):
         for i, arg in enumerate (node.args):
@@ -67,6 +69,8 @@ class ReferenceResolverVisitor (ASTVisitor):
                     "type": "absolute",
                     "arg_index": i
                 })
+        for label in node.labels:
+            label.accept (self)
 
     def visitRegisterExpressionNode (self, node):
         pass

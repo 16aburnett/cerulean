@@ -33,6 +33,9 @@ class AddressAssignerVisitor (ASTVisitor):
         alignment = DATA_DIRECTIVES[node.id]["alignment"]
         while self.currentAddress % alignment != 0:
             self.currentAddress += 1
+        # labels should have the aligned address
+        for label in node.labels:
+            label.accept (self)
         node.size = getDirectiveSize (node.id, node.args[0].value)
         node.address = self.currentAddress
         self.currentAddress += node.size
@@ -44,6 +47,9 @@ class AddressAssignerVisitor (ASTVisitor):
         alignment = 4
         while self.currentAddress % alignment != 0:
             self.currentAddress += 1
+        # labels should have the aligned address
+        for label in node.labels:
+            label.accept (self)
         node.address = self.currentAddress
         self.currentAddress += node.size
 

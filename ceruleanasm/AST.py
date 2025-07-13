@@ -73,10 +73,11 @@ class LabelNode (Node):
 
 class DataDirectiveNode (Node):
 
-    def __init__ (self, token, id, args):
+    def __init__ (self, token, id, args, labels):
         self.token = token
         self.id = id
         self.args = args
+        self.labels = labels
         self.address = None
         # Size of the data in bytes
         # To be filled in later
@@ -86,16 +87,17 @@ class DataDirectiveNode (Node):
         return visitor.visitDataDirectiveNode (self)
 
     def copy (self):
-        return DataDirectiveNode (self.token, self.id, self.args.copy ())
+        return DataDirectiveNode (self.token, self.id, self.args.copy (), self.labels.copy ())
 
 # ========================================================================
 
 class InstructionNode (Node):
 
-    def __init__ (self, token, id, args):
+    def __init__ (self, token, id, args, labels):
         self.token = token
         self.id = id
         self.args = args
+        self.labels = labels
         self.address = None
         # Size of the instruction in bytes
         # Currently all instructions are 4 bytes, but in the future
@@ -106,7 +108,7 @@ class InstructionNode (Node):
         return visitor.visitInstructionNode (self)
 
     def copy (self):
-        return InstructionNode (self.token, self.id, self.args.copy ())
+        return InstructionNode (self.token, self.id, self.args.copy (), self.labels.copy ())
 
 # ========================================================================
 

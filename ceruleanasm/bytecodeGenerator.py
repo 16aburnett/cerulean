@@ -29,6 +29,8 @@ class BytecodeGeneratorVisitor (ASTVisitor):
         pass
 
     def visitDataDirectiveNode (self, node):
+        for label in node.labels:
+            label.accept (self)
         # Assuming only a single argument - this might need to change to support multiple values
         argValue = node.args[0].accept (self)
         encodedDataDirectiveBytes = encodeDataDirective (node.id, argValue)
@@ -39,6 +41,8 @@ class BytecodeGeneratorVisitor (ASTVisitor):
         self.bytecode.extend (encodedDataDirectiveBytes)
 
     def visitInstructionNode (self, node):
+        for label in node.labels:
+            label.accept (self)
         instructionData = INSTRUCTION_MAPPING[node.id.upper ()]
         opcode = instructionData["opcode"]
         format = instructionData["format"]

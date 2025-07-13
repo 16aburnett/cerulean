@@ -25,15 +25,22 @@ class Parser:
         self.doDebug = doDebug
         self.level = 0
         self.lines = lines
+        # Keeps track of labels seen for adding to the next labelable node
+        self.pendingLabels = []
 
     # <start> -> { <codeunit> }
     def parse (self):
-
         codeunits = [] 
-        
         while self.currentToken < len (self.tokens) and self.tokens[self.currentToken].type != "END_OF_FILE":
-            codeunits += [self.codeunit ()]
-        
+            unit = self.codeunit ()
+            # Ensure there was a code unit
+            if not unit:
+                continue
+            # Save labels to add to the next instruction or data directive
+            if isinstance (unit, LabelNode):
+                self.pendingLabels += [unit]
+                continue
+            codeunits += [unit]
         return ProgramNode(codeunits)
 
     def match (self, function, expectedToken, additional=""):
@@ -138,7 +145,8 @@ class Parser:
             arguments = self.argumentList ()
         else:
             arguments = []
-        node = DataDirectiveNode (token, directive, arguments)
+        node = DataDirectiveNode (token, directive, arguments, self.pendingLabels)
+        self.pendingLabels = []
 
         self.leave ("dataDirective")
         return node
@@ -159,7 +167,8 @@ class Parser:
         else:
             arguments = []
 
-        node = InstructionNode (token, command, arguments)
+        node = InstructionNode (token, command, arguments, self.pendingLabels)
+        self.pendingLabels = []
 
         self.leave ("instruction")
         return node

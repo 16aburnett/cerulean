@@ -39,12 +39,16 @@ class SemanticAnalysisVisitor (ASTVisitor):
         # TODO: Ensure argument matches directive
         for argument in node.args:
             argument.accept (self)
+        for label in node.labels:
+            label.accept (self)
 
     def visitInstructionNode (self, node):
         # TODO: Ensure it is a valid instruction/opcode
         # TODO: Ensure arguments match instruction format
         for argument in node.args:
             argument.accept (self)
+        for label in node.labels:
+            label.accept (self)
 
     def visitRegisterExpressionNode (self, node):
         pass

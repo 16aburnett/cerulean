@@ -1,4 +1,5 @@
 // Simple Hello World with data directives
+letsgoooo:
 _start:
     lui       r0, %hi(main)
     lli       r0, %mh(main)
@@ -14,7 +15,7 @@ string_addr:
     .float32 3.1415
     .int64 1337
     .addr main
-    // .int8 16   // currently this fails - we need to align to 4 bytes for labels
+    .int8 16
 
 // This should be correctly aligned, despite above not ending at a 32bit alignment
 main:

@@ -1,97 +1,134 @@
 Program:
-|   Label("_start")
 |   Instruction: "lui"
-|   |   Register("r0")
-|   |   Label("main")
+|   |   Labels:
+|   |   |   Label("_start")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   Label("main")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
 |   Instruction: "sll64i"
-|   |   Register("r0")
-|   |   Register("r0")
-|   |   IntLiteral(16)
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   Label("main")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
 |   Instruction: "sll64i"
-|   |   Register("r0")
-|   |   Register("r0")
-|   |   IntLiteral(16)
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   Label("main")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
 |   Instruction: "call"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "halt"
-|   Label("main")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('H')
+|   |   Labels:
+|   |   |   Label("main")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('H')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('e')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('e')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('l')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('l')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('l')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('l')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('o')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('o')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral(',')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral(',')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral(' ')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral(' ')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('W')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('W')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('o')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('o')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('r')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('r')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('l')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('l')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('d')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('d')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('!')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('!')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "lli"
-|   |   Register("r0")
-|   |   CharLiteral('\n')
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('\n')
 |   Instruction: "putchar"
-|   |   Register("r0")
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "halt"
