@@ -32,6 +32,19 @@ def printToken (token:Token, tabSpace="   "):
         print (" ", end="")
     print ("^")
 
+def getTokenContextAsString (token:Token, tabSpace="   "):
+    output = []
+    output.append (f"{tabSpace}in file {token.originalFilename}\n")
+    for includer in token.includeChain:
+        output.append (f"{tabSpace}   included from {includer[0]}:{includer[1]}\n")
+    output.append (f"{tabSpace}on line {token.originalLine}:{token.column}\n")
+    output.append (f"{tabSpace}   {token.lineStr}\n")
+    output.append (f"{tabSpace}   ")
+    for i in range(token.column-1):
+        output.append (" ")
+    output.append ("^\n")
+    return "".join (output)
+
 # ========================================================================
 
 token_specification = [

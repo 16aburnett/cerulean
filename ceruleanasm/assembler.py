@@ -81,7 +81,7 @@ class CeruleanAssembler:
         # Semantic analysis
 
         semanticAnalyzer = SemanticAnalysisVisitor ()
-        ast.accept (semanticAnalyzer)
+        semanticAnalyzer.analyze (ast)
 
         if not semanticAnalyzer.wasSuccessful:
             print ("ERROR: Semantic Analysis failed")
