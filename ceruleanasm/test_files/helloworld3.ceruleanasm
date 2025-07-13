@@ -1,0 +1,51 @@
+// Simple Hello world program including looping and branching
+_start:
+    lui       r0, %hi(main) // 0x0000000012340000
+    lli       r0, %mh(main) // 0x0000000012345678
+    sll64i    r0, r0, 16    // 0x0000123456780000
+    lli       r0, %ml(main) // 0x0000123456789abc
+    sll64i    r0, r0, 16    // 0x123456789abc0000
+    lli       r0, %lo(main) // 0x123456789abcdef0
+    call      r0
+    halt
+
+main:
+    // load string_addr
+    lui       r0, %hi(string_addr) // 0x0000000012340000
+    lli       r0, %mh(string_addr) // 0x0000000012345678
+    sll64i    r0, r0, 16    // 0x0000123456780000
+    lli       r0, %ml(string_addr) // 0x0000123456789abc
+    sll64i    r0, r0, 16    // 0x123456789abc0000
+    lli       r0, %lo(string_addr) // 0x123456789abcdef0
+
+    // load loop_cond
+    lui       r3, %hi(loop_cond) // 0x0000000012340000
+    lli       r3, %mh(loop_cond) // 0x0000000012345678
+    sll64i    r3, r3, 16         // 0x0000123456780000
+    lli       r3, %ml(loop_cond) // 0x0000123456789abc
+    sll64i    r3, r3, 16         // 0x123456789abc0000
+    lli       r3, %lo(loop_cond) // 0x123456789abcdef0
+
+    // load loop_end
+    lui       r4, %hi(loop_end) // 0x0000000012340000
+    lli       r4, %mh(loop_end) // 0x0000000012345678
+    sll64i    r4, r4, 16        // 0x0000123456780000
+    lli       r4, %ml(loop_end) // 0x0000123456789abc
+    sll64i    r4, r4, 16        // 0x123456789abc0000
+    lli       r4, %lo(loop_end) // 0x123456789abcdef0
+
+    lli       r5, 0 // null-byte
+
+loop_cond:
+    load8     r2, r0, 0  // load char from mem
+    beq       r2, r5, r4 // if *str == null then jmp loop_end
+loop_body:
+    putchar   r2         // putchar(r2)
+loop_update:
+    add32i    r0, r0, 1  // move to next char
+    jmp       r3         // jmp loop_cond
+loop_end:
+    halt
+
+string_addr:
+    .string "Hello, World!\n"

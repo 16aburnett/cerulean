@@ -28,8 +28,16 @@ ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld.ceruleanbc
 ```
 
 ## More examples
+### Hello World 2: data directives
 ```bash
 python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld2.ceruleanasm -o ceruleanasm/test_files/helloworld2.ceruleanbc --debug --emitTokens --emitAST
 hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld2.ceruleanbc
 ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld2.ceruleanbc
+```
+
+### Hello World 3: branching/loops
+```bash
+python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld3.ceruleanasm -o ceruleanasm/test_files/helloworld3.ceruleanbc --debug --emitTokens --emitAST
+hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld3.ceruleanbc
+ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld3.ceruleanbc
 ```
