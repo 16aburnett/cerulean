@@ -11,6 +11,7 @@ from .tokenizer import getTokenContextAsString, Token
 from .dataDirectives import *
 from .opcodes import *
 from .AST import *
+from .pseudoInstructions import *
 
 # =================================================================================================
 
@@ -65,26 +66,39 @@ class SemanticAnalysisVisitor (ASTVisitor):
             argument.accept (self)
 
     def visitInstructionNode (self, node):
-        # Ensure it is a valid instruction/opcode
-        if node.id.upper() not in INSTRUCTION_MAPPING:
-            self.error (f"'{node.id}' is not a valid opcode", node.token)
-
         for label in node.labels:
             label.accept (self)
-
-        # Ensure arguments match instruction format
-        expectedFormat = INSTRUCTION_MAPPING[node.id.upper ()]["format"]
-        argFormat = ""
         for argument in node.args:
             argument.accept (self)
-            if isinstance (argument, RegisterExpressionNode):
-                argFormat += 'R'
-            if isinstance (argument, (IntLiteralExpressionNode, CharLiteralExpressionNode, NullExpressionNode, LabelExpressionNode)):
-                argFormat += 'I'
-        if argFormat == "":
-            argFormat = "NONE"
-        if argFormat != expectedFormat:
-            self.error (f"opcode '{node.id}' expects '{expectedFormat}' arg format, but received '{argFormat}' arg format", node.token)
+
+        if node.id in PSEUDO_INSTRUCTIONS:
+            # Ensure arguments match instruction format
+            expectedArgTypes = PSEUDO_INSTRUCTIONS[node.id].argTypes
+            argTypes = []
+            for argument in node.args:
+                if isinstance (argument, RegisterExpressionNode):
+                    argTypes += ['reg']
+                elif isinstance (argument, (IntLiteralExpressionNode, CharLiteralExpressionNode, NullExpressionNode)):
+                    argTypes += ['imm']
+                elif isinstance (argument, LabelExpressionNode):
+                    argTypes += ['label']
+            if argTypes != expectedArgTypes:
+                self.error (f"pseudo-instruction '{node.id}' expects '{expectedArgTypes}', but received '{argTypes}'", node.token)
+        elif node.id.upper() in INSTRUCTION_MAPPING:
+            # Ensure arguments match instruction format
+            expectedFormat = INSTRUCTION_MAPPING[node.id.upper ()]["format"]
+            argFormat = ""
+            for argument in node.args:
+                if isinstance (argument, RegisterExpressionNode):
+                    argFormat += 'R'
+                if isinstance (argument, (IntLiteralExpressionNode, CharLiteralExpressionNode, NullExpressionNode, LabelExpressionNode)):
+                    argFormat += 'I'
+            if argFormat == "":
+                argFormat = "NONE"
+            if argFormat != expectedFormat:
+                self.error (f"instruction '{node.id}' expects '{expectedFormat}' arg format, but received '{argFormat}' arg format", node.token)
+        else:
+            self.error (f"'{node.id}' is not a valid opcode", node.token)
 
     def visitRegisterExpressionNode (self, node):
         pass

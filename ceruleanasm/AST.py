@@ -55,6 +55,22 @@ class ProgramNode (Node):
         node.localVariables = [n.copy() for n in self.localVariables]
         return node
 
+    def __repr__ (self):
+        return f"Program({repr (self.codeunits)})"
+
+    def __str__ (self):
+        return "\n".join ([repr (codeunit) for codeunit in self.codeunits])
+
+    def __eq__ (self, other):
+        if not isinstance (other, ProgramNode):
+            return False
+        if len (self.codeunits) != len (other.codeunits):
+            return False
+        for i in range (0, len (self.codeunits)):
+            if self.codeunits[i] != other.codeunits[i]:
+                return False
+        return True
+
 # ========================================================================
 
 class LabelNode (Node):
@@ -68,6 +84,17 @@ class LabelNode (Node):
 
     def copy (self):
         return LabelNode (self.token, self.id)
+
+    def __repr__ (self):
+        return f"Label('{self.id}')"
+
+    def __str__ (self):
+        return f"{self.id}:"
+
+    def __eq__ (self, other):
+        if not isinstance (other, LabelNode):
+            return False
+        return self.id == other.id
 
 # ========================================================================
 
@@ -89,11 +116,23 @@ class DataDirectiveNode (Node):
     def copy (self):
         return DataDirectiveNode (self.token, self.id, self.args.copy (), self.labels.copy ())
 
+    def __repr__ (self):
+        return f"DataDirective('{self.id}', args={repr (self.args)})"
+
+    def __str__ (self):
+        return f".{self.id} " + ', '.join (str (arg) for arg in self.args)
+
+    def __eq__ (self, other):
+        return isinstance (other, DataDirectiveNode) and \
+            self.id == other.id and \
+            self.args == other.args and \
+            self.labels == other.labels
+
 # ========================================================================
 
 class InstructionNode (Node):
 
-    def __init__ (self, token, id, args, labels):
+    def __init__ (self, token, id, args, labels=[]):
         self.token = token
         self.id = id
         self.args = args
@@ -110,6 +149,18 @@ class InstructionNode (Node):
     def copy (self):
         return InstructionNode (self.token, self.id, self.args.copy (), self.labels.copy ())
 
+    def __repr__ (self):
+        return f"Instruction('{self.id}', args={repr (self.args)}, labels={repr (self.labels)})"
+
+    def __str__ (self):
+        return f"{self.id} " + ', '.join (str (arg) for arg in self.args)
+
+    def __eq__ (self, other):
+        return isinstance (other, InstructionNode) and \
+            self.id == other.id and \
+            self.args == other.args and \
+            self.labels == other.labels
+
 # ========================================================================
 
 class RegisterExpressionNode (Node):
@@ -125,18 +176,28 @@ class RegisterExpressionNode (Node):
     def copy (self):
         return RegisterExpressionNode (self.token, self.id)
 
+    def __repr__ (self):
+        return f"Reg('{self.id}')"
+
+    def __str__ (self):
+        return self.id
+
+    def __eq__ (self, other):
+        return isinstance (other, RegisterExpressionNode) and \
+            self.id == other.id
+
 # ========================================================================
 
 class LabelExpressionNode (Node):
 
-    def __init__ (self, token, id, modifierToken=None):
+    def __init__ (self, token, id, modifierToken=None, modifier=None):
         self.token = token
         self.id = id
         self.modifierToken = modifierToken
         if self.modifierToken:
             self.modifier = self.modifierToken.lexeme[1:]
         else:
-            self.modifier = None
+            self.modifier = modifier
         self.address = None
         self.value = None
 
@@ -144,7 +205,20 @@ class LabelExpressionNode (Node):
         return visitor.visitLabelExpressionNode (self)
 
     def copy (self):
-        return LabelExpressionNode (self.token, self.id)
+        return LabelExpressionNode (self.token, self.id, self.modifierToken, self.modifier)
+
+    def __repr__ (self):
+        return f"Label('{self.id}', modifier={repr (self.modifier)})"
+
+    def __str__ (self):
+        if self.modifier:
+            return f"%{self.modifier}({self.id})"
+        return self.id
+
+    def __eq__ (self, other):
+        return isinstance (other, LabelExpressionNode) and \
+            self.id == other.id and \
+            self.modifier == other.modifier
 
 # ========================================================================
 
@@ -160,6 +234,16 @@ class IntLiteralExpressionNode (Node):
     def copy (self):
         return IntLiteralExpressionNode (self.token, self.value)
 
+    def __repr__ (self):
+        return repr (self.value)
+
+    def __str__ (self):
+        return str (self.value)
+
+    def __eq__ (self, other):
+        return isinstance (other, IntLiteralExpressionNode) and \
+            self.value == other.value
+
 # ========================================================================
 
 class FloatLiteralExpressionNode (Node):
@@ -173,6 +257,16 @@ class FloatLiteralExpressionNode (Node):
 
     def copy (self):
         return FloatLiteralExpressionNode (self.token, self.value)
+
+    def __repr__ (self):
+        return repr (self.value)
+
+    def __str__ (self):
+        return str (self.value)
+
+    def __eq__ (self, other):
+        return isinstance (other, FloatLiteralExpressionNode) and \
+            self.value == other.value
 
 # ========================================================================
 
@@ -188,6 +282,16 @@ class CharLiteralExpressionNode (Node):
     def copy (self):
         return CharLiteralExpressionNode (self.token, self.value)
 
+    def __repr__ (self):
+        return repr (self.value)
+
+    def __str__ (self):
+        return f"'{self.value}'"
+
+    def __eq__ (self, other):
+        return isinstance (other, CharLiteralExpressionNode) and \
+            self.value == other.value
+
 # ========================================================================
 
 class StringLiteralExpressionNode (Node):
@@ -202,6 +306,16 @@ class StringLiteralExpressionNode (Node):
     def copy (self):
         return StringLiteralExpressionNode (self.token, self.value)
 
+    def __repr__ (self):
+        return repr (self.value)
+
+    def __str__ (self):
+        return self.value
+
+    def __eq__ (self, other):
+        return isinstance (other, StringLiteralExpressionNode) and \
+            self.value == other.value
+
 # ========================================================================
 
 class NullExpressionNode (Node):
@@ -215,3 +329,13 @@ class NullExpressionNode (Node):
 
     def copy (self):
         return NullExpressionNode (self.token)
+
+    def __repr__ (self):
+        return repr (self.value)
+
+    def __str__ (self):
+        return self.value
+
+    def __eq__ (self, other):
+        return isinstance (other, NullExpressionNode) and \
+            self.value == other.value

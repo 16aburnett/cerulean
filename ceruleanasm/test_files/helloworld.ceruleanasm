@@ -1,12 +1,8 @@
 // Super simple Hello World CeruleanASM Program
 _start:
-    lui       r0, %hi(main)
-    lli       r0, %mh(main)
-    sll64i    r0, r0, 16
-    lli       r0, %ml(main)
-    sll64i    r0, r0, 16
-    lli       r0, %lo(main)
-    call      r0
+    loada     r0, main
+    mv64      r1, r0
+    call      r1
     halt
 main:
     lli       r0, 'H'

@@ -14,6 +14,7 @@ from .parser import Parser
 from .visitor import *
 from .printVisitor import PrintVisitor
 from .semanticAnalysis import SemanticAnalysisVisitor
+from .lowering import LoweringVisitor
 from .addressAssigner import AddressAssignerVisitor
 from .referenceResolver import ReferenceResolverVisitor
 from .bytecodeGenerator import BytecodeGeneratorVisitor
@@ -60,7 +61,7 @@ class CeruleanAssembler:
         # -----------------------------------------------------------------------------------------
         # PARSING
 
-        self.printDebug ("Parsing...")    
+        self.printDebug ("Parsing...")
         parser = Parser (tokens, lines, False)
         ast = parser.parse ()
 
@@ -80,6 +81,7 @@ class CeruleanAssembler:
         # -----------------------------------------------------------------------------------------
         # Semantic analysis
 
+        self.printDebug ("Analyzing semantics...")
         semanticAnalyzer = SemanticAnalysisVisitor ()
         semanticAnalyzer.analyze (ast)
 
@@ -88,8 +90,30 @@ class CeruleanAssembler:
             exit (1)
 
         # -----------------------------------------------------------------------------------------
+        # Lowering pass
+        # - Expands pseudo-instructions
+
+        self.printDebug ("Lowering AST...")
+        lowerer = LoweringVisitor ()
+        lowerer.lower (ast)
+
+        # -----------------------------------------------------------------------------------------
+        # PRINT AST after lowering
+
+        # DEBUG - print AST to file
+        if emitAST:
+            astFilename = sourceFilename + ".ast_lowered"
+            self.printDebug (f"Printing AST to '{astFilename}'...")
+            printVisitor = PrintVisitor ()
+            output = printVisitor.print (ast)
+            astFile = open (astFilename, "w")
+            astFile.write (output)
+            astFile.close ()
+
+        # -----------------------------------------------------------------------------------------
         # Assign addresses to instructions
 
+        self.printDebug ("Assigning addresses...")
         symbolTable = {}
         addressAssigner = AddressAssignerVisitor (symbolTable)
         ast.accept (addressAssigner)
@@ -103,6 +127,7 @@ class CeruleanAssembler:
         # -----------------------------------------------------------------------------------------
         # Resolve labels
 
+        self.printDebug ("Resolving references...")
         referenceResolver = ReferenceResolverVisitor (symbolTable)
         ast.accept (referenceResolver)
 
@@ -117,6 +142,7 @@ class CeruleanAssembler:
         # -----------------------------------------------------------------------------------------
         # Bytecode encoding/generation
 
+        self.printDebug ("Generating bytecode...")
         codegenerator = BytecodeGeneratorVisitor (symbolTable)
         ast.accept (codegenerator)
 

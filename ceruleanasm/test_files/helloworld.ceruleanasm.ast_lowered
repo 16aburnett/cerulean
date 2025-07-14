@@ -1,14 +1,37 @@
 Program:
-|   Instruction: "loada"
+|   Instruction: "lui"
 |   |   Labels:
 |   |   |   Label("_start")
 |   |   Args:
 |   |   |   Register("r0")
 |   |   |   LabelExpression("main")
-|   Instruction: "mv64"
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
+|   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r1")
 |   |   |   Register("r0")
+|   |   |   IntLiteral(0)
 |   Instruction: "call"
 |   |   Args:
 |   |   |   Register("r1")
