@@ -3,10 +3,11 @@
 # ========================================================================
 
 import os
-import sys 
+import sys
 from sys import exit
 from enum import Enum
-import argparse 
+import argparse
+import json
 
 from .tokenizer import tokenize
 from .AST import *
@@ -155,7 +156,17 @@ class CeruleanAssembler:
         #         f"{codegenerator.bytecode[i+3]:02x}"
         #         )
 
-        return codegenerator.bytecode
+        # -----------------------------------------------------------------------------------------
+        # Package together object data
+
+        objectData = {
+            "filename": sourceFilename,
+            "bytecode": list(codegenerator.bytecode),
+            "symbols" : symbolTable,
+            "relocations": referenceResolver.relocationTable
+        }
+
+        return objectData
 
         #=== END =================================================================
 
@@ -191,7 +202,7 @@ if __name__ == "__main__":
     assembler = CeruleanAssembler (
         debug=args.debug,
     )
-    bytecode = assembler.assemble (
+    objectData = assembler.assemble (
         rawSourceCode,
         sourceFilename,
         emitTokens=args.emitTokens,
@@ -199,6 +210,6 @@ if __name__ == "__main__":
     )
 
     # Write target code
-    print (f"Writing bytecode to \"{destFilename}\"")
-    with open (destFilename, "wb") as f:
-        f.write (bytecode)
+    print (f"Writing object code to \"{destFilename}\"")
+    with open (destFilename, "w") as f:
+        json.dump (objectData, f, indent=4)
