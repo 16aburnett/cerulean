@@ -1,5 +1,5 @@
 
-
+// Use global to say that this symbol can be used outside of this file
     @global print_string
 print_string: // print_string(ptr string_addr)
 function_prologue:
@@ -17,20 +17,8 @@ function_prologue:
     push      r9        // save caller's r9
 function_body:
     load64    r0, bp, 16 // r0 <- [bp + 16] - get param ptr string_addr from stack
-    // load loop_cond
-    lui       r3, %hi(loop_cond) // 0x0000000012340000
-    lli       r3, %mh(loop_cond) // 0x0000000012345678
-    sll64i    r3, r3, 16         // 0x0000123456780000
-    lli       r3, %ml(loop_cond) // 0x0000123456789abc
-    sll64i    r3, r3, 16         // 0x123456789abc0000
-    lli       r3, %lo(loop_cond) // 0x123456789abcdef0
-    // load loop_end
-    lui       r4, %hi(loop_end) // 0x0000000012340000
-    lli       r4, %mh(loop_end) // 0x0000000012345678
-    sll64i    r4, r4, 16        // 0x0000123456780000
-    lli       r4, %ml(loop_end) // 0x0000123456789abc
-    sll64i    r4, r4, 16        // 0x123456789abc0000
-    lli       r4, %lo(loop_end) // 0x123456789abcdef0
+    loada     r3, loop_cond
+    loada     r4, loop_end
     lli       r5, 0 // null-byte
 loop_cond:
     load8     r2, r0, 0  // load char from mem

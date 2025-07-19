@@ -47,55 +47,11 @@ Program:
 |   |   |   Register("r0")
 |   |   |   Register("bp")
 |   |   |   IntLiteral(16)
-|   Instruction: "lui"
+|   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r3")
 |   |   |   LabelExpression("loop_cond")
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r3")
-|   |   |   LabelExpression("loop_cond")
-|   Instruction: "sll64i"
-|   |   Args:
-|   |   |   Register("r3")
-|   |   |   Register("r3")
-|   |   |   IntLiteral(16)
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r3")
-|   |   |   LabelExpression("loop_cond")
-|   Instruction: "sll64i"
-|   |   Args:
-|   |   |   Register("r3")
-|   |   |   Register("r3")
-|   |   |   IntLiteral(16)
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r3")
-|   |   |   LabelExpression("loop_cond")
-|   Instruction: "lui"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   LabelExpression("loop_end")
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   LabelExpression("loop_end")
-|   Instruction: "sll64i"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   Register("r4")
-|   |   |   IntLiteral(16)
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   LabelExpression("loop_end")
-|   Instruction: "sll64i"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   Register("r4")
-|   |   |   IntLiteral(16)
-|   Instruction: "lli"
+|   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r4")
 |   |   |   LabelExpression("loop_end")
