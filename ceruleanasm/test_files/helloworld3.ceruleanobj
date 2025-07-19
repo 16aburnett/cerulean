@@ -150,8 +150,8 @@
         0
     ],
     "symbols": {
-        "_start": {
-            "symbol": "_start",
+        "__start": {
+            "symbol": "__start",
             "visibility": "local",
             "relAddress": 0
         },

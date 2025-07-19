@@ -61,7 +61,7 @@ ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld4.ceruleanbc
 ```bash
 python3 -m ceruleanasm.assembler ceruleanasm/test_files/helloworld5.ceruleanasm -o ceruleanasm/test_files/helloworld5.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanasm.assembler ceruleanasm/test_files/print_string.ceruleanasm -o ceruleanasm/test_files/print_string.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanasm/test_files/helloworld5.ceruleanobj ceruleanasm/test_files/print_string.ceruleanobj -o ceruleanasm/test_files/helloworld5.ceruleanbc --debug
+python3 -m ceruleanld.linker ceruleanasm/test_files/print_string.ceruleanobj ceruleanasm/test_files/helloworld5.ceruleanobj -o ceruleanasm/test_files/helloworld5.ceruleanbc --debug
 hexdump -v -e '"%08_ax " 4/1 "%02x " "\n"' ceruleanasm/test_files/helloworld5.ceruleanbc
 ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld5.ceruleanbc
 ```

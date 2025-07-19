@@ -1,5 +1,5 @@
 // Simple Hello world program with multiple files
-_start:
+__start:
     loada     r0, main
     call      r0
     halt

@@ -1,5 +1,5 @@
 // Super simple Hello World CeruleanASM Program
-_start:
+__start:
     loada     r0, main
     mv64      r1, r0
     call      r1

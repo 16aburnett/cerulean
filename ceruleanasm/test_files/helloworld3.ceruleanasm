@@ -1,5 +1,5 @@
 // Simple Hello world program including looping and branching
-_start:
+__start:
     lui       r0, %hi(main) // 0x0000000012340000
     lli       r0, %mh(main) // 0x0000000012345678
     sll64i    r0, r0, 16    // 0x0000123456780000

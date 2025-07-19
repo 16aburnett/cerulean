@@ -1,7 +1,7 @@
 Program:
 |   Instruction: "loada"
 |   |   Labels:
-|   |   |   Label("_start")
+|   |   |   Label("__start")
 |   |   Args:
 |   |   |   Register("r0")
 |   |   |   LabelExpression("main")

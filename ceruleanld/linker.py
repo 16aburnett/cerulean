@@ -6,12 +6,15 @@ import os
 import sys
 import argparse
 import json
+from ceruleanasm.opcodes import *
 
 # =================================================================================================
 
 class Linker:
     def __init__(self, debug=False):
         self.shouldPrintDebug = debug
+        # Where the program should start executing
+        self.startSymbol = "__start"
 
     def printDebug (self, *args, **kwargs):
         """Custom debug print function."""
@@ -22,6 +25,8 @@ class Linker:
 
     def link (self, objectCodes:list):
         globalSymbolTable = self.buildGlobalSymbolTable (objectCodes)
+        # Add an entry section for the program
+        self.addEntrySection (objectCodes, globalSymbolTable)
         # Assign base addresses to each section
         self.assignSectionBaseAddresses (objectCodes)
         # Update the addresses of the symbol definitions
@@ -39,12 +44,13 @@ class Linker:
     # ---------------------------------------------------------------------------------------------
 
     def buildGlobalSymbolTable (self, objectCodes):
+        self.printDebug ("Building global symbol table...")
         globalSymbolTable = {}
         for objectCode in objectCodes:
             for symbol in objectCode["symbols"]:
                 # Ensure it is a global symbol
                 symbolData = objectCode["symbols"][symbol]
-                if symbolData["visibility"] != "global":
+                if symbolData["visibility"] != "global" and symbol != self.startSymbol:
                     continue
                 # add filename for debug
                 symbolData["originalFilename"] = objectCode["filename"]
@@ -55,9 +61,72 @@ class Linker:
                     print (f"   Found in: '{originalSymbolDecl["originalFilename"]}'")
                     print (f"   Also defined in: '{symbolData["originalFilename"]}'")
                     print (f"   Hint: Global symbols must be uniquely defined across object files. Consider renaming or adjusting visibility.")
+                    if symbol == self.startSymbol:
+                        print (f"   Note: '{self.startSymbol}' is a special symbol and implicitly global")
                     exit (1)
                 globalSymbolTable[symbol] = symbolData
         return globalSymbolTable
+
+    # ---------------------------------------------------------------------------------------------
+
+    def addEntrySection (self, objectCodes, globalSymbolTable):
+        # Ensure start symbol was declared
+        if self.startSymbol not in globalSymbolTable:
+            print (f"ERROR: Missing entry point symbol '{self.startSymbol}'")
+            print (f"   Required to determine program start location for CeruleanVM")
+            print (f"   No global '{self.startSymbol}' label found in linked object files")
+            print (f"   Hint: Define a global '{self.startSymbol}' label in your main module to mark where execution begins.")
+            exit (1)
+        # Setup init object
+        setupObject = {
+            "filename": "<entry>",
+            "bytecode": [
+                # Note: dont have the address for __start yet, but will be filled in later
+                INSTRUCTION_MAPPING["LUI"   ]["opcode"], 0x00, 0x00, 0x00, # lui r0, %hi(__start)
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %mh(__start)
+                INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %ml(__start)
+                INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %lo(__start)
+                INSTRUCTION_MAPPING["JMP"   ]["opcode"], 0x00, 0x00, 0x00, # jmp r0 ; jmp __start
+            ],
+            "symbols": {
+                # Dummy extern for __start
+                self.startSymbol: {
+                    "symbol": self.startSymbol,
+                    "visibility": "extern",
+                    "relAddress": 0
+                }
+            },
+            "relocations": [
+                {
+                    "location": 2,
+                    "symbol": self.startSymbol,
+                    "type": "imm16_abs_hi",
+                    "isGlobal": True
+                },
+                {
+                    "location": 6,
+                    "symbol": self.startSymbol,
+                    "type": "imm16_abs_mh",
+                    "isGlobal": True
+                },
+                {
+                    "location": 14,
+                    "symbol": self.startSymbol,
+                    "type": "imm16_abs_ml",
+                    "isGlobal": True
+                },
+                {
+                    "location": 22,
+                    "symbol": self.startSymbol,
+                    "type": "imm16_abs_lo",
+                    "isGlobal": True
+                }
+            ]
+        }
+        # Add to start of code sections so it gets address 0
+        objectCodes.insert (0, setupObject)
 
     # ---------------------------------------------------------------------------------------------
 

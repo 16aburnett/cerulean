@@ -276,8 +276,8 @@
             "visibility": "local",
             "relAddress": 0
         },
-        "_start": {
-            "symbol": "_start",
+        "__start": {
+            "symbol": "__start",
             "visibility": "local",
             "relAddress": 0
         },
