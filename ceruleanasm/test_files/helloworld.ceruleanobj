@@ -155,8 +155,16 @@
         0
     ],
     "symbols": {
-        "_start": 0,
-        "main": 36
+        "_start": {
+            "symbol": "_start",
+            "visibility": "local",
+            "relAddress": 0
+        },
+        "main": {
+            "symbol": "main",
+            "visibility": "local",
+            "relAddress": 36
+        }
     },
     "relocations": [
         {

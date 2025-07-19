@@ -1,61 +1,57 @@
 {
-    "filename": "ceruleanasm/test_files/helloworld3.ceruleanasm",
+    "filename": "ceruleanasm/test_files/print_string.ceruleanasm",
     "bytecode": [
-        1,
+        131,
+        224,
+        0,
+        0,
+        33,
+        239,
+        0,
+        0,
+        131,
         0,
         0,
         0,
-        2,
-        0,
-        0,
-        0,
-        97,
-        0,
+        131,
         16,
         0,
-        2,
+        0,
+        131,
+        32,
         0,
         0,
-        0,
-        97,
-        0,
-        16,
-        0,
-        2,
+        131,
+        48,
         0,
         0,
+        131,
+        64,
         0,
+        0,
+        131,
+        80,
+        0,
+        0,
+        131,
+        96,
+        0,
+        0,
+        131,
+        112,
+        0,
+        0,
+        131,
         128,
         0,
         0,
-        0,
-        145,
-        0,
-        0,
-        0,
-        1,
+        131,
+        144,
         0,
         0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        97,
-        0,
+        6,
+        14,
         16,
-        0,
-        2,
-        0,
-        0,
-        0,
-        97,
-        0,
-        16,
-        0,
-        2,
-        0,
-        0,
         0,
         1,
         48,
@@ -129,156 +125,146 @@
         48,
         0,
         0,
-        145,
+        132,
+        144,
         0,
         0,
+        132,
+        128,
         0,
-        72,
-        101,
-        108,
-        108,
-        111,
-        44,
+        0,
+        132,
+        112,
+        0,
+        0,
+        132,
+        96,
+        0,
+        0,
+        132,
+        80,
+        0,
+        0,
+        132,
+        64,
+        0,
+        0,
+        132,
+        48,
+        0,
+        0,
+        132,
         32,
-        87,
-        111,
-        114,
-        108,
-        100,
+        0,
+        0,
+        132,
+        16,
+        0,
+        0,
+        132,
+        0,
+        0,
+        0,
         33,
-        10,
+        254,
+        0,
+        0,
+        132,
+        224,
+        0,
+        0,
+        130,
+        0,
+        0,
         0
     ],
     "symbols": {
-        "_start": {
-            "symbol": "_start",
+        "print_string": {
+            "symbol": "print_string",
+            "visibility": "global",
+            "relAddress": 0
+        },
+        "function_prologue": {
+            "symbol": "function_prologue",
             "visibility": "local",
             "relAddress": 0
         },
-        "main": {
-            "symbol": "main",
+        "function_body": {
+            "symbol": "function_body",
             "visibility": "local",
-            "relAddress": 32
+            "relAddress": 48
         },
         "loop_cond": {
             "symbol": "loop_cond",
             "visibility": "local",
-            "relAddress": 108
+            "relAddress": 104
         },
         "loop_body": {
             "symbol": "loop_body",
             "visibility": "local",
-            "relAddress": 116
+            "relAddress": 112
         },
         "loop_update": {
             "symbol": "loop_update",
             "visibility": "local",
-            "relAddress": 120
+            "relAddress": 116
         },
         "loop_end": {
             "symbol": "loop_end",
             "visibility": "local",
-            "relAddress": 128
+            "relAddress": 124
         },
-        "string_addr": {
-            "symbol": "string_addr",
+        "function_epilogue": {
+            "symbol": "function_epilogue",
             "visibility": "local",
-            "relAddress": 132
+            "relAddress": 124
         }
     },
     "relocations": [
         {
-            "location": 2,
-            "symbol": "main",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 6,
-            "symbol": "main",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 14,
-            "symbol": "main",
-            "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
-            "location": 22,
-            "symbol": "main",
-            "type": "imm16_abs_lo",
-            "isGlobal": false
-        },
-        {
-            "location": 34,
-            "symbol": "string_addr",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 38,
-            "symbol": "string_addr",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 46,
-            "symbol": "string_addr",
-            "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
             "location": 54,
-            "symbol": "string_addr",
-            "type": "imm16_abs_lo",
+            "symbol": "loop_cond",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 58,
             "symbol": "loop_cond",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 62,
-            "symbol": "loop_cond",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 70,
+            "location": 66,
             "symbol": "loop_cond",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 78,
+            "location": 74,
             "symbol": "loop_cond",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 82,
+            "location": 78,
             "symbol": "loop_end",
             "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
-            "location": 86,
+            "location": 82,
             "symbol": "loop_end",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 94,
+            "location": 90,
             "symbol": "loop_end",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 102,
+            "location": 98,
             "symbol": "loop_end",
             "type": "imm16_abs_lo",
             "isGlobal": false

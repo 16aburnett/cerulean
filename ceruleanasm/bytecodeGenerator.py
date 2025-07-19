@@ -17,7 +17,7 @@ from .dataDirectives import *
 
 class BytecodeGeneratorVisitor (ASTVisitor):
 
-    def __init__(self, symbolTable):
+    def __init__(self):
         self.bytecode = bytearray ()
 
     def visitProgramNode (self, node):
@@ -26,6 +26,9 @@ class BytecodeGeneratorVisitor (ASTVisitor):
                 codeunit.accept (self)
 
     def visitLabelNode (self, node):
+        pass
+
+    def visitVisibilityDirectiveNode (self, node):
         pass
 
     def visitDataDirectiveNode (self, node):

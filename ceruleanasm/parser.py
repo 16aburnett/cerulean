@@ -30,40 +30,45 @@ class Parser:
 
     # <start> -> { <codeunit> }
     def parse (self):
-        codeunits = [] 
+        codeunits = []
+        visibilityDirectives = []
         while self.currentToken < len (self.tokens) and self.tokens[self.currentToken].type != "END_OF_FILE":
             unit = self.codeunit ()
             # Ensure there was a code unit
             if not unit:
+                continue
+            # Save visibility directives separately
+            if isinstance (unit, VisibilityDirectiveNode):
+                visibilityDirectives += [unit]
                 continue
             # Save labels to add to the next instruction or data directive
             if isinstance (unit, LabelNode):
                 self.pendingLabels += [unit]
                 continue
             codeunits += [unit]
-        return ProgramNode(codeunits)
+        return ProgramNode (codeunits, visibilityDirectives)
 
     def match (self, function, expectedToken, additional=""):
         if (self.tokens[self.currentToken].type == expectedToken):
             self.currentToken += 1
         else:
-            self.error(function, expectedToken, additional)
+            self.error (function, expectedToken, additional)
 
 # ========================================================================
 # debug 
 
-    def error(self, function, expectedToken, additional=""):
+    def error (self, function, expectedToken, additional=""):
         print (f"Parse Error: Attempted to parse <{function}>")
         print (f"   expected {expectedToken} but got {self.tokens[self.currentToken].type}")
         printToken (self.tokens[self.currentToken])
         if additional != "":
-            print(f"   -> {additional}")
-        exit(1)
+            print (f"   -> {additional}")
+        exit (1)
 
     def enter (self, name):
         if (not self.doDebug): 
             return
-        self.printSpaces(self.level)
+        self.printSpaces (self.level)
         self.level += 1
         if self.currentToken < len(self.tokens):
             print (f"+-{name}: Enter, \tToken == {self.tokens[self.currentToken]}")
@@ -89,6 +94,7 @@ class Parser:
 # syntax productions 
 
     # <codeunit> -> <label> NEWLINE
+    #            -> <visibility_directive> NEWLINE
     #            -> <data_directive> NEWLINE
     #            -> <instruction> NEWLINE
     #            -> NEWLINE
@@ -100,6 +106,10 @@ class Parser:
         # <codeunit> -> <label>
         if (self.tokens[self.currentToken].type == 'IDENTIFIER' and self.tokens[self.currentToken+1].type == 'COLON'):
             node = self.label ()
+            self.match ("codeunit", "NEWLINE")
+        # <codeunit> -> <visibility_directive>
+        elif (self.tokens[self.currentToken].type == "VISIBILITY_DIRECTIVE"):
+            node = self.visibilityDirective ()
             self.match ("codeunit", "NEWLINE")
         # <codeunit> -> <data_directive>
         elif (self.tokens[self.currentToken].type == "DATA_DIRECTIVE"):
@@ -129,6 +139,24 @@ class Parser:
         self.match ("label", "COLON")
 
         self.leave ("label")
+        return node
+
+    # ====================================================================
+    # <visibilityDirective> -> VISIBILITY_DIRECTIVE IDENTIFIER
+
+    def visibilityDirective (self):
+        self.enter ("visibilityDirective")
+
+        token = self.tokens[self.currentToken]
+        directive = token.lexeme[1:]
+        self.match ("visibilityDirective", "VISIBILITY_DIRECTIVE")
+        labelToken = self.tokens[self.currentToken]
+        self.match ("visibilityDirective", "IDENTIFIER")
+        node = VisibilityDirectiveNode (token, directive, labelToken.lexeme)
+        # TODO: We should probably make sure that there werent labels attached to this directive
+        # self.pendingLabels = []
+
+        self.leave ("visibilityDirective")
         return node
 
     # ====================================================================

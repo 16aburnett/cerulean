@@ -37,6 +37,10 @@ class PrintVisitor (ASTVisitor):
         self.printSpaces (self.level)
         self.outputstrings += [f"Label(\"{node.id}\")\n"]
 
+    def visitVisibilityDirectiveNode (self, node):
+        self.printSpaces (self.level)
+        self.outputstrings += [f"VisibilityDirective: \"{node.id}\" \"{node.label}\"\n"]
+
     def visitDataDirectiveNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += [f"DataDirective: \"{node.id}\"\n"]

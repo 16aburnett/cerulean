@@ -39,10 +39,10 @@ def expand_loada (pseudoInstruction):
     token = pseudoInstruction.token
     reg, label = pseudoInstruction.args
 
-    hi = LabelExpressionNode (label.token, label.id, modifier="hi")
-    mh = LabelExpressionNode (label.token, label.id, modifier="mh")
-    ml = LabelExpressionNode (label.token, label.id, modifier="ml")
-    lo = LabelExpressionNode (label.token, label.id, modifier="lo")
+    hi = LabelExpressionNode (label.token, label.id, modifier="hi", decl=label.decl)
+    mh = LabelExpressionNode (label.token, label.id, modifier="mh", decl=label.decl)
+    ml = LabelExpressionNode (label.token, label.id, modifier="ml", decl=label.decl)
+    lo = LabelExpressionNode (label.token, label.id, modifier="lo", decl=label.decl)
     imm16 = IntLiteralExpressionNode (token, 16)
 
     # Make sure any labels on the pseudo-instruction are passed to the first instruction

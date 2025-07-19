@@ -83,7 +83,8 @@ class CeruleanAssembler:
         # Semantic analysis
 
         self.printDebug ("Analyzing semantics...")
-        semanticAnalyzer = SemanticAnalysisVisitor ()
+        symbolTable = {}
+        semanticAnalyzer = SemanticAnalysisVisitor (symbolTable)
         semanticAnalyzer.analyze (ast)
 
         if not semanticAnalyzer.wasSuccessful:
@@ -115,11 +116,8 @@ class CeruleanAssembler:
         # Assign addresses to instructions
 
         self.printDebug ("Assigning addresses...")
-        symbolTable = {}
-        addressAssigner = AddressAssignerVisitor (symbolTable)
+        addressAssigner = AddressAssignerVisitor ()
         ast.accept (addressAssigner)
-
-        self.printDebug ("symbolTable: ", symbolTable)
 
         # for instruction in ast.codeunits:
         #     if isinstance (instruction, InstructionNode):
@@ -129,7 +127,7 @@ class CeruleanAssembler:
         # Resolve labels
 
         self.printDebug ("Resolving references...")
-        referenceResolver = ReferenceResolverVisitor (symbolTable)
+        referenceResolver = ReferenceResolverVisitor ()
         ast.accept (referenceResolver)
 
         self.printDebug ("relocationTable: ", referenceResolver.relocationTable)
@@ -144,7 +142,7 @@ class CeruleanAssembler:
         # Bytecode encoding/generation
 
         self.printDebug ("Generating bytecode...")
-        codegenerator = BytecodeGeneratorVisitor (symbolTable)
+        codegenerator = BytecodeGeneratorVisitor ()
         ast.accept (codegenerator)
 
         # print ("bytecode:", codegenerator.bytecode)
@@ -159,10 +157,20 @@ class CeruleanAssembler:
         # -----------------------------------------------------------------------------------------
         # Package together object data
 
+        # Extract the symbol table info that is needed for the linker
+        finalSymbolTable = {}
+        for symbol in symbolTable:
+            symbolDecl = symbolTable[symbol]
+            finalSymbolTable[symbol] = {
+                "symbol": symbolDecl.id,
+                "visibility": symbolDecl.visibility,
+                "relAddress": symbolDecl.address
+            }
+
         objectData = {
             "filename": sourceFilename,
             "bytecode": list(codegenerator.bytecode),
-            "symbols" : symbolTable,
+            "symbols" : finalSymbolTable,
             "relocations": referenceResolver.relocationTable
         }
 

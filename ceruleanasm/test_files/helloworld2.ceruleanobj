@@ -271,10 +271,26 @@
         0
     ],
     "symbols": {
-        "letsgoooo": 0,
-        "_start": 0,
-        "string_addr": 32,
-        "main": 76
+        "letsgoooo": {
+            "symbol": "letsgoooo",
+            "visibility": "local",
+            "relAddress": 0
+        },
+        "_start": {
+            "symbol": "_start",
+            "visibility": "local",
+            "relAddress": 0
+        },
+        "string_addr": {
+            "symbol": "string_addr",
+            "visibility": "local",
+            "relAddress": 32
+        },
+        "main": {
+            "symbol": "main",
+            "visibility": "local",
+            "relAddress": 76
+        }
     },
     "relocations": [
         {

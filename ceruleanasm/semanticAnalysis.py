@@ -8,6 +8,7 @@ from sys import exit
 from .visitor import ASTVisitor
 from .modifiers import MODIFIERS
 from .tokenizer import getTokenContextAsString, Token
+from .visibilityDirectives import *
 from .dataDirectives import *
 from .opcodes import *
 from .AST import *
@@ -17,8 +18,8 @@ from .pseudoInstructions import *
 
 class SemanticAnalysisVisitor (ASTVisitor):
 
-    def __init__(self):
-        self.symbolTable = {}
+    def __init__(self, symbolTable):
+        self.symbolTable = symbolTable
         # Assume semantics pass initially and try to break this assumption
         self.wasSuccessful = True
         self.errorMessages = []
@@ -32,6 +33,14 @@ class SemanticAnalysisVisitor (ASTVisitor):
         for labelExpressionNode in self.labelExpressionNodes:
             if labelExpressionNode.id not in self.symbolTable:
                 self.error (f"Label '{labelExpressionNode.id}' was not defined", labelExpressionNode.token)
+                return
+            # Save decl with reference for easier lookup
+            labelExpressionNode.decl = self.symbolTable[labelExpressionNode.id]
+        # Make sure declarations are tagged as local if visibility was not otherwise set
+        for symbol in self.symbolTable:
+            if self.symbolTable[symbol].visibility == None:
+                # print (f"setting {symbol} to local")
+                self.symbolTable[symbol].visibility = "local"
 
     # ---------------------------------------------------------------------------------------------
     # Helper functions
@@ -48,6 +57,8 @@ class SemanticAnalysisVisitor (ASTVisitor):
         for codeunit in node.codeunits:
             if codeunit != None:
                 codeunit.accept (self)
+        for visibilityDirective in node.visibilityDirectives:
+            visibilityDirective.accept (self)
 
     def visitLabelNode (self, node):
         # Ensure this is not a duplicate label
@@ -55,9 +66,35 @@ class SemanticAnalysisVisitor (ASTVisitor):
             self.error (f"Duplicate label '{node.id}'", node.token)
         self.symbolTable[node.id] = node
 
+    def visitVisibilityDirectiveNode (self, node):
+        # Ensure it is a valid directive
+        if node.id not in VISIBILITY_DIRECTIVES:
+            self.error (f"'{node.id}' is not a valid visibility directive", node.token)
+        if node.id == "extern":
+            # Treat as a label declaration since the real declaration/definition is
+            # outside of the file and shouldnt be defined in the file.
+            # Ensure it wasnt already declared
+            if node.label in self.symbolTable:
+                self.error (f"External symbol '{node.label}' was already previously declared", node.token)
+                return
+            # symbol table expects a label decl not a directive so just make a dummy label node
+            self.symbolTable[node.label] = LabelNode (node.token, node.label, visibility="extern")
+        elif node.id == "global":
+            # Ensure the label was defined
+            if node.label not in self.symbolTable:
+                self.error (f"Symbol '{node.label}' was not defined to declare as global", node.token)
+                return
+            # Ensure the visibility wasnt already set
+            labelDecl = self.symbolTable[node.label]
+            if labelDecl.visibility != None:
+                self.error (f"Symbol '{node.label}' already has a visibility, '{labelDecl.visibility}'. Cannot set a new visibility", node.token)
+                return
+            # Update the label declaration
+            labelDecl.visibility = "global"
+
     def visitDataDirectiveNode (self, node):
         # Ensure it is a valid data directive
-        if node.id.lower() not in DATA_DIRECTIVES:
+        if node.id.lower () not in DATA_DIRECTIVES:
             self.error (f"'{node.id}' is not a valid data directive", node.token)
         for label in node.labels:
             label.accept (self)

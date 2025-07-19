@@ -12,8 +12,7 @@ from .visitor import ASTVisitor
 
 class ReferenceResolverVisitor (ASTVisitor):
 
-    def __init__(self, symbolTable):
-        self.symbolTable = symbolTable
+    def __init__(self):
         self.relocationTable = []
 
     def visitProgramNode (self, node):
@@ -22,6 +21,9 @@ class ReferenceResolverVisitor (ASTVisitor):
                 codeunit.accept (self)
 
     def visitLabelNode (self, node):
+        pass
+
+    def visitVisibilityDirectiveNode (self, node):
         pass
 
     def determineRelocationType (self, node):
@@ -48,18 +50,18 @@ class ReferenceResolverVisitor (ASTVisitor):
             if not isinstance (arg, LabelExpressionNode):
                 continue
             # Local (in file) symbols
-            if arg.id in self.symbolTable:
-                # arg.address = self.symbolTable[arg.id]
+            if arg.decl.visibility != "extern":
                 # For now, let the linker handle this
                 arg.address = 0
+                isGlobal = arg.decl.visibility == "global"
                 self.relocationTable.append ({
                     "location": node.address, # data starts at base address
                     "symbol": arg.id,
                     "type": self.determineRelocationType (arg),
-                    "isGlobal": False
+                    "isGlobal": isGlobal
                 })
             # External (outside of file) symbols
-            else:
+            elif arg.decl.visibility == "extern":
                 # Just use 0 as a placeholder
                 # Linker will need to resolve this
                 arg.address = 0
@@ -80,18 +82,18 @@ class ReferenceResolverVisitor (ASTVisitor):
             if not isinstance (arg, LabelExpressionNode):
                 continue
             # Local (in file) symbols
-            if arg.id in self.symbolTable:
-                # arg.address = self.symbolTable[arg.id]
+            if arg.decl.visibility != "extern":
                 # For now, let the linker handle this
                 arg.address = 0
+                isGlobal = arg.decl.visibility == "global"
                 self.relocationTable.append ({
                     "location": node.address + 2, # imm is last 2 bytes of instruction
                     "symbol": arg.id,
                     "type": self.determineRelocationType (arg),
-                    "isGlobal": False
+                    "isGlobal": isGlobal
                 })
             # External (outside of file) symbols
-            else:
+            elif arg.decl.visibility == "extern":
                 # Just use 0 as a placeholder
                 # Linker will need to resolve this
                 arg.address = 0

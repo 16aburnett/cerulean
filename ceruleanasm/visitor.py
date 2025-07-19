@@ -20,6 +20,10 @@ class ASTVisitor (ABC):
         pass
 
     @abstractmethod
+    def visitVisibilityDirectiveNode (self, node):
+        pass
+
+    @abstractmethod
     def visitDataDirectiveNode (self, node):
         pass
 

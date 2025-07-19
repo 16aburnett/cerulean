@@ -44,7 +44,7 @@ class Linker:
         self.printDebug ("Resolving symbol addresses...")
         for objectCode in objectCodes:
             for symbol in objectCode["symbols"]:
-                objectCode["symbols"][symbol] += objectCode["baseAddress"]
+                objectCode["symbols"][symbol]["relAddress"] += objectCode["baseAddress"]
 
     # Processes the address based on relocType and returns the (little endian) bytes to patch
     def convertAddressToBytes (self, address, relocType):
@@ -71,7 +71,7 @@ class Linker:
                 if relocation["symbol"] not in objectCode["symbols"]:
                     print (f"ERROR: Unknown symbol '{relocation['symbol']}'")
                     exit (1)
-                address = objectCode["symbols"][relocation["symbol"]]
+                address = objectCode["symbols"][relocation["symbol"]]["relAddress"]
                 relocType = relocation["type"]
                 # Handle relocType
                 addressBytes = self.convertAddressToBytes (address, relocType)
@@ -88,7 +88,7 @@ class Linker:
             # Ensure code is aligned to the correct address
             # This is needed bc we align base address while assigning
             while len (finalBytecode) < objectCode["baseAddress"]:
-                finalBytecode.extend (bytearray (0x00))
+                finalBytecode.extend (bytearray ([0x00]))
             # Add this code section
             finalBytecode.extend (bytearray (objectCode["bytecode"]))
         return finalBytecode

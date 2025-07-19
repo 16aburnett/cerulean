@@ -290,17 +290,61 @@
         0
     ],
     "symbols": {
-        "_start": 0,
-        "print_string": 32,
-        "function_prologue": 32,
-        "function_body": 80,
-        "loop_cond": 136,
-        "loop_body": 144,
-        "loop_update": 148,
-        "loop_end": 156,
-        "function_epilogue": 156,
-        "main": 208,
-        "string_addr": 272
+        "_start": {
+            "symbol": "_start",
+            "visibility": "local",
+            "relAddress": 0
+        },
+        "print_string": {
+            "symbol": "print_string",
+            "visibility": "local",
+            "relAddress": 32
+        },
+        "function_prologue": {
+            "symbol": "function_prologue",
+            "visibility": "local",
+            "relAddress": 32
+        },
+        "function_body": {
+            "symbol": "function_body",
+            "visibility": "local",
+            "relAddress": 80
+        },
+        "loop_cond": {
+            "symbol": "loop_cond",
+            "visibility": "local",
+            "relAddress": 136
+        },
+        "loop_body": {
+            "symbol": "loop_body",
+            "visibility": "local",
+            "relAddress": 144
+        },
+        "loop_update": {
+            "symbol": "loop_update",
+            "visibility": "local",
+            "relAddress": 148
+        },
+        "loop_end": {
+            "symbol": "loop_end",
+            "visibility": "local",
+            "relAddress": 156
+        },
+        "function_epilogue": {
+            "symbol": "function_epilogue",
+            "visibility": "local",
+            "relAddress": 156
+        },
+        "main": {
+            "symbol": "main",
+            "visibility": "local",
+            "relAddress": 208
+        },
+        "string_addr": {
+            "symbol": "string_addr",
+            "visibility": "local",
+            "relAddress": 272
+        }
     },
     "relocations": [
         {

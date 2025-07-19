@@ -31,6 +31,9 @@ class LoweringVisitor (ASTVisitor):
     def visitLabelNode (self, node):
         pass
 
+    def visitVisibilityDirectiveNode (self, node):
+        pass
+
     def visitDataDirectiveNode (self, node):
         # for label in node.labels:
         #     label.accept (self)

@@ -1,0 +1,174 @@
+Program:
+|   Instruction: "push"
+|   |   Labels:
+|   |   |   Label("print_string")
+|   |   |   Label("function_prologue")
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(0)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r1")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r2")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r3")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r4")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r5")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r6")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r7")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "load64"
+|   |   Labels:
+|   |   |   Label("function_body")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(16)
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   LabelExpression("loop_cond")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   LabelExpression("loop_cond")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   Register("r3")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   LabelExpression("loop_cond")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   Register("r3")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   LabelExpression("loop_cond")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   LabelExpression("loop_end")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   LabelExpression("loop_end")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   Register("r4")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   LabelExpression("loop_end")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   Register("r4")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   LabelExpression("loop_end")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r5")
+|   |   |   IntLiteral(0)
+|   Instruction: "load8"
+|   |   Labels:
+|   |   |   Label("loop_cond")
+|   |   Args:
+|   |   |   Register("r2")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(0)
+|   Instruction: "beq"
+|   |   Args:
+|   |   |   Register("r2")
+|   |   |   Register("r5")
+|   |   |   Register("r4")
+|   Instruction: "putchar"
+|   |   Labels:
+|   |   |   Label("loop_body")
+|   |   Args:
+|   |   |   Register("r2")
+|   Instruction: "add32i"
+|   |   Labels:
+|   |   |   Label("loop_update")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(1)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r3")
+|   Instruction: "pop"
+|   |   Labels:
+|   |   |   Label("loop_end")
+|   |   |   Label("function_epilogue")
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r7")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r6")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r5")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r4")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r3")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r2")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r1")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(0)
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "ret"

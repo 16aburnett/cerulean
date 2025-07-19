@@ -1,0 +1,19 @@
+// Simple Hello world program with multiple files
+_start:
+    loada     r0, main
+    call      r0
+    halt
+
+    // extern declares that the symbol is defined outside of this file
+    @extern print_string
+
+main:
+    loada     r0, string_addr
+    loada     r1, print_string
+    push r0
+    call r1
+    pop r0
+    ret
+
+string_addr:
+    .string "Hello, World!\n"

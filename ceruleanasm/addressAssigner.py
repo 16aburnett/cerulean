@@ -14,9 +14,8 @@ from .dataDirectives import *
 
 class AddressAssignerVisitor (ASTVisitor):
 
-    def __init__(self, symbolTable):
+    def __init__(self):
         self.currentAddress = 0
-        self.symbolTable = symbolTable
 
     def visitProgramNode (self, node):
         for codeunit in node.codeunits:
@@ -24,7 +23,10 @@ class AddressAssignerVisitor (ASTVisitor):
                 codeunit.accept (self)
 
     def visitLabelNode (self, node):
-        self.symbolTable[node.id] = self.currentAddress
+        node.address = self.currentAddress
+
+    def visitVisibilityDirectiveNode (self, node):
+        pass
 
     def visitDataDirectiveNode (self, node):
         for argument in node.args:

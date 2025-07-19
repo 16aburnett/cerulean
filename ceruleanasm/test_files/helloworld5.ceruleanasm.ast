@@ -1,0 +1,36 @@
+Program:
+|   Instruction: "loada"
+|   |   Labels:
+|   |   |   Label("_start")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("main")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "halt"
+|   Instruction: "loada"
+|   |   Labels:
+|   |   |   Label("main")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("string_addr")
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r1")
+|   |   |   LabelExpression("print_string")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r1")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "ret"
+|   DataDirective: "string"
+|   |   Labels:
+|   |   |   Label("string_addr")
+|   |   Args:
+|   |   |   StringLiteral(""Hello, World!\n"")

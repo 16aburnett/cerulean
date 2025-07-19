@@ -39,8 +39,9 @@ class Node (ABC):
 
 class ProgramNode (Node):
 
-    def __init__ (self, codeunits):
+    def __init__ (self, codeunits, visibilityDirectives=[]):
         self.codeunits = codeunits
+        self.visibilityDirectives = visibilityDirectives
         self.localVariables = []
         self.floatLiterals = []
         self.stringLiterals = []
@@ -75,15 +76,18 @@ class ProgramNode (Node):
 
 class LabelNode (Node):
 
-    def __init__ (self, token, id):
+    def __init__ (self, token, id, visibility=None):
         self.token = token
         self.id = id
+        self.visibility = visibility
+        # Needs to be assigned
+        self.address = 0
 
     def accept (self, visitor):
         return visitor.visitLabelNode (self)
 
     def copy (self):
-        return LabelNode (self.token, self.id)
+        return LabelNode (self.token, self.id, self.visibility)
 
     def __repr__ (self):
         return f"Label('{self.id}')"
@@ -95,6 +99,32 @@ class LabelNode (Node):
         if not isinstance (other, LabelNode):
             return False
         return self.id == other.id
+
+# ========================================================================
+
+class VisibilityDirectiveNode (Node):
+
+    def __init__ (self, token, id, label):
+        self.token = token
+        self.id = id
+        self.label = label
+
+    def accept (self, visitor):
+        return visitor.visitVisibilityDirectiveNode (self)
+
+    def copy (self):
+        return VisibilityDirectiveNode (self.token, self.id, self.label)
+
+    def __repr__ (self):
+        return f"VisibilityDirective('{self.id}', label='{self.label}')"
+
+    def __str__ (self):
+        return f"@{self.id} {self.label}"
+
+    def __eq__ (self, other):
+        return isinstance (other, VisibilityDirectiveNode) and \
+            self.id == other.id and \
+            self.label == other.label
 
 # ========================================================================
 
@@ -190,7 +220,7 @@ class RegisterExpressionNode (Node):
 
 class LabelExpressionNode (Node):
 
-    def __init__ (self, token, id, modifierToken=None, modifier=None):
+    def __init__ (self, token, id, modifierToken=None, modifier=None, decl=None):
         self.token = token
         self.id = id
         self.modifierToken = modifierToken
@@ -200,6 +230,7 @@ class LabelExpressionNode (Node):
             self.modifier = modifier
         self.address = None
         self.value = None
+        self.decl = decl
 
     def accept (self, visitor):
         return visitor.visitLabelExpressionNode (self)

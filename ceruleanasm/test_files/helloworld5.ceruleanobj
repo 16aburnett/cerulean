@@ -1,5 +1,5 @@
 {
-    "filename": "ceruleanasm/test_files/helloworld3.ceruleanasm",
+    "filename": "ceruleanasm/test_files/helloworld5.ceruleanasm",
     "bytecode": [
         1,
         0,
@@ -58,78 +58,42 @@
         0,
         0,
         1,
-        48,
+        16,
         0,
         0,
         2,
-        48,
+        16,
         0,
         0,
         97,
-        51,
+        17,
         16,
         0,
         2,
-        48,
+        16,
         0,
         0,
         97,
-        51,
+        17,
         16,
         0,
         2,
-        48,
-        0,
-        0,
-        1,
-        64,
-        0,
-        0,
-        2,
-        64,
-        0,
-        0,
-        97,
-        68,
         16,
         0,
-        2,
-        64,
+        0,
+        131,
         0,
         0,
-        97,
-        68,
+        0,
+        128,
         16,
         0,
-        2,
-        64,
+        0,
+        132,
         0,
         0,
-        2,
-        80,
         0,
-        0,
-        3,
-        32,
-        0,
-        0,
-        112,
-        37,
-        64,
-        0,
-        147,
-        32,
-        0,
-        0,
-        32,
-        0,
-        1,
-        0,
-        118,
-        48,
-        0,
-        0,
-        145,
+        130,
         0,
         0,
         0,
@@ -160,30 +124,15 @@
             "visibility": "local",
             "relAddress": 32
         },
-        "loop_cond": {
-            "symbol": "loop_cond",
-            "visibility": "local",
-            "relAddress": 108
-        },
-        "loop_body": {
-            "symbol": "loop_body",
-            "visibility": "local",
-            "relAddress": 116
-        },
-        "loop_update": {
-            "symbol": "loop_update",
-            "visibility": "local",
-            "relAddress": 120
-        },
-        "loop_end": {
-            "symbol": "loop_end",
-            "visibility": "local",
-            "relAddress": 128
-        },
         "string_addr": {
             "symbol": "string_addr",
             "visibility": "local",
-            "relAddress": 132
+            "relAddress": 96
+        },
+        "print_string": {
+            "symbol": "print_string",
+            "visibility": "extern",
+            "relAddress": 0
         }
     },
     "relocations": [
@@ -237,51 +186,27 @@
         },
         {
             "location": 58,
-            "symbol": "loop_cond",
+            "symbol": "print_string",
             "type": "imm16_abs_hi",
-            "isGlobal": false
+            "isGlobal": true
         },
         {
             "location": 62,
-            "symbol": "loop_cond",
+            "symbol": "print_string",
             "type": "imm16_abs_mh",
-            "isGlobal": false
+            "isGlobal": true
         },
         {
             "location": 70,
-            "symbol": "loop_cond",
+            "symbol": "print_string",
             "type": "imm16_abs_ml",
-            "isGlobal": false
+            "isGlobal": true
         },
         {
             "location": 78,
-            "symbol": "loop_cond",
+            "symbol": "print_string",
             "type": "imm16_abs_lo",
-            "isGlobal": false
-        },
-        {
-            "location": 82,
-            "symbol": "loop_end",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 86,
-            "symbol": "loop_end",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 94,
-            "symbol": "loop_end",
-            "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
-            "location": 102,
-            "symbol": "loop_end",
-            "type": "imm16_abs_lo",
-            "isGlobal": false
+            "isGlobal": true
         }
     ]
 }

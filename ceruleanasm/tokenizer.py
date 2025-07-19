@@ -60,6 +60,7 @@ token_specification = [
     ('CHAR',     r'\'(\\[A-Za-z_0-9\'\"]*|.)\''),   # '0' '\n' '\101'
     ('STRING',   r'\"([^"\\]|\\.)*\"'),
 # Identifier
+    ('VISIBILITY_DIRECTIVE', r'\@[A-Za-z_][A-Za-z_0-9]*'), # @extern, @global
     ('DATA_DIRECTIVE', r'\.[A-Za-z_][A-Za-z_0-9]*'), # .ascii, .string, .float
     ('MODIFIER'  ,r'%[A-Za-z_][A-Za-z_0-9]*'), # %hi, %lo
     ('IDENTIFIER',r'[A-Za-z_][A-Za-z_0-9]*'),  # Identifiers
