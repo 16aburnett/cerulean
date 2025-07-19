@@ -23,7 +23,7 @@
         0,
         2,
         0,
-        76,
+        0,
         0,
         128,
         0,
@@ -65,7 +65,7 @@
         0,
         0,
         0,
-        76,
+        0,
         0,
         0,
         0,
@@ -99,7 +99,7 @@
         0,
         2,
         0,
-        32,
+        0,
         0,
         3,
         16,
@@ -276,5 +276,60 @@
         "string_addr": 32,
         "main": 76
     },
-    "relocations": []
+    "relocations": [
+        {
+            "location": 2,
+            "symbol": "main",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 6,
+            "symbol": "main",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 14,
+            "symbol": "main",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 22,
+            "symbol": "main",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 64,
+            "symbol": "main",
+            "type": "addr64",
+            "isGlobal": false
+        },
+        {
+            "location": 78,
+            "symbol": "string_addr",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 82,
+            "symbol": "string_addr",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 90,
+            "symbol": "string_addr",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 98,
+            "symbol": "string_addr",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        }
+    ]
 }

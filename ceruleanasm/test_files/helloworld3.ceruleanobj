@@ -23,7 +23,7 @@
         0,
         2,
         0,
-        32,
+        0,
         0,
         128,
         0,
@@ -55,7 +55,7 @@
         0,
         2,
         0,
-        132,
+        0,
         0,
         1,
         48,
@@ -79,7 +79,7 @@
         0,
         2,
         48,
-        108,
+        0,
         0,
         1,
         64,
@@ -103,7 +103,7 @@
         0,
         2,
         64,
-        128,
+        0,
         0,
         2,
         80,
@@ -158,5 +158,102 @@
         "loop_end": 128,
         "string_addr": 132
     },
-    "relocations": []
+    "relocations": [
+        {
+            "location": 2,
+            "symbol": "main",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 6,
+            "symbol": "main",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 14,
+            "symbol": "main",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 22,
+            "symbol": "main",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 34,
+            "symbol": "string_addr",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 38,
+            "symbol": "string_addr",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 46,
+            "symbol": "string_addr",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 54,
+            "symbol": "string_addr",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 58,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 62,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 70,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 78,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 82,
+            "symbol": "loop_end",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 86,
+            "symbol": "loop_end",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 94,
+            "symbol": "loop_end",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 102,
+            "symbol": "loop_end",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        }
+    ]
 }

@@ -23,7 +23,7 @@
         0,
         2,
         0,
-        208,
+        0,
         0,
         128,
         0,
@@ -107,7 +107,7 @@
         0,
         2,
         48,
-        136,
+        0,
         0,
         1,
         64,
@@ -131,7 +131,7 @@
         0,
         2,
         64,
-        156,
+        0,
         0,
         2,
         80,
@@ -231,8 +231,8 @@
         0,
         2,
         0,
-        16,
-        1,
+        0,
+        0,
         1,
         16,
         0,
@@ -255,7 +255,7 @@
         0,
         2,
         16,
-        32,
+        0,
         0,
         131,
         0,
@@ -302,5 +302,126 @@
         "main": 208,
         "string_addr": 272
     },
-    "relocations": []
+    "relocations": [
+        {
+            "location": 2,
+            "symbol": "main",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 6,
+            "symbol": "main",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 14,
+            "symbol": "main",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 22,
+            "symbol": "main",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 86,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 90,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 98,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 106,
+            "symbol": "loop_cond",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 110,
+            "symbol": "loop_end",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 114,
+            "symbol": "loop_end",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 122,
+            "symbol": "loop_end",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 130,
+            "symbol": "loop_end",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 210,
+            "symbol": "string_addr",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 214,
+            "symbol": "string_addr",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 222,
+            "symbol": "string_addr",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 230,
+            "symbol": "string_addr",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 234,
+            "symbol": "print_string",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 238,
+            "symbol": "print_string",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 246,
+            "symbol": "print_string",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 254,
+            "symbol": "print_string",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        }
+    ]
 }

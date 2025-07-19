@@ -24,6 +24,22 @@ class ReferenceResolverVisitor (ASTVisitor):
     def visitLabelNode (self, node):
         pass
 
+    def determineRelocationType (self, node):
+        if node.modifier == 'lo':
+            return "imm16_abs_lo"
+        elif node.modifier == 'ml':
+            return "imm16_abs_ml"
+        elif node.modifier == 'mh':
+            return "imm16_abs_mh"
+        elif node.modifier == 'hi':
+            return "imm16_abs_hi"
+        elif node.modifier == None:
+            return "addr64"
+        # We should never reach here, semantic analysis should catch this
+        # Just adding this for completion
+        print (f"ERROR: Unknown modifier '{node.modifier}'")
+        exit (1)
+
     def visitDataDirectiveNode (self, node):
         for i, arg in enumerate (node.args):
             # Ensure we are only looking at label expressions
@@ -33,17 +49,25 @@ class ReferenceResolverVisitor (ASTVisitor):
                 continue
             # Local (in file) symbols
             if arg.id in self.symbolTable:
-                arg.address = self.symbolTable[arg.id]
-            # Exteral (outside of file) symbols
+                # arg.address = self.symbolTable[arg.id]
+                # For now, let the linker handle this
+                arg.address = 0
+                self.relocationTable.append ({
+                    "location": node.address, # data starts at base address
+                    "symbol": arg.id,
+                    "type": self.determineRelocationType (arg),
+                    "isGlobal": False
+                })
+            # External (outside of file) symbols
             else:
                 # Just use 0 as a placeholder
                 # Linker will need to resolve this
                 arg.address = 0
                 self.relocationTable.append ({
-                    "location": node.address,
+                    "location": node.address, # data starts at base address
                     "symbol": arg.id,
-                    "type": "absolute",
-                    "arg_index": i
+                    "type": self.determineRelocationType (arg),
+                    "isGlobal": True
                 })
         for label in node.labels:
             label.accept (self)
@@ -57,17 +81,25 @@ class ReferenceResolverVisitor (ASTVisitor):
                 continue
             # Local (in file) symbols
             if arg.id in self.symbolTable:
-                arg.address = self.symbolTable[arg.id]
-            # Exteral (outside of file) symbols
+                # arg.address = self.symbolTable[arg.id]
+                # For now, let the linker handle this
+                arg.address = 0
+                self.relocationTable.append ({
+                    "location": node.address + 2, # imm is last 2 bytes of instruction
+                    "symbol": arg.id,
+                    "type": self.determineRelocationType (arg),
+                    "isGlobal": False
+                })
+            # External (outside of file) symbols
             else:
                 # Just use 0 as a placeholder
                 # Linker will need to resolve this
                 arg.address = 0
                 self.relocationTable.append ({
-                    "location": node.address,
+                    "location": node.address + 2, # imm is last 2 bytes of instruction
                     "symbol": arg.id,
-                    "type": "absolute",
-                    "arg_index": i
+                    "type": self.determineRelocationType (arg),
+                    "isGlobal": True
                 })
         for label in node.labels:
             label.accept (self)

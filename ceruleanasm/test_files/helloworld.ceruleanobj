@@ -23,7 +23,7 @@
         0,
         2,
         0,
-        36,
+        0,
         0,
         33,
         16,
@@ -158,5 +158,30 @@
         "_start": 0,
         "main": 36
     },
-    "relocations": []
+    "relocations": [
+        {
+            "location": 2,
+            "symbol": "main",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 6,
+            "symbol": "main",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 14,
+            "symbol": "main",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 22,
+            "symbol": "main",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        }
+    ]
 }
