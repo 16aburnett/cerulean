@@ -1,0 +1,37 @@
+// Super simple hello world example
+// Author: Amy Burnett
+//========================================================================
+
+function int32 @main () {
+    block entry {
+        %char0 = value (char('H'))
+        call @__builtin__print__char (char(%char0))
+        %char1 = value (char('e'))
+        call @__builtin__print__char (char(%char1))
+        %char2 = value (char('l'))
+        call @__builtin__print__char (char(%char2))
+        %char3 = value (char('l'))
+        call @__builtin__print__char (char(%char3))
+        %char4 = value (char('o'))
+        call @__builtin__print__char (char(%char4))
+        %char5 = value (char(','))
+        call @__builtin__print__char (char(%char5))
+        %char6 = value (char(' '))
+        call @__builtin__print__char (char(%char6))
+        %char7 = value (char('W'))
+        call @__builtin__print__char (char(%char7))
+        %char8 = value (char('o'))
+        call @__builtin__print__char (char(%char8))
+        %char9 = value (char('r'))
+        call @__builtin__print__char (char(%char9))
+        %char10 = value (char('l'))
+        call @__builtin__print__char (char(%char10))
+        %char11 = value (char('d'))
+        call @__builtin__print__char (char(%char11))
+        %char12 = value (char('!'))
+        call @__builtin__print__char (char(%char12))
+        %char13 = value (char('\n'))
+        call @__builtin__print__char (char(%char13))
+        return (int32(0))
+    }
+}

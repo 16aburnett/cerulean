@@ -22,7 +22,7 @@ if __name__ == "__main__":
     from .irGenerator import IRGeneratorVisitor
     from backend.irEmitter import IREmitterVisitor
     from backend.ceruleanIRBuilder import CeruleanIRBuilder
-    from backend.ceruleanIRCompiler import printAST, analyzeSemantics, generateCode
+    from backend.ceruleanIRCompiler import printAST, analyzeSemantics, generateCode, TargetLang
 else:
     from .preprocessor import CeruleanPreprocessor
     from .tokenizer import tokenize
@@ -39,14 +39,9 @@ else:
 
 # ========================================================================
 
-TARGET_AMYASM = "amyasm"
-TARGET_X86    = "x86"
-TARGET_PYTHON = "python"
-TARGET_CPP    = "cpp"
-
 class CeruleanCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitIRAST=False, emitPreprocessed=False, preprocess=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitIRAST=False, emitPreprocessed=False, preprocess=False, target=TargetLang.AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
@@ -181,9 +176,9 @@ class CeruleanCompiler:
 
         #=== CODEGEN =============================================================
 
-        # if target == TARGET_AMYASM:
+        # if target == TargetLang.AMYASM:
             # codeGenVisitor = CodeGenVisitor (lines)
-        # elif target == TARGET_X86:
+        # elif target == TargetLang.X86:
             # codeGenVisitor = CodeGenVisitor_x86 (lines)
         # elif target == TARGET_PYTHON:
             # codeGenVisitor = CodeGenVisitor_python (lines)
@@ -194,7 +189,7 @@ class CeruleanCompiler:
 
         # generate code
         print (f"Generating code...")
-        code = generateCode (irAST, lines, TARGET_AMYASM)
+        code = generateCode (irAST, lines, TargetLang.AMYASM)
 
         #=== OUTPUT ==============================================================
 
@@ -220,7 +215,9 @@ if __name__ == "__main__":
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the generated IR")
     argparser.add_argument("--emitIRAST", dest="emitIRAST", action="store_true", help="output the AST of the generated IR")
     argparser.add_argument("--preprocess", dest="preprocess", action="store_true", help="only run preprocessor")
-    argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm | x86 | python | cpp)")
+    argparser.add_argument("--target", dest="target", type=str,
+        choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
+        help="specifies the target language to compile to [default: amyasm]")
 
     args = argparser.parse_args()
 
@@ -230,18 +227,7 @@ if __name__ == "__main__":
     if args.outputFilename:
         destFilename = args.outputFilename
 
-    # ensure valid target
-    if args.target == None or args.target[0] == "amyasm": # Default 
-        target=TARGET_AMYASM
-    elif args.target[0] == "x86":  # Intel x86
-        target=TARGET_X86
-    elif args.target[0] == "python": # transpile to python
-        target=TARGET_PYTHON
-    elif args.target[0] == "cpp": # transpile to python
-        target=TARGET_CPP
-    else: # Invalid/unknown target
-        print (f"Unknown target {args.target}")
-        exit (1)
+    target = TargetLang(args.target)
 
     # output compilation info 
     print ("target      :", target)

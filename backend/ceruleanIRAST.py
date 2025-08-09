@@ -132,6 +132,7 @@ class VariableDeclarationNode (DeclarationNode):
     def __init__(self, id, token):
         super().__init__ (id, token)
         self.wasAssigned = True
+        self.references = []
 
         self.lineNumber = 0
         self.columnNumber = 0
@@ -156,6 +157,7 @@ class GlobalVariableDeclarationNode (DeclarationNode):
         self.command = command
         self.arguments = arguments
         self.wasAssigned = True
+        self.references = []
 
     def accept (self, visitor):
         return visitor.visitGlobalVariableDeclarationNode (self)

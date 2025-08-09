@@ -1,0 +1,728 @@
+Program:
+|   Instruction: "push"
+|   |   Labels:
+|   |   |   Label("__builtin__print__char")
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(0)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(16)
+|   Instruction: "putchar"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(0)
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "ret"
+|   Instruction: "push"
+|   |   Labels:
+|   |   |   Label("__main____main")
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(0)
+|   Instruction: "sub64i"
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(0)
+|   Instruction: "lli"
+|   |   Labels:
+|   |   |   Label("__main__main__entry")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   CharLiteral('H')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r1")
+|   |   |   CharLiteral('e')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r1")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r2")
+|   |   |   CharLiteral('l')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r2")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r3")
+|   |   |   CharLiteral('l')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r3")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r4")
+|   |   |   CharLiteral('o')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r4")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r5")
+|   |   |   CharLiteral(',')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r5")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r6")
+|   |   |   CharLiteral(' ')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r6")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r7")
+|   |   |   CharLiteral('W')
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r7")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('o')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(0)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(0)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('r')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-8)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-8)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('l')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-16)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-16)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('d')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-24)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-24)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('!')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-32)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-32)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   CharLiteral('\n')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-40)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-40)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("ra")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("ra")
+|   |   |   IntLiteral(0)
+|   Instruction: "lui"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__epilogue____main____main")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__epilogue____main____main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__epilogue____main____main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__epilogue____main____main")
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "add64i"
+|   |   Labels:
+|   |   |   Label("__epilogue____main____main")
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(0)
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "ret"
+|   Instruction: "lui"
+|   |   Labels:
+|   |   |   Label("__end____main____main")
+|   |   |   Label("__start")
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__main____main")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__main____main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__main____main")
+|   Instruction: "sll64i"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r0")
+|   |   |   IntLiteral(16)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__main____main")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "halt"

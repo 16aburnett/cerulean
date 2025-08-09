@@ -1,7 +1,6 @@
 # CeruleanIR Compiler
 # CeruleanIR is a low-level IR language
 # Author: Amy Burnett
-# March 20, 2024
 # ========================================================================
 
 import sys
@@ -18,15 +17,18 @@ from .parser import Parser
 from .visitor import *
 from .builtins import addBuiltinsToSymbolTable
 from .semanticAnalyzer import *
-from .codegen_amyasm import CodeGenVisitor_AmyAssembly
-from .codegen_x86 import CodeGenVisitor_x86
+from .backends.ceruleanasm.codegen import CodeGenVisitor_CeruleanASM
+from .backends.amyasm.codegen_amyasm import CodeGenVisitor_AmyAssembly
+from .backends.x86.codegen_x86 import CodeGenVisitor_x86
 
 # ========================================================================
 
-TARGET_AMYASM = "amyasm"
-TARGET_X86    = "x86"
-TARGET_PYTHON = "python"
-TARGET_CPP    = "cpp"
+class TargetLang(Enum):
+    CERULEANASM = "ceruleanasm"
+    AMYASM = "amyasm"
+    X86    = "x86"
+    # PYTHON = "python"
+    # CPP    = "cpp"
 
 BUILTIN_PREFIX = "__builtin__"
 
@@ -34,7 +36,7 @@ BUILTIN_PREFIX = "__builtin__"
 
 class CeruleanIRCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, emitIR=False, target=TARGET_AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
@@ -217,9 +219,11 @@ class CeruleanIRCompiler:
         for filename in fileASTs:
             ast = fileASTs[filename]
             source_code_lines = self.files[filename]
-            if target == TARGET_AMYASM:
+            if target == TargetLang.CERULEANASM:
+                code_generators[filename] = CodeGenVisitor_CeruleanASM (source_code_lines, shouldPrintDebug=self.shouldPrintDebug)
+            elif target == TargetLang.AMYASM:
                 code_generators[filename] = CodeGenVisitor_AmyAssembly (source_code_lines)
-            elif target == TARGET_X86:
+            elif target == TargetLang.X86:
                 code_generators[filename] = CodeGenVisitor_x86 (source_code_lines)
             else:
                 print (f"Error: unknown target language '{target}'")
@@ -241,9 +245,11 @@ class CeruleanIRCompiler:
             destCode = "".join(code_generator.code)
 
             # determine compiled filename
-            if target == TARGET_AMYASM:
+            if target == TargetLang.CERULEANASM:
+                dest_filename = f"{filename}.ceruleanasm"
+            elif target == TargetLang.AMYASM:
                 dest_filename = f"{filename}.amyasm"
-            elif target == TARGET_X86:
+            elif target == TargetLang.X86:
                 dest_filename = f"{filename}.asm"
             else:
                 print (f"Error: unknown target language '{target}'")
@@ -285,9 +291,11 @@ def analyzeSemantics (ast, sourceCodeLines):
 # ========================================================================
 
 def generateCode (ast, sourceCodeLines, target):
-    if target == TARGET_AMYASM:
+    if target == TargetLang.CERULEANASM:
+        codegenVisitor = CodeGenVisitor_CeruleanASM (sourceCodeLines)
+    elif target == TargetLang.AMYASM:
         codegenVisitor = CodeGenVisitor_AmyAssembly (sourceCodeLines)
-    elif target == TARGET_X86:
+    elif target == TargetLang.X86:
         codegenVisitor = CodeGenVisitor_x86 (sourceCodeLines)
     else:
         print (f"Error: unknown target language '{target}'")
@@ -314,7 +322,9 @@ if __name__ == "__main__":
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name of the outputted compiled file")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the Abstract Syntax Tree (AST)")
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the IR")
-    argparser.add_argument("--target", nargs=1, dest="target", help="specifies the target language to compile to [default amyasm] (amyasm, x86)")
+    argparser.add_argument("--target", dest="target", type=str,
+        choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
+        help="specifies the target language to compile to [default: amyasm]")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
     args = argparser.parse_args()
@@ -325,18 +335,7 @@ if __name__ == "__main__":
     if args.outputFilename:
         destFilename = args.outputFilename
 
-    # ensure valid target
-    if args.target == None or args.target[0] == "amyasm": # Default 
-        target=TARGET_AMYASM
-    elif args.target[0] == "x86":  # Intel x86
-        target=TARGET_X86
-    elif args.target[0] == "python": # transpile to python
-        target=TARGET_PYTHON
-    elif args.target[0] == "cpp": # transpile to python
-        target=TARGET_CPP
-    else: # Invalid/unknown target
-        print (f"Error: Unknown target '{args.target}'")
-        exit (1)
+    target = TargetLang(args.target)
 
     # output compilation info
     print ("target      :", target)
@@ -353,5 +352,3 @@ if __name__ == "__main__":
         debug=args.debug
     )
     destCode = compiler.compile ()
-
-

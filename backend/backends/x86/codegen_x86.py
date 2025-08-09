@@ -6,9 +6,9 @@
 import os 
 from sys import exit
 
-from .ceruleanIRAST import *
-from .visitor import ASTVisitor
-from .symbolTable import SymbolTable
+from ...ceruleanIRAST import *
+from ...visitor import ASTVisitor
+from ...symbolTable import SymbolTable
 
 # ========================================================================
 

@@ -1,0 +1,223 @@
+ProgramNode:
+|   Function: @main (void)->int32
+|   |   ReturnType:
+|   |   |   Type: Type.INT32 int32
+|   |   Body:
+|   |   |   Basic Block: entry
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char0
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: H byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char0
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char1
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: e byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char1
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char2
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: l byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char2
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char3
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: l byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char3
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char4
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: o byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char4
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char5
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: , byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char5
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char6
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal:   byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char6
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char7
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: W byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char7
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char8
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: o byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char8
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char9
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: r byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char9
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char10
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: l byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char10
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char11
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: d byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char11
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char12
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: ! byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char12
+|   |   |   |   Instruction:
+|   |   |   |   |   LHS: %char13
+|   |   |   |   |   Command: value
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Char Literal: \n byte
+|   |   |   |   Call Instruction:
+|   |   |   |   |   Called Function: @__builtin__print__char
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.CHAR char
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Local Variable: %char13
+|   |   |   |   Instruction:
+|   |   |   |   |   Command: return
+|   |   |   |   |   Arguments:
+|   |   |   |   |   |   Argument: 
+|   |   |   |   |   |   |   Type: Type.INT32 int32
+|   |   |   |   |   |   |   Expression:
+|   |   |   |   |   |   |   |   Int Literal: 0 int32
