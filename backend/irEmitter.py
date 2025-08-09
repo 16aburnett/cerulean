@@ -18,7 +18,8 @@ class IREmitterVisitor (ASTVisitor):
         self.level = 0
         self.code = []
 
-    def getIRCode (self):
+    def emit (self, ast):
+        ast.accept (self)
         return "".join (self.code)
 
     # === HELPER FUNCTIONS ===============================================

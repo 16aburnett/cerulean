@@ -40,6 +40,10 @@ class CodeGenVisitor_AmyAssembly (ASTVisitor):
         self.wasSuccessful = True
         self.cmpIndex = 0
 
+    def generate (self, ast):
+        ast.accept (self)
+        return "".join (self.code)
+
     # === HELPER FUNCTIONS ===============================================
 
     def printSpaces (self, level):

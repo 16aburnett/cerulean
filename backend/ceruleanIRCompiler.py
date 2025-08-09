@@ -36,60 +36,14 @@ BUILTIN_PREFIX = "__builtin__"
 
 class CeruleanIRCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amyasm", debug=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM):
-        self.mainFilename = mainFilename
-        self.otherFilenames = otherFilenames
-        self.destFilename = destFilename
-        self.files = {}
+    def __init__(self, debug=False):
         self.shouldPrintDebug = debug
-        self.ast = ""
-
-        self.emitAST = emitAST
-        self.emitIR = emitIR
-
-        self.astFilename = mainFilename + ".ast"
-        self.debugLines = []
-
-        self.target = target
 
     #---------------------------------------------------------------------
 
-    def compile (self):
+    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM):
 
-        #=== GATHERING INPUT =============================================
-        # Start by reading in the contents of the files to compile.
-        
-        rootDir = os.path.abspath("")
-
-        # ensure main file exists
-        if (not os.path.exists(os.path.abspath(self.mainFilename))):
-            print (f"Compiler Error: '{self.mainFilename}' does not exist")
-            print (f"   Current Dir: {os.getcwd()}")
-            print (f"   Absolute Path: {os.path.abspath(self.mainFilename)}")
-            exit (1)
-
-        # Read in file contents
-        print ("file:", self.mainFilename)
-        self.files[os.path.abspath(self.mainFilename)] = open (os.path.abspath(self.mainFilename), "r").readlines ()
-        
-        # ensure last line ends in newline
-        if len(self.files[os.path.abspath(self.mainFilename)]) > 0:
-            if not self.files[os.path.abspath(self.mainFilename)][-1].endswith ("\n"):
-                self.files[os.path.abspath(self.mainFilename)][-1] = self.files[os.path.abspath(self.mainFilename)][-1] + "\n"
-        for i in range(len(self.otherFilenames)):
-            # print ("file:", os.path.abspath(self.otherFilenames[i]))
-            # ensure file exists
-            if (not os.path.exists(os.path.abspath(self.otherFilenames[i]))):
-                print (f"Compiler Error: '{self.otherFilenames[i]}' does not exist")
-                print (f"   Current Dir: {os.getcwd()}")
-                print (f"   Absolute Path: {os.path.abspath(self.otherFilenames[i])}")
-                exit (1)
-            # add file to included files 
-            self.files[os.path.abspath(self.otherFilenames[i])] = open (os.path.abspath(self.otherFilenames[i]), "r").readlines ()
-            # ensure last line ends in newline
-            if len(self.files[os.path.abspath(self.otherFilenames[i])]) > 0:
-                if not self.files[os.path.abspath(self.otherFilenames[i])][-1].endswith ("\n"):
-                    self.files[os.path.abspath(self.otherFilenames[i])][-1] = self.files[os.path.abspath(self.otherFilenames[i])][-1] + "\n"
+        lines = rawSourceCode.split ("\n")
 
         #=== TOKENIZATION ================================================
         # Group source code characters into tokens to identify symbols/operators,
@@ -99,30 +53,25 @@ class CeruleanIRCompiler:
         # Tokenization will throw errors for invalid symbols and invalid
         # identifiers.
 
-        self.debug ("Tokenizing...")
-        # Tokenize each file
-        fileTokens = {}
-        for filename in self.files:
-            self.debug (f"   Tokenizing '{filename}'...")
-            fileLines = self.files[filename]
-            fileContentsString = "".join (fileLines)
-            fileTokens[filename] = tokenize (fileContentsString, filename, )
+        self.printDebug ("Tokenizing...")
+        tokens = tokenize (rawSourceCode, sourceFilename)
 
         # DEBUG - print tokens to a file
-        for filename in fileTokens:
-            tokens = fileTokens[filename]
-            tokens_string = []
+        if emitTokens:
+            tokensString = []
             for token in tokens:
                 if (token.type == "IDENTIFIER" or token.type == "GVARIABLE" or token.type == "LVARIABLE"):
-                    tokens_string += [f"{token.type}({token.lexeme}) "]
+                    tokensString += [f"{token.type}({token.lexeme}) "]
                 elif token.type == "NEWLINE":
-                    tokens_string += ["\n"]
+                    tokensString += ["\n"]
                 else:
-                    tokens_string += [f"{token.type} "]
-            tokens_string = "".join (tokens_string)
-            tokens_file = open (f"{filename}.tokens", "w")
-            tokens_file.write (tokens_string)
-            tokens_file.close ()
+                    tokensString += [f"{token.type} "]
+            tokensString = "".join (tokensString)
+            tokensFilename = f"{sourceFilename}.tokens"
+            self.printDebug (f"Writing Tokens to \"{tokensFilename}\"")
+            tokensFile = open (tokensFilename, "w")
+            tokensFile.write (tokensString)
+            tokensFile.close ()
 
         #=== PARSING =====================================================
         # Parsing groups tokens into code structures like instructions,
@@ -134,79 +83,56 @@ class CeruleanIRCompiler:
         # Since the parser is looking for specific code structures, it will
         # give an error if incorrect syntax is found.
 
-        self.debug ("Parsing...")
-        
-        # Parse each file 
-        fileASTs = {}
-        for filename in self.files:
-            self.debug (f"   Parsing '{filename}'...")
-            fileLines = self.files[filename]
-            tokens = fileTokens[filename]
-            # Parse file
-            parser = Parser (tokens, fileLines, False)
-            fileASTs[filename] = parser.parse ()
+        self.printDebug ("Parsing...")
+        parser = Parser (tokens, lines, False)
+        ast = parser.parse ()
 
         #=== SEMANTIC ANALYSIS ===========================================
 
-        self.debug ("Analyzing semantics...")
+        self.printDebug ("Analyzing semantics...")
+        semanticAnalyzer = SemanticAnalysisVisitor (lines, False)
 
-        # semantically analyze each file's AST
-        for filename in fileASTs:
-            self.debug (f"   Analyzing semantics of AST for '{filename}'...")
-            ast = fileASTs[filename]
-            source_code_lines = self.files[filename]
+        # Add built-in functions/variables to the symbol table
+        # So we know what functions exist for checking for undefined symbols
+        addBuiltinsToSymbolTable (semanticAnalyzer.table)
 
-            semanticAnalysisVisitor = SemanticAnalysisVisitor (source_code_lines, False)
+        # Check AST
+        # checks for:
+        # - undeclared vars
+        # - redeclared vars
+        # - matching operand types
+        # - valid instructions
+        wasSuccessful = semanticAnalyzer.analyze (ast)
+        # ensure it was successful 
+        if not wasSuccessful:
+            print ("ERROR: Semantic Analysis failed")
+            exit (1)
 
-            # Add built-in functions/variables to the symbol table
-            # So we know what functions exist for checking for undefined symbols
-            addBuiltinsToSymbolTable (semanticAnalysisVisitor.table)
-
-            # Check AST
-            # checks for:
-            # - undeclared vars
-            # - redeclared vars
-            # - matching operand types
-            # - valid instructions
-            ast.accept (semanticAnalysisVisitor)
-            # ensure it was successful 
-            if (not semanticAnalysisVisitor.wasSuccessful):
-                exit (1)
-
-            # Reaches here if the file is semantically valid
-            self.debug ("   Semantic analysis passes successfully")
+        # Reaches here if the file is semantically valid
+        self.printDebug ("Semantic analysis passes successfully")
         
         #=== PRINT AST ===================================================
 
         # DEBUG - print AST to file
-        if self.emitAST:
-            self.debug (f"Printing AST...")
-            for filename in fileASTs:
-                self.debug (f"   Printing AST for '{filename}'...")
-                printVisitor = PrintVisitor ()
-                ast = fileASTs[filename]
-                ast.accept (printVisitor)
-                astFilename = f"{filename}.ast"
-                astFile = open (astFilename, "w")
-                self.debug (f"   Writing AST to '{astFilename}'...")
-                astFile.write ("".join (printVisitor.outputstrings))
-                astFile.close ()
+        if emitAST:
+            astFilename = f"{sourceFilename}.ast"
+            self.printDebug (f"Printing AST to '{astFilename}'...")
+            printVisitor = PrintVisitor ()
+            output = printVisitor.print (ast)
+            astFile = open (astFilename, "w")
+            astFile.write (output)
+            astFile.close ()
 
         #=== EMITTING IR =================================================
         # Regenerates the IR code and outputs to a file
 
-        if self.emitIR:
-            self.debug (f"Emitting IR...")
-            for filename in fileASTs:
-                ast = fileASTs[filename]
-                self.debug (f"   Emitting IR for '{filename}'...")
-                irEmitter = IREmitterVisitor ()
-                ast.accept (irEmitter)
-                irOutput = irEmitter.getIRCode ()
-                irFilename = filename + ".ir"
-                self.debug (f"   Writing IR to '{irFilename}'...")
-                file = open (irFilename, "w")
-                file.write (irOutput)
+        if emitIR:
+            irFilename = f"{sourceFilename}.ir"
+            self.printDebug (f"Emitting IR to '{irFilename}'...")
+            irEmitter = IREmitterVisitor ()
+            irOutput = irEmitter.emit (ast)
+            file = open (irFilename, "w")
+            file.write (irOutput)
 
         #=== OPTIMIZATION ================================================
         # TODO: figure out what optimizations I can do
@@ -214,58 +140,28 @@ class CeruleanIRCompiler:
         #=== CODE GENERATION =============================================
 
         # keyed by filename
-        self.debug (f"Generating code...")
-        code_generators = {}
-        for filename in fileASTs:
-            ast = fileASTs[filename]
-            source_code_lines = self.files[filename]
-            if target == TargetLang.CERULEANASM:
-                code_generators[filename] = CodeGenVisitor_CeruleanASM (source_code_lines, shouldPrintDebug=self.shouldPrintDebug)
-            elif target == TargetLang.AMYASM:
-                code_generators[filename] = CodeGenVisitor_AmyAssembly (source_code_lines)
-            elif target == TargetLang.X86:
-                code_generators[filename] = CodeGenVisitor_x86 (source_code_lines)
-            else:
-                print (f"Error: unknown target language '{target}'")
-                exit (1)
+        self.printDebug (f"Generating code...")
+        if target == TargetLang.CERULEANASM:
+            codeGenerator = CodeGenVisitor_CeruleanASM (lines, shouldPrintDebug=self.shouldPrintDebug)
+        elif target == TargetLang.AMYASM:
+            codeGenerator = CodeGenVisitor_AmyAssembly (lines)
+        elif target == TargetLang.X86:
+            codeGenerator = CodeGenVisitor_x86 (lines)
+        else:
+            print (f"Error: unknown target language '{target}'")
+            exit (1)
 
-            # generate code
-            ast.accept (code_generators[filename])
+        # generate code
+        generatedCode = codeGenerator.generate (ast)
 
-            # Ensure codegen was successful
-            if not code_generators[filename].wasSuccessful:
-                print (f"Error: codegen failed on file '{filename}'")
-                exit (1)
+        # Ensure codegen was successful
+        if not codeGenerator.wasSuccessful:
+            print (f"Error: codegen failed")
+            exit (1)
 
-        #=== OUTPUT ======================================================
-        # Combine generated code to a single executable/interpretable file.
+        return generatedCode
 
-        for filename in code_generators:
-            code_generator = code_generators[filename]
-            destCode = "".join(code_generator.code)
-
-            # determine compiled filename
-            if target == TargetLang.CERULEANASM:
-                dest_filename = f"{filename}.ceruleanasm"
-            elif target == TargetLang.AMYASM:
-                dest_filename = f"{filename}.amyasm"
-            elif target == TargetLang.X86:
-                dest_filename = f"{filename}.asm"
-            else:
-                print (f"Error: unknown target language '{target}'")
-                exit (1)
-
-            # output generated/compiled code to separate file
-            self.debug (f"   Writing compiled code to \"{dest_filename}\"")
-            file = open(dest_filename, "w")
-            file.write (destCode)
-
-        #=== END =========================================================
-
-        print ("Compiled successfully!")
-        return None
-
-    def debug(self, *args, **kwargs):
+    def printDebug (self, *args, **kwargs):
         """Custom debug print function."""
         if (self.shouldPrintDebug):
             print(*args, **kwargs)
@@ -274,43 +170,42 @@ class CeruleanIRCompiler:
 
 def printAST (ast):
     printVisitor = PrintVisitor ()
-    ast.accept (printVisitor)
-    return "".join (printVisitor.outputstrings)
+    output = printVisitor.print (ast)
+    return output
 
 # ========================================================================
 
 def analyzeSemantics (ast, sourceCodeLines):
-    semanticAnalysisVisitor = SemanticAnalysisVisitor (sourceCodeLines, False)
+    semanticAnalyzer = SemanticAnalysisVisitor (sourceCodeLines, False)
     # Add built-in functions/variables to the symbol table
     # So we know what functions exist for checking for undefined symbols
-    addBuiltinsToSymbolTable (semanticAnalysisVisitor.table)
+    addBuiltinsToSymbolTable (semanticAnalyzer.table)
     # Check ast
-    ast.accept (semanticAnalysisVisitor)
-    return semanticAnalysisVisitor.wasSuccessful
+    wasSuccessful = semanticAnalyzer.analyze (ast)
+    return wasSuccessful
 
 # ========================================================================
 
 def generateCode (ast, sourceCodeLines, target):
     if target == TargetLang.CERULEANASM:
-        codegenVisitor = CodeGenVisitor_CeruleanASM (sourceCodeLines)
+        codeGenerator = CodeGenVisitor_CeruleanASM (sourceCodeLines, shouldPrintDebug=self.shouldPrintDebug)
     elif target == TargetLang.AMYASM:
-        codegenVisitor = CodeGenVisitor_AmyAssembly (sourceCodeLines)
+        codeGenerator = CodeGenVisitor_AmyAssembly (sourceCodeLines)
     elif target == TargetLang.X86:
-        codegenVisitor = CodeGenVisitor_x86 (sourceCodeLines)
+        codeGenerator = CodeGenVisitor_x86 (sourceCodeLines)
     else:
         print (f"Error: unknown target language '{target}'")
         exit (1)
 
     # generate code
-    ast.accept (codegenVisitor)
+    generatedCode = codeGenerator.generate (ast)
 
     # Ensure codegen was successful
-    if not codegenVisitor.wasSuccessful:
+    if not codeGenerator.wasSuccessful:
         print (f"Error: codegen failed")
         exit (1)
 
-    # NOTE: this should be a getter .getGeneratedCode
-    return "".join (codegenVisitor.code)
+    return generatedCode
 
 # ========================================================================
 
@@ -320,6 +215,7 @@ if __name__ == "__main__":
 
     argparser.add_argument(dest="sourceFiles", nargs="+", help="source files to compile (first file should be the main file)")
     argparser.add_argument("-o", "--outputFilename", dest="outputFilename", help="name of the outputted compiled file")
+    argparser.add_argument("--emitTokens", dest="emitTokens", action="store_true", help="output the parsed tokens to a file")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the Abstract Syntax Tree (AST)")
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the IR")
     argparser.add_argument("--target", dest="target", type=str,
@@ -329,26 +225,42 @@ if __name__ == "__main__":
 
     args = argparser.parse_args()
 
-    mainFilename = args.sourceFiles[0]
-    otherFilenames = args.sourceFiles[1:]
-    destFilename = "a.amyasm" # this assumes target is AmyAssembly
-    if args.outputFilename:
-        destFilename = args.outputFilename
-
     target = TargetLang(args.target)
+    sourceFilename = args.sourceFiles[0]
+    # otherFilenames = args.sourceFiles[1:]
+    destFilename = None
+    if args.outputFilename: # provided target filename
+        destFilename = args.outputFilename
+    elif target == TargetLang.CERULEANASM:
+        destFilename = os.path.splitext (sourceFilename)[0] + ".ceruleanasm"
+    elif target == TargetLang.AMYASM:
+        destFilename = os.path.splitext (sourceFilename)[0] + ".amyasm"
+    elif target == TargetLang.X86:
+        destFilename = os.path.splitext (sourceFilename)[0] + ".asm"
+    else:
+        print (f"Error: unknown target, {target}")
+        exit (1)
 
     # output compilation info
     print ("target      :", target)
     print ("destFilename:", destFilename)
 
+    # Read source code
+    with open (sourceFilename, "r") as f:
+        rawSourceCode = f.read ()
+
     # compile code 
-    compiler = CeruleanIRCompiler (
-        mainFilename, 
-        otherFilenames, 
-        destFilename=destFilename,
+    compiler = CeruleanIRCompiler (debug=args.debug)
+    targetCode = compiler.compile (
+        rawSourceCode,
+        sourceFilename,
+        emitTokens=args.emitTokens,
         emitAST=args.emitAST,
         emitIR=args.emitIR,
-        target=target,
-        debug=args.debug
+        target=target
     )
-    destCode = compiler.compile ()
+
+    # Write target code
+    print (f"Writing compiled code to \"{destFilename}\"")
+    with open (destFilename, "w") as f:
+        f.write (targetCode)

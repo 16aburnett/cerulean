@@ -42,6 +42,10 @@ class CodeGenVisitor_x86 (ASTVisitor):
         self.floatZeroLabel = ".floatZero"
         self.floatOneLabel = ".floatOne"
 
+    def generate (self, ast):
+        ast.accept (self)
+        return "".join (self.code)
+
     # === HELPER FUNCTIONS ===============================================
 
     def printSpaces (self, level):

@@ -54,6 +54,10 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         self.spillSlots = {}        # SSA var → stack slot index
         self.nextSpillSlot = 0
 
+    def generate (self, ast):
+        ast.accept (self)
+        return "".join (self.code)
+
     # === HELPER FUNCTIONS ===============================================
 
     def printSpaces (self, level):

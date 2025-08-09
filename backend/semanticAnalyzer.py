@@ -14,7 +14,7 @@ from .symbolTable import *
 
 class SemanticAnalysisVisitor (ASTVisitor):
 
-    def __init__(self, lines, debug=False):
+    def __init__ (self, lines, debug=False):
         self.debug = debug
         self.table = SymbolTable (self.debug)
 
@@ -34,6 +34,11 @@ class SemanticAnalysisVisitor (ASTVisitor):
 
         self.insertFunc = True
 
+    # ====================================================================
+
+    def analyze (self, ast):
+        ast.accept (self)
+        return self.wasSuccessful
 
     # ====================================================================
 

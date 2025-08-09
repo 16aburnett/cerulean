@@ -152,10 +152,10 @@ class CeruleanCompiler:
         if self.emitIR:
             print (f"Emitting IR...")
             irEmitterVisitor = IREmitterVisitor ()
-            irAST.accept (irEmitterVisitor)
+            output = irEmitterVisitor.emit (irAST)
             print (f"Writing IR to \"{self.irFilename}\"...")
             irFile = open (self.irFilename, "w")
-            irFile.write (irEmitterVisitor.getIRCode ())
+            irFile.write (output)
             irFile.close ()
 
         if self.emitIRAST:

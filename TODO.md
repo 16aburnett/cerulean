@@ -73,24 +73,31 @@ ceruleanirc <source_files> -o <dest_filename>
 
 
 # test examples
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld.ceruleanir -o backend/test_files/helloworld.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld.ceruleanir.amyasm
+# helloworld
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld.ceruleanir -o backend/test_files/helloworld.amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld.amyasm
 
-python3 -m backend.ceruleanIRCompiler backend/test_files/test_math.ceruleanir -o backend/test_files/test_math.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_math.ceruleanir.amyasm
+# test_math
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_math.ceruleanir -o backend/test_files/test_math.amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_math.amyasm
 
-python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_heap_arrays.ceruleanir.amyasm
+# test_heap_arrays
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_heap_arrays.ceruleanir -o backend/test_files/test_heap_arrays.amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_heap_arrays.amyasm
 
 # test_cmp
-python3 -m backend.ceruleanIRCompiler backend/test_files/test_cmp.ceruleanir -o backend/test_files/test_cmp.amyasm --debug --emitAST --emitIR
-python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cmp.ceruleanir.amyasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/test_cmp.ceruleanir -o backend/test_files/test_cmp.amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cmp.amyasm
 
 # Test target=ceruleanasm
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitAST --emitIR
-python3 -m ceruleanasm.assembler backend/test_files/helloworld0.ceruleanir.ceruleanasm -o backend/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler backend/test_files/helloworld0.ceruleanasm -o backend/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanld.linker backend/test_files/helloworld0.ceruleanobj -o backend/test_files/helloworld0.ceruleanbc --debug
 ceruleanvm/build/ceruleanvm backend/test_files/helloworld0.ceruleanbc
+# Test target=ceruleanasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld0.amyasm
+
 
 ```
 

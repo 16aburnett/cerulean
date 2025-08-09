@@ -19,6 +19,12 @@ class PrintVisitor (ASTVisitor):
 
     # ====================================================================
 
+    def print (self, ast):
+        ast.accept (self)
+        return "".join (self.outputstrings)
+
+    # ====================================================================
+
     def visitProgramNode (self, node):
         self.printSpaces (self.level)
         self.outputstrings += ["ProgramNode:\n"]
