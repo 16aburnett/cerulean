@@ -9,6 +9,7 @@ CeruleanVM uses a CMake build system. The following commands should build the pr
 cmake -S . -B build/
 cmake --build build
 ```
+<!-- rm -rf build/ && cmake -S . -B build/ && cmake --build build -->
 
 This should produce the CeruleanVM executable: `./build/ceruleanvm`
 

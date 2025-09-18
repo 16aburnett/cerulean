@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <cmath>
+#include "disassembler.hpp"
 
 CeruleanVM::CeruleanVM (const std::vector<uint8_t>& bytecode, bool debug_)
     : memory(bytecode.size(), STACK_SIZE, HEAP_SIZE), debug(debug_) {
@@ -81,6 +82,10 @@ void CeruleanVM::execute_instruction () {
         {
             printf ("%lx, ", registers.get<uint64_t>(i));
         }
+        // Disassemble
+        std::vector<uint8_t> instr_bytes = {code[pc+0], code[pc+1], code[pc+2], code[pc+3]};
+        std::string disassembled = disassemble (instr_bytes);
+        printf (" | %s", disassembled.c_str());
         printf ("\n");
     }
     switch (opcode) {

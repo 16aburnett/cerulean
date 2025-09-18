@@ -12,6 +12,8 @@ add_executable(ceruleanvm
     src/ceruleanvm.cpp
 	src/loader.cpp
 	src/memory_manager.cpp
+	src/instruction_registry.cpp
+	src/disassembler.cpp
 )
 
 # Debugger
@@ -21,6 +23,8 @@ add_executable(ceruleandbg
 	src/ceruleanvm.cpp
 	src/loader.cpp
 	src/memory_manager.cpp
+	src/instruction_registry.cpp
+	src/disassembler.cpp
 )
 
 # Testing
@@ -30,6 +34,8 @@ if(BUILD_TESTS)
 		tests/main.cpp
 		src/ceruleanvm.cpp
 		src/memory_manager.cpp
+		src/instruction_registry.cpp
+		src/disassembler.cpp
 	)
 endif()
 
