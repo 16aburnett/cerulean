@@ -89,6 +89,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_he
 python3 -m backend.ceruleanIRCompiler backend/test_files/test_cmp.ceruleanir -o backend/test_files/test_cmp.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cmp.amyasm
 
+# helloworld0
 # Test target=ceruleanasm
 python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld0.ceruleanasm -o backend/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
@@ -98,6 +99,16 @@ ceruleanvm/build/ceruleanvm backend/test_files/helloworld0.ceruleanbc
 python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld0.amyasm
 
+
+# helloworld1
+# Test target=ceruleanasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler backend/test_files/helloworld1.ceruleanasm -o backend/test_files/helloworld1.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker backend/test_files/helloworld1.ceruleanobj -o backend/test_files/helloworld1.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm backend/test_files/helloworld1.ceruleanbc
+# Test target=ceruleanasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld1.amyasm
 
 ```
 

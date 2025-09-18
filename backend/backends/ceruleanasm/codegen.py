@@ -41,6 +41,10 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         self.wasSuccessful = True
         self.cmpIndex = 0
 
+        # Data section fields
+        self.nextStringIndex = 0
+        self.dataSection = []
+
         self.functionEpilogueLabel = "<unknown-function-epilogue-label>"
 
         # Reg allocation
@@ -56,7 +60,10 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
 
     def generate (self, ast):
         ast.accept (self)
-        return "".join (self.code)
+        codeSection = "".join (self.code)
+        dataSectionHeader = "\n// data section\n"
+        dataSection = "".join (self.dataSection)
+        return codeSection + dataSectionHeader + dataSection
 
     # === HELPER FUNCTIONS ===============================================
 
@@ -65,13 +72,22 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             level = 1
             
         while level > 0:
-            for i in range(TAB_LENGTH):
-                self.code += [" "]
+            self.code += [" " * TAB_LENGTH]
             level -= 1
 
     def printCode (self, line):
         self.printSpaces (self.indentation)
         self.code += [f"{line}\n"]
+
+    def printDataDirective (self, line, label=None):
+        if label:
+            self.dataSection += [f"{label}:\n"]
+        self.dataSection += [" " * TAB_LENGTH, f"{line}\n"]
+    
+    def getNewStringLabel (self):
+        label = f"str_{self.nextStringIndex}"
+        self.nextStringIndex += 1
+        return label
 
     def printLabel (self, label):
         # labels do not have indentation
@@ -158,19 +174,13 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         self.virtualToPhysical[virtualName] = {"kind": "spill", "value": slot}
         return self.virtualToPhysical[virtualName]
 
-    # Returns a register corresponding to the given virtual register/variable
-    # If register spilling was needed, then this will emit a load instruction
-    # to read the value from the stack and return it in a temporary register
-    # Given virtual register/variable must have been allocated
-    def resolve (self, virtualName):
-        regOrSpill = self.virtualToPhysical[virtualName]
-        
-        if regOrSpill is None:
-            raise Exception(f"Unknown virtual register {virtualName}")
-        
+    def resolve (self, regOrSpill):
+        # In case user passed an immediate
+        if isinstance (regOrSpill, (int, str, float)):
+            return regOrSpill
         if regOrSpill["kind"] == "spill":
             # Emit a LOAD from spill slot into a temp reg
-            tempReg = getTempReg ()
+            tempReg = self.getTempReg ()
             self.printCode (f"load64 {tempReg}, bp, -{regOrSpill['value']}")
             return tempReg
         reg = regOrSpill["value"]
@@ -414,15 +424,26 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
             arg1 = node.arguments[1].accept (self)
+            arg0reg = self.resolve (arg0)
+            arg1reg = self.resolve (arg1)
+            if isinstance (node.arguments[1].expression, (IntLiteralExpressionNode)):
+                op = "add64i"
+            else:
+                op = "add64"
             if regOrSpill["kind"] == "spill":
                 offset = -regOrSpill["value"] * 8
                 tempReg = self.getTempReg ()
-                self.printCode (f"add64 {tempReg}, {arg0}, {arg1} // {lhs_var} = add {arg0}, {arg1}")
+                self.printCode (f"{op} {tempReg}, {arg0reg}, {arg1reg} // {lhs_var} = add {arg0reg}, {arg1reg}")
                 self.printCode (f"store64 bp, {tempReg}, {offset} // spill to stack")
+                # Free up registers
                 self.deallocateTempReg (tempReg)
             else:
                 reg = regOrSpill["value"]
-                self.printCode (f"add64 {reg}, {arg0}, {arg1} // {lhs_var} = add {arg0}, {arg1}")
+                self.printCode (f"{op} {reg}, {arg0reg}, {arg1reg} // {lhs_var} = add {arg0reg}, {arg1reg}")
+            if arg0reg in self.scratchRegisters:
+                self.deallocateTempReg (arg0reg)
+            if arg1reg in self.scratchRegisters:
+                self.deallocateTempReg (arg1reg)
         elif command_name == "sub":
             # CeruleanIR : <dest> = sub (<src0>, <src1>)
             # CeruleanASM: sub64 <dest>, <src0>, <src1>
@@ -479,10 +500,10 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             regOrSpill = node.lhsVariable.accept (self)
             lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             arg0 = node.arguments[0].accept (self)
-            if isinstance (node.arguments[0].expression, (IntLiteralExpressionNode, FloatLiteralExpressionNode, CharLiteralExpressionNode, StringLiteralExpressionNode)):
+            if isinstance (node.arguments[0].expression, (IntLiteralExpressionNode, FloatLiteralExpressionNode, CharLiteralExpressionNode)):
                 # NOTE: This is problematic if the arg doesnt fit in 16 bits
                 op = "lli"
-            else:
+            else: # reg to reg (string literals)
                 op = "mv64"
             if regOrSpill["kind"] == "spill":
                 offset = -regOrSpill["value"] * 8
@@ -493,6 +514,9 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             else:
                 reg = regOrSpill["value"]
                 self.printCode (f"{op} {reg}, {arg0} // {lhs_var} = value {arg0}")
+            # SUPER AD HOC ICKY!
+            if isinstance (node.arguments[0].expression, (StringLiteralExpressionNode)):
+                self.deallocateTempReg (arg0)
         elif command_name == "alloca":
             print (f"ERROR: {command_name} not implemented")
             exit (1)
@@ -531,18 +555,49 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             ptr = node.arguments[0].accept (self)
             self.printCode (f"FREE {ptr}")
         elif command_name == "load":
-            print (f"ERROR: {command_name} not implemented")
-            exit (1)
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
-            # CeruleanASM: ASSIGN <dest> <pointer>[<offset>]
+            # CeruleanASM: load<size> r<dest>, r<ptr>, imm<offset>
+
             # visit variabledecl to establish scopename
             # **lhsvariable should probably return scopename
-            node.lhsVariable.accept (self)
+            regOrSpill = node.lhsVariable.accept (self)
             lhs_var = node.lhsVariable.scopeName.replace(".", "_")
             # **NOTE** ignoring type arg
-            pointer = node.arguments[1].accept (self)
-            offset = node.arguments[2].accept (self)
-            self.printCode (f"ASSIGN {lhs_var} {pointer}[{offset}]")
+            pointerRegOrSpill = node.arguments[1].accept (self)
+            offsetRegSpillImm = node.arguments[2].accept (self)
+            pointerReg = self.resolve (pointerRegOrSpill)
+            offsetRegOrImm = self.resolve (offsetRegSpillImm)
+
+            # Handle case where offset is register
+            if isinstance (node.arguments[2].expression, LocalVariableExpressionNode):
+                offsetReg = offsetRegOrImm
+                tempReg = self.getTempReg ()
+                self.debugPrint (f">>> lowering load(R,R) to add(R,R,R) and load(R,R,I)")
+                self.printCode (f"add64 {tempReg}, {pointerReg}, {offsetReg}")
+                # deallocate temp registers if used
+                if pointerReg in self.scratchRegisters:
+                    self.deallocateTempReg (pointerReg)
+                if offsetReg in self.scratchRegisters:
+                    self.deallocateTempReg (offsetReg)
+                pointerReg = tempReg
+                offsetImmediate = 0
+            else:
+                offsetImmediate = offsetRegOrImm
+
+            # TODO: This need to take into account the type
+            op = f"load64"
+            if regOrSpill["kind"] == "spill":
+                regOffset = -regOrSpill["value"] * 8
+                tempReg = self.getTempReg ()
+                self.printCode (f"{op} {tempReg}, {pointerReg}, {offsetImmediate}")
+                self.printCode (f"store64 bp, {tempReg}, {regOffset} // spill to stack")
+                self.deallocateTempReg (tempReg)
+            else:
+                reg = regOrSpill["value"]
+                self.printCode (f"{op} {reg}, {pointerReg}, {offsetImmediate} // {lhs_var} = load {pointerReg}, {offsetImmediate}")
+            # deallocate temp registers if used
+            if pointerReg in self.scratchRegisters:
+                self.deallocateTempReg (pointerReg)
         elif command_name == "store":
             print (f"ERROR: {command_name} not implemented")
             exit (1)
@@ -831,37 +886,23 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
     #=====================================================================
 
     def visitStringLiteralExpressionNode (self, node):
-        print ("ERROR: visitStringLiteralExpressionNode not implemented")
-        exit (1)
         self.printComment ("String Literal")
-        self.indentation += 1
-        # this should be allocated statically
-        # I REALLY need to fix this stack/heap issue
-        # create string on heap as char[]
-        node.value = (node.value.replace(f'\n', f'\\n').replace ('\t', '\\t')).replace ("\r", "\\r").replace ("\b", "\\b")
-        # node.value = node.value.replace ("\\n", "\n").replace ("\\t", "\t").replace ("\\r", "\r").replace ("\\b", "\b")
-        chars = [node.value[i] for i in range(1, len(node.value)-1)]
-        for i in range(len(chars)-1):
-            if i >= len(chars)-1:
-                break
-            if chars[i] == "\\": # and \
-                # (chars[i+1] == 'n'  \
-                # or chars[i+1] == 't'\
-                # or chars[i+1] == 'r'\
-                # or chars[i+1] == 'b'):
-                chars[i] = "\\" + chars[i+1]
-                del chars[i+1]
-            # add backslash to apostrophe 
-            elif chars[i] == '\'':
-                chars[i] = '\\\''
-        node.value = chars + ['\\0']
-        backSlashes = 0
-        # for c in node.value:
-        #     if c == '\\':
-        #         backSlashes += 1
-        self.printCode (f"MALLOC __str {len(node.value)-backSlashes}")
-        for i in range(len(node.value)-backSlashes):
-            self.printCode (f"ASSIGN __str[{i}] '{(node.value[i])}'")
-        # self.printCode ("PUSH __str")
-        self.indentation -= 1
-        return "__str"
+        
+        # This is ultimately used for the following line:
+        # CeruleanIR : %str = value(ptr("Hello!\n"))
+        # but this specifically refers to just the literal
+        # so we need to return a register with the address to the string
+        # CeruleanIR : ptr("Hello!\n")
+        # CeruleanASM: loada r0, str_0 // r0 == "Hello!\n"
+        #              str_0: .ascii "Hello!\n" // placed in a data section
+        #              // return the r0 register
+
+        # Pick label for string
+        label = self.getNewStringLabel ()
+        # add string to data section (added to code later)
+        self.printDataDirective (f".ascii {node.value}", label)
+        # load address of string into desired register
+        tempReg = self.getTempReg ()
+        self.printCode (f"loada {tempReg}, {label}")
+        # Return the register to whatever was using the string literal
+        return tempReg
