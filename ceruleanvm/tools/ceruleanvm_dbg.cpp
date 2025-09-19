@@ -10,10 +10,14 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
-    const std::string filename = argv[1];
+    printf ("CeruleanVM Debugger\n");
+    printf ("type \"help\" for a list of commands\n");
+    printf ("type \"quit\" to quit\n");
 
+    const std::string filename = argv[1];
     auto bytecode = loadBytecode (filename);
     CeruleanVM vm (bytecode, true);
     Debugger dbg (vm);
+    printf ("bytecode loaded from file '%s'\n", filename.c_str());
     dbg.repl ();
 }
