@@ -8,12 +8,18 @@ Program:
 |   |   Args:
 |   |   |   Register("bp")
 |   |   |   Register("sp")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "load64"
 |   |   Args:
 |   |   |   Register("r0")
 |   |   |   Register("bp")
 |   |   |   IntLiteral(16)
 |   Instruction: "putchar"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "pop"
 |   |   Args:
 |   |   |   Register("r0")
 |   Instruction: "mv64"

@@ -8,12 +8,18 @@ Program:
 |   |   Args:
 |   |   |   Register("bp")
 |   |   |   Register("sp")
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
 |   Instruction: "load64"
 |   |   Args:
 |   |   |   Register("r0")
 |   |   |   Register("bp")
 |   |   |   IntLiteral(16)
 |   Instruction: "putchar"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "pop"
 |   |   Args:
 |   |   |   Register("r0")
 |   Instruction: "mv64"
@@ -183,7 +189,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-1)
+|   |   |   IntLiteral(-8)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -221,7 +227,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-1)
+|   |   |   IntLiteral(-8)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -236,7 +242,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-3)
+|   |   |   IntLiteral(-24)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -274,7 +280,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-3)
+|   |   |   IntLiteral(-24)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -289,7 +295,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-5)
+|   |   |   IntLiteral(-40)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -327,7 +333,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-5)
+|   |   |   IntLiteral(-40)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -342,7 +348,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-7)
+|   |   |   IntLiteral(-56)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -380,7 +386,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-7)
+|   |   |   IntLiteral(-56)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -395,7 +401,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-9)
+|   |   |   IntLiteral(-72)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -433,7 +439,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-9)
+|   |   |   IntLiteral(-72)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -448,7 +454,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-11)
+|   |   |   IntLiteral(-88)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -486,7 +492,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-11)
+|   |   |   IntLiteral(-88)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -501,7 +507,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-13)
+|   |   |   IntLiteral(-104)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -539,7 +545,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-13)
+|   |   |   IntLiteral(-104)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -554,7 +560,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-15)
+|   |   |   IntLiteral(-120)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -592,7 +598,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-15)
+|   |   |   IntLiteral(-120)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -607,7 +613,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-17)
+|   |   |   IntLiteral(-136)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")
@@ -645,7 +651,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-17)
+|   |   |   IntLiteral(-136)
 |   Instruction: "add64i"
 |   |   Args:
 |   |   |   Register("r9")
@@ -660,7 +666,7 @@ Program:
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-19)
+|   |   |   IntLiteral(-152)
 |   Instruction: "add64"
 |   |   Args:
 |   |   |   Register("r9")

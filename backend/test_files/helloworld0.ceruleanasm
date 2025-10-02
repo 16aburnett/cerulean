@@ -215,10 +215,12 @@ __builtin__print__char:
         // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
+        push r0 // Saving caller's r0
         // function body
         load64 r0, bp, 16 // r0 <- [bp + 16]
         putchar r0
         // function epilogue - this is prolly overkill
+        pop r0 // Restoring caller's r0
         mv64 sp, bp
         pop bp
         ret

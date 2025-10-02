@@ -9,6 +9,7 @@ from sys import exit
 from ...ceruleanIRAST import *
 from ...visitor import ASTVisitor
 from ...symbolTable import SymbolTable
+from . import ceruleanASMAST as ASM_AST
 
 # =================================================================================================
 
@@ -18,179 +19,351 @@ class LoweringVisitor (ASTVisitor):
         self.shouldPrintDebug = shouldPrintDebug
 
     def lower (self, ast):
-        ast.accept (self)
+        asm_ast = ast.accept (self)
+        return asm_ast
 
-    # === HELPER FUNCTIONS ===============================================
+    # === HELPER FUNCTIONS ========================================================================
     
     def debugPrint (self, *args, **kwargs):
         if (self.shouldPrintDebug):
             print ("[debug] [lowering]", *args, **kwargs)
 
-    # === VISITOR FUNCTIONS ==============================================
+    # === VISITOR FUNCTIONS =======================================================================
 
     def visitProgramNode (self, node):
+        codeunits = []
         for codeunit in node.codeunits:
             if codeunit != None:
-                codeunit.accept (self)
+                newCodeunit = codeunit.accept (self)
+                if newCodeunit:
+                    codeunits += [newCodeunit]
+        return ASM_AST.ProgramNode (codeunits)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitTypeSpecifierNode (self, node):
         pass
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitParameterNode (self, node):
         node.type.accept (self)
         node.scopeName = "".join (self.scopeNames) + "__" + node.id[1:]
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitGlobalVariableDeclarationNode (self, node):
-        pass
+        return ASM_AST.VirtualRegisterNode (node.id)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitVariableDeclarationNode (self, node):
-        pass
+        return ASM_AST.VirtualRegisterNode (node.id)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitFunctionNode (self, node):
+        params = []
         for i in range(len(node.params)):
-            node.params[i].accept (self)
-
+            params += [node.params[i].accept (self)]
+        asmInstructions = []
         for basicBlock in node.basicBlocks:
-            basicBlock.accept (self)
+            asmInstructions += basicBlock.accept (self)
+        return ASM_AST.FunctionNode (node.id, node.token, params, asmInstructions)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitBasicBlockNode (self, node):
+        asmInstructions = []
         for instruction in node.instructions:
-            instruction.accept (self)
+            # Each instruction may expand to multiple asm instructions when lowered
+            asmInstructions += instruction.accept (self)
+        return asmInstructions
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitInstructionNode (self, node):
+        asmArguments = []
         for arg in node.arguments:
-            arg.accept (self)
-        command_name = node.command
-        if command_name == "add":
-            pass
-        elif command_name == "sub":
-            pass
-        elif command_name == "mul":
-            pass
-        elif command_name == "div":
-            pass
-        elif command_name == "mod":
-            pass
-        elif command_name == "lnot":
-            pass
-        elif command_name == "value":
-            pass
-        elif command_name == "alloca":
-            pass
-        elif command_name == "malloc":
-            pass
-        elif command_name == "free":
-            pass
-        elif command_name == "load":
-            pass
-        elif command_name == "store":
-            pass
-        elif command_name == "clt":
-            pass
-        elif command_name == "cle":
-            pass
-        elif command_name == "cgt":
-            pass
-        elif command_name == "cge":
-            pass
-        elif command_name == "ceq":
-            pass
-        elif command_name == "cne":
-            pass
-        elif command_name == "jmp":
-            pass
-        elif command_name == "jcmp":
-            pass
-        elif command_name == "jg":
-            pass
-        elif command_name == "jge":
-            pass
-        elif command_name == "jl":
-            pass
-        elif command_name == "jle":
-            pass
-        elif command_name == "jne":
-            pass
-        elif command_name == "jne":
-            pass
-        elif command_name == "return":
-            pass
+            asmArguments += [arg.accept (self)]
+        # can expand to multiple instructions
+        asmInstructions = []
+        commandName = node.command
+        if commandName == "add":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg, Reg
+            # CeruleanIR : <dest> = add (<src0>, <src1>)
+            # CeruleanASM: add <dest>, <src0>, <src1>
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("add64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Reg, Imm
+            # CeruleanIR : <dest> = add (<src0>, <imm>)
+            # CeruleanASM: addi <dest>, <src0>, <imm>
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("add64i", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "sub":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg, Reg
+            # CeruleanIR : <dest> = sub (<src0>, <src1>)
+            # CeruleanASM: sub <dest>, <src0>, <src1>
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("sub64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Reg, Imm
+            # CeruleanIR : <dest> = sub (<src0>, <imm>)
+            # CeruleanASM: subi <dest>, <src0>, <imm>
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("sub64i", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "mul":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg, Reg
+            # CeruleanIR : <dest> = mul (<src0>, <src1>)
+            # CeruleanASM: mul<size> <dest>, <src0>, <src1>
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("mul64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Reg, Imm
+            # CeruleanIR : <dest> = mul (<src0>, <imm>)
+            # CeruleanASM: mul<size>i <dest>, <src0>, <imm>
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("mul64i", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "div":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg, Reg
+            # CeruleanIR : <dest> = div (<src0>, <src1>)
+            # CeruleanASM: divi<size> <dest>, <src0>, <src1>
+            # NOTE: Currently only using ints
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("divi64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Reg, Imm
+            # CeruleanIR : <dest> = div (<src0>, <imm>)
+            # CeruleanASM: divi<size>i <dest>, <src0>, <imm>
+            # NOTE: Currently only using ints
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("divi64i", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "mod":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg, Reg
+            # CeruleanIR : <dest> = mod (<src0>, <src1>)
+            # CeruleanASM: modi<size> <dest>, <src0>, <src1>
+            # NOTE: Currently only using ints
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("divi64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Reg, Imm
+            # CeruleanIR : <dest> = mod (<src0>, <imm>)
+            # CeruleanASM: modi<size>i <dest>, <src0>, <imm>
+            # NOTE: Currently only using ints
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("modi64i", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "lnot":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg
+            # CeruleanIR : <dest> = lnot (<src0>)
+            # CeruleanASM: not64 <dest>, <src0>
+            asmInstruction = ASM_AST.InstructionNode ("not64", [lhsReg, *asmArguments])
+            asmInstructions += [asmInstruction]
+        elif commandName == "value":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: Reg
+            # CeruleanIR : <dest> = value (<arg0>)
+            # CeruleanASM: mv64 <dest>, <arg0>
+            if isinstance (asmArguments[0], ASM_AST.RegisterNode):
+                asmInstruction = ASM_AST.InstructionNode ("mv64", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 2: Imm
+            # CeruleanIR : <dest> = value (<imm>)
+            # CeruleanASM: lli <dest>, <imm>
+            # NOTE: Imm must fit in 16-bits
+            else: # assuming imm is the only other option
+                asmInstruction = ASM_AST.InstructionNode ("lli", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+        elif commandName == "alloca":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "malloc":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "free":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "load":
+            lhsReg = node.lhsVariable.accept (self)
+            # Usage 1: reg offset
+            # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
+            # CeruleanASM: add64 r<temp>, r<ptr>, r<offset>
+            #              load<size> r<dest>, r<temp>, imm<offset>
+            if isinstance (asmArguments[2], ASM_AST.RegisterNode):
+                self.debugPrint (f">>> lowering load(R,R) to add(R,R,R) and load(R,R,I)")
+                tempReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [
+                    ASM_AST.InstructionNode ("add64", [tempReg, asmArguments[1], asmArguments[2]]),
+                    ASM_AST.InstructionNode ("load64", [lhsReg, tempReg, ASM_AST.IntLiteralNode (0)])
+                ]
+            # Usage 2: imm offset
+            # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
+            # CeruleanASM: load<size> r<dest>, r<ptr>, imm<offset>
+            elif isinstance (asmArguments[2], ASM_AST.LiteralNode):
+                asmInstructions += [ASM_AST.InstructionNode ("load64", [lhsReg, asmArguments[1], asmArguments[2]])]
+            else:
+                print (f"Lowering Error: Unexpected argument type {asmArguments[2]}")
+                exit (1)
+        elif commandName == "store":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "clt":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "cle":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "cgt":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "cge":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "ceq":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "cne":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jmp":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jcmp":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jg":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jge":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jl":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jle":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jne":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "jne":
+            print (f"Lowering ERROR: {commandName} not implemented")
+            exit (1)
+        elif commandName == "return":
+            # Usage 1: no return value
+            # CeruleanIR : return ()
+            # CeruleanASM: loada r<temp> <functionEpilogueLabel>
+            #              jmp r<temp>
+            # NOTE: we dont want to just use the ASM ret
+            # We want to use the function epilogue to fix the stack and such
+            if len(asmArguments) < 1:
+                tempReg = ASM_AST.VirtualTempRegisterNode ()
+                functionEpilogueLabel = ASM_AST.LabelNode ("<function_epilogue_placeholder>")
+                asmInstructions += [
+                    ASM_AST.InstructionNode ("loada", [tempReg, functionEpilogueLabel]),
+                    ASM_AST.InstructionNode ("jmp", [tempReg])
+                ]
+            # Usage 2: return reg
+            # CeruleanIR : return (reg)
+            # CeruleanASM: mv64 ra, r<src>
+            #              loada r<temp> <functionEpilogueLabel>
+            #              jmp r<temp>
+            elif isinstance (asmArguments[0], ASM_AST.RegisterNode):
+                returnReg = ASM_AST.PhysicalRegisterNode ("ra")
+                tempReg = ASM_AST.VirtualTempRegisterNode ()
+                functionEpilogueLabel = ASM_AST.LabelNode ("<function_epilogue_placeholder>")
+                asmInstructions += [
+                    ASM_AST.InstructionNode ("mv64", [returnReg, asmArguments[0]]),
+                    ASM_AST.InstructionNode ("loada", [tempReg, functionEpilogueLabel]),
+                    ASM_AST.InstructionNode ("jmp", [tempReg])
+                ]
+            # Usage 3: return imm
+            # CeruleanIR : return (imm)
+            # CeruleanASM: lli ra, imm
+            #              loada r<temp> <functionEpilogueLabel>
+            #              jmp r<temp>
+            # NOTE: Imm needs to fit in 16-bit
+            elif isinstance (asmArguments[0], ASM_AST.LiteralNode):
+                returnReg = ASM_AST.PhysicalRegisterNode ("ra")
+                tempReg = ASM_AST.VirtualTempRegisterNode ()
+                functionEpilogueLabel = ASM_AST.LabelNode ("<function_epilogue_placeholder>")
+                asmInstructions += [
+                    ASM_AST.InstructionNode ("lli", [returnReg, asmArguments[0]]),
+                    ASM_AST.InstructionNode ("loada", [tempReg, functionEpilogueLabel]),
+                    ASM_AST.InstructionNode ("jmp", [tempReg])
+                ]
+            # Unknown arg
+            else:
+                print (f"Lowering error: unknown argument '{asmArguments[0]}' for 'return' instruction")
+                exit (1)
         else:
-            print (f"Lowering error: Unknown instruction '{command_name}'")
+            print (f"Lowering error: Unknown instruction '{commandName}'")
             self.wasSuccessful = False
+        return asmInstructions
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitCallInstructionNode (self, node):
+        astArguments = []
         for arg in node.arguments:
-            arg.accept (self)
+            astArguments += [arg.accept (self)]
+        return [ASM_AST.CallInstructionNode (node.function_name, node.token, astArguments)]
 
-    #=====================================================================
+    # =============================================================================================
 
     # writes any code it needs to
     # returns the parsed argument
     def visitArgumentExpressionNode (self, node):
         return node.expression.accept (self)
 
-    #=====================================================================
+    # =============================================================================================
 
     # root node - should not be used
     def visitExpressionNode (self, node):
         pass
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitGlobalVariableExpressionNode (self, node):
-        # Ensure reference has a decl
-        if node.decl == None:
-            raise ValueError (f"LivenessAnalyzer: ERROR: Reference does not have a matching declaration - this is an error with the compiler")
-        self.debugPrint (f"Counting global reference for '{node.id}'")
-        node.decl.references.append (node)
+        return ASM_AST.VirtualRegisterNode (node.id)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitLocalVariableExpressionNode (self, node):
-        # Ensure reference has a decl
-        if node.decl == None:
-            raise ValueError (f"LivenessAnalyzer: ERROR: Reference does not have a matching declaration - this is an error with the compiler")
-        self.debugPrint (f"Counting reference for '{node.id}'")
-        node.decl.references.append (node)
+        return ASM_AST.VirtualRegisterNode (node.id)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitBasicBlockExpressionNode (self, node):
-        pass
+        return ASM_AST.LabelNode (node.id)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitIntLiteralExpressionNode (self, node):
-        pass
+        return ASM_AST.IntLiteralNode (node.value)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitFloatLiteralExpressionNode (self, node):
-        pass
+        return ASM_AST.FloatLiteralNode (node.value)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitCharLiteralExpressionNode (self, node):
-        pass
+        return ASM_AST.CharLiteralNode (node.value)
 
-    #=====================================================================
+    # =============================================================================================
 
     def visitStringLiteralExpressionNode (self, node):
-        pass
+        return ASM_AST.StringLiteralNode (node.value)

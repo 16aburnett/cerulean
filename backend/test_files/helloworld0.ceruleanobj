@@ -9,11 +9,19 @@
         239,
         0,
         0,
+        131,
+        0,
+        0,
+        0,
         6,
         14,
         16,
         0,
         147,
+        0,
+        0,
+        0,
+        132,
         0,
         0,
         0,
@@ -735,410 +743,410 @@
         "__main____main": {
             "symbol": "__main____main",
             "visibility": "local",
-            "relAddress": 28
+            "relAddress": 36
         },
         "__main__main__entry": {
             "symbol": "__main__main__entry",
             "visibility": "local",
-            "relAddress": 40
+            "relAddress": 48
         },
         "__epilogue____main____main": {
             "symbol": "__epilogue____main____main",
             "visibility": "local",
-            "relAddress": 680
+            "relAddress": 688
         },
         "__end____main____main": {
             "symbol": "__end____main____main",
             "visibility": "local",
-            "relAddress": 692
+            "relAddress": 700
         },
         "__start": {
             "symbol": "__start",
             "visibility": "local",
-            "relAddress": 692
+            "relAddress": 700
         }
     },
     "relocations": [
         {
-            "location": 50,
+            "location": 58,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 54,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 62,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 70,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 78,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 90,
+            "location": 98,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 94,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 102,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 110,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 118,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 130,
+            "location": 138,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 134,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 142,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 150,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 158,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 170,
+            "location": 178,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 174,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 182,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 190,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 198,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 210,
+            "location": 218,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 214,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 222,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 230,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 238,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 250,
+            "location": 258,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 254,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 262,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 270,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 278,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 290,
+            "location": 298,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 294,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 302,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 310,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 318,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 330,
+            "location": 338,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 334,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 342,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 350,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 358,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 378,
+            "location": 386,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 382,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 390,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 398,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 406,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 426,
+            "location": 434,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 430,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 438,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 446,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 454,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 474,
+            "location": 482,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 478,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 486,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 494,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 502,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 522,
+            "location": 530,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 526,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 534,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 542,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 550,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 570,
+            "location": 578,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 574,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 582,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 590,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 598,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 618,
+            "location": 626,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 622,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 630,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 638,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 646,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 654,
+            "location": 662,
             "symbol": "__epilogue____main____main",
             "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 658,
-            "symbol": "__epilogue____main____main",
-            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 666,
             "symbol": "__epilogue____main____main",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 674,
             "symbol": "__epilogue____main____main",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 682,
+            "symbol": "__epilogue____main____main",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 694,
+            "location": 702,
             "symbol": "__main____main",
             "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
-            "location": 698,
+            "location": 706,
             "symbol": "__main____main",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 706,
+            "location": 714,
             "symbol": "__main____main",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 714,
+            "location": 722,
             "symbol": "__main____main",
             "type": "imm16_abs_lo",
             "isGlobal": false

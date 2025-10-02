@@ -215,10 +215,12 @@ __builtin__print__char:
         // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
+        push r0 // Saving caller's r0
         // function body
         load64 r0, bp, 16 // r0 <- [bp + 16]
         putchar r0
         // function epilogue - this is prolly overkill
+        pop r0 // Restoring caller's r0
         mv64 sp, bp
         pop bp
         ret
@@ -602,7 +604,7 @@ __main__main__entry:
    pop ra
    add64i r8, r7, 1 // __main__main__i4 = add r7, 1
    store64 bp, r8, -8 // spill to stack
-   load64 r8, bp, -1
+   load64 r8, bp, -8 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -16 // spill to stack
@@ -611,10 +613,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -1
+   load64 r8, bp, -8 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i5 = add r8, 1
    store64 bp, r9, -24 // spill to stack
-   load64 r8, bp, -3
+   load64 r8, bp, -24 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -32 // spill to stack
@@ -623,10 +625,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -3
+   load64 r8, bp, -24 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i6 = add r8, 1
    store64 bp, r9, -40 // spill to stack
-   load64 r8, bp, -5
+   load64 r8, bp, -40 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -48 // spill to stack
@@ -635,10 +637,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -5
+   load64 r8, bp, -40 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i7 = add r8, 1
    store64 bp, r9, -56 // spill to stack
-   load64 r8, bp, -7
+   load64 r8, bp, -56 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -64 // spill to stack
@@ -647,10 +649,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -7
+   load64 r8, bp, -56 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i8 = add r8, 1
    store64 bp, r9, -72 // spill to stack
-   load64 r8, bp, -9
+   load64 r8, bp, -72 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -80 // spill to stack
@@ -659,10 +661,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -9
+   load64 r8, bp, -72 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i9 = add r8, 1
    store64 bp, r9, -88 // spill to stack
-   load64 r8, bp, -11
+   load64 r8, bp, -88 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -96 // spill to stack
@@ -671,10 +673,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -11
+   load64 r8, bp, -88 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i10 = add r8, 1
    store64 bp, r9, -104 // spill to stack
-   load64 r8, bp, -13
+   load64 r8, bp, -104 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -112 // spill to stack
@@ -683,10 +685,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -13
+   load64 r8, bp, -104 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i11 = add r8, 1
    store64 bp, r9, -120 // spill to stack
-   load64 r8, bp, -15
+   load64 r8, bp, -120 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -128 // spill to stack
@@ -695,10 +697,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -15
+   load64 r8, bp, -120 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i12 = add r8, 1
    store64 bp, r9, -136 // spill to stack
-   load64 r8, bp, -17
+   load64 r8, bp, -136 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -144 // spill to stack
@@ -707,10 +709,10 @@ __main__main__entry:
    loada r8, __builtin__print__char
    call r8
    pop ra
-   load64 r8, bp, -17
+   load64 r8, bp, -136 // read spill from stack - resolve
    add64i r9, r8, 1 // __main__main__i13 = add r8, 1
    store64 bp, r9, -152 // spill to stack
-   load64 r8, bp, -19
+   load64 r8, bp, -152 // read spill from stack - resolve
    add64 r9, r0, r8
    load64 r8, r9, 0
    store64 bp, r8, -160 // spill to stack

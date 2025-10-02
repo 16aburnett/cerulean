@@ -8,6 +8,7 @@ from sys import exit
 from ...ceruleanIRAST import *
 from ...visitor import ASTVisitor
 from ...symbolTable import SymbolTable
+from .lowering import LoweringVisitor
 from .livenessAnalyzer import LivenessAnalyzer
 
 # =================================================================================================
@@ -21,10 +22,12 @@ LIB_FILENAME = os.path.dirname(__file__) + "/CeruleanIR_BuiltinLib.ceruleanasm"
 
 class CodeGenVisitor_CeruleanASM (ASTVisitor):
 
-    def __init__(self, lines, shouldPrintDebug=False):
+    def __init__(self, lines, sourceFilename, shouldPrintDebug=False, emitVirtualASM=False):
         self.parameters = []
-        self.lines = lines 
+        self.lines = lines
+        self.sourceFilename = sourceFilename
         self.shouldPrintDebug = shouldPrintDebug
+        self.emitVirtualASM = emitVirtualASM
         self.indentation = 0
         self.code = []
         self.lhs = "null"
@@ -59,6 +62,24 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         self.nextSpillSlot = 0
 
     def generate (self, ast):
+
+        loweringVisitor = LoweringVisitor ()
+        asm_ast = loweringVisitor.lower (ast)
+
+        if self.emitVirtualASM:
+            # Virtual Assembly
+            vasmFilename = f"{self.sourceFilename}.virtasm"
+            self.debugPrint (f"Emitting Virtual Assembly to '{vasmFilename}'...")
+            file = open (vasmFilename, "w")
+            file.write (str (asm_ast))
+            # Virtual Assembly AST
+            vasmastFilename = f"{self.sourceFilename}.virtasmast"
+            self.debugPrint (f"Emitting Virtual Assembly AST to '{vasmastFilename}'...")
+            file = open (vasmastFilename, "w")
+            file.write (repr (asm_ast))
+
+        # NOTE: Currently we are doing nothing with the virtual asm
+
         ast.accept (self)
         codeSection = "".join (self.code)
         dataSectionHeader = "\n// data section\n"
@@ -181,7 +202,7 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         if regOrSpill["kind"] == "spill":
             # Emit a LOAD from spill slot into a temp reg
             tempReg = self.getTempReg ()
-            self.printCode (f"load64 {tempReg}, bp, -{regOrSpill['value']}")
+            self.printCode (f"load64 {tempReg}, bp, -{regOrSpill['value'] * 8} // read spill from stack - resolve")
             return tempReg
         reg = regOrSpill["value"]
         return reg
