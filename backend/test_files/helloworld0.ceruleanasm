@@ -1,3 +1,10 @@
+// CeruleanASM code compiled from CeruleanIR
+// ===========================================================================
+
+// ===========================================================================
+//### BUILT-IN LIBRARY CODE ##############################################
+// ===========================================================================
+
 // // CeruleanIR Built-in library
 // // Author: Amy Burnett
 // // ========================================================================
@@ -565,104 +572,108 @@ __builtin__print__char:
 // //     return __null
 
 // // ========================================================================
-__main____main:
+
+// ===========================================================================
+//### COMPILED CODE #######################################################
+// ===========================================================================
+
+// ---------------------------------------------------------------------------
+// Function: main
+main:
+   // Prologue: Setup stack frame
    push bp
    mv64 bp, sp
-   sub64i sp, sp, 0 // allocate space for local variables
-__main__main__entry:
-   lli r0, 'H' // __main__main__char0 = value 'H'
+   // Function body
+   lli r0, 'H'
    push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r1, 'e' // __main__main__char1 = value 'e'
-   push r1
+   pop r8
+   lli r0, 'e'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r2, 'l' // __main__main__char2 = value 'l'
-   push r2
+   pop r8
+   lli r0, 'l'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r3, 'l' // __main__main__char3 = value 'l'
-   push r3
+   pop r8
+   lli r0, 'l'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r4, 'o' // __main__main__char4 = value 'o'
-   push r4
+   pop r8
+   lli r0, 'o'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r5, ',' // __main__main__char5 = value ','
-   push r5
+   pop r8
+   lli r0, ','
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r6, ' ' // __main__main__char6 = value ' '
-   push r6
+   pop r8
+   lli r0, ' '
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r7, 'W' // __main__main__char7 = value 'W'
-   push r7
+   pop r8
+   lli r0, 'W'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, 'o' // __main__main__char8 = value 'o'
-   store64 bp, r8, 0 // spill to stack
-   load64 r8, bp, 0 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, 'o'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, 'r' // __main__main__char9 = value 'r'
-   store64 bp, r8, -8 // spill to stack
-   load64 r8, bp, -8 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, 'r'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, 'l' // __main__main__char10 = value 'l'
-   store64 bp, r8, -16 // spill to stack
-   load64 r8, bp, -16 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, 'l'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, 'd' // __main__main__char11 = value 'd'
-   store64 bp, r8, -24 // spill to stack
-   load64 r8, bp, -24 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, 'd'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, '!' // __main__main__char12 = value '!'
-   store64 bp, r8, -32 // spill to stack
-   load64 r8, bp, -32 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, '!'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli r8, '\n' // __main__main__char13 = value '\n'
-   store64 bp, r8, -40 // spill to stack
-   load64 r8, bp, -40 // read spilled value from stack
-   push r8
+   pop r8
+   lli r0, '\n'
+   push r0
    loada r8, __builtin__print__char
    call r8
-   pop ra
-   lli ra, 0 // return value
-   loada r8, __epilogue____main____main
-   jmp r8
-__epilogue____main____main:
-   mv64 sp, bp // remove local vars + unpopped pushes
+   pop r8
+   lli ra, 0
+   loada r0, __epilogue__main
+   jmp r0
+   // Epilogue
+__epilogue__main:
+   mv64 sp, bp // restore stack pointer
    pop bp
    ret
-__end____main____main:
+__end__main:
+
+
+// ===========================================================================
+//### END OF CODE #########################################################
+// ===========================================================================
+
 __start:
-   loada r0, __main____main
+   // Start with main function
+   loada r0, main
    call r0
    halt
+
 
 // data section

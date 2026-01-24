@@ -3,12 +3,10 @@
 # By Amy Burnett
 # =================================================================================================
 
-import os
 from sys import exit
 
 from ...ceruleanIRAST import *
 from ...visitor import ASTVisitor
-from ...symbolTable import SymbolTable
 from . import ceruleanASMAST as ASM_AST
 
 # =================================================================================================
@@ -42,13 +40,14 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitTypeSpecifierNode (self, node):
-        pass
+        return node.id
 
     # =============================================================================================
 
     def visitParameterNode (self, node):
-        node.type.accept (self)
-        node.scopeName = "".join (self.scopeNames) + "__" + node.id[1:]
+        # Parameters don't need special handling in Virtual ASM
+        # Just return the node itself or None
+        return None
 
     # =============================================================================================
 
@@ -69,7 +68,13 @@ class LoweringVisitor (ASTVisitor):
         asmInstructions = []
         for basicBlock in node.basicBlocks:
             asmInstructions += basicBlock.accept (self)
-        return ASM_AST.FunctionNode (node.id, node.token, params, asmInstructions)
+        # Strip @ prefix from function name if present
+        funcId = node.id[1:] if node.id.startswith('@') else node.id
+        funcNode = ASM_AST.FunctionNode (funcId, node.token, params, asmInstructions)
+        # Preserve scope name if it exists
+        if hasattr(node, 'scopeName'):
+            funcNode.scopeName = node.scopeName
+        return funcNode
 
     # =============================================================================================
 
@@ -178,7 +183,16 @@ class LoweringVisitor (ASTVisitor):
             if isinstance (asmArguments[0], ASM_AST.RegisterNode):
                 asmInstruction = ASM_AST.InstructionNode ("mv64", [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
-            # Usage 2: Imm
+            # Usage 2: String Literal (needs loada for address)
+            # CeruleanIR : <dest> = value (ptr("string"))
+            # CeruleanASM: loada <dest>, <label>
+            elif isinstance (asmArguments[0], ASM_AST.StringLiteralNode):
+                # String literals are handled by the emitter (creates data section)
+                # For now, keep the string literal and let emitter handle it
+                # But we need loada instead of lli
+                asmInstruction = ASM_AST.InstructionNode ("loada", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
+            # Usage 3: Imm
             # CeruleanIR : <dest> = value (<imm>)
             # CeruleanASM: lli <dest>, <imm>
             # NOTE: Imm must fit in 16-bits
@@ -186,8 +200,24 @@ class LoweringVisitor (ASTVisitor):
                 asmInstruction = ASM_AST.InstructionNode ("lli", [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
         elif commandName == "alloca":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <ptr> = alloca(<type>, <count>)
+            # Allocates <count> elements of <type> on the stack
+            # Returns a pointer (address) to the allocated memory
+            # 
+            # Strategy: Use frame pointer arithmetic
+            # The actual stack space will be allocated during frame lowering
+            # Here we just need to compute the address
+            #
+            # For now, treat alloca variables as special stack-allocated registers
+            # They'll be handled specially during register allocation
+            lhsReg = node.lhsVariable.accept (self)
+            typeArg = node.arguments[0].accept (self)
+            count = node.arguments[1]
+            
+            # Create a pseudo-instruction to mark this as an alloca
+            # The register allocator will handle this specially
+            asmInstruction = ASM_AST.InstructionNode ("alloca", [lhsReg, ASM_AST.IntLiteralNode(str(count.value))])
+            asmInstructions += [asmInstruction]
         elif commandName == "malloc":
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
@@ -196,22 +226,26 @@ class LoweringVisitor (ASTVisitor):
             exit (1)
         elif commandName == "load":
             lhsReg = node.lhsVariable.accept (self)
+            # Determine load instruction size based on type
+            typeArg = node.arguments[0].accept (self)
+            loadOp = "load8" if typeArg == "char" else "load64"
+            
             # Usage 1: reg offset
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
             # CeruleanASM: add64 r<temp>, r<ptr>, r<offset>
             #              load<size> r<dest>, r<temp>, imm<offset>
             if isinstance (asmArguments[2], ASM_AST.RegisterNode):
-                self.debugPrint (f">>> lowering load(R,R) to add(R,R,R) and load(R,R,I)")
+                self.debugPrint (f">>> lowering load(R,R) to add(R,R,R) and {loadOp}(R,R,I)")
                 tempReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += [
                     ASM_AST.InstructionNode ("add64", [tempReg, asmArguments[1], asmArguments[2]]),
-                    ASM_AST.InstructionNode ("load64", [lhsReg, tempReg, ASM_AST.IntLiteralNode (0)])
+                    ASM_AST.InstructionNode (loadOp, [lhsReg, tempReg, ASM_AST.IntLiteralNode (0)])
                 ]
             # Usage 2: imm offset
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
             # CeruleanASM: load<size> r<dest>, r<ptr>, imm<offset>
             elif isinstance (asmArguments[2], ASM_AST.LiteralNode):
-                asmInstructions += [ASM_AST.InstructionNode ("load64", [lhsReg, asmArguments[1], asmArguments[2]])]
+                asmInstructions += [ASM_AST.InstructionNode (loadOp, [lhsReg, asmArguments[1], asmArguments[2]])]
             else:
                 print (f"Lowering Error: Unexpected argument type {asmArguments[2]}")
                 exit (1)

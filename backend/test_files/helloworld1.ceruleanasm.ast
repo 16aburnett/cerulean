@@ -32,45 +32,34 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "push"
 |   |   Labels:
-|   |   |   Label("__main____main")
+|   |   |   Label("main")
 |   |   Args:
 |   |   |   Register("bp")
 |   Instruction: "mv64"
 |   |   Args:
 |   |   |   Register("bp")
 |   |   |   Register("sp")
-|   Instruction: "sub64i"
-|   |   Args:
-|   |   |   Register("sp")
-|   |   |   Register("sp")
-|   |   |   IntLiteral(168)
 |   Instruction: "loada"
-|   |   Labels:
-|   |   |   Label("__main__main__entry")
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   LabelExpression("str_0")
-|   Instruction: "mv64"
-|   |   Args:
-|   |   |   Register("r0")
-|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
 |   |   |   Register("r1")
 |   |   |   IntLiteral(0)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
 |   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
+|   |   |   Register("r3")
 |   |   |   Register("r2")
-|   |   |   Register("r8")
 |   |   |   IntLiteral(0)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r2")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -80,53 +69,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   Register("r1")
 |   |   |   IntLiteral(1)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
+|   |   |   Register("r2")
+|   Instruction: "load8"
+|   |   Args:
 |   |   |   Register("r3")
-|   Instruction: "load8"
-|   |   Args:
-|   |   |   Register("r4")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r4")
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   LabelExpression("__builtin__print__char")
-|   Instruction: "call"
-|   |   Args:
-|   |   |   Register("r8")
-|   Instruction: "pop"
-|   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "add64i"
-|   |   Args:
-|   |   |   Register("r5")
 |   |   |   Register("r3")
-|   |   |   IntLiteral(1)
-|   Instruction: "add64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r0")
-|   |   |   Register("r5")
-|   Instruction: "load8"
-|   |   Args:
-|   |   |   Register("r6")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(0)
-|   Instruction: "push"
-|   |   Args:
-|   |   |   Register("r6")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -136,35 +97,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r7")
-|   |   |   Register("r5")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r7")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(0)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -174,45 +125,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r7")
+|   |   |   Register("r2")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-8)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-8)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-16)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-16)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -222,50 +153,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-8)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-24)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-32)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-32)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -275,50 +181,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-40)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-40)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-48)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-48)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -328,50 +209,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-40)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-56)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-56)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-64)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-64)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -381,50 +237,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-56)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-72)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-72)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-80)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-80)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -434,50 +265,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-72)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-88)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-88)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-96)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-96)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -487,50 +293,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-88)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-104)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-104)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-112)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-112)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -540,50 +321,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-104)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-120)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-120)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-128)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-128)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -593,50 +349,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-120)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-136)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-136)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r1")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r2")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r1")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-144)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-144)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -646,50 +377,25 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
-|   Instruction: "load64"
-|   |   Args:
 |   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-136)
 |   Instruction: "add64i"
 |   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-152)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-152)
 |   Instruction: "add64"
 |   |   Args:
-|   |   |   Register("r9")
+|   |   |   Register("r2")
 |   |   |   Register("r0")
-|   |   |   Register("r8")
+|   |   |   Register("r1")
 |   Instruction: "load8"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r9")
+|   |   |   Register("r3")
+|   |   |   Register("r2")
 |   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-160)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-160)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r3")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -699,21 +405,49 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("r2")
+|   |   |   Register("r1")
+|   |   |   IntLiteral(1)
+|   Instruction: "add64"
+|   |   Args:
+|   |   |   Register("r1")
+|   |   |   Register("r0")
+|   |   |   Register("r2")
+|   Instruction: "load8"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   Register("r1")
+|   |   |   IntLiteral(0)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
 |   |   |   Register("ra")
 |   |   |   IntLiteral(0)
 |   Instruction: "loada"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   LabelExpression("__epilogue____main____main")
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__epilogue__main")
 |   Instruction: "jmp"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "mv64"
 |   |   Labels:
-|   |   |   Label("__epilogue____main____main")
+|   |   |   Label("__epilogue__main")
 |   |   Args:
 |   |   |   Register("sp")
 |   |   |   Register("bp")
@@ -723,11 +457,11 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "loada"
 |   |   Labels:
-|   |   |   Label("__end____main____main")
+|   |   |   Label("__end__main")
 |   |   |   Label("__start")
 |   |   Args:
 |   |   |   Register("r0")
-|   |   |   LabelExpression("__main____main")
+|   |   |   LabelExpression("main")
 |   Instruction: "call"
 |   |   Args:
 |   |   |   Register("r0")

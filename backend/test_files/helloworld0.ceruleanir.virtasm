@@ -1,4 +1,4 @@
-@main:
+main:
    lli %char0, 'H'
    call @__builtin__print__char %char0
    lli %char1, 'e'

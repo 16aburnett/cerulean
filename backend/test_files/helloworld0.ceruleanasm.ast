@@ -32,21 +32,14 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "push"
 |   |   Labels:
-|   |   |   Label("__main____main")
+|   |   |   Label("main")
 |   |   Args:
 |   |   |   Register("bp")
 |   Instruction: "mv64"
 |   |   Args:
 |   |   |   Register("bp")
 |   |   |   Register("sp")
-|   Instruction: "sub64i"
-|   |   Args:
-|   |   |   Register("sp")
-|   |   |   Register("sp")
-|   |   |   IntLiteral(0)
 |   Instruction: "lli"
-|   |   Labels:
-|   |   |   Label("__main__main__entry")
 |   |   Args:
 |   |   |   Register("r0")
 |   |   |   CharLiteral('H')
@@ -62,14 +55,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r1")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('e')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r1")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -79,14 +72,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r2")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('l')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r2")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -96,14 +89,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r3")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('l')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r3")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -113,14 +106,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r4")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('o')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r4")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -130,14 +123,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r5")
+|   |   |   Register("r0")
 |   |   |   CharLiteral(',')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r5")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -147,14 +140,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r6")
+|   |   |   Register("r0")
 |   |   |   CharLiteral(' ')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r6")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -164,14 +157,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r7")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('W')
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r7")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -181,24 +174,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('o')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(0)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(0)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -208,24 +191,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('r')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-8)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-8)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -235,24 +208,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('l')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-16)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-16)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -262,24 +225,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('d')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-24)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -289,24 +242,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('!')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-32)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-32)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -316,24 +259,14 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   |   |   CharLiteral('\n')
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-40)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-40)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
@@ -343,21 +276,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
-|   |   |   Register("ra")
+|   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
 |   |   |   Register("ra")
 |   |   |   IntLiteral(0)
 |   Instruction: "loada"
 |   |   Args:
-|   |   |   Register("r8")
-|   |   |   LabelExpression("__epilogue____main____main")
+|   |   |   Register("r0")
+|   |   |   LabelExpression("__epilogue__main")
 |   Instruction: "jmp"
 |   |   Args:
-|   |   |   Register("r8")
+|   |   |   Register("r0")
 |   Instruction: "mv64"
 |   |   Labels:
-|   |   |   Label("__epilogue____main____main")
+|   |   |   Label("__epilogue__main")
 |   |   Args:
 |   |   |   Register("sp")
 |   |   |   Register("bp")
@@ -367,11 +300,11 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "loada"
 |   |   Labels:
-|   |   |   Label("__end____main____main")
+|   |   |   Label("__end__main")
 |   |   |   Label("__start")
 |   |   Args:
 |   |   |   Register("r0")
-|   |   |   LabelExpression("__main____main")
+|   |   |   LabelExpression("main")
 |   Instruction: "call"
 |   |   Args:
 |   |   |   Register("r0")

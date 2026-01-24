@@ -45,10 +45,6 @@
         239,
         0,
         0,
-        35,
-        255,
-        0,
-        0,
         2,
         0,
         72,
@@ -86,15 +82,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        16,
+        0,
         101,
         0,
         131,
-        16,
+        0,
         0,
         0,
         1,
@@ -126,15 +122,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        32,
+        0,
         108,
         0,
         131,
-        32,
+        0,
         0,
         0,
         1,
@@ -166,15 +162,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        48,
+        0,
         108,
         0,
         131,
-        48,
+        0,
         0,
         0,
         1,
@@ -206,15 +202,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        64,
+        0,
         111,
         0,
         131,
-        64,
+        0,
         0,
         0,
         1,
@@ -246,15 +242,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        80,
+        0,
         44,
         0,
         131,
-        80,
+        0,
         0,
         0,
         1,
@@ -286,15 +282,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        96,
+        0,
         32,
         0,
         131,
-        96,
+        0,
         0,
         0,
         1,
@@ -326,15 +322,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        112,
+        0,
         87,
         0,
         131,
-        112,
+        0,
         0,
         0,
         1,
@@ -366,23 +362,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
+        0,
         111,
         0,
-        10,
-        232,
-        0,
-        0,
-        6,
-        142,
-        0,
-        0,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -414,23 +402,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
+        0,
         114,
         0,
-        10,
-        232,
-        248,
-        255,
-        6,
-        142,
-        248,
-        255,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -462,23 +442,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
+        0,
         108,
         0,
-        10,
-        232,
-        240,
-        255,
-        6,
-        142,
-        240,
-        255,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -510,23 +482,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
+        0,
         100,
         0,
-        10,
-        232,
-        232,
-        255,
-        6,
-        142,
-        232,
-        255,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -558,23 +522,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
+        0,
         33,
         0,
-        10,
-        232,
-        224,
-        255,
-        6,
-        142,
-        224,
-        255,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -606,23 +562,15 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
-        128,
-        10,
         0,
         10,
-        232,
-        216,
-        255,
-        6,
-        142,
-        216,
-        255,
+        0,
         131,
-        128,
+        0,
         0,
         0,
         1,
@@ -654,7 +602,7 @@
         0,
         0,
         132,
-        208,
+        128,
         0,
         0,
         2,
@@ -662,31 +610,31 @@
         0,
         0,
         1,
-        128,
+        0,
         0,
         0,
         2,
-        128,
+        0,
         0,
         0,
         97,
-        136,
+        0,
         16,
         0,
         2,
-        128,
+        0,
         0,
         0,
         97,
-        136,
+        0,
         16,
         0,
         2,
-        128,
+        0,
         0,
         0,
         118,
-        128,
+        0,
         0,
         0,
         33,
@@ -740,414 +688,409 @@
             "visibility": "local",
             "relAddress": 0
         },
-        "__main____main": {
-            "symbol": "__main____main",
+        "main": {
+            "symbol": "main",
             "visibility": "local",
             "relAddress": 36
         },
-        "__main__main__entry": {
-            "symbol": "__main__main__entry",
+        "__epilogue__main": {
+            "symbol": "__epilogue__main",
             "visibility": "local",
-            "relAddress": 48
+            "relAddress": 636
         },
-        "__epilogue____main____main": {
-            "symbol": "__epilogue____main____main",
+        "__end__main": {
+            "symbol": "__end__main",
             "visibility": "local",
-            "relAddress": 688
-        },
-        "__end____main____main": {
-            "symbol": "__end____main____main",
-            "visibility": "local",
-            "relAddress": 700
+            "relAddress": 648
         },
         "__start": {
             "symbol": "__start",
             "visibility": "local",
-            "relAddress": 700
+            "relAddress": 648
         }
     },
     "relocations": [
         {
-            "location": 58,
+            "location": 54,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
-            "location": 62,
+            "location": 58,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 70,
+            "location": 66,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 78,
+            "location": 74,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 94,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 98,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 102,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 110,
+            "location": 106,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 118,
+            "location": 114,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 134,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 138,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 142,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 150,
+            "location": 146,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 158,
+            "location": 154,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 174,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 178,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 182,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 190,
+            "location": 186,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 198,
+            "location": 194,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 214,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 218,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 222,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 230,
+            "location": 226,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 238,
+            "location": 234,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 254,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 258,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 262,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 270,
+            "location": 266,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 278,
+            "location": 274,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 294,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 298,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 302,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 310,
+            "location": 306,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 318,
+            "location": 314,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 334,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 338,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 342,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 350,
+            "location": 346,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 358,
+            "location": 354,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 374,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 378,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 386,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 394,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 414,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
-            "location": 390,
+            "location": 418,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 398,
+            "location": 426,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
-            "location": 406,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
             "location": 434,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 438,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 446,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
+            "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
             "location": 454,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_lo",
-            "isGlobal": false
-        },
-        {
-            "location": 482,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
-            "location": 486,
+            "location": 458,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 466,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_ml",
+            "isGlobal": false
+        },
+        {
+            "location": 474,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
             "location": 494,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 498,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 506,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 502,
+            "location": 514,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
-            "isGlobal": false
-        },
-        {
-            "location": 530,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 534,
             "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 538,
+            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 542,
+            "location": 546,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 550,
+            "location": 554,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 574,
+            "symbol": "__builtin__print__char",
+            "type": "imm16_abs_hi",
             "isGlobal": false
         },
         {
             "location": 578,
             "symbol": "__builtin__print__char",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 582,
-            "symbol": "__builtin__print__char",
             "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
-            "location": 590,
+            "location": 586,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 598,
+            "location": 594,
             "symbol": "__builtin__print__char",
             "type": "imm16_abs_lo",
             "isGlobal": false
         },
         {
-            "location": 626,
-            "symbol": "__builtin__print__char",
+            "location": 610,
+            "symbol": "__epilogue__main",
             "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 614,
+            "symbol": "__epilogue__main",
+            "type": "imm16_abs_mh",
+            "isGlobal": false
+        },
+        {
+            "location": 622,
+            "symbol": "__epilogue__main",
+            "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
             "location": 630,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 638,
-            "symbol": "__builtin__print__char",
-            "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
-            "location": 646,
-            "symbol": "__builtin__print__char",
+            "symbol": "__epilogue__main",
             "type": "imm16_abs_lo",
+            "isGlobal": false
+        },
+        {
+            "location": 650,
+            "symbol": "main",
+            "type": "imm16_abs_hi",
+            "isGlobal": false
+        },
+        {
+            "location": 654,
+            "symbol": "main",
+            "type": "imm16_abs_mh",
             "isGlobal": false
         },
         {
             "location": 662,
-            "symbol": "__epilogue____main____main",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 666,
-            "symbol": "__epilogue____main____main",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 674,
-            "symbol": "__epilogue____main____main",
+            "symbol": "main",
             "type": "imm16_abs_ml",
             "isGlobal": false
         },
         {
-            "location": 682,
-            "symbol": "__epilogue____main____main",
-            "type": "imm16_abs_lo",
-            "isGlobal": false
-        },
-        {
-            "location": 702,
-            "symbol": "__main____main",
-            "type": "imm16_abs_hi",
-            "isGlobal": false
-        },
-        {
-            "location": 706,
-            "symbol": "__main____main",
-            "type": "imm16_abs_mh",
-            "isGlobal": false
-        },
-        {
-            "location": 714,
-            "symbol": "__main____main",
-            "type": "imm16_abs_ml",
-            "isGlobal": false
-        },
-        {
-            "location": 722,
-            "symbol": "__main____main",
+            "location": 670,
+            "symbol": "main",
             "type": "imm16_abs_lo",
             "isGlobal": false
         }
