@@ -568,34 +568,34 @@ __builtin__print__char:
 __main____main:
    push bp
    mv64 bp, sp
-   sub64i sp, sp, 0 // allocate space for local variables
+   sub64i sp, sp, 168 // allocate space for local variables
 __main__main__entry:
    loada r8, str_0
    mv64 r0, r8 // __main__main__str_ptr = value r8
    lli r1, 0 // __main__main__i0 = value 0
    add64 r8, r0, r1
-   load64 r2, r8, 0 // __main__main__c0 = load r8, 0
+   load8 r2, r8, 0 // __main__main__c0 = load r8, 0
    push r2
    loada r8, __builtin__print__char
    call r8
    pop ra
    add64i r3, r1, 1 // __main__main__i1 = add r1, 1
    add64 r8, r0, r3
-   load64 r4, r8, 0 // __main__main__c1 = load r8, 0
+   load8 r4, r8, 0 // __main__main__c1 = load r8, 0
    push r4
    loada r8, __builtin__print__char
    call r8
    pop ra
    add64i r5, r3, 1 // __main__main__i2 = add r3, 1
    add64 r8, r0, r5
-   load64 r6, r8, 0 // __main__main__c2 = load r8, 0
+   load8 r6, r8, 0 // __main__main__c2 = load r8, 0
    push r6
    loada r8, __builtin__print__char
    call r8
    pop ra
    add64i r7, r5, 1 // __main__main__i3 = add r5, 1
    add64 r8, r0, r7
-   load64 r9, r8, 0
+   load8 r9, r8, 0
    store64 bp, r9, 0 // spill to stack
    load64 r8, bp, 0 // read spilled value from stack
    push r8
@@ -606,7 +606,7 @@ __main__main__entry:
    store64 bp, r8, -8 // spill to stack
    load64 r8, bp, -8 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -16 // spill to stack
    load64 r8, bp, -16 // read spilled value from stack
    push r8
@@ -618,7 +618,7 @@ __main__main__entry:
    store64 bp, r9, -24 // spill to stack
    load64 r8, bp, -24 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -32 // spill to stack
    load64 r8, bp, -32 // read spilled value from stack
    push r8
@@ -630,7 +630,7 @@ __main__main__entry:
    store64 bp, r9, -40 // spill to stack
    load64 r8, bp, -40 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -48 // spill to stack
    load64 r8, bp, -48 // read spilled value from stack
    push r8
@@ -642,7 +642,7 @@ __main__main__entry:
    store64 bp, r9, -56 // spill to stack
    load64 r8, bp, -56 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -64 // spill to stack
    load64 r8, bp, -64 // read spilled value from stack
    push r8
@@ -654,7 +654,7 @@ __main__main__entry:
    store64 bp, r9, -72 // spill to stack
    load64 r8, bp, -72 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -80 // spill to stack
    load64 r8, bp, -80 // read spilled value from stack
    push r8
@@ -666,7 +666,7 @@ __main__main__entry:
    store64 bp, r9, -88 // spill to stack
    load64 r8, bp, -88 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -96 // spill to stack
    load64 r8, bp, -96 // read spilled value from stack
    push r8
@@ -678,7 +678,7 @@ __main__main__entry:
    store64 bp, r9, -104 // spill to stack
    load64 r8, bp, -104 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -112 // spill to stack
    load64 r8, bp, -112 // read spilled value from stack
    push r8
@@ -690,7 +690,7 @@ __main__main__entry:
    store64 bp, r9, -120 // spill to stack
    load64 r8, bp, -120 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -128 // spill to stack
    load64 r8, bp, -128 // read spilled value from stack
    push r8
@@ -702,7 +702,7 @@ __main__main__entry:
    store64 bp, r9, -136 // spill to stack
    load64 r8, bp, -136 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -144 // spill to stack
    load64 r8, bp, -144 // read spilled value from stack
    push r8
@@ -714,7 +714,7 @@ __main__main__entry:
    store64 bp, r9, -152 // spill to stack
    load64 r8, bp, -152 // read spill from stack - resolve
    add64 r9, r0, r8
-   load64 r8, r9, 0
+   load8 r8, r9, 0
    store64 bp, r8, -160 // spill to stack
    load64 r8, bp, -160 // read spilled value from stack
    push r8

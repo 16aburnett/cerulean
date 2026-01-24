@@ -272,7 +272,7 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
     #=====================================================================
 
     def visitTypeSpecifierNode (self, node):
-        pass
+        return node.id
 
     #=====================================================================
 
@@ -354,6 +354,11 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         # create new scope level 
         self.scopeNames += [f"__{node.id[1:]}"]
 
+        # Reset spill slot counter and register allocation for this function
+        self.nextSpillSlot = 0
+        self.virtualToPhysical = {}
+        self.usedRegisters = set()
+
         self.printDivider ()
         self.printComment (f"Function Declaration - {node.signature} -> {node.type}")
 
@@ -369,10 +374,13 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         self.indentation += 1
         self.printCode ("push bp")
         self.printCode ("mv64 bp, sp")
-        # Allocate space for local vars
+        # Allocate space for local vars - placeholder to be filled in later
         # Warning! Make sure not to exceed 16-bit imm
-        localVariablesBytes = 0
-        self.printCode (f"sub64i sp, sp, {localVariablesBytes} // allocate space for local variables")
+        # Track both the spaces index and the text index
+        stackAllocSpacesIndex = len(self.code)
+        self.printSpaces (self.indentation)
+        stackAllocTextIndex = len(self.code)
+        self.code += ["PLACEHOLDER_STACK_ALLOC\n"]
         self.indentation -= 1
         
         # load parameters 
@@ -393,6 +401,10 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         for basicBlock in node.basicBlocks:
             basicBlock.accept (self)
         self.indentation -= 1
+
+        # Now we know how many spill slots we need, update the placeholder
+        localVariablesBytes = self.nextSpillSlot * 8
+        self.code[stackAllocTextIndex] = f"sub64i sp, sp, {localVariablesBytes} // allocate space for local variables\n"
 
         # FUNCTION EPILOGUE
         self.printComment ("Function Epilogue")
@@ -583,7 +595,8 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             # **lhsvariable should probably return scopename
             regOrSpill = node.lhsVariable.accept (self)
             lhs_var = node.lhsVariable.scopeName.replace(".", "_")
-            # **NOTE** ignoring type arg
+            # Get type to determine load size
+            typeArg = node.arguments[0].accept (self)
             pointerRegOrSpill = node.arguments[1].accept (self)
             offsetRegSpillImm = node.arguments[2].accept (self)
             pointerReg = self.resolve (pointerRegOrSpill)
@@ -605,8 +618,15 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             else:
                 offsetImmediate = offsetRegOrImm
 
-            # TODO: This need to take into account the type
-            op = f"load64"
+            # Determine load instruction based on type
+            # Check if the type is char (1 byte)
+            if typeArg == "char" or (hasattr(node.arguments[0], 'expression') and 
+                                      hasattr(node.arguments[0].expression, 'id') and 
+                                      node.arguments[0].expression.id == "char"):
+                op = "load8"
+            else:
+                # Default to 64-bit load for pointers, ints, etc.
+                op = "load64"
             if regOrSpill["kind"] == "spill":
                 regOffset = -regOrSpill["value"] * 8
                 tempReg = self.getTempReg ()

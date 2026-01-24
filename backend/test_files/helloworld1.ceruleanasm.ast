@@ -43,7 +43,7 @@ Program:
 |   |   Args:
 |   |   |   Register("sp")
 |   |   |   Register("sp")
-|   |   |   IntLiteral(0)
+|   |   |   IntLiteral(168)
 |   Instruction: "loada"
 |   |   Labels:
 |   |   |   Label("__main__main__entry")
@@ -63,7 +63,7 @@ Program:
 |   |   |   Register("r8")
 |   |   |   Register("r0")
 |   |   |   Register("r1")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r2")
 |   |   |   Register("r8")
@@ -91,7 +91,7 @@ Program:
 |   |   |   Register("r8")
 |   |   |   Register("r0")
 |   |   |   Register("r3")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r4")
 |   |   |   Register("r8")
@@ -119,7 +119,7 @@ Program:
 |   |   |   Register("r8")
 |   |   |   Register("r0")
 |   |   |   Register("r5")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r6")
 |   |   |   Register("r8")
@@ -147,7 +147,7 @@ Program:
 |   |   |   Register("r8")
 |   |   |   Register("r0")
 |   |   |   Register("r7")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r9")
 |   |   |   Register("r8")
@@ -195,7 +195,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -248,7 +248,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -301,7 +301,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -354,7 +354,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -407,7 +407,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -460,7 +460,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -513,7 +513,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -566,7 +566,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -619,7 +619,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
@@ -672,7 +672,7 @@ Program:
 |   |   |   Register("r9")
 |   |   |   Register("r0")
 |   |   |   Register("r8")
-|   Instruction: "load64"
+|   Instruction: "load8"
 |   |   Args:
 |   |   |   Register("r8")
 |   |   |   Register("r9")
