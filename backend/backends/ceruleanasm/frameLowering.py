@@ -68,21 +68,46 @@ class FrameLoweringVisitor(ASMASTVisitor):
     def visitFunctionNode(self, node):
         """
         Add stack frame information to the function.
+        Calculates space needed for spilled registers and alloca'd memory.
         """
         self.frameLowering.debugPrint(f"\nProcessing frame for function: {node.id}")
         
-        # Calculate total stack frame size
-        # This includes: spilled variables + local variables + alignment
-        stackFrameSize = getattr(node, 'stackFrameSize', 0)
+        # Start with spilled variables from register allocation
+        spilledSize = getattr(node, 'stackFrameSize', 0)
         
-        # Ensure 16-byte alignment (common requirement on many architectures)
-        if stackFrameSize % 16 != 0:
-            stackFrameSize = ((stackFrameSize // 16) + 1) * 16
+        # Scan instructions for allocas and calculate their offsets
+        allocaSize = 0
+        allocaOffsets = {}  # Map alloca register -> offset from bp
+        currentOffset = spilledSize  # Allocas come after spills
+        
+        for instr in node.instructions:
+            if isinstance(instr, ASM_AST.InstructionNode) and instr.command == "alloca":
+                if hasattr(instr, 'allocaSize'):
+                    size = instr.allocaSize
+                    # Get the destination register
+                    destReg = instr.arguments[0].id if instr.arguments else None
+                    if destReg:
+                        # Align each alloca to 8 bytes for safety
+                        if currentOffset % 8 != 0:
+                            currentOffset = ((currentOffset // 8) + 1) * 8
+                        allocaOffsets[destReg] = currentOffset
+                        self.frameLowering.debugPrint(f"  Alloca {destReg}: {size} bytes at offset {currentOffset}")
+                        currentOffset += size
+                        allocaSize += size
+        
+        # Total frame = spills + allocas
+        totalFrameSize = spilledSize + allocaSize
+        
+        # Ensure 16-byte alignment for the entire frame
+        if totalFrameSize % 16 != 0:
+            totalFrameSize = ((totalFrameSize // 16) + 1) * 16
         
         # Store frame info on the node
-        node.stackFrameSize = stackFrameSize
+        node.stackFrameSize = totalFrameSize
+        node.allocaOffsets = allocaOffsets  # For use during emission
         
-        self.frameLowering.debugPrint(f"  Final stack frame size: {stackFrameSize} bytes (aligned)")
+        self.frameLowering.debugPrint(f"  Spilled: {spilledSize} bytes, Allocas: {allocaSize} bytes")
+        self.frameLowering.debugPrint(f"  Final stack frame size: {totalFrameSize} bytes (aligned)")
         
         return node
     

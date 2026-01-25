@@ -399,23 +399,22 @@ __builtin__print__char:
 // //     println __e
 // //     return 0
 
-// // //========================================================================
-// // // Prints a newline to the console
-// // // void println ();
-// __builtin__println:
-//         push    rbp 
-//         mov     rbp, rsp
-
-//         mov     rdi, __data__println__format
-//         mov     eax, 0
-//         call    printf 
-
-//         pop     rbp
-//         ret 
-
-// section .data
-// __data__println__format: db 10, 0
-// section .text
+// ========================================================================
+// Prints a newline to the console
+// void println ();
+__builtin__println:
+        // function prologue
+        push bp
+        mv64 bp, sp
+        push r0 // Saving caller's r0
+        // function body - print newline character
+        lli r0, 10 // ASCII newline
+        putchar r0
+        // function epilogue
+        pop r0 // Restoring caller's r0
+        mv64 sp, bp
+        pop bp
+        ret
 
 // // //========================================================================
 // // // grabs input from the console 

@@ -254,6 +254,15 @@ class AllocationVisitor(ASMASTVisitor):
                     liveRanges[var] = [idx, idx]
                 else:
                     liveRanges[var][1] = max(liveRanges[var][1], idx)
+            
+            # Get variables live-out at this instruction
+            # This captures variables that need to stay alive beyond their last explicit use
+            liveOutAt = funcLiveness.get(f"liveOut_{idx}", [])
+            for var in liveOutAt:
+                if var not in liveRanges:
+                    liveRanges[var] = [idx, idx]
+                else:
+                    liveRanges[var][1] = max(liveRanges[var][1], idx)
         
         # Convert to tuples
         return {var: tuple(range_) for var, range_ in liveRanges.items()}

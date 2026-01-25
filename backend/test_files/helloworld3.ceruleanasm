@@ -582,107 +582,39 @@ main:
    // Prologue: Setup stack frame
    push bp
    mv64 bp, sp
+   sub64i sp, sp, 16 // allocate 16 bytes
    // Function body
 entry:
    loada r0, str_0
-   lli r1, 0
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
-   load8 r3, r1, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r1, r2, 1
-   add64 r2, r0, r1
-   load8 r3, r2, 0
-   push r3
-   loada r8, __builtin__print__char
-   call r8
-   pop r8
-   add64i r2, r1, 1
-   add64 r1, r0, r2
+   lli r1, 13
+   mv64 r2, bp // alloca: compute stack address
+   lli r3, 0
+   store32 r2, r3, 0
+   loada r3, for_cond
+   jmp r3
+for_cond:
+   load32 r3, r2, 0
+   loada r4, for_end
+   bge r3, r1, r4
+   loada r1, for_body
+   jmp r1
+for_body:
+   add64 r1, r0, r3
    load8 r0, r1, 0
    push r0
    loada r8, __builtin__print__char
    call r8
    pop r8
+   loada r0, for_update
+   jmp r0
+for_update:
+   add64i r0, r3, 1
+   store32 r2, r0, 0
+   loada r0, for_cond
+   jmp r0
+for_end:
+   loada r8, __builtin__println
+   call r8
    lli ra, 0
    loada r0, __epilogue__main
    jmp r0
@@ -707,4 +639,4 @@ __start:
 
 // data section
 str_0:
-   .ascii "Hello, World!\n"
+   .ascii "Hello, World!"

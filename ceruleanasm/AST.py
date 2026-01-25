@@ -162,11 +162,11 @@ class DataDirectiveNode (Node):
 
 class InstructionNode (Node):
 
-    def __init__ (self, token, id, args, labels=[]):
+    def __init__ (self, token, id, args, labels=None):
         self.token = token
         self.id = id
         self.args = args
-        self.labels = labels
+        self.labels = labels if labels is not None else []
         self.address = None
         # Size of the instruction in bytes
         # Currently all instructions are 4 bytes, but in the future

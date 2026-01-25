@@ -251,11 +251,11 @@ class BasicBlockNode (Node):
 
 class InstructionNode (Node):
     
-    def __init__(self, lhsVariable, command, arguments=[]):
+    def __init__(self, lhsVariable, command, arguments=None):
         self.hasAssignment = lhsVariable != None
         self.lhsVariable = lhsVariable
         self.command = command
-        self.arguments = arguments
+        self.arguments = arguments if arguments is not None else []
         self.lineNumber = 0
         self.columnNumber = 0
 
@@ -269,12 +269,12 @@ class InstructionNode (Node):
 
 class CallInstructionNode (Node):
     
-    def __init__(self, lhsVariable, function_name, token, arguments=[]):
+    def __init__(self, lhsVariable, function_name, token, arguments=None):
         self.hasAssignment = lhsVariable != None
         self.lhsVariable = lhsVariable
         self.function_name = function_name
         self.token = token
-        self.arguments = arguments
+        self.arguments = arguments if arguments is not None else []
         self.decl = None
         self.lineNumber = 0
         self.columnNumber = 0
