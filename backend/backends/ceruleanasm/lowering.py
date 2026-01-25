@@ -7,6 +7,7 @@ from sys import exit
 
 from ...ceruleanIRAST import *
 from ...visitor import ASTVisitor
+from ...typeUtils import getTypeSize
 from . import ceruleanASMAST as ASM_AST
 
 # =================================================================================================
@@ -80,9 +81,17 @@ class LoweringVisitor (ASTVisitor):
 
     def visitBasicBlockNode (self, node):
         asmInstructions = []
+
         for instruction in node.instructions:
             # Each instruction may expand to multiple asm instructions when lowered
             asmInstructions += instruction.accept (self)
+
+        # Attach the basic block label to the first instruction
+        if len(asmInstructions) > 0:
+            self.debugPrint(f"Attaching label '{node.name}' to instruction: {asmInstructions[0].command if hasattr(asmInstructions[0], 'command') else type(asmInstructions[0]).__name__}")
+            self.debugPrint(f"  Block has {len(asmInstructions)} instructions")
+            asmInstructions[0].labels.append(node.name)
+        
         return asmInstructions
 
     # =============================================================================================
@@ -204,19 +213,29 @@ class LoweringVisitor (ASTVisitor):
             # Allocates <count> elements of <type> on the stack
             # Returns a pointer (address) to the allocated memory
             # 
-            # Strategy: Use frame pointer arithmetic
-            # The actual stack space will be allocated during frame lowering
-            # Here we just need to compute the address
-            #
-            # For now, treat alloca variables as special stack-allocated registers
-            # They'll be handled specially during register allocation
+            # Strategy: Create a pseudo-instruction with metadata
+            # Frame lowering will calculate actual stack space and offsets
+            # Code emission will replace this with address computation
             lhsReg = node.lhsVariable.accept (self)
             typeArg = node.arguments[0].accept (self)
-            count = node.arguments[1]
+            countNode = node.arguments[1]
             
-            # Create a pseudo-instruction to mark this as an alloca
-            # The register allocator will handle this specially
-            asmInstruction = ASM_AST.InstructionNode ("alloca", [lhsReg, ASM_AST.IntLiteralNode(str(count.value))])
+            # Calculate size in bytes using centralized type utilities
+            elementSize = getTypeSize(typeArg)
+            
+            # Get count value
+            if hasattr(countNode, 'value'):
+                count = countNode.value
+            elif hasattr(countNode, 'expression') and hasattr(countNode.expression, 'value'):
+                count = countNode.expression.value
+            else:
+                count = 1  # Fallback
+            
+            totalBytes = elementSize * count
+            
+            # Create pseudo-instruction with metadata
+            asmInstruction = ASM_AST.InstructionNode("alloca", [lhsReg])
+            asmInstruction.allocaSize = totalBytes  # Attach size metadata
             asmInstructions += [asmInstruction]
         elif commandName == "malloc":
             print (f"Lowering ERROR: {commandName} not implemented")
@@ -228,7 +247,19 @@ class LoweringVisitor (ASTVisitor):
             lhsReg = node.lhsVariable.accept (self)
             # Determine load instruction size based on type
             typeArg = node.arguments[0].accept (self)
-            loadOp = "load8" if typeArg == "char" else "load64"
+            
+            # Map type to load instruction
+            typeToLoadOp = {
+                "char": "load8",
+                "int8": "load8",
+                "int16": "load16",
+                "int32": "load32",
+                "int64": "load64",
+                "float32": "load32",
+                "float64": "load64",
+                "ptr": "load64"
+            }
+            loadOp = typeToLoadOp.get(typeArg, "load64")  # Default to 64-bit
             
             # Usage 1: reg offset
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
@@ -250,8 +281,58 @@ class LoweringVisitor (ASTVisitor):
                 print (f"Lowering Error: Unexpected argument type {asmArguments[2]}")
                 exit (1)
         elif commandName == "store":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: store(<pointer>, <offset>, <value>)
+            # Stores <value> at memory location <pointer> + <offset>
+            # Extract type from the value argument (3rd argument in IR)
+            valueNode = node.arguments[2]
+            valueType = None
+            if hasattr(valueNode, 'type'):
+                valueType = valueNode.type.id if hasattr(valueNode.type, 'id') else str(valueNode.type)
+            
+            # Map type to store instruction
+            typeToStoreOp = {
+                "char": "store8",
+                "int8": "store8",
+                "int16": "store16",
+                "int32": "store32",
+                "int64": "store64",
+                "float32": "store32",
+                "float64": "store64",
+                "ptr": "store64"
+            }
+            storeOp = typeToStoreOp.get(valueType, "store64")  # Default to 64-bit
+            
+            # Usage 1: reg offset, reg value
+            # CeruleanIR : store (<pointer>, <offset_reg>, <value>)
+            # CeruleanASM: add64 r<temp>, r<ptr>, r<offset>
+            #              store<size> r<temp>, r<value>, imm<0>
+            if isinstance (asmArguments[1], ASM_AST.RegisterNode):
+                self.debugPrint (f">>> lowering store(R,R,R) to add(R,R,R) and {storeOp}(R,R,I)")
+                tempReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [
+                    ASM_AST.InstructionNode ("add64", [tempReg, asmArguments[0], asmArguments[1]]),
+                    ASM_AST.InstructionNode (storeOp, [tempReg, asmArguments[2], ASM_AST.IntLiteralNode (0)])
+                ]
+            # Usage 2: imm offset, reg value
+            # CeruleanIR : store (<pointer>, <offset_imm>, <value>)
+            # CeruleanASM: store<size> r<ptr>, r<value>, imm<offset>
+            elif isinstance (asmArguments[1], ASM_AST.LiteralNode):
+                # Check if value is reg or imm
+                if isinstance (asmArguments[2], ASM_AST.RegisterNode):
+                    asmInstructions += [ASM_AST.InstructionNode (storeOp, [asmArguments[0], asmArguments[2], asmArguments[1]])]
+                # Usage 3: imm offset, imm value
+                # CeruleanIR : store (<pointer>, <offset_imm>, <imm_value>)
+                # CeruleanASM: lli r<temp>, imm<value>
+                #              store<size> r<ptr>, r<temp>, imm<offset>
+                else:
+                    tempReg = ASM_AST.VirtualTempRegisterNode()
+                    asmInstructions += [
+                        ASM_AST.InstructionNode ("lli", [tempReg, asmArguments[2]]),
+                        ASM_AST.InstructionNode (storeOp, [asmArguments[0], tempReg, asmArguments[1]])
+                    ]
+            else:
+                print (f"Lowering Error: Unexpected argument type for store offset: {asmArguments[1]}")
+                exit (1)
         elif commandName == "clt":
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
@@ -271,8 +352,15 @@ class LoweringVisitor (ASTVisitor):
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
         elif commandName == "jmp":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jmp (block(label))
+            # Unconditional jump to a label
+            # CeruleanASM: loada r<temp>, <label>
+            #              jmp r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[0]]),
+                ASM_AST.InstructionNode("jmp", [tempReg])
+            ]
         elif commandName == "jcmp":
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
@@ -280,15 +368,36 @@ class LoweringVisitor (ASTVisitor):
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
         elif commandName == "jge":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jge (int32(lhs), int32(rhs), block(label))
+            # Jump to label if lhs >= rhs
+            # CeruleanASM: loada r<temp>, <label>
+            #              bge r<lhs>, r<rhs>, r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            
+            # Handle immediate operands - load into temp registers
+            lhs = asmArguments[0]
+            rhs = asmArguments[1]
+            
+            # If lhs is immediate, load into temp
+            if isinstance(lhs, ASM_AST.LiteralNode):
+                lhsReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [lhsReg, lhs])]
+                lhs = lhsReg
+            
+            # If rhs is immediate, load into temp
+            if isinstance(rhs, ASM_AST.LiteralNode):
+                rhsReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [rhsReg, rhs])]
+                rhs = rhsReg
+            
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
+                ASM_AST.InstructionNode("bge", [lhs, rhs, tempReg])
+            ]
         elif commandName == "jl":
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
         elif commandName == "jle":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
-        elif commandName == "jne":
             print (f"Lowering ERROR: {commandName} not implemented")
             exit (1)
         elif commandName == "jne":

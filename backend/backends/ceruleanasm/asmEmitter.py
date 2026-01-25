@@ -205,8 +205,38 @@ class EmitterVisitor(ASMASTVisitor):
     
     def visitInstructionNode(self, node):
         """Visit an instruction node - emit the instruction."""
+        # Emit any labels attached to this instruction
+        if hasattr(node, 'labels') and node.labels:
+            for label in node.labels:
+                self.emitLabel(label)
+        
         # Check for special handling of certain instructions
         command = node.command
+        
+        # Handle alloca pseudo-instruction
+        if command == "alloca":
+            # Replace with stack address computation
+            # Get the destination register
+            if node.arguments and len(node.arguments) > 0:
+                destOperand = node.arguments[0]
+                destReg = self.visit(destOperand)
+                
+                # Get the offset from function's alloca map
+                if self.currentFunction and hasattr(self.currentFunction, 'allocaOffsets'):
+                    allocaOffsets = self.currentFunction.allocaOffsets
+                    regName = destOperand.id if hasattr(destOperand, 'id') else str(destOperand)
+                    
+                    if regName in allocaOffsets:
+                        offset = allocaOffsets[regName]
+                        # Compute address: bp - offset
+                        # Since stack grows down, alloca space is below bp
+                        self.emitLine(f"mv64 {destReg}, bp // alloca: compute stack address")
+                        if offset > 0:
+                            self.emitLine(f"sub64i {destReg}, {destReg}, {offset}")
+                        return
+            # Fallback if we couldn't find the offset
+            self.emitComment("Warning: alloca offset not found")
+            return
         
         # Handle return statements with epilogue jump
         if command == "return" or (command == "jmp" and len(node.arguments) > 0):
@@ -232,6 +262,11 @@ class EmitterVisitor(ASMASTVisitor):
     
     def visitCallInstructionNode(self, node):
         """Visit a call instruction node."""
+        # Emit any labels attached to this instruction
+        if node.labels:
+            for label in node.labels:
+                self.emitLabel(label)
+        
         # Strip @ prefix from function name if present
         funcName = node.functionName
         if isinstance(funcName, str) and funcName.startswith('@'):
@@ -293,6 +328,7 @@ class EmitterVisitor(ASMASTVisitor):
         if "epilogue_placeholder" in labelId and self.currentFunction:
             return f"__epilogue__{self.currentFunction.id}"
         
+        return labelId
         return labelId
     
     def visitIntLiteralNode(self, node):

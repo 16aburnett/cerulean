@@ -226,6 +226,8 @@ class VirtualASMLivenessAnalyzer:
         
         # Iterate until fixed point (simple version: just backwards pass)
         # For single basic block, this is straightforward
+        # NOTE: This doesn't handle control flow correctly - loops will have issues
+        # TODO: Implement proper CFG-based liveness analysis
         changed = True
         iterations = 0
         maxIterations = 100

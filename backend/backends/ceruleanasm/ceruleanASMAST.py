@@ -107,7 +107,7 @@ class FunctionNode (Node):
 
 class InstructionNode (Node):
     
-    def __init__ (self, command, arguments, labels=[]):
+    def __init__ (self, command, arguments, labels=None):
         self.command = command
         self.arguments = arguments
         self.labels = []
@@ -128,11 +128,11 @@ class InstructionNode (Node):
 
 class CallInstructionNode (Node):
     
-    def __init__ (self, functionName, token, arguments, labels=[]):
+    def __init__ (self, functionName, token, arguments, labels=None):
         self.functionName = functionName
         self.token = token
         self.arguments = arguments
-        self.labels = labels
+        self.labels = labels if labels is not None else []
         self.decl = None
 
     def accept (self, visitor):

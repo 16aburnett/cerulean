@@ -110,6 +110,18 @@ ceruleanvm/build/ceruleanvm backend/test_files/helloworld1.ceruleanbc
 python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld1.amyasm
 
+
+# helloworld3
+# Test target=ceruleanasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld3.ceruleanir -o backend/test_files/helloworld3.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler backend/test_files/helloworld3.ceruleanasm -o backend/test_files/helloworld3.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker backend/test_files/helloworld3.ceruleanobj -o backend/test_files/helloworld3.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm backend/test_files/helloworld3.ceruleanbc
+# Test target=amyasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld3.ceruleanir -o backend/test_files/helloworld3.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld3.amyasm
+
+
 ```
 
 ### NOTES ################################################################
