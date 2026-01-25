@@ -142,7 +142,7 @@ class CeruleanIRCompiler:
         # keyed by filename
         self.printDebug (f"Generating code...")
         if target == TargetLang.CERULEANASM:
-            codeGenerator = CodeGenVisitor_CeruleanASM (lines, shouldPrintDebug=self.shouldPrintDebug)
+            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (lines)
         elif target == TargetLang.X86:

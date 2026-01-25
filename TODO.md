@@ -89,6 +89,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_he
 python3 -m backend.ceruleanIRCompiler backend/test_files/test_cmp.ceruleanir -o backend/test_files/test_cmp.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cmp.amyasm
 
+# helloworld0
 # Test target=ceruleanasm
 python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld0.ceruleanasm -o backend/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
@@ -99,9 +100,40 @@ python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir 
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld0.amyasm
 
 
+# helloworld1
+# Test target=ceruleanasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler backend/test_files/helloworld1.ceruleanasm -o backend/test_files/helloworld1.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker backend/test_files/helloworld1.ceruleanobj -o backend/test_files/helloworld1.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm backend/test_files/helloworld1.ceruleanbc
+# Test target=amyasm
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/helloworld1.amyasm
+
 ```
 
 ### NOTES ################################################################
+
+
+#### CeruleanIR -> CeruleanASM
+- lower CeruleanIR to a new IR that is closer to CeruleanASM (still virtual infinite registers)
+    - Handles type info conversions to respective instructions
+        - `add int32(%0), int32(%1)` -> `add32 %0, %1`
+        - `add float64(%0), float64(%1)` -> `addf64 %0, %1`
+        - `add int64(%0), int64(16)` -> `add64i %0, 16`
+        - `add float64(%0), float64(3.14159265)` -> `load64 %temp0, %float0, 0 ; addf64 %0, %temp0`
+            - float literals (and string literals) need to be stored in mem since there are no float instr with immediates
+            - visiting arguments can generate instructions!
+    - this also might generate more instructions for if CeruleanASM doesnt support a size like int16 - which might need to sign extended to int32
+    - should handle moving imm to data section if >16-bit imm
+- register allocation
+    - converts virtual infinite registers to finite physical registers
+    - this can be a really challenging problem, so start off incredibly simple.
+    - need the number of references for each virtual register so we know when to allocate/deallocate a physical register
+- final code gen pass
+    - Converts to actual string representation
+    - adds instructions for function prologue and epilogue using info from register allocation phase (num local variables for stack, num registers spilled to stack)
+
 
 #### Casting
 casting a pointer of one type to another is UNDEFINED BEHAVIOR in c++

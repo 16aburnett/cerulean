@@ -584,72 +584,101 @@ main:
    push bp
    mv64 bp, sp
    // Function body
-   lli r0, 'H'
-   push r0
+   loada r0, str_0
+   lli r1, 0
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'e'
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'l'
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'l'
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'o'
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, ','
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, ' '
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'W'
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'o'
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'r'
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'l'
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, 'd'
-   push r0
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r3, r1, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, '!'
-   push r0
+   add64i r1, r2, 1
+   add64 r2, r0, r1
+   load8 r3, r2, 0
+   push r3
    loada r8, __builtin__print__char
    call r8
    pop r8
-   lli r0, '\n'
+   add64i r2, r1, 1
+   add64 r1, r0, r2
+   load8 r0, r1, 0
    push r0
    loada r8, __builtin__print__char
    call r8
@@ -677,3 +706,5 @@ __start:
 
 
 // data section
+str_0:
+   .ascii "Hello, World!\n"
