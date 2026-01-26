@@ -176,7 +176,7 @@ class AllocatorStrategy(Enum):
 python3 -m backend.ceruleanIRCompiler input.ceruleanir --target ceruleanasm
 
 # Use linear scan allocator (optimized, requires proper CFG)
-python3 -m backend.ceruleanIRCompiler input.ceruleanir --target ceruleanasm --allocator linear-scan
+python3 -m backend.ceruleanIRCompiler input.ceruleanir --target ceruleanasm --regalloc linear-scan
 ```
 
 ## Current Status
