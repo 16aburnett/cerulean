@@ -211,15 +211,6 @@ def generateCode (ast, sourceCodeLines, target):
 
 if __name__ == "__main__":
 
-    # Custom type converter for register allocator argument
-    def regalloc_type(value):
-        try:
-            return AllocatorStrategy(value)
-        except ValueError:
-            raise argparse.ArgumentTypeError(
-                f"Invalid register allocator '{value}'. Choose from: {', '.join(s.value for s in AllocatorStrategy)}"
-            )
-
     argparser = argparse.ArgumentParser(description="CeruleanIR Compiler")
 
     argparser.add_argument(dest="sourceFiles", nargs="+", help="source files to compile (first file should be the main file)")
@@ -230,14 +221,15 @@ if __name__ == "__main__":
     argparser.add_argument("--target", dest="target", type=str,
         choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
         help="specifies the target language to compile to [default: amyasm]")
-    argparser.add_argument("--regalloc", dest="regalloc", type=regalloc_type,
-        default=AllocatorStrategy.NAIVE,
-        help="register allocator strategy: 'naive' (spill all, always correct) or 'linear-scan' (optimized, requires CFG) [default: naive]")
+    argparser.add_argument("--regalloc", dest="regalloc", type=str,
+        choices=[s.value for s in AllocatorStrategy], default=AllocatorStrategy.NAIVE.value,
+        help="specifies the register allocator strategy to use [default: naive]")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
     args = argparser.parse_args()
 
     target = TargetLang(args.target)
+    regalloc = AllocatorStrategy(args.regalloc)
     sourceFilename = args.sourceFiles[0]
     # otherFilenames = args.sourceFiles[1:]
     destFilename = None
@@ -270,7 +262,7 @@ if __name__ == "__main__":
         emitAST=args.emitAST,
         emitIR=args.emitIR,
         target=target,
-        regalloc=args.regalloc
+        regalloc=regalloc
     )
 
     # Write target code
