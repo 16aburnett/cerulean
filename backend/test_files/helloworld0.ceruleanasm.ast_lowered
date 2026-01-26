@@ -34,6 +34,38 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "push"
 |   |   Labels:
+|   |   |   Label("__builtin__println")
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(0)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r0")
+|   |   |   IntLiteral(10)
+|   Instruction: "putchar"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r0")
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(0)
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "ret"
+|   Instruction: "push"
+|   |   Labels:
 |   |   |   Label("main")
 |   |   Args:
 |   |   |   Register("bp")
@@ -42,13 +74,30 @@ Program:
 |   |   |   Register("bp")
 |   |   |   Register("sp")
 |   |   |   IntLiteral(0)
-|   Instruction: "lli"
+|   Instruction: "sub64i"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("sp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(128)
+|   Instruction: "lli"
+|   |   Labels:
+|   |   |   Label("entry")
+|   |   Args:
+|   |   |   Register("r9")
 |   |   |   CharLiteral('H')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-8)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-8)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -83,11 +132,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('e')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-16)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-16)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -122,11 +181,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('l')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-56)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-56)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -161,11 +230,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('l')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-64)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-64)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -200,11 +279,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('o')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-72)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-72)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -239,11 +328,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral(',')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-80)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-80)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -278,11 +377,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral(' ')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-88)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-88)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -317,11 +426,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('W')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-96)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-96)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -356,11 +475,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('o')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-104)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-104)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -395,11 +524,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('r')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-112)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-112)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -434,11 +573,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('l')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-24)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-24)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -473,11 +622,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('d')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-32)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-32)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -512,11 +671,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('!')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-40)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-40)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -551,11 +720,21 @@ Program:
 |   |   |   Register("r8")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   CharLiteral('\n')
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-48)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-48)
 |   Instruction: "push"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "lui"
 |   |   Args:
 |   |   |   Register("r8")
@@ -594,33 +773,43 @@ Program:
 |   |   |   IntLiteral(0)
 |   Instruction: "lui"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   LabelExpression("__epilogue__main")
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   LabelExpression("__epilogue__main")
 |   Instruction: "sll64i"
 |   |   Args:
-|   |   |   Register("r0")
-|   |   |   Register("r0")
+|   |   |   Register("r9")
+|   |   |   Register("r9")
 |   |   |   IntLiteral(16)
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   LabelExpression("__epilogue__main")
 |   Instruction: "sll64i"
 |   |   Args:
-|   |   |   Register("r0")
-|   |   |   Register("r0")
+|   |   |   Register("r9")
+|   |   |   Register("r9")
 |   |   |   IntLiteral(16)
 |   Instruction: "lli"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   |   |   LabelExpression("__epilogue__main")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-120)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-120)
 |   Instruction: "jmp"
 |   |   Args:
-|   |   |   Register("r0")
+|   |   |   Register("r9")
 |   Instruction: "add64i"
 |   |   Labels:
 |   |   |   Label("__epilogue__main")

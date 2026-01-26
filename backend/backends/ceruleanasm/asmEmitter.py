@@ -204,7 +204,7 @@ class EmitterVisitor(ASMASTVisitor):
         self.currentFunction = None
     
     def visitInstructionNode(self, node):
-        """Visit an instruction node - emit the instruction."""
+        """Visit an instruction node - emit the instruction with proper spill handling."""
         # Emit any labels attached to this instruction
         if hasattr(node, 'labels') and node.labels:
             for label in node.labels:
@@ -219,7 +219,6 @@ class EmitterVisitor(ASMASTVisitor):
             # Get the destination register
             if node.arguments and len(node.arguments) > 0:
                 destOperand = node.arguments[0]
-                destReg = self.visit(destOperand)
                 
                 # Get the offset from function's alloca map
                 if self.currentFunction and hasattr(self.currentFunction, 'allocaOffsets'):
@@ -228,11 +227,12 @@ class EmitterVisitor(ASMASTVisitor):
                     
                     if regName in allocaOffsets:
                         offset = allocaOffsets[regName]
-                        # Compute address: bp - offset
-                        # Since stack grows down, alloca space is below bp
-                        self.emitLine(f"mv64 {destReg}, bp // alloca: compute stack address")
+                        # Compute address into scratch register
+                        self.emitLine(f"mv64 r8, bp // alloca: compute stack address")
                         if offset > 0:
-                            self.emitLine(f"sub64i {destReg}, {destReg}, {offset}")
+                            self.emitLine(f"sub64i r8, r8, {offset}")
+                        # Store result to destination (may be spilled)
+                        self._emitStore(destOperand, "r8")
                         return
             # Fallback if we couldn't find the offset
             self.emitComment("Warning: alloca offset not found")
@@ -251,17 +251,11 @@ class EmitterVisitor(ASMASTVisitor):
                         self.emitLine(f"jmp r8")
                         return
         
-        # Standard instruction emission
-        args = [self.visit(arg) for arg in node.arguments]
-        
-        if args:
-            argStr = ", ".join(str(arg) for arg in args)
-            self.emitLine(f"{command} {argStr}")
-        else:
-            self.emitLine(f"{command}")
+        # Standard instruction emission with spill handling
+        self._emitInstructionWithSpills(node)
     
     def visitCallInstructionNode(self, node):
-        """Visit a call instruction node."""
+        """Visit a call instruction node with proper spill handling."""
         # Emit any labels attached to this instruction
         if node.labels:
             for label in node.labels:
@@ -272,10 +266,20 @@ class EmitterVisitor(ASMASTVisitor):
         if isinstance(funcName, str) and funcName.startswith('@'):
             funcName = funcName[1:]
         
-        # Push arguments in reverse order
+        # Push arguments in reverse order, loading spilled args first
+        scratchRegs = ["r9", "r10", "r11"]
         for i in range(len(node.arguments) - 1, -1, -1):
-            arg = self.visit(node.arguments[i])
-            self.emitLine(f"push {arg}")
+            arg = node.arguments[i]
+            
+            # Handle spilled arguments
+            if self._isSpilled(arg):
+                scratch = scratchRegs[i % len(scratchRegs)]
+                self._emitLoad(arg, scratch)
+                self.emitLine(f"push {scratch}")
+            else:
+                # Handle normal arguments (physical registers or literals)
+                argValue = self.visit(arg)
+                self.emitLine(f"push {argValue}")
         
         # Call function
         self.emitLine(f"loada r8, {funcName}")
@@ -290,13 +294,12 @@ class EmitterVisitor(ASMASTVisitor):
         return node.id
     
     def visitVirtualRegisterNode(self, node):
-        """Visit a virtual register node - look up physical register."""
+        """Visit a virtual register node - look up physical register or return spill info."""
         # Virtual registers should have been allocated to physical registers
         # by the register allocator pass
         if self.currentFunction:
             registerAllocation = getattr(self.currentFunction, 'registerAllocation', {})
             if node.id in registerAllocation:
-                # Get the physical register or spill slot
                 allocation = registerAllocation[node.id]
                 if isinstance(allocation, str):
                     return allocation  # Physical register name like "r0"
@@ -304,13 +307,136 @@ class EmitterVisitor(ASMASTVisitor):
                     if allocation.get('kind') == 'reg':
                         return allocation['value']
                     elif allocation.get('kind') == 'spill':
-                        # For spills, we need to emit load/store around uses
-                        # For now, just return a comment
-                        slot = allocation['value']
-                        return f"[bp-{slot*8}]"  # Stack location
+                        # Return spill location info (to be handled by caller)
+                        return allocation
         
         # Fallback: return the virtual register name as-is
         return node.id
+    
+    def _isSpilled(self, operand):
+        """Check if an operand is a spilled virtual register."""
+        if isinstance(operand, (ASM_AST.VirtualRegisterNode, ASM_AST.VirtualTempRegisterNode)):
+            if self.currentFunction:
+                registerAllocation = getattr(self.currentFunction, 'registerAllocation', {})
+                if operand.id in registerAllocation:
+                    allocation = registerAllocation[operand.id]
+                    if isinstance(allocation, dict) and allocation.get('kind') == 'spill':
+                        return True
+        return False
+    
+    def _getSpillOffset(self, operand):
+        """Get the stack offset for a spilled operand."""
+        if isinstance(operand, (ASM_AST.VirtualRegisterNode, ASM_AST.VirtualTempRegisterNode)):
+            if self.currentFunction:
+                registerAllocation = getattr(self.currentFunction, 'registerAllocation', {})
+                if operand.id in registerAllocation:
+                    allocation = registerAllocation[operand.id]
+                    if isinstance(allocation, dict) and allocation.get('kind') == 'spill':
+                        return allocation['value']
+        return None
+    
+    def _emitLoad(self, operand, scratchReg):
+        """Emit code to load a spilled operand into a scratch register."""
+        offset = self._getSpillOffset(operand)
+        if offset is not None:
+            self.emitLine(f"load64 {scratchReg}, bp, -{offset} // load spilled {operand.id}")
+        else:
+            self.emitComment(f"ERROR: Cannot load non-spilled operand {operand.id}")
+    
+    def _emitStore(self, operand, scratchReg):
+        """Emit code to store from a scratch register to a spilled operand."""
+        offset = self._getSpillOffset(operand)
+        if offset is not None:
+            self.emitLine(f"store64 bp, {scratchReg}, -{offset} // store to spilled {operand.id}")
+        else:
+            self.emitComment(f"ERROR: Cannot store to non-spilled operand {operand.id}")
+    
+    def _emitInstructionWithSpills(self, node):
+        """
+        Emit an instruction, handling spilled operands by loading/storing with scratch registers.
+        
+        Strategy:
+        1. Load all spilled source operands into scratch registers (r9, r10, r11)
+        2. Emit instruction using physical/scratch registers
+        3. Store result from scratch register to spilled destination if needed
+        """
+        command = node.command
+        args = node.arguments if node.arguments else []
+        
+        # Available scratch registers for spill handling
+        # r8 is reserved for other uses, use r9, r10, r11 for spills
+        scratchRegs = ["r9", "r10", "r11"]
+        scratchIdx = 0
+        
+        # Track which operands are spilled and their scratch registers
+        operandMapping = []  # List of (original_operand, scratch_or_physical_reg)
+        
+        for arg in args:
+            if self._isSpilled(arg):
+                # Allocate a scratch register for this spilled operand
+                scratch = scratchRegs[scratchIdx % len(scratchRegs)]
+                scratchIdx += 1
+                operandMapping.append((arg, scratch))
+            else:
+                # Use the operand directly (physical register or literal)
+                resolved = self.visit(arg)
+                operandMapping.append((arg, resolved))
+        
+        # Determine instruction type to understand operand semantics
+        # Store instructions: store<size> <base_addr>, <value>, <offset>
+        #   - base_addr is source (read), value is source (read)
+        #   - No destination register
+        # Load instructions: load<size> <dest>, <base_addr>, <offset>
+        #   - dest is destination (written), base_addr is source (read)
+        # Branch instructions: bge, blt, beq, bne, jmp, call, etc.
+        #   - ALL operands are sources (read), no destination
+        # Most other instructions: <dest>, <src1>, <src2>, ...
+        #   - First operand is destination (written), rest are sources (read)
+        
+        isStoreInst = command.startswith("store")
+        isLoadInst = command.startswith("load")
+        isBranchInst = command in ["bge", "blt", "ble", "bgt", "beq", "bne", "jmp", "call", "ret"]
+        
+        if isStoreInst:
+            # For store: all operands are sources, load them all
+            for i, (original, mapped) in enumerate(operandMapping):
+                if self._isSpilled(original):
+                    self._emitLoad(original, mapped)
+            destIdx = -1  # No destination
+        elif isBranchInst:
+            # For branches: all operands are sources, load them all
+            for i, (original, mapped) in enumerate(operandMapping):
+                if self._isSpilled(original):
+                    self._emitLoad(original, mapped)
+            destIdx = -1  # No destination
+        elif isLoadInst:
+            # For load: first operand is dest, rest are sources
+            destIdx = 0
+            for i, (original, mapped) in enumerate(operandMapping):
+                if i != destIdx and self._isSpilled(original):
+                    self._emitLoad(original, mapped)
+        else:
+            # Default: first operand is destination
+            destIdx = 0 if len(args) > 0 else -1
+            # Load spilled source operands (skip destination)
+            for i, (original, mapped) in enumerate(operandMapping):
+                if i != destIdx and self._isSpilled(original):
+                    self._emitLoad(original, mapped)
+        
+        # Emit the actual instruction with mapped operands
+        mappedArgs = [mapped for (_, mapped) in operandMapping]
+        
+        if mappedArgs:
+            argStr = ", ".join(str(arg) for arg in mappedArgs)
+            self.emitLine(f"{command} {argStr}")
+        else:
+            self.emitLine(f"{command}")
+        
+        # Store result to spilled destination if needed
+        if destIdx >= 0 and destIdx < len(operandMapping):
+            original, mapped = operandMapping[destIdx]
+            if self._isSpilled(original):
+                self._emitStore(original, mapped)
     
     def visitVirtualTempRegisterNode(self, node):
         """Visit a virtual temp register node."""

@@ -17,7 +17,7 @@ from .parser import Parser
 from .visitor import *
 from .builtins import addBuiltinsToSymbolTable
 from .semanticAnalyzer import *
-from .backends.ceruleanasm.codegen import CodeGenVisitor_CeruleanASM
+from .backends.ceruleanasm.codegen import CodeGenVisitor_CeruleanASM, AllocatorStrategy
 from .backends.amyasm.codegen_amyasm import CodeGenVisitor_AmyAssembly
 from .backends.x86.codegen_x86 import CodeGenVisitor_x86
 
@@ -41,7 +41,7 @@ class CeruleanIRCompiler:
 
     #---------------------------------------------------------------------
 
-    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM):
+    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE):
 
         lines = rawSourceCode.split ("\n")
 
@@ -142,7 +142,7 @@ class CeruleanIRCompiler:
         # keyed by filename
         self.printDebug (f"Generating code...")
         if target == TargetLang.CERULEANASM:
-            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True)
+            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (lines)
         elif target == TargetLang.X86:
@@ -221,11 +221,15 @@ if __name__ == "__main__":
     argparser.add_argument("--target", dest="target", type=str,
         choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
         help="specifies the target language to compile to [default: amyasm]")
+    argparser.add_argument("--regalloc", dest="regalloc", type=str,
+        choices=[s.value for s in AllocatorStrategy], default=AllocatorStrategy.NAIVE.value,
+        help="specifies the register allocator strategy to use [default: naive]")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
     args = argparser.parse_args()
 
     target = TargetLang(args.target)
+    regalloc = AllocatorStrategy(args.regalloc)
     sourceFilename = args.sourceFiles[0]
     # otherFilenames = args.sourceFiles[1:]
     destFilename = None
@@ -257,7 +261,8 @@ if __name__ == "__main__":
         emitTokens=args.emitTokens,
         emitAST=args.emitAST,
         emitIR=args.emitIR,
-        target=target
+        target=target,
+        regalloc=regalloc
     )
 
     # Write target code

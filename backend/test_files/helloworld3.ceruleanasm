@@ -582,42 +582,75 @@ main:
    // Prologue: Setup stack frame
    push bp
    mv64 bp, sp
-   sub64i sp, sp, 16 // allocate 16 bytes
+   sub64i sp, sp, 144 // allocate 144 bytes
    // Function body
 entry:
-   loada r0, str_0
-   lli r1, 13
-   mv64 r2, bp // alloca: compute stack address
-   lli r3, 0
-   store32 r2, r3, 0
-   loada r3, for_cond
-   jmp r3
+   loada r9, str_0
+   store64 bp, r9, -16 // store to spilled %greeting
+   lli r9, 13
+   store64 bp, r9, -48 // store to spilled %length
+   mv64 r8, bp // alloca: compute stack address
+   sub64i r8, r8, 128
+   store64 bp, r8, -40 // store to spilled %i_ptr
+   lli r9, 0
+   store64 bp, r9, -56 // store to spilled tmp0
+   load64 r9, bp, -40 // load spilled %i_ptr
+   load64 r10, bp, -56 // load spilled tmp0
+   store32 r9, r10, 0
+   loada r9, for_cond
+   store64 bp, r9, -64 // store to spilled tmp1
+   load64 r9, bp, -64 // load spilled tmp1
+   jmp r9
 for_cond:
-   load32 r3, r2, 0
-   loada r4, for_end
-   bge r3, r1, r4
-   loada r1, for_body
-   jmp r1
+   load64 r10, bp, -40 // load spilled %i_ptr
+   load32 r9, r10, 0
+   store64 bp, r9, -24 // store to spilled %i_curr
+   loada r9, for_end
+   store64 bp, r9, -72 // store to spilled tmp2
+   load64 r9, bp, -24 // load spilled %i_curr
+   load64 r10, bp, -48 // load spilled %length
+   load64 r11, bp, -72 // load spilled tmp2
+   bge r9, r10, r11
+   loada r9, for_body
+   store64 bp, r9, -80 // store to spilled tmp3
+   load64 r9, bp, -80 // load spilled tmp3
+   jmp r9
 for_body:
-   add64 r1, r0, r3
-   load8 r0, r1, 0
-   push r0
+   load64 r10, bp, -16 // load spilled %greeting
+   load64 r11, bp, -24 // load spilled %i_curr
+   add64 r9, r10, r11
+   store64 bp, r9, -88 // store to spilled tmp4
+   load64 r10, bp, -88 // load spilled tmp4
+   load8 r9, r10, 0
+   store64 bp, r9, -8 // store to spilled %char
+   load64 r9, bp, -8 // load spilled %char
+   push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
-   loada r0, for_update
-   jmp r0
+   loada r9, for_update
+   store64 bp, r9, -96 // store to spilled tmp5
+   load64 r9, bp, -96 // load spilled tmp5
+   jmp r9
 for_update:
-   add64i r0, r3, 1
-   store32 r2, r0, 0
-   loada r0, for_cond
-   jmp r0
+   load64 r10, bp, -24 // load spilled %i_curr
+   add64i r9, r10, 1
+   store64 bp, r9, -32 // store to spilled %i_next
+   load64 r9, bp, -40 // load spilled %i_ptr
+   load64 r10, bp, -32 // load spilled %i_next
+   store32 r9, r10, 0
+   loada r9, for_cond
+   store64 bp, r9, -104 // store to spilled tmp6
+   load64 r9, bp, -104 // load spilled tmp6
+   jmp r9
 for_end:
    loada r8, __builtin__println
    call r8
    lli ra, 0
-   loada r0, __epilogue__main
-   jmp r0
+   loada r9, __epilogue__main
+   store64 bp, r9, -112 // store to spilled tmp7
+   load64 r9, bp, -112 // load spilled tmp7
+   jmp r9
    // Epilogue
 __epilogue__main:
    mv64 sp, bp // restore stack pointer
