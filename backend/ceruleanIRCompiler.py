@@ -41,7 +41,7 @@ class CeruleanIRCompiler:
 
     #---------------------------------------------------------------------
 
-    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, allocator=AllocatorStrategy.NAIVE):
+    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE):
 
         lines = rawSourceCode.split ("\n")
 
@@ -142,7 +142,7 @@ class CeruleanIRCompiler:
         # keyed by filename
         self.printDebug (f"Generating code...")
         if target == TargetLang.CERULEANASM:
-            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=allocator)
+            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (lines)
         elif target == TargetLang.X86:
@@ -211,13 +211,13 @@ def generateCode (ast, sourceCodeLines, target):
 
 if __name__ == "__main__":
 
-    # Custom type converter for allocator argument
-    def allocator_type(value):
+    # Custom type converter for register allocator argument
+    def regalloc_type(value):
         try:
             return AllocatorStrategy(value)
         except ValueError:
             raise argparse.ArgumentTypeError(
-                f"Invalid allocator '{value}'. Choose from: {', '.join(s.value for s in AllocatorStrategy)}"
+                f"Invalid register allocator '{value}'. Choose from: {', '.join(s.value for s in AllocatorStrategy)}"
             )
 
     argparser = argparse.ArgumentParser(description="CeruleanIR Compiler")
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     argparser.add_argument("--target", dest="target", type=str,
         choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
         help="specifies the target language to compile to [default: amyasm]")
-    argparser.add_argument("--allocator", dest="allocator", type=allocator_type,
+    argparser.add_argument("--regalloc", dest="regalloc", type=regalloc_type,
         default=AllocatorStrategy.NAIVE,
         help="register allocator strategy: 'naive' (spill all, always correct) or 'linear-scan' (optimized, requires CFG) [default: naive]")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
@@ -270,7 +270,7 @@ if __name__ == "__main__":
         emitAST=args.emitAST,
         emitIR=args.emitIR,
         target=target,
-        allocator=args.allocator
+        regalloc=args.regalloc
     )
 
     # Write target code
