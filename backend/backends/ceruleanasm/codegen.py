@@ -2,21 +2,33 @@
 # By Amy Burnett
 # =================================================================================================
 
+from enum import Enum
 from ...visitor import ASTVisitor
 from .lowering import LoweringVisitor
 from .livenessAnalyzer import LivenessAnalyzer
 from .registerAllocator import RegisterAllocator
+from .naiveAllocator import NaiveAllocator
 from .frameLowering import FrameLowering
 from .asmEmitter import ASMEmitter
 
 # =================================================================================================
 
+class AllocatorStrategy(Enum):
+    """Register allocator strategies."""
+    NAIVE = "naive"              # Spill everything, always correct
+    LINEAR_SCAN = "linear-scan"  # Linear scan allocation (requires CFG for loops)
+    # Future options:
+    # GRAPH_COLORING = "graph-coloring"
+
+# =================================================================================================
+
 class CodeGenVisitor_CeruleanASM (ASTVisitor):
 
-    def __init__(self, lines, sourceFilename, shouldPrintDebug=False, emitVirtualASM=False):
+    def __init__(self, lines, sourceFilename, shouldPrintDebug=False, emitVirtualASM=False, allocatorStrategy=AllocatorStrategy.NAIVE):
         self.sourceFilename = sourceFilename
         self.shouldPrintDebug = shouldPrintDebug
         self.emitVirtualASM = emitVirtualASM
+        self.allocatorStrategy = allocatorStrategy
         self.wasSuccessful = True  # Used by compiler to check for errors
         
         # Configuration for register allocation (passed to RegisterAllocator)
@@ -46,18 +58,30 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
             file = open (vasmastFilename, "w")
             file.write (repr (virtualASM))
 
-        # Pass 2: Liveness Analysis (for register allocation)
+        # Pass 2: Liveness Analysis (only needed for some allocators)
         self.debugPrint("Pass 2: Analyzing variable liveness...")
-        livenessAnalyzer = LivenessAnalyzer (self.shouldPrintDebug)
-        livenessInfo = livenessAnalyzer.analyze (virtualASM)  # Use virtualASM, not original IR ast
+        if self.allocatorStrategy == AllocatorStrategy.NAIVE:
+            self.debugPrint("  Skipped (not needed for naive allocation)")
+            livenessInfo = None
+        else:
+            livenessAnalyzer = LivenessAnalyzer (self.shouldPrintDebug)
+            livenessInfo = livenessAnalyzer.analyze (virtualASM)
         
         # Pass 3: Register Allocation (virtual -> physical registers + spills)
         self.debugPrint("Pass 3: Allocating registers...")
-        registerAllocator = RegisterAllocator(
-            availableRegs=[f"r{i}" for i in range(self.MAX_AVAILABLE_REGISTERS)],
-            scratchRegs=self.scratchRegisters,
-            shouldPrintDebug=self.shouldPrintDebug
-        )
+        if self.allocatorStrategy == AllocatorStrategy.NAIVE:
+            self.debugPrint("  Using naive allocator (spill everything)")
+            registerAllocator = NaiveAllocator(shouldPrintDebug=self.shouldPrintDebug)
+        elif self.allocatorStrategy == AllocatorStrategy.LINEAR_SCAN:
+            self.debugPrint("  Using linear scan allocator")
+            registerAllocator = RegisterAllocator(
+                availableRegs=[f"r{i}" for i in range(self.MAX_AVAILABLE_REGISTERS)],
+                scratchRegs=self.scratchRegisters,
+                shouldPrintDebug=self.shouldPrintDebug
+            )
+        else:
+            raise ValueError(f"Unknown allocator strategy: {self.allocatorStrategy}")
+        
         allocatedASM = registerAllocator.allocate(virtualASM, livenessInfo)
         
         # Pass 4: Frame Lowering (stack frame setup)

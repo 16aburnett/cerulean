@@ -68,28 +68,40 @@ Assembly Text (.ceruleanasm)
 - Compute liveness sets via iterative algorithm
 - Generate live range information
 
-### Pass 3: Register Allocation (`registerAllocator.py`) ✨ NEW!
+### Pass 3: Register Allocation (`registerAllocator.py`, `naiveAllocator.py`) ✅ COMPLETE!
 **Purpose**: Map unlimited virtual registers to limited physical registers
 
-**Input**: Virtual ASM + Liveness Info
+**Input**: Virtual ASM + Liveness Info (optional for naive)
 **Output**: Virtual ASM with allocation metadata
-- Physical register assignments
+- Physical register assignments (linear scan) OR spill slots (naive)
 - Spill slot assignments
 - Stack frame size requirements
 
-**Algorithm**: Linear Scan
-1. Build live ranges for each virtual register
-2. Sort variables by live range start
-3. For each variable:
-   - Try to allocate a free physical register
-   - If none available, spill (choose variable with furthest endpoint)
-4. Track spill slots needed
+**Allocator Strategies** (via `AllocatorStrategy` enum):
+
+1. **NAIVE** (`naiveAllocator.py`) - Default
+   - Spills ALL virtual registers to stack
+   - Uses scratch registers (r9-r11) only for intermediate operations
+   - Always correct, no liveness analysis needed
+   - Equivalent to GCC/Clang `-O0` behavior
+   - Algorithm: Assign stack slot to each virtual register (offset 8, 16, 24, ...)
+
+2. **LINEAR_SCAN** (`registerAllocator.py`)
+   - Optimized allocation using linear scan algorithm
+   - Requires liveness analysis
+   - Algorithm:
+     1. Build live ranges for each virtual register
+     2. Sort variables by live range start
+     3. For each variable:
+        - Try to allocate a free physical register
+        - If none available, spill (choose variable with furthest endpoint)
+     4. Track spill slots needed
 
 **Responsibilities**:
-- Map virtual registers → physical registers (r0-r7)
+- Map virtual registers → physical registers (r0-r7) or stack slots
 - Determine which variables need to be spilled to stack
 - Calculate stack frame size
-- Reserve scratch registers (r8-r10) for operations
+- Reserve scratch registers (r8-r10) for operations and spill handling
 
 ### Pass 4: Frame Lowering (`frameLowering.py`) ✨ NEW!
 **Purpose**: Set up stack frames for functions
@@ -103,8 +115,8 @@ Assembly Text (.ceruleanasm)
 - Annotate functions with stack frame metadata
 - (Future) Insert explicit prologue/epilogue instructions
 
-### Pass 5: Code Emission (`asmEmitter.py`) ✨ REFACTORED!
-**Purpose**: Convert AST to assembly text
+### Pass 5: Code Emission (`asmEmitter.py`) ✅ COMPLETE!
+**Purpose**: Convert AST to assembly text with automatic spill handling
 
 **Input**: Final Virtual ASM (with register allocations and stack frame info)
 **Output**: Assembly text file
@@ -113,10 +125,25 @@ Assembly Text (.ceruleanasm)
 - Traverse AST and emit text
 - Format instructions, labels, directives
 - Use physical register assignments from allocation metadata
+- **Automatic spill handling**: Load spilled operands into scratch registers, store results back
 - Insert function prologue/epilogue based on frame info
 - Resolve epilogue label placeholders
 - Emit data section (strings, constants)
 - Generate startup code that calls main
+
+**Spilling Mechanics**:
+For each instruction with spilled operands:
+1. **Before instruction**: Load spilled sources into scratch registers (r9-r11)
+   - `load64 r9, bp, -<offset> // load spilled %var`
+2. **Execute instruction**: Use scratch registers in place of virtual registers
+3. **After instruction**: Store result from scratch register back to spill slot
+   - `store64 bp, r9, -<offset> // store to spilled %var`
+
+**Instruction-specific handling**:
+- **Store instructions**: All operands are sources (base address + value)
+- **Load instructions**: First operand is destination, rest are sources
+- **Branch instructions**: All operands are sources
+- **Arithmetic/Logic**: First operand is destination, rest are sources
 
 ## Orchestrator: `codegen.py`
 
@@ -133,30 +160,72 @@ The `CodeGenVisitor_CeruleanASM` class serves as the orchestrator that:
 **Configuration**:
 - `MAX_AVAILABLE_REGISTERS = 8`: Number of general-purpose registers (r0-r7)
 - `scratchRegisters = ["r8", "r9", "r10"]`: Reserved for temporary operations
+- `allocatorStrategy`: `AllocatorStrategy` enum (NAIVE or LINEAR_SCAN)
+
+**AllocatorStrategy Enum**:
+```python
+class AllocatorStrategy(Enum):
+    NAIVE = "naive"              # Spill everything, always correct
+    LINEAR_SCAN = "linear-scan"  # Linear scan allocation (requires CFG for loops)
+    # Future: GRAPH_COLORING, LLVM_STYLE, etc.
+```
+
+**Command-line Usage**:
+```bash
+# Use naive allocator (default, always correct)
+python3 -m backend.ceruleanIRCompiler input.ceruleanir --target ceruleanasm
+
+# Use linear scan allocator (optimized, requires proper CFG)
+python3 -m backend.ceruleanIRCompiler input.ceruleanir --target ceruleanasm --allocator linear-scan
+```
 
 ## Current Status
 
 ✅ **Fully Implemented**:
-- Pass 1: Lowering (partial - core instructions working)
-- Pass 2: Liveness Analysis (working for Virtual ASM)
-- Pass 3: Register Allocator (working - linear scan algorithm)
-- Pass 4: Frame Lowering (working - stack frame calculation)
-- Pass 5: Code Emission (working - clean visitor-based emitter)
+- Pass 1: Lowering (core instructions: loada, lli, add64, load8/32/64, store32/64, alloca, jmp, jge)
+- Pass 2: Liveness Analysis (working for straight-line code, needs CFG for loops)
+- Pass 3a: Naive Allocator (COMPLETE - spills everything, always correct)
+- Pass 3b: Linear Scan Allocator (working for straight-line code, needs CFG for loops)
+- Pass 4: Frame Lowering (working - stack frame calculation with alignment)
+- Pass 5: Code Emission (COMPLETE - automatic spill handling, proper instruction semantics)
 - Pipeline integration (all passes connected and working)
+- Spilling mechanics (COMPLETE - automatic load/store insertion)
 
-✅ **Tested**:
-- helloworld0.ceruleanir: Successfully compiles and runs
-- Perfect register allocation (0-byte stack frame for simple programs)
-- All 14 character variables reuse single register (r0)
+✅ **Tested & Working**:
+- **helloworld0.ceruleanir**: Simple sequential program (linear scan: 0 spills, naive: 14 spills)
+- **helloworld1.ceruleanir**: Sequential with function calls (working)
+- **helloworld3.ceruleanir**: Loop program (WORKING with naive allocator!)
+  - Correctly prints "Hello, World!" from loop
+  - Demonstrates proper spilling for loop-carried variables
+  - All variables spilled to stack, loaded/stored around each operation
+
+✅ **Architecture Improvements**:
+- Enum-based allocator selection (`AllocatorStrategy`)
+- Clean separation between allocator strategies
+- Extensible design (easy to add graph coloring, etc.)
+- Command-line flag: `--allocator=naive` or `--allocator=linear-scan`
+
+🚧 **Known Limitations**:
+1. **Linear scan allocator**: Requires CFG analysis for loops (incorrect liveness without CFG)
+2. **Naive allocator**: Very conservative (spills everything), but ALWAYS CORRECT
+3. **Liveness analyzer**: Simple backward pass, doesn't handle control flow joins properly
 
 🚧 **TODO**:
-1. Complete lowering pass for remaining IR instructions:
-   - `alloca`, `store`, `malloc`, `free`
-   - Comparison operations (`clt`, `cle`, `cgt`, `cge`, `ceq`, `cne`)
-   - Branch instructions (`jmp`, `jcmp`, `jg`, `jge`, `jl`, `jle`, `jne`)
-2. Test with more complex programs (loops, conditionals, multiple functions)
-3. Add optimization passes (dead code elimination, constant folding, etc.)
-4. Improve spill code generation (currently untested - no spills in test cases)
+1. Implement CFG analysis (control flow graph construction)
+   - Proper loop detection and back-edge handling
+   - Enable linear scan allocator for all programs
+2. Complete lowering pass for remaining IR instructions:
+   - Remaining branch instructions: `jl`, `jle`, `jg`, `jne`, `jeq`
+   - Comparison operations: `clt`, `cle`, `cgt`, `cge`, `ceq`, `cne`
+   - Memory operations: `malloc`, `free`
+3. Add optimization passes:
+   - Dead code elimination
+   - Constant folding/propagation
+   - Copy propagation
+4. Improve linear scan allocator:
+   - Live range splitting
+   - Better spill cost heuristics
+   - Register hints for moves
 
 ## Architecture Benefits
 
@@ -171,13 +240,15 @@ The `CodeGenVisitor_CeruleanASM` class serves as the orchestrator that:
 
 ```
 backend/backends/ceruleanasm/
-├── codegen.py              # Main orchestrator (~140 lines)
-├── lowering.py             # Pass 1: IR → Virtual ASM
+├── codegen.py              # Main orchestrator (~170 lines)
+├── lowering.py             # Pass 1: IR → Virtual ASM (~505 lines)
 ├── livenessAnalyzer.py     # Pass 2: Liveness analysis
-├── registerAllocator.py    # Pass 3: Register allocation
-├── frameLowering.py        # Pass 4: Stack frame setup
-├── asmEmitter.py           # Pass 5: AST → Text emission
+├── naiveAllocator.py       # Pass 3a: Naive allocator (spill everything) (~190 lines)
+├── registerAllocator.py    # Pass 3b: Linear scan allocator (~310 lines)
+├── frameLowering.py        # Pass 4: Stack frame setup (~155 lines)
+├── asmEmitter.py           # Pass 5: AST → Text emission (~450 lines)
 ├── ceruleanASMAST.py       # Virtual ASM AST definitions
+├── ceruleanASMASTVisitor.py # Visitor base class
 └── ARCHITECTURE.md         # This document
 ```
 
@@ -202,10 +273,16 @@ backend/backends/ceruleanasm/
 - Frame Lowering: O(n) - single traversal
 - Emission: O(n) - single traversal
 
-**Code Quality**: Good for straight-line code, decent for complex control flow
-- Efficient register usage (variables reused when dead)
-- Optimal for simple cases (0-byte stack frames when no spills)
-- Room for improvement with more sophisticated allocation algorithms
+**Code Quality**:
+- **Naive allocator**: Always correct, but inefficient (all variables spilled)
+  - Guarantees correctness for ALL programs (loops, branches, etc.)
+  - Equivalent to `-O0` in mature compilers
+  - Large stack frames, many load/store operations
+- **Linear scan allocator**: Efficient for straight-line code
+  - Optimal for simple cases (0-byte stack frames when no spills)
+  - Good register reuse (variables reused when dead)
+  - Requires CFG analysis for correctness with loops
+- Room for improvement with graph coloring, live range splitting, better spill costs
 
 ## Future Enhancements
 
