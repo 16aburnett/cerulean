@@ -84,16 +84,17 @@ class NaiveAllocationVisitor(ASMASTVisitor):
         # Collect all unique virtual registers used in this function
         virtualRegs = self._collectVirtualRegisters(node.instructions)
         
-        # Assign each virtual register to a stack slot
-        # Offsets start at 8 to account for saved BP at bp+0 and return address at bp+8
-        # Actually, saved BP is at [bp], so spills start at offset 8 meaning bp-8
+        # Assign each virtual register to a stack slot.
+        # Here, "offset" is a positive distance *below* bp, so an offset of N means [bp - N].
+        # Saved bp itself is at [bp], and the return address is at [bp+8], so the first spill
+        # slot lives at [bp-8], corresponding to offset = 8.
         registerAllocation = {}
         stackSlots = {}
-        currentOffset = 8  # Start at 8 to skip saved bp
+        currentOffset = 8  # First spill slot at [bp-8]
         
         for vreg in sorted(virtualRegs):
             stackSlots[vreg] = currentOffset
-            # Mark as spilled with offset
+            # Mark as spilled with offset (interpreted as [bp - offset] by the emitter)
             registerAllocation[vreg] = {"kind": "spill", "value": currentOffset}
             self.allocator.debugPrint(f"  {vreg} -> stack slot at bp-{currentOffset}")
             currentOffset += 8  # 8 bytes per slot (64-bit values)
