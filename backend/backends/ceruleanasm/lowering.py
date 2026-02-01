@@ -16,6 +16,11 @@ class LoweringVisitor (ASTVisitor):
 
     def __init__(self, shouldPrintDebug=False):
         self.shouldPrintDebug = shouldPrintDebug
+        self.currentFunctionName = None  # Track current function for label scoping
+        self.functionIndex = 0  # Global function counter for unique labels
+        self.currentFunctionIndex = 0  # Index of current function
+        self.blockIndex = 0  # Block counter within current function
+        self.blockNameToIndex = {}  # Map block name -> index for current function
 
     def lower (self, ast):
         asm_ast = ast.accept (self)
@@ -64,17 +69,38 @@ class LoweringVisitor (ASTVisitor):
 
     def visitFunctionNode (self, node):
         params = []
+        # Collect parameter IDs before lowering
+        paramIds = []
         for i in range(len(node.params)):
-            params += [node.params[i].accept (self)]
+            param = node.params[i]
+            if param is not None and hasattr(param, 'id'):
+                paramIds.append(param.id)
+            params += [param.accept(self) if param else None]
+        # Strip @ prefix from function name if present
+        funcId = node.id[1:] if node.id.startswith('@') else node.id
+        # Track current function name and assign unique index for label scoping
+        self.currentFunctionName = funcId
+        self.currentFunctionIndex = self.functionIndex
+        self.functionIndex += 1
+        self.blockIndex = 0  # Reset block counter for new function
+        
+        # First pass: build block name -> index mapping
+        self.blockNameToIndex = {}
+        for basicBlock in node.basicBlocks:
+            self.blockNameToIndex[basicBlock.name] = self.blockIndex
+            self.blockIndex += 1
+        
+        # Second pass: lower instructions with proper label references
+        self.blockIndex = 0  # Reset for actual lowering
         asmInstructions = []
         for basicBlock in node.basicBlocks:
             asmInstructions += basicBlock.accept (self)
-        # Strip @ prefix from function name if present
-        funcId = node.id[1:] if node.id.startswith('@') else node.id
         funcNode = ASM_AST.FunctionNode (funcId, node.token, params, asmInstructions)
         # Preserve scope name if it exists
         if hasattr(node, 'scopeName'):
             funcNode.scopeName = node.scopeName
+        # Store parameter IDs for allocator
+        funcNode.parameterIds = paramIds
         return funcNode
 
     # =============================================================================================
@@ -87,10 +113,14 @@ class LoweringVisitor (ASTVisitor):
             asmInstructions += instruction.accept (self)
 
         # Attach the basic block label to the first instruction
+        # Format: functionName_blockName_fN_bM (guaranteed unique via indices)
+        # e.g., println_entry_f0_b0, println_for_cond_f0_b1, main_entry_f1_b0
         if len(asmInstructions) > 0:
-            self.debugPrint(f"Attaching label '{node.name}' to instruction: {asmInstructions[0].command if hasattr(asmInstructions[0], 'command') else type(asmInstructions[0]).__name__}")
+            scopedLabel = f"{self.currentFunctionName}_{node.name}_f{self.currentFunctionIndex}_b{self.blockIndex}"
+            self.blockIndex += 1  # Increment for next block in this function
+            self.debugPrint(f"Attaching label '{scopedLabel}' (was '{node.name}') to instruction: {asmInstructions[0].command if hasattr(asmInstructions[0], 'command') else type(asmInstructions[0]).__name__}")
             self.debugPrint(f"  Block has {len(asmInstructions)} instructions")
-            asmInstructions[0].labels.append(node.name)
+            asmInstructions[0].labels.append(scopedLabel)
         
         return asmInstructions
 
@@ -489,7 +519,12 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitBasicBlockExpressionNode (self, node):
-        return ASM_AST.LabelNode (node.id)
+        # Look up the block index from pre-built mapping
+        blockIdx = self.blockNameToIndex.get(node.id, 0)
+        # Scope label to current function with unique suffix
+        # Format: functionName_blockName_fN_bM
+        scopedLabel = f"{self.currentFunctionName}_{node.id}_f{self.currentFunctionIndex}_b{blockIdx}"
+        return ASM_AST.LabelNode (scopedLabel)
 
     # =============================================================================================
 

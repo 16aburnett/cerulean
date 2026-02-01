@@ -1,0 +1,48 @@
+// Super simple hello world example including function calls
+// Author: Amy Burnett
+//========================================================================
+
+function void @println (ptr(%string_ptr), int32(%string_length)) {
+    block entry {
+        %i_ptr = alloca (type(int32), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+        jge (int32(%i_curr), int32(%string_length), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %char = load (type(char), ptr(%string_ptr), int32(%i_curr))
+        call @__builtin__print__char (char(%char))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (int32(%i_curr), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        call @__builtin__println ()
+        return (int32(0))
+    }
+}
+
+//========================================================================
+
+function int32 @main () {
+    block entry {
+        %greeting = value (ptr("Hello, World!"))
+        %length = value(int32(13))
+        call @println (ptr(%greeting), int32(%length))
+        return (int32(0))
+    }
+}
+
+
+
+
+
+
+

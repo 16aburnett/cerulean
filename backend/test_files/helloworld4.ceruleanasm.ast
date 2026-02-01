@@ -62,6 +62,302 @@ Program:
 |   Instruction: "ret"
 |   Instruction: "push"
 |   |   Labels:
+|   |   |   Label("println")
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "mv64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("sp")
+|   Instruction: "sub64i"
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("sp")
+|   |   |   IntLiteral(128)
+|   Instruction: "mv64"
+|   |   Labels:
+|   |   |   Label("println_entry_f0_b0")
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("bp")
+|   Instruction: "sub64i"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(112)
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r8")
+|   |   |   IntLiteral(-8)
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   IntLiteral(0)
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-16)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-8)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-16)
+|   Instruction: "store32"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   IntLiteral(0)
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("println_for_cond_f0_b1")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-24)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-24)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "load64"
+|   |   Labels:
+|   |   |   Label("println_for_cond_f0_b1")
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-8)
+|   Instruction: "load32"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   IntLiteral(0)
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-32)
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("println_for_end_f0_b4")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-40)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-32)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(24)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r11")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-40)
+|   Instruction: "bge"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   Register("r11")
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("println_for_body_f0_b2")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-48)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-48)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "load64"
+|   |   Labels:
+|   |   |   Label("println_for_body_f0_b2")
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(16)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r11")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-32)
+|   Instruction: "add64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   Register("r11")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-56)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-56)
+|   Instruction: "load8"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   IntLiteral(0)
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-64)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-64)
+|   Instruction: "push"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__print__char")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("println_for_update_f0_b3")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-72)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-72)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "load64"
+|   |   Labels:
+|   |   |   Label("println_for_update_f0_b3")
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-32)
+|   Instruction: "add64i"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   IntLiteral(1)
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-80)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-8)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r10")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-80)
+|   Instruction: "store32"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("r10")
+|   |   |   IntLiteral(0)
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("println_for_cond_f0_b1")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-88)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-88)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "loada"
+|   |   Labels:
+|   |   |   Label("println_for_end_f0_b4")
+|   |   Args:
+|   |   |   Register("r8")
+|   |   |   LabelExpression("__builtin__println")
+|   Instruction: "call"
+|   |   Args:
+|   |   |   Register("r8")
+|   Instruction: "lli"
+|   |   Args:
+|   |   |   Register("ra")
+|   |   |   IntLiteral(0)
+|   Instruction: "loada"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   LabelExpression("__epilogue__println")
+|   Instruction: "store64"
+|   |   Args:
+|   |   |   Register("bp")
+|   |   |   Register("r9")
+|   |   |   IntLiteral(-96)
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
+|   |   |   Register("bp")
+|   |   |   IntLiteral(-96)
+|   Instruction: "jmp"
+|   |   Args:
+|   |   |   Register("r9")
+|   Instruction: "mv64"
+|   |   Labels:
+|   |   |   Label("__epilogue__println")
+|   |   Args:
+|   |   |   Register("sp")
+|   |   |   Register("bp")
+|   Instruction: "pop"
+|   |   Args:
+|   |   |   Register("bp")
+|   Instruction: "ret"
+|   Instruction: "push"
+|   |   Labels:
+|   |   |   Label("__end__println")
 |   |   |   Label("main")
 |   |   Args:
 |   |   |   Register("bp")
@@ -73,10 +369,10 @@ Program:
 |   |   Args:
 |   |   |   Register("sp")
 |   |   |   Register("sp")
-|   |   |   IntLiteral(144)
+|   |   |   IntLiteral(32)
 |   Instruction: "loada"
 |   |   Labels:
-|   |   |   Label("main_entry_f0_b0")
+|   |   |   Label("main_entry_f1_b0")
 |   |   Args:
 |   |   |   Register("r9")
 |   |   |   LabelExpression("str_0")
@@ -94,252 +390,33 @@ Program:
 |   |   |   Register("bp")
 |   |   |   Register("r9")
 |   |   |   IntLiteral(-16)
-|   Instruction: "mv64"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("bp")
-|   Instruction: "sub64i"
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(128)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r8")
-|   |   |   IntLiteral(-24)
-|   Instruction: "lli"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-32)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r10")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-32)
-|   Instruction: "store32"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   IntLiteral(0)
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   LabelExpression("main_for_cond_f0_b1")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-40)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-40)
-|   Instruction: "jmp"
-|   |   Args:
-|   |   |   Register("r9")
-|   Instruction: "load64"
-|   |   Labels:
-|   |   |   Label("main_for_cond_f0_b1")
-|   |   Args:
-|   |   |   Register("r10")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
-|   Instruction: "load32"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-48)
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   LabelExpression("main_for_end_f0_b4")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-56)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-48)
 |   Instruction: "load64"
 |   |   Args:
 |   |   |   Register("r10")
 |   |   |   Register("bp")
 |   |   |   IntLiteral(-16)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r11")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-56)
-|   Instruction: "bge"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   Register("r11")
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   LabelExpression("main_for_body_f0_b2")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-64)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-64)
-|   Instruction: "jmp"
-|   |   Args:
-|   |   |   Register("r9")
-|   Instruction: "load64"
-|   |   Labels:
-|   |   |   Label("main_for_body_f0_b2")
+|   Instruction: "push"
 |   |   Args:
 |   |   |   Register("r10")
+|   Instruction: "load64"
+|   |   Args:
+|   |   |   Register("r9")
 |   |   |   Register("bp")
 |   |   |   IntLiteral(-8)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r11")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-48)
-|   Instruction: "add64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   Register("r11")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-72)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r10")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-72)
-|   Instruction: "load8"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   IntLiteral(0)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-80)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-80)
 |   Instruction: "push"
 |   |   Args:
 |   |   |   Register("r9")
 |   Instruction: "loada"
 |   |   Args:
 |   |   |   Register("r8")
-|   |   |   LabelExpression("__builtin__print__char")
+|   |   |   LabelExpression("println")
 |   Instruction: "call"
 |   |   Args:
 |   |   |   Register("r8")
 |   Instruction: "pop"
 |   |   Args:
 |   |   |   Register("r8")
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   LabelExpression("main_for_update_f0_b3")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-88)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-88)
-|   Instruction: "jmp"
-|   |   Args:
-|   |   |   Register("r9")
-|   Instruction: "load64"
-|   |   Labels:
-|   |   |   Label("main_for_update_f0_b3")
-|   |   Args:
-|   |   |   Register("r10")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-48)
-|   Instruction: "add64i"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   IntLiteral(1)
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-96)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-24)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r10")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-96)
-|   Instruction: "store32"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("r10")
-|   |   |   IntLiteral(0)
-|   Instruction: "loada"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   LabelExpression("main_for_cond_f0_b1")
-|   Instruction: "store64"
-|   |   Args:
-|   |   |   Register("bp")
-|   |   |   Register("r9")
-|   |   |   IntLiteral(-104)
-|   Instruction: "load64"
-|   |   Args:
-|   |   |   Register("r9")
-|   |   |   Register("bp")
-|   |   |   IntLiteral(-104)
-|   Instruction: "jmp"
-|   |   Args:
-|   |   |   Register("r9")
-|   Instruction: "loada"
-|   |   Labels:
-|   |   |   Label("main_for_end_f0_b4")
-|   |   Args:
-|   |   |   Register("r8")
-|   |   |   LabelExpression("__builtin__println")
-|   Instruction: "call"
+|   Instruction: "pop"
 |   |   Args:
 |   |   |   Register("r8")
 |   Instruction: "lli"
@@ -354,12 +431,12 @@ Program:
 |   |   Args:
 |   |   |   Register("bp")
 |   |   |   Register("r9")
-|   |   |   IntLiteral(-112)
+|   |   |   IntLiteral(-24)
 |   Instruction: "load64"
 |   |   Args:
 |   |   |   Register("r9")
 |   |   |   Register("bp")
-|   |   |   IntLiteral(-112)
+|   |   |   IntLiteral(-24)
 |   Instruction: "jmp"
 |   |   Args:
 |   |   |   Register("r9")
