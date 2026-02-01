@@ -11,6 +11,6 @@ python3 -m ceruleanld.linker <obj_files> -o <dest_file>
 # Simple hello world example
 
 ```bash
-python3 -m ceruleanld.linker ceruleanld/testFiles/helloworld.ceruleanobj -o ceruleanld/testFiles/helloworld.ceruleanbc
-ceruleanvm/build/ceruleanvm ceruleanld/testFiles/helloworld.ceruleanbc
+python3 -m ceruleanld.linker ceruleanld/test_files/helloworld.ceruleanobj -o ceruleanld/test_files/helloworld.ceruleanbc
+ceruleanvm/build/ceruleanvm ceruleanld/test_files/helloworld.ceruleanbc
 ```
