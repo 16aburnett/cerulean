@@ -171,6 +171,33 @@ class EmitterVisitor(ASMASTVisitor):
         # Function header
         self.emit("// " + "-" * 75 + "\n")
         self.emitComment(f"Function: {node.id}")
+        
+        # Emit stack frame layout comments
+        if registerAllocation:
+            self.emitComment("Stack layout:")
+            # Separate parameters and locals
+            params = []
+            locals = []
+            for var, allocation in sorted(registerAllocation.items()):
+                kind = allocation.get('kind')
+                offset = allocation.get('value')
+                if kind == 'param':
+                    params.append((var, offset))
+                elif kind == 'spill':
+                    locals.append((var, offset))
+            
+            # Sort and emit parameters (positive offsets, descending order)
+            for var, offset in sorted(params, key=lambda x: x[1], reverse=True):
+                self.emitComment(f"  [bp + {offset}]: {var}")
+            
+            # Emit fixed stack slots
+            self.emitComment(f"  [bp + 8]: return address")
+            self.emitComment(f"  [bp + 0]: saved bp")
+            
+            # Sort and emit locals (negative offsets)
+            for var, offset in sorted(locals, key=lambda x: x[1]):
+                self.emitComment(f"  [bp - {offset}]: {var}")
+        
         self.emitLabel(node.id)
         
         self.indentation += 1
@@ -314,42 +341,59 @@ class EmitterVisitor(ASMASTVisitor):
         return node.id
     
     def _isSpilled(self, operand):
-        """Check if an operand is a spilled virtual register."""
+        """Check if an operand is a spilled virtual register or a parameter."""
         if isinstance(operand, (ASM_AST.VirtualRegisterNode, ASM_AST.VirtualTempRegisterNode)):
             if self.currentFunction:
                 registerAllocation = getattr(self.currentFunction, 'registerAllocation', {})
                 if operand.id in registerAllocation:
                     allocation = registerAllocation[operand.id]
-                    if isinstance(allocation, dict) and allocation.get('kind') == 'spill':
-                        return True
+                    if isinstance(allocation, dict):
+                        kind = allocation.get('kind')
+                        return kind in ('spill', 'param')
         return False
     
     def _getSpillOffset(self, operand):
-        """Get the stack offset for a spilled operand."""
+        """Get the stack offset for a spilled operand or parameter.
+        Returns (offset, kind) where kind is 'param' or 'spill'.
+        Returns (None, None) if not found.
+        """
         if isinstance(operand, (ASM_AST.VirtualRegisterNode, ASM_AST.VirtualTempRegisterNode)):
             if self.currentFunction:
                 registerAllocation = getattr(self.currentFunction, 'registerAllocation', {})
                 if operand.id in registerAllocation:
                     allocation = registerAllocation[operand.id]
-                    if isinstance(allocation, dict) and allocation.get('kind') == 'spill':
-                        return allocation['value']
-        return None
+                    if isinstance(allocation, dict):
+                        kind = allocation.get('kind')
+                        if kind in ('spill', 'param'):
+                            return allocation['value'], kind
+        return None, None
     
     def _emitLoad(self, operand, scratchReg):
-        """Emit code to load a spilled operand into a scratch register."""
-        offset = self._getSpillOffset(operand)
+        """Emit code to load a spilled operand or parameter into a scratch register."""
+        offset, kind = self._getSpillOffset(operand)
         if offset is not None:
-            self.emitLine(f"load64 {scratchReg}, bp, -{offset} // load spilled {operand.id}")
+            if kind == 'param':
+                # Parameters are at positive offsets: [bp + offset]
+                self.emitLine(f"load64 {scratchReg}, bp, {offset} // load parameter {operand.id}")
+            elif kind == 'spill':
+                # Spilled locals are at negative offsets: [bp - offset]
+                self.emitLine(f"load64 {scratchReg}, bp, -{offset} // load spilled {operand.id}")
         else:
-            self.emitComment(f"ERROR: Cannot load non-spilled operand {operand.id}")
+            self.emitComment(f"ERROR: Cannot load operand {operand.id}")
     
     def _emitStore(self, operand, scratchReg):
         """Emit code to store from a scratch register to a spilled operand."""
-        offset = self._getSpillOffset(operand)
+        offset, kind = self._getSpillOffset(operand)
         if offset is not None:
-            self.emitLine(f"store64 bp, {scratchReg}, -{offset} // store to spilled {operand.id}")
+            if kind == 'param':
+                # Parameters shouldn't be stored to (they're read-only in this context)
+                # But if needed: [bp + offset]
+                self.emitLine(f"store64 bp, {scratchReg}, {offset} // store to parameter {operand.id}")
+            elif kind == 'spill':
+                # Spilled locals are at negative offsets: [bp - offset]
+                self.emitLine(f"store64 bp, {scratchReg}, -{offset} // store to spilled {operand.id}")
         else:
-            self.emitComment(f"ERROR: Cannot store to non-spilled operand {operand.id}")
+            self.emitComment(f"ERROR: Cannot store to operand {operand.id}")
     
     def _emitInstructionWithSpills(self, node):
         """

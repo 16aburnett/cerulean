@@ -578,13 +578,31 @@ __builtin__println:
 
 // ---------------------------------------------------------------------------
 // Function: main
+// Stack layout:
+//   [bp + 8]: return address
+//   [bp + 0]: saved bp
+//   [bp - 8]: %char0
+//   [bp - 16]: %char1
+//   [bp - 24]: %char2
+//   [bp - 32]: %char3
+//   [bp - 40]: %char4
+//   [bp - 48]: %char5
+//   [bp - 56]: %char6
+//   [bp - 64]: %char7
+//   [bp - 72]: %char8
+//   [bp - 80]: %char9
+//   [bp - 88]: %char10
+//   [bp - 96]: %char11
+//   [bp - 104]: %char12
+//   [bp - 112]: %char13
+//   [bp - 120]: tmp0
 main:
    // Prologue: Setup stack frame
    push bp
    mv64 bp, sp
    sub64i sp, sp, 128 // allocate 128 bytes
    // Function body
-entry:
+main_entry_f0_b0:
    lli r9, 'H'
    store64 bp, r9, -8 // store to spilled %char0
    load64 r9, bp, -8 // load spilled %char0
@@ -600,85 +618,85 @@ entry:
    call r8
    pop r8
    lli r9, 'l'
-   store64 bp, r9, -56 // store to spilled %char2
-   load64 r9, bp, -56 // load spilled %char2
+   store64 bp, r9, -24 // store to spilled %char2
+   load64 r9, bp, -24 // load spilled %char2
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'l'
-   store64 bp, r9, -64 // store to spilled %char3
-   load64 r9, bp, -64 // load spilled %char3
+   store64 bp, r9, -32 // store to spilled %char3
+   load64 r9, bp, -32 // load spilled %char3
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'o'
-   store64 bp, r9, -72 // store to spilled %char4
-   load64 r9, bp, -72 // load spilled %char4
+   store64 bp, r9, -40 // store to spilled %char4
+   load64 r9, bp, -40 // load spilled %char4
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, ','
-   store64 bp, r9, -80 // store to spilled %char5
-   load64 r9, bp, -80 // load spilled %char5
+   store64 bp, r9, -48 // store to spilled %char5
+   load64 r9, bp, -48 // load spilled %char5
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, ' '
-   store64 bp, r9, -88 // store to spilled %char6
-   load64 r9, bp, -88 // load spilled %char6
+   store64 bp, r9, -56 // store to spilled %char6
+   load64 r9, bp, -56 // load spilled %char6
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'W'
-   store64 bp, r9, -96 // store to spilled %char7
-   load64 r9, bp, -96 // load spilled %char7
+   store64 bp, r9, -64 // store to spilled %char7
+   load64 r9, bp, -64 // load spilled %char7
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'o'
-   store64 bp, r9, -104 // store to spilled %char8
-   load64 r9, bp, -104 // load spilled %char8
+   store64 bp, r9, -72 // store to spilled %char8
+   load64 r9, bp, -72 // load spilled %char8
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'r'
-   store64 bp, r9, -112 // store to spilled %char9
-   load64 r9, bp, -112 // load spilled %char9
+   store64 bp, r9, -80 // store to spilled %char9
+   load64 r9, bp, -80 // load spilled %char9
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'l'
-   store64 bp, r9, -24 // store to spilled %char10
-   load64 r9, bp, -24 // load spilled %char10
+   store64 bp, r9, -88 // store to spilled %char10
+   load64 r9, bp, -88 // load spilled %char10
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, 'd'
-   store64 bp, r9, -32 // store to spilled %char11
-   load64 r9, bp, -32 // load spilled %char11
+   store64 bp, r9, -96 // store to spilled %char11
+   load64 r9, bp, -96 // load spilled %char11
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, '!'
-   store64 bp, r9, -40 // store to spilled %char12
-   load64 r9, bp, -40 // load spilled %char12
+   store64 bp, r9, -104 // store to spilled %char12
+   load64 r9, bp, -104 // load spilled %char12
    push r9
    loada r8, __builtin__print__char
    call r8
    pop r8
    lli r9, '\n'
-   store64 bp, r9, -48 // store to spilled %char13
-   load64 r9, bp, -48 // load spilled %char13
+   store64 bp, r9, -112 // store to spilled %char13
+   load64 r9, bp, -112 // load spilled %char13
    push r9
    loada r8, __builtin__print__char
    call r8

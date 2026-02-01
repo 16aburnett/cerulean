@@ -61,6 +61,7 @@ class NaiveAllocationVisitor(ASMASTVisitor):
     
     def __init__(self, allocator):
         self.allocator = allocator
+        self.seen = set()  # Track seen virtual registers for deduplication
     
     def visitProgramNode(self, node):
         """Visit each function and allocate stack slots."""
@@ -78,46 +79,70 @@ class NaiveAllocationVisitor(ASMASTVisitor):
         """
         Naive allocation: Spill ALL virtual registers to stack.
         Physical registers are only used as scratch space within instructions.
+        
+        IMPORTANT: Parameters are pushed before the call, so they live at positive
+        offsets above bp ([bp+16], [bp+24], etc.). Local variables and temporaries
+        are allocated at negative offsets below bp ([bp-8], [bp-16], etc.).
         """
         self.allocator.debugPrint(f"\nAllocating stack slots for function: {node.id}")
         
         # Collect all unique virtual registers used in this function
         virtualRegs = self._collectVirtualRegisters(node.instructions)
         
-        # Assign each virtual register to a stack slot.
-        # Here, "offset" is a positive distance *below* bp, so an offset of N means [bp - N].
-        # Saved bp itself is at [bp], and the return address is at [bp+8], so the first spill
-        # slot lives at [bp-8], corresponding to offset = 8.
+        # Separate parameters from local variables
+        # Parameters are stored in node.parameterIds (set during lowering)
+        paramNames = set(getattr(node, 'parameterIds', []))
+        
         registerAllocation = {}
         stackSlots = {}
-        currentOffset = 8  # First spill slot at [bp-8]
         
-        for vreg in sorted(virtualRegs):
-            stackSlots[vreg] = currentOffset
-            # Mark as spilled with offset (interpreted as [bp - offset] by the emitter)
-            registerAllocation[vreg] = {"kind": "spill", "value": currentOffset}
-            self.allocator.debugPrint(f"  {vreg} -> stack slot at bp-{currentOffset}")
-            currentOffset += 8  # 8 bytes per slot (64-bit values)
+        # Allocate parameters at POSITIVE offsets (above bp)
+        # Stack layout after call and prologue:
+        #   [bp + 24] <- second parameter (pushed second, so higher address)
+        #   [bp + 16]  <- first parameter (pushed first)
+        #   [bp + 8]  <- return address (pushed by call instruction)
+        #   [bp + 0]  <- saved bp (pushed by function prologue)
+        #   [bp - 8]  <- first local variable
+        paramOffset = 16  # First parameter at [bp+16]
+        for paramName in getattr(node, 'parameterIds', []):
+            stackSlots[paramName] = paramOffset
+            # Positive offset means [bp + offset]
+            registerAllocation[paramName] = {"kind": "param", "value": paramOffset}
+            self.allocator.debugPrint(f"  {paramName} -> parameter at bp+{paramOffset}")
+            paramOffset += 8  # 8 bytes per parameter
         
-        # Round up to 16-byte alignment
-        if currentOffset % 16 != 0:
-            currentOffset = ((currentOffset + 15) // 16) * 16
+        # Allocate local variables at NEGATIVE offsets (below bp)
+        # Start at -8 for first local
+        localOffset = 8  # Represents [bp-8], [bp-16], etc.
+        for vreg in virtualRegs:
+            if vreg not in paramNames:
+                stackSlots[vreg] = localOffset
+                # Mark as spilled with negative offset
+                registerAllocation[vreg] = {"kind": "spill", "value": localOffset}
+                self.allocator.debugPrint(f"  {vreg} -> stack slot at bp-{localOffset}")
+                localOffset += 8  # 8 bytes per slot
+        
+        # Round up to 16-byte alignment for locals
+        if localOffset % 16 != 0:
+            localOffset = ((localOffset + 15) // 16) * 16
         
         # Store allocation info in the function node
         node.registerAllocation = registerAllocation
         node.spillSlots = stackSlots
-        node.stackFrameSize = currentOffset
+        node.stackFrameSize = localOffset  # Size needed for local variables
         
-        self.allocator.debugPrint(f"Total stack frame size: {currentOffset} bytes")
-        self.allocator.debugPrint(f"Spilled {len(virtualRegs)} virtual registers to stack")
+        self.allocator.debugPrint(f"Total stack frame size: {localOffset} bytes")
+        self.allocator.debugPrint(f"Allocated {len(paramNames)} parameters, spilled {len(virtualRegs) - len(paramNames)} locals")
         
         return node
     
     def _collectVirtualRegisters(self, instructions):
         """
         Collect all unique virtual register names from a list of instructions.
+        Preserves order of first occurrence.
         """
-        virtualRegs = set()
+        virtualRegs = []
+        self.seen = set()  # Reset for each function
         
         for instr in instructions:
             # Handle regular instructions
@@ -135,11 +160,15 @@ class NaiveAllocationVisitor(ASMASTVisitor):
     def _collectFromNode(self, node, virtualRegs):
         """Recursively collect virtual register names from an AST node."""
         if isinstance(node, (ASM_AST.VirtualRegisterNode, ASM_AST.VirtualTempRegisterNode)):
-            virtualRegs.add(node.id)
+            if node.id not in self.seen:
+                virtualRegs.append(node.id)
+                self.seen.add(node.id)
         elif isinstance(node, ASM_AST.RegisterNode):
             # Check if it's a virtual register by name
             if hasattr(node, 'id') and isinstance(node.id, str) and node.id.startswith('%'):
-                virtualRegs.add(node.id)
+                if node.id not in self.seen:
+                    virtualRegs.append(node.id)
+                    self.seen.add(node.id)
     
     # Default implementations for other node types
     def visitTypeSpecifierNode(self, node):
