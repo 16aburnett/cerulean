@@ -1,6 +1,34 @@
 # Testing temp directory
 testing/test_tmp
 
+# Generated test artifacts
+# Keep .ceruleanir source files, ignore all generated outputs
+backend/test_files/*.amyasm
+backend/test_files/*.ceruleanasm
+backend/test_files/*.tokens
+backend/test_files/*.ast
+backend/test_files/*.ast_lowered
+backend/test_files/*.ir
+backend/test_files/*.virtasm
+backend/test_files/*.virtasmast
+backend/test_files/*.ceruleanbc
+backend/test_files/*.ceruleanobj
+
+cerulean/test_files/*.amyasm
+cerulean/test_files/*.ast
+cerulean/test_files/*.ir
+cerulean/test_files/*.irast
+cerulean/test_files/*.tokens
+cerulean/test_files/*.ceruleanasm
+cerulean/test_files/*.ast_lowered
+
+ceruleanasm/test_files/*.ast
+ceruleanasm/test_files/*.ast_lowered
+ceruleanasm/test_files/*.tokens
+ceruleanasm/test_files/*.ceruleanbc
+ceruleanasm/test_files/*.ceruleanobj
+
+ceruleanld/test_files/*.ceruleanbc
 
 
 # Byte-compiled / optimized / DLL files
