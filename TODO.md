@@ -91,7 +91,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/test_cm
 
 # helloworld0
 # Test target=ceruleanasm
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --with-start
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld0.ceruleanir -o backend/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld0.ceruleanasm -o backend/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanld.linker backend/test_files/helloworld0.ceruleanobj -o backend/test_files/helloworld0.ceruleanbc --debug
 ceruleanvm/build/ceruleanvm backend/test_files/helloworld0.ceruleanbc
@@ -102,7 +102,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/hellowo
 
 # helloworld1
 # Test target=ceruleanasm
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --with-start
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld1.ceruleanir -o backend/test_files/helloworld1.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld1.ceruleanasm -o backend/test_files/helloworld1.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanld.linker backend/test_files/helloworld1.ceruleanobj -o backend/test_files/helloworld1.ceruleanbc --debug
 ceruleanvm/build/ceruleanvm backend/test_files/helloworld1.ceruleanbc
@@ -113,7 +113,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/hellowo
 
 # helloworld3
 # Test target=ceruleanasm
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld3.ceruleanir -o backend/test_files/helloworld3.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --with-start
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld3.ceruleanir -o backend/test_files/helloworld3.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld3.ceruleanasm -o backend/test_files/helloworld3.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanld.linker backend/test_files/helloworld3.ceruleanobj -o backend/test_files/helloworld3.ceruleanbc --debug
 ceruleanvm/build/ceruleanvm backend/test_files/helloworld3.ceruleanbc
@@ -124,7 +124,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/hellowo
 
 # helloworld4
 # Test target=ceruleanasm
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld4.ceruleanir -o backend/test_files/helloworld4.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --with-start
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld4.ceruleanir -o backend/test_files/helloworld4.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld4.ceruleanasm -o backend/test_files/helloworld4.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanld.linker backend/test_files/helloworld4.ceruleanobj -o backend/test_files/helloworld4.ceruleanbc --debug
 ceruleanvm/build/ceruleanvm backend/test_files/helloworld4.ceruleanbc
@@ -134,8 +134,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py backend/test_files/hellowo
 
 # helloworld5: helloworld5.ceruleanir print_string.ceruleanir
 # Test target=ceruleanasm
-# NOTE: we need --with-start for the file containing main()
-python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld5.ceruleanir -o backend/test_files/helloworld5.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --with-start
+python3 -m backend.ceruleanIRCompiler backend/test_files/helloworld5.ceruleanir -o backend/test_files/helloworld5.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m backend.ceruleanIRCompiler backend/test_files/print_string.ceruleanir -o backend/test_files/print_string.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanasm.assembler backend/test_files/helloworld5.ceruleanasm -o backend/test_files/helloworld5.ceruleanobj --debug --emitTokens --emitAST
 python3 -m ceruleanasm.assembler backend/test_files/print_string.ceruleanasm -o backend/test_files/print_string.ceruleanobj --debug --emitTokens --emitAST
