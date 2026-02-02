@@ -42,14 +42,15 @@ class Node (ABC):
 
 class ProgramNode (Node):
 
-    def __init__ (self, codeunits):
+    def __init__ (self, codeunits, externSymbols=None):
         self.codeunits = codeunits
+        self.externSymbols = externSymbols if externSymbols is not None else []
 
     def accept (self, visitor):
         return visitor.visitProgramNode (self)
 
     def copy (self):
-        node = ProgramNode (None)
+        node = ProgramNode (None, self.externSymbols[:])
         for codeunit in self.codeunits:
             node.codeunits += [codeunit.copy ()]
         return node

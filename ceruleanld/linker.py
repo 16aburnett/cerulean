@@ -13,8 +13,9 @@ from ceruleanasm.opcodes import *
 class Linker:
     def __init__(self, debug=False):
         self.shouldPrintDebug = debug
-        # Where the program should start executing
-        self.startSymbol = "__start"
+        # The linker will generate __start that jumps to main
+        self.startSymbol = "__start"  # What the linker generates
+        self.entrySymbol = "main"      # What the user must provide
 
     def printDebug (self, *args, **kwargs):
         """Custom debug print function."""
@@ -50,7 +51,7 @@ class Linker:
             for symbol in objectCode["symbols"]:
                 # Ensure it is a global symbol
                 symbolData = objectCode["symbols"][symbol]
-                if symbolData["visibility"] != "global" and symbol != self.startSymbol:
+                if symbolData["visibility"] != "global":
                     continue
                 # add filename for debug
                 symbolData["originalFilename"] = objectCode["filename"]
@@ -61,8 +62,6 @@ class Linker:
                     print (f"   Found in: '{originalSymbolDecl["originalFilename"]}'")
                     print (f"   Also defined in: '{symbolData["originalFilename"]}'")
                     print (f"   Hint: Global symbols must be uniquely defined across object files. Consider renaming or adjusting visibility.")
-                    if symbol == self.startSymbol:
-                        print (f"   Note: '{self.startSymbol}' is a special symbol and implicitly global")
                     exit (1)
                 globalSymbolTable[symbol] = symbolData
         return globalSymbolTable
@@ -70,30 +69,37 @@ class Linker:
     # ---------------------------------------------------------------------------------------------
 
     def addEntrySection (self, objectCodes, globalSymbolTable):
-        # Ensure start symbol was declared
-        if self.startSymbol not in globalSymbolTable:
-            print (f"ERROR: Missing entry point symbol '{self.startSymbol}'")
+        # Ensure main symbol exists (the user-provided entry point)
+        if self.entrySymbol not in globalSymbolTable:
+            print (f"ERROR: Missing entry point symbol '{self.entrySymbol}'")
             print (f"   Required to determine program start location for CeruleanVM")
-            print (f"   No global '{self.startSymbol}' label found in linked object files")
-            print (f"   Hint: Define a global '{self.startSymbol}' label in your main module to mark where execution begins.")
+            print (f"   No global '{self.entrySymbol}' function found in linked object files")
+            print (f"   Hint: Define a global '{self.entrySymbol}' function in your main module to mark where execution begins.")
             exit (1)
-        # Setup init object
+        # Setup init object that generates __start and calls main
         setupObject = {
             "filename": "<entry>",
             "bytecode": [
-                # Note: dont have the address for __start yet, but will be filled in later
-                INSTRUCTION_MAPPING["LUI"   ]["opcode"], 0x00, 0x00, 0x00, # lui r0, %hi(__start)
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %mh(__start)
+                # Load address of main and call it, exact address is not known yet
+                INSTRUCTION_MAPPING["LUI"   ]["opcode"], 0x00, 0x00, 0x00, # lui r0, %hi(main)
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %mh(main)
                 INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %ml(__start)
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %ml(main)
                 INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %lo(__start)
-                INSTRUCTION_MAPPING["JMP"   ]["opcode"], 0x00, 0x00, 0x00, # jmp r0 ; jmp __start
+                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %lo(main)
+                INSTRUCTION_MAPPING["CALL"  ]["opcode"], 0x00, 0x00, 0x00, # call r0 ; call main
+                INSTRUCTION_MAPPING["HALT"  ]["opcode"], 0x00, 0x00, 0x00, # halt
             ],
             "symbols": {
-                # Dummy extern for __start
+                # The linker generates __start at address 0
                 self.startSymbol: {
                     "symbol": self.startSymbol,
+                    "visibility": "global",
+                    "relAddress": 0
+                },
+                # Dummy extern for main (to be resolved)
+                self.entrySymbol: {
+                    "symbol": self.entrySymbol,
                     "visibility": "extern",
                     "relAddress": 0
                 }
@@ -101,25 +107,25 @@ class Linker:
             "relocations": [
                 {
                     "location": 2,
-                    "symbol": self.startSymbol,
+                    "symbol": self.entrySymbol,
                     "type": "imm16_abs_hi",
                     "isGlobal": True
                 },
                 {
                     "location": 6,
-                    "symbol": self.startSymbol,
+                    "symbol": self.entrySymbol,
                     "type": "imm16_abs_mh",
                     "isGlobal": True
                 },
                 {
                     "location": 14,
-                    "symbol": self.startSymbol,
+                    "symbol": self.entrySymbol,
                     "type": "imm16_abs_ml",
                     "isGlobal": True
                 },
                 {
                     "location": 22,
-                    "symbol": self.startSymbol,
+                    "symbol": self.entrySymbol,
                     "type": "imm16_abs_lo",
                     "isGlobal": True
                 }

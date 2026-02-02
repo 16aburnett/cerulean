@@ -103,7 +103,10 @@ class PrintVisitor (ASTVisitor):
 
     def visitFunctionNode (self, node):
         self.printSpaces (self.level)
-        self.outputstrings += [f"Function: {node.id} "]
+        if node.isExtern:
+            self.outputstrings += [f"Extern Function: {node.id} "]
+        else:
+            self.outputstrings += [f"Function: {node.id} "]
 
         # function signature
         self.outputstrings += [f"("]
@@ -128,12 +131,16 @@ class PrintVisitor (ASTVisitor):
         for param in node.params:
             param.accept (self)
 
-        self.printSpaces (self.level)
-        self.outputstrings += ["Body:\n"]
-        self.level += 1
-        for basicBlock in node.basicBlocks:
-            basicBlock.accept (self)
-        self.level -= 2
+        # Only print body if not extern
+        if not node.isExtern:
+            self.printSpaces (self.level)
+            self.outputstrings += ["Body:\n"]
+            self.level += 1
+            for basicBlock in node.basicBlocks:
+                basicBlock.accept (self)
+            self.level -= 1
+        
+        self.level -= 1
 
     # ====================================================================
 

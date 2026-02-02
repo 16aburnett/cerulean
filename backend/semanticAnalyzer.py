@@ -170,6 +170,12 @@ class SemanticAnalysisVisitor (ASTVisitor):
         # check parameters
         for p in node.params:
             p.accept (self)
+        
+        # Skip body analysis for extern functions
+        if node.isExtern:
+            self.table.exitScope ()
+            return
+        
         # containing function keeps track of what function 
         # we're currently in 
         # this is helpful for ensuring RETURN is in a function

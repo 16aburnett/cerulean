@@ -36,12 +36,21 @@ class LoweringVisitor (ASTVisitor):
 
     def visitProgramNode (self, node):
         codeunits = []
+        externSymbols = []
         for codeunit in node.codeunits:
             if codeunit != None:
+                # Check if this is an extern function before lowering
+                if isinstance(codeunit, FunctionNode) and codeunit.isExtern:
+                    # Strip @ prefix if present
+                    funcName = codeunit.id[1:] if codeunit.id.startswith('@') else codeunit.id
+                    externSymbols.append(funcName)
+                    self.debugPrint(f"Found extern function: {funcName}")
+                    continue  # Skip lowering extern functions
                 newCodeunit = codeunit.accept (self)
                 if newCodeunit:
                     codeunits += [newCodeunit]
-        return ASM_AST.ProgramNode (codeunits)
+        self.debugPrint(f"Total extern symbols: {externSymbols}")
+        return ASM_AST.ProgramNode (codeunits, externSymbols)
 
     # =============================================================================================
 
@@ -68,6 +77,10 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitFunctionNode (self, node):
+        # Skip extern functions - they have no body to lower
+        if node.isExtern:
+            return None
+        
         params = []
         # Collect parameter IDs before lowering
         paramIds = []

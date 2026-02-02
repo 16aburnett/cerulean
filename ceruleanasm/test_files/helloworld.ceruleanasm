@@ -1,9 +1,6 @@
 // Super simple Hello World CeruleanASM Program
-__start:
-    loada     r0, main
-    mv64      r1, r0
-    call      r1
-    halt
+// Main is where the program starts executing from (and must be global)
+    @global main
 main:
     lli       r0, 'H'
     putchar   r0

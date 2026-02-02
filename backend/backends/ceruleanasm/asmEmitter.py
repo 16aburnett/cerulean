@@ -110,6 +110,8 @@ class EmitterVisitor(ASMASTVisitor):
     
     def visitProgramNode(self, node):
         """Visit the program node - emit all functions."""
+        self.emitter.debugPrint(f"Emitting program with {len(node.externSymbols)} extern symbols: {node.externSymbols}")
+        
         self.emitComment("CeruleanASM code compiled from CeruleanIR")
         self.emit("// " + "=" * 75 + "\n\n")
         
@@ -129,6 +131,13 @@ class EmitterVisitor(ASMASTVisitor):
         self.emit("//### COMPILED CODE " + "#" * 55 + "\n")
         self.emit("// " + "=" * 75 + "\n\n")
         
+        # Emit extern declarations
+        if node.externSymbols:
+            self.emitComment("External symbol declarations")
+            for symbol in node.externSymbols:
+                self.emitLine(f"@extern {symbol}")
+            self.emit("\n")
+        
         # Emit each function
         for codeunit in node.codeunits:
             if isinstance(codeunit, ASM_AST.FunctionNode):
@@ -137,23 +146,6 @@ class EmitterVisitor(ASMASTVisitor):
         self.emit("\n// " + "=" * 75 + "\n")
         self.emit("//### END OF CODE " + "#" * 57 + "\n")
         self.emit("// " + "=" * 75 + "\n\n")
-        
-        # Emit startup code
-        self.emitLabel("__start")
-        self.indentation += 1
-        self.emitComment("Start with main function")
-        # Look for main function - should be the last one compiled
-        mainFuncLabel = "main"  # default
-        for codeunit in node.codeunits:
-            if isinstance(codeunit, ASM_AST.FunctionNode):
-                if codeunit.id == "main":
-                    mainFuncLabel = "main"
-                    break
-        self.emitLine(f"loada r0, {mainFuncLabel}")
-        self.emitLine("call r0")
-        self.emitLine("halt")
-        self.indentation -= 1
-        self.emit("\n")
     
     def visitFunctionNode(self, node):
         """Visit a function node - emit function code."""
@@ -170,6 +162,10 @@ class EmitterVisitor(ASMASTVisitor):
         
         # Function header
         self.emit("// " + "-" * 75 + "\n")
+        
+        # Emit global directive to make function visible to other object files
+        self.emitLine(f"@global {node.id}")
+        
         self.emitComment(f"Function: {node.id}")
         
         # Emit stack frame layout comments

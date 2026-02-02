@@ -63,7 +63,7 @@ class FrameLoweringVisitor(ASMASTVisitor):
             else:
                 processedFunctions.append(function)
         
-        return ASM_AST.ProgramNode(processedFunctions)
+        return ASM_AST.ProgramNode(processedFunctions, node.externSymbols)
     
     def visitFunctionNode(self, node):
         """

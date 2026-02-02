@@ -1,14 +1,4 @@
 // Simple Hello world program including function calls, and push/pop
-__start:
-    lui       r0, %hi(main) // 0x0000000012340000
-    lli       r0, %mh(main) // 0x0000000012345678
-    sll64i    r0, r0, 16    // 0x0000123456780000
-    lli       r0, %ml(main) // 0x0000123456789abc
-    sll64i    r0, r0, 16    // 0x123456789abc0000
-    lli       r0, %lo(main) // 0x123456789abcdef0
-    call      r0
-    halt
-
 print_string: // print_string(ptr string_addr)
 function_prologue:
     push      bp        // save caller's bp
@@ -64,6 +54,7 @@ function_epilogue:
     pop       bp         // bp = [sp] ; restore caller bp
     ret                  // return from function
 
+    @global main
 main:
     // load string_addr
     lui       r0, %hi(string_addr) // 0x0000000012340000
