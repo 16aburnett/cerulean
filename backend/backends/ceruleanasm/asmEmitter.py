@@ -22,9 +22,8 @@ class ASMEmitter:
     Uses register allocation and frame information computed by previous passes.
     """
     
-    def __init__(self, shouldPrintDebug=False, emitStartup=False):
+    def __init__(self, shouldPrintDebug=False):
         self.shouldPrintDebug = shouldPrintDebug
-        self.emitStartup = emitStartup
         self.code = []
         self.dataSection = []
         self.nextStringIndex = 0
@@ -147,25 +146,6 @@ class EmitterVisitor(ASMASTVisitor):
         self.emit("\n// " + "=" * 75 + "\n")
         self.emit("//### END OF CODE " + "#" * 57 + "\n")
         self.emit("// " + "=" * 75 + "\n\n")
-        
-        # Emit startup code (only if emitStartup is True)
-        if self.emitter.emitStartup:
-            self.emitLine("@global __start")
-            self.emitLabel("__start")
-            self.indentation += 1
-            self.emitComment("Start with main function")
-            # Look for main function - should be the last one compiled
-            mainFuncLabel = "main"  # default
-            for codeunit in node.codeunits:
-                if isinstance(codeunit, ASM_AST.FunctionNode):
-                    if codeunit.id == "main":
-                        mainFuncLabel = "main"
-                        break
-            self.emitLine(f"loada r0, {mainFuncLabel}")
-            self.emitLine("call r0")
-            self.emitLine("halt")
-            self.indentation -= 1
-            self.emit("\n")
     
     def visitFunctionNode(self, node):
         """Visit a function node - emit function code."""

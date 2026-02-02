@@ -41,7 +41,7 @@ class CeruleanIRCompiler:
 
     #---------------------------------------------------------------------
 
-    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE, emitStartup=False):
+    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE):
 
         lines = rawSourceCode.split ("\n")
 
@@ -142,7 +142,7 @@ class CeruleanIRCompiler:
         # keyed by filename
         self.printDebug (f"Generating code...")
         if target == TargetLang.CERULEANASM:
-            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc, emitStartup=emitStartup)
+            codeGenerator = CodeGenVisitor_CeruleanASM (lines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (lines)
         elif target == TargetLang.X86:
@@ -224,7 +224,6 @@ if __name__ == "__main__":
     argparser.add_argument("--regalloc", dest="regalloc", type=str,
         choices=[s.value for s in AllocatorStrategy], default=AllocatorStrategy.NAIVE.value,
         help="specifies the register allocator strategy to use [default: naive]")
-    argparser.add_argument("--with-start", dest="withStart", action="store_true", help="emit startup code that calls main (usually handled by linker)")
     argparser.add_argument("--debug", dest="debug", action="store_true", help="output debug info")
 
     args = argparser.parse_args()
@@ -263,8 +262,7 @@ if __name__ == "__main__":
         emitAST=args.emitAST,
         emitIR=args.emitIR,
         target=target,
-        regalloc=regalloc,
-        emitStartup=args.withStart
+        regalloc=regalloc
     )
 
     # Write target code
