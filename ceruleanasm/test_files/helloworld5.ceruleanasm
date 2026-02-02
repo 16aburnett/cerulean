@@ -1,12 +1,7 @@
 // Simple Hello world program with multiple files
-__start:
-    loada     r0, main
-    call      r0
-    halt
-
     // extern declares that the symbol is defined outside of this file
     @extern print_string
-
+    @global main
 main:
     loada     r0, string_addr
     loada     r1, print_string

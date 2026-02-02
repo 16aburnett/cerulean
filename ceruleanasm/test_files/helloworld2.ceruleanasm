@@ -1,15 +1,5 @@
 // Simple Hello World with data directives
 letsgoooo:
-__start:
-    lui       r0, %hi(main) // 0x0000000012340000
-    lli       r0, %mh(main) // 0x0000000012345678
-    sll64i    r0, r0, 16    // 0x0000123456780000
-    lli       r0, %ml(main) // 0x0000123456789abc
-    sll64i    r0, r0, 16    // 0x123456789abc0000
-    lli       r0, %lo(main) // 0x123456789abcdef0
-    call      r0
-    halt
-
 string_addr:
     .ascii "Hello, World!\n"
     .float32 3.1415
@@ -18,6 +8,7 @@ string_addr:
     .int8 16
 
 // This should be correctly aligned, despite above not ending at a 32bit alignment
+    @global main
 main:
     // Load string_addr into r0
     // Currently this takes 6 instructions
