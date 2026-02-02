@@ -191,18 +191,21 @@ class ParameterNode (DeclarationNode):
         return node
 
 # ========================================================================
+# FunctionNode - represents both function definitions and extern declarations
 # id - string
 # params - List(ParameterNode)
-# body - CodeBlockNode
+# basicBlocks - List(BasicBlockNode) or None for extern functions
+# isExtern - bool indicating if this is an extern declaration
 
 class FunctionNode (Node):
     
-    def __init__(self, type:TypeSpecifierNode, id, token, params, basicBlocks):
+    def __init__(self, type:TypeSpecifierNode, id, token, params, basicBlocks, isExtern=False):
         self.type = type 
         self.id = id
         self.token = token
         self.params = params
-        self.basicBlocks = basicBlocks
+        self.basicBlocks = basicBlocks  # None or [] for extern functions
+        self.isExtern = isExtern  # True for extern declarations
 
         self.signature = ""
 
@@ -221,7 +224,14 @@ class FunctionNode (Node):
         return visitor.visitFunctionNode (self)
 
     def copy (self):
-        node = FunctionNode (self.type.copy(), self.id, self.token, [param.copy() for param in self.params], [block.copy() for block in self.basicBlocks])
+        node = FunctionNode (
+            self.type.copy(), 
+            self.id, 
+            self.token, 
+            [param.copy() for param in self.params], 
+            [block.copy() for block in self.basicBlocks] if self.basicBlocks else None,
+            self.isExtern
+        )
         node.signature = self.signature
         node.scopeName = self.scopeName
         node.label = self.label

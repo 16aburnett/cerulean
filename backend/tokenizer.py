@@ -157,6 +157,8 @@ def tokenize(code, filename):
             elif (lexeme == "ptr"): # pointers/addresses to memory
                 kind = "TYPE_PTR"
             # KEYWORDS
+            elif (lexeme == "extern"):
+                kind = "EXTERN"
             elif (lexeme == "function"):
                 kind = "FUNCTION"
             elif (lexeme == "global"):

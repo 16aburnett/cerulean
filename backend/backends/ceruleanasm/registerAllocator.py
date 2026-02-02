@@ -193,7 +193,7 @@ class AllocationVisitor(ASMASTVisitor):
             else:
                 allocatedFunctions.append(function)
         
-        return ASM_AST.ProgramNode(allocatedFunctions)
+        return ASM_AST.ProgramNode(allocatedFunctions, node.externSymbols)
     
     def visitFunctionNode(self, node):
         """

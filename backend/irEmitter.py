@@ -71,6 +71,12 @@ class IREmitterVisitor (ASTVisitor):
             paramListStrings += [paramString]
         paramListString = ", ".join (paramListStrings)
 
+        # Handle extern functions
+        if node.isExtern:
+            self.printCode (f"extern function {returnTypeString} {node.id} ({paramListString});")
+            return
+        
+        # Regular function with body
         self.printCode (f"function {returnTypeString} {node.id} ({paramListString}) {{")
         for basicBlock in node.basicBlocks:
             basicBlock.accept (self)

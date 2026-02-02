@@ -24,11 +24,12 @@ class AllocatorStrategy(Enum):
 
 class CodeGenVisitor_CeruleanASM (ASTVisitor):
 
-    def __init__(self, lines, sourceFilename, shouldPrintDebug=False, emitVirtualASM=False, allocatorStrategy=AllocatorStrategy.NAIVE):
+    def __init__(self, lines, sourceFilename, shouldPrintDebug=False, emitVirtualASM=False, allocatorStrategy=AllocatorStrategy.NAIVE, emitStartup=True):
         self.sourceFilename = sourceFilename
         self.shouldPrintDebug = shouldPrintDebug
         self.emitVirtualASM = emitVirtualASM
         self.allocatorStrategy = allocatorStrategy
+        self.emitStartup = emitStartup
         self.wasSuccessful = True  # Used by compiler to check for errors
         
         # Configuration for register allocation (passed to RegisterAllocator)
@@ -91,7 +92,7 @@ class CodeGenVisitor_CeruleanASM (ASTVisitor):
         
         # Pass 5: Code Emission (convert AST to text)
         self.debugPrint("Pass 5: Emitting final assembly...")
-        emitter = ASMEmitter(self.shouldPrintDebug)
+        emitter = ASMEmitter(self.shouldPrintDebug, emitStartup=self.emitStartup)
         assemblyText = emitter.emit(finalASM)
         return assemblyText
 

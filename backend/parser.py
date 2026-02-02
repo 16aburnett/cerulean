@@ -89,10 +89,13 @@ class Parser:
 
         node = None
 
+        # <codeunit> -> <externFunction>
+        if (self.tokens[self.currentToken].type == 'EXTERN'):
+            node = self.externFunction ()
         # <codeunit> -> <function>
-        if (self.tokens[self.currentToken].type == 'FUNCTION'):
+        elif (self.tokens[self.currentToken].type == 'FUNCTION'):
             node = self.function ()
-        # <codeunit> -> <class>
+        # <codeunit> -> <global>
         elif (self.tokens[self.currentToken].type == "GLOBAL"):
             node = self.globalVarDeclaration ()
         # <codeunit> -> NEWLINE
@@ -103,12 +106,46 @@ class Parser:
             pass
         # something unexpected
         else:
-            self.error ("codeunit", "FUNCTION",
-                "Program level scope expects either a function or global")
+            self.error ("codeunit", "EXTERN, FUNCTION, or GLOBAL",
+                "Program level scope expects extern, function, or global")
         
         self.leave ("codeunit")
 
         return node
+
+    # ====================================================================
+    # extern function declaration (no body)
+    # <externFunction> -> EXTERN FUNCTION <typeSpecifier> GVARIABLE <paramlist> SEMI
+    
+    def externFunction (self):
+        self.enter ("externFunction")
+        expected_syntax = "Extern Function Syntax:\nextern function <return_type> @<function_name> (<parameter_list>);"
+
+        self.match ("externFunction", "EXTERN", expected_syntax)
+        self.match ("externFunction", "FUNCTION", expected_syntax)
+        
+        # match function's return type
+        return_type = self.typeSpecifier ()
+
+        # match function's name
+        function_name = self.tokens[self.currentToken].lexeme
+        token = self.tokens[self.currentToken]
+        self.match ("externFunction", "GVARIABLE", expected_syntax)
+        
+        # match function's parameters
+        params = self.paramlist ()
+
+        # AD HOC!! newlines before semicolon
+        while self.tokens[self.currentToken].type == "NEWLINE":
+            self.match ("externFunction", "NEWLINE")
+
+        # match semicolon
+        self.match ("externFunction", "SEMI", expected_syntax)
+
+        self.leave ("externFunction")
+
+        # Create FunctionNode with isExtern=True and no basicBlocks
+        return FunctionNode (return_type, function_name, token, params, None, isExtern=True)
 
     # ====================================================================
     # function declaration
@@ -140,7 +177,7 @@ class Parser:
 
         self.leave ("function")
 
-        return FunctionNode (return_type, function_name, token, params, basicBlockList)
+        return FunctionNode (return_type, function_name, token, params, basicBlockList, isExtern=False)
 
     # ====================================================================
     # parameter list for a function declaration
