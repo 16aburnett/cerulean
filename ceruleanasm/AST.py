@@ -57,10 +57,11 @@ class ProgramNode (Node):
         return node
 
     def __repr__ (self):
-        return f"Program({repr (self.codeunits)})"
+        codeunits_repr = ',\n  '.join(repr(cu) for cu in self.codeunits)
+        return f"Program([\n  {codeunits_repr}\n])"
 
     def __str__ (self):
-        return "\n".join ([repr (codeunit) for codeunit in self.codeunits])
+        return "\n".join ([str (codeunit) for codeunit in self.codeunits])
 
     def __eq__ (self, other):
         if not isinstance (other, ProgramNode):

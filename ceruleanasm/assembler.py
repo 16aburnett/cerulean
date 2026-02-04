@@ -13,7 +13,6 @@ from .tokenizer import tokenize
 from .AST import *
 from .parser import Parser
 from .visitor import *
-from .printVisitor import PrintVisitor
 from .semanticAnalysis import SemanticAnalysisVisitor
 from .lowering import LoweringVisitor
 from .addressAssigner import AddressAssignerVisitor
@@ -73,8 +72,7 @@ class CeruleanAssembler:
         if emitAST:
             astFilename = sourceFilename + ".ast"
             self.printDebug (f"Printing AST to '{astFilename}'...")
-            printVisitor = PrintVisitor ()
-            output = printVisitor.print (ast)
+            output = repr (ast)
             astFile = open (astFilename, "w")
             astFile.write (output)
             astFile.close ()
@@ -106,8 +104,7 @@ class CeruleanAssembler:
         if emitAST:
             astFilename = sourceFilename + ".ast_lowered"
             self.printDebug (f"Printing AST to '{astFilename}'...")
-            printVisitor = PrintVisitor ()
-            output = printVisitor.print (ast)
+            output = repr (ast)
             astFile = open (astFilename, "w")
             astFile.write (output)
             astFile.close ()
