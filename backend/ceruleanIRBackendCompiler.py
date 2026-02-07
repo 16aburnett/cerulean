@@ -93,53 +93,29 @@ class CeruleanIRBackendCompiler:
         #=== CODE GENERATION =============================================
 
         self.printDebug (f"Generating code...")
-        generatedCode = generateCode (ast, sourceCodeLines, sourceFilename, target, self.shouldPrintDebug, regalloc)
+        if target == TargetLang.CERULEANASM:
+            codeGenerator = CodeGenVisitor_CeruleanASM (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
+        elif target == TargetLang.AMYASM:
+            codeGenerator = CodeGenVisitor_AmyAssembly (sourceCodeLines)
+        elif target == TargetLang.X86:
+            codeGenerator = CodeGenVisitor_x86 (sourceCodeLines)
+        else:
+            print (f"Error: unknown target language '{target}'")
+            exit (1)
+
+        # generate code
+        generatedCode = codeGenerator.generate (ast)
+
+        # Ensure codegen was successful
+        if not codeGenerator.wasSuccessful:
+            print (f"Error: codegen failed")
+            exit (1)
+
         return generatedCode
 
     def printDebug (self, *args, **kwargs):
         """Custom debug print function."""
         if (self.shouldPrintDebug):
             print(*args, **kwargs)
-
-# ========================================================================
-
-def printAST (ast):
-    printVisitor = PrintVisitor ()
-    output = printVisitor.print (ast)
-    return output
-
-# ========================================================================
-
-def analyzeSemantics (ast, sourceCodeLines):
-    semanticAnalyzer = SemanticAnalysisVisitor (sourceCodeLines, False)
-    # Add built-in functions/variables to the symbol table
-    # So we know what functions exist for checking for undefined symbols
-    addBuiltinsToSymbolTable (semanticAnalyzer.table)
-    # Check ast
-    wasSuccessful = semanticAnalyzer.analyze (ast)
-    return wasSuccessful
-
-# ========================================================================
-
-def generateCode (ast, sourceCodeLines, sourceFilename, target, shouldPrintDebug=False, regalloc=AllocatorStrategy.NAIVE):
-    if target == TargetLang.CERULEANASM:
-        codeGenerator = CodeGenVisitor_CeruleanASM (sourceCodeLines, sourceFilename, shouldPrintDebug=shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
-    elif target == TargetLang.AMYASM:
-        codeGenerator = CodeGenVisitor_AmyAssembly (sourceCodeLines)
-    elif target == TargetLang.X86:
-        codeGenerator = CodeGenVisitor_x86 (sourceCodeLines)
-    else:
-        print (f"Error: unknown target language '{target}'")
-        exit (1)
-
-    # generate code
-    generatedCode = codeGenerator.generate (ast)
-
-    # Ensure codegen was successful
-    if not codeGenerator.wasSuccessful:
-        print (f"Error: codegen failed")
-        exit (1)
-
-    return generatedCode
 
 # ========================================================================
