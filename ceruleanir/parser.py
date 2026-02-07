@@ -1,12 +1,11 @@
-# CeruleanIR Compiler: Parsing
+# CeruleanIR Frontend: Parsing
 # By Amy Burnett
-# June 7 2025
 # ========================================================================
 
 from sys import exit
 
 from .tokenizer import printToken
-from .ceruleanIRAST import *
+from backend.ceruleanIRAST import *
 
 # ========================================================================
 
