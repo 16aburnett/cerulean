@@ -20,7 +20,7 @@ if __name__ == "__main__":
     from .semanticAnalyzer import *
     from .codegen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
-    from backend.ceruleanIRBackendCompiler import CeruleanIRBackendCompiler, TargetLang
+    from backend.compiler import CeruleanIRBackendCompiler, TargetLang
     from backend.backends.ceruleanasm.codegen import AllocatorStrategy
 else:
     from .preprocessor import CeruleanPreprocessor

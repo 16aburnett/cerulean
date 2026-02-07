@@ -16,7 +16,7 @@ from .parser import Parser
 
 # Backend components (shared IR definitions and compilation)
 from backend.ceruleanIRAST import *
-from backend.ceruleanIRBackendCompiler import CeruleanIRBackendCompiler, TargetLang
+from backend.compiler import CeruleanIRBackendCompiler, TargetLang
 from backend.backends.ceruleanasm.codegen import AllocatorStrategy
 
 # ========================================================================
