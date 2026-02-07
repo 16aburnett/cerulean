@@ -26,7 +26,7 @@ def runTestCeruleanIRToAmyAssembly (test, code:str, testTarget:TestTarget, level
         file.write (fullCode)
 
     # === Compiling
-    compilerOutput = subprocess.run ([f'python3', '-m', 'backend.ceruleanIRCompiler', sourceCodeFilename, '--target', 'amyasm', '-o', destCodeFilename], capture_output=True, text=True)
+    compilerOutput = subprocess.run ([f'python3', '-m', 'ceruleanir.compiler', sourceCodeFilename, '--target', 'amyasm', '-o', destCodeFilename], capture_output=True, text=True)
     isCompiled = (compilerOutput.returncode == 0)
 
     # 1. Failed to Compile when expecting fail
@@ -120,7 +120,7 @@ def runTestCeruleanToAmyAssembly (test, code:str, testTarget:TestTarget, level:i
         file.write (fullCode)
 
     # === Compiling
-    compilerOutput = subprocess.run ([f'python3', '-m', 'cerulean.ceruleanCompiler', sourceCodeFilename, '--target', 'amyasm', '-o', destCodeFilename, '--emitIR'], capture_output=True, text=True)
+    compilerOutput = subprocess.run ([f'python3', '-m', 'cerulean.compiler', sourceCodeFilename, '--target', 'amyasm', '-o', destCodeFilename, '--emitIR'], capture_output=True, text=True)
     isCompiled = (compilerOutput.returncode == 0)
 
     # 1. Failed to Compile when expecting fail
@@ -182,7 +182,7 @@ def runTestCeruleanToAmyAssembly (test, code:str, testTarget:TestTarget, level:i
     # 4. Compiles when expecting success
 
     # === Compile IR to target (NOTE this is not the intended path)
-    compilerOutput = subprocess.run ([f'python3', '-m', 'backend.ceruleanIRCompiler', irCodeFilename, '--target', 'amyasm', '-o', destCodeFilename], capture_output=True, text=True)
+    compilerOutput = subprocess.run ([f'python3', '-m', 'backend.compiler', irCodeFilename, '--target', 'amyasm', '-o', destCodeFilename], capture_output=True, text=True)
     isCompiled = (compilerOutput.returncode == 0)
     if not isCompiled:
         print (f"FAILED to compile IR->Target")

@@ -3,16 +3,16 @@ testing/test_tmp
 
 # Generated test artifacts
 # Keep .ceruleanir source files, ignore all generated outputs
-backend/test_files/*.amyasm
-backend/test_files/*.ceruleanasm
-backend/test_files/*.tokens
-backend/test_files/*.ast
-backend/test_files/*.ast_lowered
-backend/test_files/*.ir
-backend/test_files/*.virtasm
-backend/test_files/*.virtasmast
-backend/test_files/*.ceruleanbc
-backend/test_files/*.ceruleanobj
+ceruleanir/test_files/*.amyasm
+ceruleanir/test_files/*.ceruleanasm
+ceruleanir/test_files/*.tokens
+ceruleanir/test_files/*.ast
+ceruleanir/test_files/*.ast_lowered
+ceruleanir/test_files/*.ir
+ceruleanir/test_files/*.virtasm
+ceruleanir/test_files/*.virtasmast
+ceruleanir/test_files/*.ceruleanbc
+ceruleanir/test_files/*.ceruleanobj
 
 cerulean/test_files/*.amyasm
 cerulean/test_files/*.ast

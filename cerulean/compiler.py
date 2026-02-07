@@ -20,9 +20,8 @@ if __name__ == "__main__":
     from .semanticAnalyzer import *
     from .codegen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
-    from backend.irEmitter import IREmitterVisitor
-    from backend.ceruleanIRBuilder import CeruleanIRBuilder
-    from backend.ceruleanIRCompiler import printAST, analyzeSemantics, generateCode, TargetLang
+    from backend.compiler import CeruleanIRBackendCompiler, TargetLang
+    from backend.backends.ceruleanasm.codegen import AllocatorStrategy
 else:
     from .preprocessor import CeruleanPreprocessor
     from .tokenizer import tokenize
@@ -34,7 +33,6 @@ else:
     from .codeGen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
     from backend.printVisitor import PrintVisitor as IRPrintVisitor
-    from backend.ceruleanIRBuilder import CeruleanIRBuilder
 
 
 # ========================================================================
@@ -142,54 +140,21 @@ class CeruleanCompiler:
 
         #=== CONVERT TO IR =======================================================
 
-        print ("Converting to IR...")
-
+        if (self.debug):
+            print ("Converting to IR...")
         irGeneratorVisitor = IRGeneratorVisitor (lines)
         # Generate IR AST
         ast.accept (irGeneratorVisitor)
         irAST = irGeneratorVisitor.ast
         
-        if self.emitIR:
-            print (f"Emitting IR...")
-            irEmitterVisitor = IREmitterVisitor ()
-            output = irEmitterVisitor.emit (irAST)
-            print (f"Writing IR to \"{self.irFilename}\"...")
-            irFile = open (self.irFilename, "w")
-            irFile.write (output)
-            irFile.close ()
+        #=== BACKEND COMPILATION =================================================
+        # Backend handles: IR semantic analysis, IR emission, AST printing, code generation, and more
 
-        if self.emitIRAST:
-            print (f"Printing IR AST...")
-            irASTString = printAST (irAST)
-            print (f"Writing IR AST to \"{self.irASTFilename}\"...")
-            astFile = open (self.irASTFilename, "w")
-            astFile.write (irASTString)
-            astFile.close ()
-
-        #=== IR SEMANTICS ANALYSIS ===============================================
-
-        print ("Analyzing IR semantics...")
-        wasSuccessful = analyzeSemantics (irAST, lines)
-        if (not wasSuccessful):
-            exit (1)
-        print ("IR semantic analysis passes successfully")
-
-        #=== CODEGEN =============================================================
-
-        # if target == TargetLang.AMYASM:
-            # codeGenVisitor = CodeGenVisitor (lines)
-        # elif target == TargetLang.X86:
-            # codeGenVisitor = CodeGenVisitor_x86 (lines)
-        # elif target == TARGET_PYTHON:
-            # codeGenVisitor = CodeGenVisitor_python (lines)
-        # elif target == TARGET_CPP:
-            # precodegen stage to generate scopenames
-            # ast.accept (PreCodeGenVisitor_cpp (lines))
-            # codeGenVisitor = CodeGenVisitor_cpp (lines)
-
-        # generate code
-        print (f"Generating code...")
-        code = generateCode (irAST, lines, TargetLang.AMYASM)
+        if (self.debug):
+            print (f"Offloading code to backend...")
+        backendCompiler = CeruleanIRBackendCompiler(debug=self.debug)
+        code = backendCompiler.compile(irAST, lines, self.mainFilename, 
+            emitAST=self.emitIRAST, emitIR=self.emitIR, target=self.target, regalloc=AllocatorStrategy.NAIVE)
 
         #=== OUTPUT ==============================================================
 
