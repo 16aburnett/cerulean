@@ -1106,23 +1106,7 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers.get<uint32_t>(src1) < registers.get<uint32_t>(src2))
-                pc = registers.get<uint64_t>(addr) - 4;
-            break;
-        }
-        case Opcode::BLE: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers.get<uint32_t>(src1) <= registers.get<uint32_t>(src2))
-                pc = registers.get<uint64_t>(addr) - 4;
-            break;
-        }
-        case Opcode::BGT: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers.get<uint32_t>(src1) > registers.get<uint32_t>(src2))
+            if (registers.get<int64_t>(src1) < registers.get<int64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
@@ -1130,7 +1114,23 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            if (registers.get<uint32_t>(src1) >= registers.get<uint32_t>(src2))
+            if (registers.get<int64_t>(src1) >= registers.get<int64_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
+            break;
+        }
+        case Opcode::BLTU: {
+            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            if (registers.get<uint64_t>(src1) < registers.get<uint64_t>(src2))
+                pc = registers.get<uint64_t>(addr) - 4;
+            break;
+        }
+        case Opcode::BGEU: {
+            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            if (registers.get<uint64_t>(src1) >= registers.get<uint64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }

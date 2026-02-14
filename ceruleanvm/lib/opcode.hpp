@@ -345,19 +345,19 @@ enum Opcode : const uint8_t {
     // BNE src1, src2, addr - if src1 != src2 then pc <- addr
     // XXXXXXXX ssssssss aaaa0000 00000000
     BNE = 0x71,
-    // BLT src1, src2, addr - if src1 <  src2 then pc <- addr
+    // BLT src1, src2, addr - if src1 < src2 then pc <- addr (signed)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BLT = 0x72,
-    // BLE src1, src2, addr - if src1 <= src2 then pc <- addr
+    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr (signed)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BLE = 0x73,
-    // BGT src1, src2, addr - if src1 >  src2 then pc <- addr
+    BGE = 0x73,
+    // BLTU src1, src2, addr - if src1 < src2 then pc <- addr (unsigned)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BGT = 0x74,
-    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr
+    BLTU = 0x74,
+    // BGEU src1, src2, addr - if src1 >= src2 then pc <- addr (unsigned)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BGE = 0x75,
-    // JMP addr - pc <- addr
+    BGEU = 0x75,
+    // JMP addr - pc <- addr (unconditional jump)
     // XXXXXXXX aaaa0000 00000000 00000000
     JMP = 0x76,
 

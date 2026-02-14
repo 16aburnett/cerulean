@@ -107,9 +107,9 @@ INSTRUCTION_MAPPING = {
     "BEQ"       : {"opcode": 0x70, "format": "RRR" },
     "BNE"       : {"opcode": 0x71, "format": "RRR" },
     "BLT"       : {"opcode": 0x72, "format": "RRR" },
-    "BLE"       : {"opcode": 0x73, "format": "RRR" },
-    "BGT"       : {"opcode": 0x74, "format": "RRR" },
-    "BGE"       : {"opcode": 0x75, "format": "RRR" },
+    "BGE"       : {"opcode": 0x73, "format": "RRR" },
+    "BLTU"      : {"opcode": 0x74, "format": "RRR" },
+    "BGEU"      : {"opcode": 0x75, "format": "RRR" },
     "JMP"       : {"opcode": 0x76, "format": "R"   },
 
     "CALL"      : {"opcode": 0x80, "format": "R"   },
