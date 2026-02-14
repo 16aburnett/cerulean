@@ -21,30 +21,50 @@ enum Opcode : const uint8_t {
     // Example: LLI r0, 0x5678
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LLI = 0x02,
-    // LOAD8 dest, offset(src) - load 
+    // LOAD8 dest, offset(src) - load byte with sign-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD8 = 0x03,
-    // LOAD16 dest, offset(src) - load half (2 bytes)
+    // LOADU8 dest, offset(src) - load byte with zero-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD16 = 0x04,
-    // LOAD32 dest, offset(src) - load word (4 bytes)
+    LOADU8 = 0x04,
+    // LOAD16 dest, offset(src) - load half (2 bytes) with sign-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD32 = 0x05,
+    LOAD16 = 0x05,
+    // LOADU16 dest, offset(src) - load half (2 bytes) with zero-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOADU16 = 0x06,
+    // LOAD32 dest, offset(src) - load word (4 bytes) with sign-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOAD32 = 0x07,
+    // LOADU32 dest, offset(src) - load word (4 bytes) with zero-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOADU32 = 0x08,
     // LOAD64 dest, offset(src) - load double word (8 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD64 = 0x06,
+    LOAD64 = 0x09,
     // STORE8 offset(dest), src - store byte
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE8 = 0x07,
+    STORE8 = 0x0a,
     // STORE16 offset(dest), src - store half (2 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE16 = 0x08,
+    STORE16 = 0x0b,
     // STORE32 offset(dest), src - store word (4 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE32 = 0x09,
+    STORE32 = 0x0c,
     // STORE64 offset(dest), src - store double word (8 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE64 = 0x0a,
+    STORE64 = 0x0d,
 
     // ============================================================================================
     // Integer Arithmetic - 0x10-0x20

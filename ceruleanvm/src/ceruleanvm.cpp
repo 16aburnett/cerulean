@@ -115,11 +115,21 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
-            uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes - this is probably not needed
-            registers.set<uint64_t>(dest, 0);
-            // read in byte
-            registers.set<uint8_t>(dest, memory.read8 (address + offset));
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in byte and sign-extend to 64-bit
+            int8_t value = static_cast<int8_t>(memory.read8(address + offset));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::LOADU8: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint64_t address = registers.get<uint64_t>(src1);
+            // read offset in little endian
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in byte and zero-extend to 64-bit
+            uint8_t value = memory.read8(address + offset);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD16: {
@@ -127,11 +137,21 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
-            uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes - this is probably not needed
-            registers.set<uint64_t>(dest, 0);
-            // read in half word (2 bytes) 
-            registers.set<uint16_t>(dest, memory.read16 (address + offset));
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in half word (2 bytes) and sign-extend to 64-bit
+            int16_t value = static_cast<int16_t>(memory.read16(address + offset));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::LOADU16: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint64_t address = registers.get<uint64_t>(src1);
+            // read offset in little endian
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in half word (2 bytes) and zero-extend to 64-bit
+            uint16_t value = memory.read16(address + offset);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD32: {
@@ -139,11 +159,21 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
-            uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes - this is probably not needed
-            registers.set<uint64_t>(dest, 0);
-            // read in word (4 bytes) 
-            registers.set<uint32_t>(dest, memory.read32 (address + offset));
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in word (4 bytes) and sign-extend to 64-bit
+            int32_t value = static_cast<int32_t>(memory.read32(address + offset));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::LOADU32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint64_t address = registers.get<uint64_t>(src1);
+            // read offset in little endian
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in word (4 bytes) and zero-extend to 64-bit
+            uint32_t value = memory.read32(address + offset);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD64: {
@@ -151,11 +181,9 @@ void CeruleanVM::execute_instruction () {
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
             uint64_t address = registers.get<uint64_t>(src1);
             // read offset in little endian
-            uint64_t offset = *(int16_t*)&code[pc + 2];
-            // clear register bytes - this is probably not needed
-            registers.set<uint64_t>(dest, 0);
-            // read in double word (8 bytes) 
-            registers.set<uint64_t>(dest, memory.read64 (address + offset));
+            int64_t offset = *(int16_t*)&code[pc + 2];
+            // read in double word (8 bytes)
+            registers.set<uint64_t>(dest, memory.read64(address + offset));
             break;
         }
         case Opcode::STORE8: {

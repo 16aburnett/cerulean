@@ -37,7 +37,7 @@ CeruleanVM comes with a debugger that gives similar control over a program as so
 To use the unit tests, they need to be enabled while building:
 ```bash
 cmake -S . -B build -DBUILD_TESTS=ON
-cmake --build build
+cmake --build build --parallel
 ```
 
 Then you can run all of the tests with the following:
