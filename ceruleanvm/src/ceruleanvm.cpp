@@ -756,6 +756,105 @@ void CeruleanVM::execute_instruction () {
             break;
         }
         // ========================================================================================
+        // Type Conversion Instructions
+        // ========================================================================================
+        case Opcode::SEXT8: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read byte and sign-extend to 64-bit
+            int8_t value = static_cast<int8_t>(registers.get<uint8_t>(src1));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::SEXT16: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read halfword and sign-extend to 64-bit
+            int16_t value = static_cast<int16_t>(registers.get<uint16_t>(src1));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::SEXT32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read word and sign-extend to 64-bit
+            int32_t value = static_cast<int32_t>(registers.get<uint32_t>(src1));
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::ZEXT8: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read byte and zero-extend to 64-bit
+            uint8_t value = registers.get<uint8_t>(src1);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
+            break;
+        }
+        case Opcode::ZEXT16: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read halfword and zero-extend to 64-bit
+            uint16_t value = registers.get<uint16_t>(src1);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
+            break;
+        }
+        case Opcode::ZEXT32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read word and zero-extend to 64-bit
+            uint32_t value = registers.get<uint32_t>(src1);
+            registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
+            break;
+        }
+        case Opcode::CVTI32F32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert int32 to float32
+            int32_t value = registers.get<int32_t>(src1);
+            registers.set<float>(dest, static_cast<float>(value));
+            break;
+        }
+        case Opcode::CVTI64F64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert int64 to float64
+            int64_t value = registers.get<int64_t>(src1);
+            registers.set<double>(dest, static_cast<double>(value));
+            break;
+        }
+        case Opcode::CVTF32I32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert float32 to int32
+            float value = registers.get<float>(src1);
+            registers.set<int32_t>(dest, static_cast<int32_t>(value));
+            break;
+        }
+        case Opcode::CVTF64I64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert float64 to int64
+            double value = registers.get<double>(src1);
+            registers.set<int64_t>(dest, static_cast<int64_t>(value));
+            break;
+        }
+        case Opcode::CVTF64F32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert float64 to float32
+            double value = registers.get<double>(src1);
+            registers.set<float>(dest, static_cast<float>(value));
+            break;
+        }
+        case Opcode::CVTF32F64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Convert float32 to float64
+            float value = registers.get<float>(src1);
+            registers.set<double>(dest, static_cast<double>(value));
+            break;
+        }
+        // ========================================================================================
         // Logical/Bitwise Instructions
         // ========================================================================================
         case Opcode::SLL32: {

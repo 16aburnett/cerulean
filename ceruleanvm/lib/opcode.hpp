@@ -204,52 +204,44 @@ enum Opcode : const uint8_t {
 
     // ============================================================================================
     // Type Conversion - 0x40-0x50
-    // Int-Int Conversions
-    // CVTI32I64 dest, src1 - convert int32 to int64
+    // Integer-to-Integer Conversions (Sign/Zero Extension)
+    // SEXT8 dest, src - sign-extend byte (8-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI32I64 = 0x40,
-    // CVTI64I32 dest, src1 - convert int64 to int32
+    SEXT8 = 0x40,
+    // SEXT16 dest, src - sign-extend halfword (16-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI64I32 = 0x41,
-    // Uint-Uint Conversions
-    // CVTU32U64 dest, src1 - convert uint32 to uint64
+    SEXT16 = 0x41,
+    // SEXT32 dest, src - sign-extend word (32-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU32U64 = 0x42,
-    // CVTU64U32 dest, src1 - convert uint64 to uint32
+    SEXT32 = 0x42,
+    // ZEXT8 dest, src - zero-extend byte (8-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU64U32 = 0x43,
-    // Int-Float Conversions
-    // CVTF32I32 dest, src1 - convert float32 to int32
+    ZEXT8 = 0x43,
+    // ZEXT16 dest, src - zero-extend halfword (16-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32I32 = 0x44,
-    // CVTI32F32 dest, src1 - convert int32 to float32
+    ZEXT16 = 0x44,
+    // ZEXT32 dest, src - zero-extend word (32-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI32F32 = 0x45,
-    // CVTF64I64 dest, src1 - convert float64 to int64
+    ZEXT32 = 0x45,
+    // Floating-Point to/from Integer Conversions
+    // CVTI32F32 dest, src - convert int32 to float32
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64I64 = 0x46,
-    // CVTI64F64 dest, src1 - convert int64 to float64
+    CVTI32F32 = 0x46,
+    // CVTI64F64 dest, src - convert int64 to float64
     // XXXXXXXX ddddssss 00000000 00000000
     CVTI64F64 = 0x47,
-    // CVTF32U32 dest, src1 - convert float32 to uint32
+    // CVTF32I32 dest, src - convert float32 to int32
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32U32 = 0x48,
-    // CVTU32F32 dest, src1 - convert uint32 to float32
+    CVTF32I32 = 0x48,
+    // CVTF64I64 dest, src - convert float64 to int64
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU32F32 = 0x49,
-    // CVTF64U64 dest, src1 - convert float64 to uint64
+    CVTF64I64 = 0x49,
+    // CVTF64F32 dest, src - convert float64 to float32 (double to single)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64U64 = 0x4a,
-    // CVTU64F64 dest, src1 - convert uint64 to float64
+    CVTF64F32 = 0x4a,
+    // CVTF32F64 dest, src - convert float32 to float64 (single to double)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU64F64 = 0x4b,
-    // Float-Float Conversions
-    // CVTF32F64 dest, src1 - convert float32 to float64
-    // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32F64 = 0x4c,
-    // CVTF64F32 dest, src1 - convert float64 to float32
-    // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64F32 = 0x4d,
+    CVTF32F64 = 0x4b,
 
     // ============================================================================================
     // Logical/Bitwise Instructions - 0x50-0x60
