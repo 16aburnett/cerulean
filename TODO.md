@@ -190,8 +190,6 @@ double c = a + b;
 registers[dest] = std::bit_cast<uint64_t>(c);
 ```
 
-
-
 - [TODO] rename localvariableexpression to register
 - [] IR could have required extern? use an external function - must declare extern and linker will handle symbol finding?
 
@@ -498,4 +496,27 @@ Additionals
     - figure out a way to use MD files so it is easier
 - make an IR interpreter
 - this is separate from AmyScript, but make an AmyScript->IR frontend, why not?    
+
+
+
+
+# CeruleanASM notes
+Conditional Sets (Write 1 or 0 to Register)
+- These are useful for evaluating boolean expressions (e.g., bool x = (a < b);).
+- SEQ (Set Equal)
+- SLT (Set Less Than, Signed)
+- SLTU (Set Less Than, Unsigned)
+- FEQ / FLT / FLE (Floating Point versions)
+
+
+Desired Operation | Logical Equivalent | Synthesis Strategy
+-- | -- | --
+Less Than (A<B) | A<B | Use SLT or SLTU directly.
+Greater Than (A>B) | B<A | Swap operands: Use SLT dest, B, A.
+Less or Equal (A≤B) | NOT (B<A) | Perform SLT temp, B, A, then XORI dest, temp, 1.
+Greater or Equal (A≥B) | NOT (A<B) | Perform SLT temp, A, B, then XORI dest, temp, 1.
+Equal (A=B) | A=B | Use SEQ directly.
+Not Equal (A≠B) | NOT (A=B) | Perform SEQ temp, A, B, then XORI dest, temp, 1.
+
+
 
