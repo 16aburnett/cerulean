@@ -377,23 +377,117 @@ class LoweringVisitor (ASTVisitor):
                 print (f"Lowering Error: Unexpected argument type for store offset: {asmArguments[1]}")
                 exit (1)
         elif commandName == "clt":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = clt(<a>, <b>)
+            # Returns 1 if a < b, 0 otherwise (signed)
+            # CeruleanASM: lt <dest>, <a>, <b>
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, a, b])]
         elif commandName == "cle":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = cle(<a>, <b>)
+            # Returns 1 if a <= b, 0 otherwise (signed)
+            # Strategy: a <= b is !(a > b) = !(b < a)
+            # CeruleanASM: lt <dest>, <b>, <a>
+            #              xor64i <dest>, <dest>, 1
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [
+                ASM_AST.InstructionNode("lt", [lhsReg, b, a]),
+                ASM_AST.InstructionNode("xor64i", [lhsReg, lhsReg, ASM_AST.IntLiteralNode(1)])
+            ]
         elif commandName == "cgt":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = cgt(<a>, <b>)
+            # Returns 1 if a > b, 0 otherwise (signed)
+            # Strategy: a > b is b < a (swap operands)
+            # CeruleanASM: lt <dest>, <b>, <a>
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, b, a])]
         elif commandName == "cge":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = cge(<a>, <b>)
+            # Returns 1 if a >= b, 0 otherwise (signed)
+            # Strategy: a >= b is !(a < b)
+            # CeruleanASM: lt <dest>, <a>, <b>
+            #              xor64i <dest>, <dest>, 1
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [
+                ASM_AST.InstructionNode("lt", [lhsReg, a, b]),
+                ASM_AST.InstructionNode("xor64i", [lhsReg, lhsReg, ASM_AST.IntLiteralNode(1)])
+            ]
         elif commandName == "ceq":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = ceq(<a>, <b>)
+            # Returns 1 if a == b, 0 otherwise
+            # CeruleanASM: eq <dest>, <a>, <b>
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [ASM_AST.InstructionNode("eq", [lhsReg, a, b])]
         elif commandName == "cne":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: <dest> = cne(<a>, <b>)
+            # Returns 1 if a != b, 0 otherwise
+            # Strategy: a != b is equivalent to !(a == b)
+            # CeruleanASM: eq <dest>, <a>, <b>
+            #              xor64i <dest>, <dest>, 1
+            lhsReg = node.lhsVariable.accept(self)
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                tempA = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                a = tempA
+            if isinstance(b, ASM_AST.LiteralNode):
+                tempB = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                b = tempB
+            asmInstructions += [
+                ASM_AST.InstructionNode("eq", [lhsReg, a, b]),
+                ASM_AST.InstructionNode("xor64i", [lhsReg, lhsReg, ASM_AST.IntLiteralNode(1)])
+            ]
         elif commandName == "jmp":
             # CeruleanIR: jmp (block(label))
             # Unconditional jump to a label
@@ -405,11 +499,54 @@ class LoweringVisitor (ASTVisitor):
                 ASM_AST.InstructionNode("jmp", [tempReg])
             ]
         elif commandName == "jcmp":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jcmp(<cond>, block(label_true), block(label_false))
+            # Jump to label_true if cond is non-zero, otherwise jump to label_false
+            # CeruleanASM: lli r<tempZero>, 0
+            #              loada r<tempFalse>, <label_false>
+            #              beq r<cond>, r<tempZero>, r<tempFalse>  // if cond == 0, jump to false
+            #              loada r<tempTrue>, <label_true>
+            #              jmp r<tempTrue>                          // otherwise jump to true
+            tempZero = ASM_AST.VirtualTempRegisterNode()
+            tempFalse = ASM_AST.VirtualTempRegisterNode()
+            tempTrue = ASM_AST.VirtualTempRegisterNode()
+            cond = asmArguments[0]
+            labelTrue = asmArguments[1]
+            labelFalse = asmArguments[2]
+            
+            # Handle immediate condition
+            if isinstance(cond, ASM_AST.LiteralNode):
+                condReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [condReg, cond])]
+                cond = condReg
+            
+            asmInstructions += [
+                ASM_AST.InstructionNode("lli", [tempZero, ASM_AST.IntLiteralNode(0)]),
+                ASM_AST.InstructionNode("loada", [tempFalse, labelFalse]),
+                ASM_AST.InstructionNode("beq", [cond, tempZero, tempFalse]),
+                ASM_AST.InstructionNode("loada", [tempTrue, labelTrue]),
+                ASM_AST.InstructionNode("jmp", [tempTrue])
+            ]
         elif commandName == "jg":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jg(<a>, <b>, block(label))
+            # Jump to label if a > b (signed)
+            # Strategy: a > b is b < a (swap operands for BLT)
+            # CeruleanASM: loada r<temp>, <label>
+            #              blt r<b>, r<a>, r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                aReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                a = aReg
+            if isinstance(b, ASM_AST.LiteralNode):
+                bReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                b = bReg
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
+                ASM_AST.InstructionNode("blt", [b, a, tempReg])
+            ]
         elif commandName == "jge":
             # CeruleanIR: jge (int32(lhs), int32(rhs), block(label))
             # Jump to label if lhs >= rhs
@@ -438,14 +575,68 @@ class LoweringVisitor (ASTVisitor):
                 ASM_AST.InstructionNode("bge", [lhs, rhs, tempReg])
             ]
         elif commandName == "jl":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jl(<a>, <b>, block(label))
+            # Jump to label if a < b (signed)
+            # CeruleanASM: loada r<temp>, <label>
+            #              blt r<a>, r<b>, r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            a = asmArguments[0]
+            b = asmArguments[1]
+            # Handle immediate operands
+            if isinstance(a, ASM_AST.LiteralNode):
+                aReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                a = aReg
+            if isinstance(b, ASM_AST.LiteralNode):
+                bReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                b = bReg
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
+                ASM_AST.InstructionNode("blt", [a, b, tempReg])
+            ]
         elif commandName == "jle":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jle(<a>, <b>, block(label))
+            # Jump to label if a <= b (signed)
+            # Strategy: a <= b is b >= a (swap operands for BGE)
+            # CeruleanASM: loada r<temp>, <label>
+            #              bge r<b>, r<a>, r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            a = asmArguments[0]
+            b = asmArguments[1]
+            if isinstance(a, ASM_AST.LiteralNode):
+                aReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                a = aReg
+            if isinstance(b, ASM_AST.LiteralNode):
+                bReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                b = bReg
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
+                ASM_AST.InstructionNode("bge", [b, a, tempReg])
+            ]
         elif commandName == "jne":
-            print (f"Lowering ERROR: {commandName} not implemented")
-            exit (1)
+            # CeruleanIR: jne(<a>, <b>, block(label))
+            # Jump to label if a != b
+            # CeruleanASM: loada r<temp>, <label>
+            #              bne r<a>, r<b>, r<temp>
+            tempReg = ASM_AST.VirtualTempRegisterNode()
+            a = asmArguments[0]
+            b = asmArguments[1]
+            # Handle immediate operands
+            if isinstance(a, ASM_AST.LiteralNode):
+                aReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                a = aReg
+            if isinstance(b, ASM_AST.LiteralNode):
+                bReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                b = bReg
+            asmInstructions += [
+                ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
+                ASM_AST.InstructionNode("bne", [a, b, tempReg])
+            ]
         elif commandName == "return":
             # Usage 1: no return value
             # CeruleanIR : return ()

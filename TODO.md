@@ -16,6 +16,11 @@ python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean --debug --e
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
 # Compiling to CeruleanASM
 python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --emitIRAST
+# python3 -m ceruleanir.compiler cerulean/test_files/test_comparisons.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler cerulean/test_files/helloworld.ceruleanasm -o cerulean/test_files/helloworld.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker cerulean/test_files/helloworld.ceruleanobj -o cerulean/test_files/helloworld.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm cerulean/test_files/helloworld.ceruleanbc
+
 
 
 # simple tests
@@ -146,6 +151,16 @@ ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld5.ceruleanbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
+
+# test_comparisons
+# Test target=ceruleanasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler ceruleanir/test_files/test_comparisons.ceruleanasm -o ceruleanir/test_files/test_comparisons.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker ceruleanir/test_files/test_comparisons.ceruleanobj -o ceruleanir/test_files/test_comparisons.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm ceruleanir/test_files/test_comparisons.ceruleanbc
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_comparisons.amyasm
 
 
 ```
