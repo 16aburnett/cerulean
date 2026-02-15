@@ -110,6 +110,16 @@ INSTRUCTION_MAPPING = {
     "BGEU"      : {"opcode": 0x75, "format": "RRR" },
     "JMP"       : {"opcode": 0x76, "format": "R"   },
 
+    "EQ"        : {"opcode": 0x77, "format": "RRR" },
+    "LT"        : {"opcode": 0x78, "format": "RRR" },
+    "LTU"       : {"opcode": 0x79, "format": "RRR" },
+    "EQF32"     : {"opcode": 0x7a, "format": "RRR" },
+    "EQF64"     : {"opcode": 0x7b, "format": "RRR" },
+    "LTF32"     : {"opcode": 0x7c, "format": "RRR" },
+    "LTF64"     : {"opcode": 0x7d, "format": "RRR" },
+    "LEF32"     : {"opcode": 0x7e, "format": "RRR" },
+    "LEF64"     : {"opcode": 0x7f, "format": "RRR" },
+
     "CALL"      : {"opcode": 0x80, "format": "R"   },
     "SYSCALL"   : {"opcode": 0x81, "format": "I"   },
     "RET"       : {"opcode": 0x82, "format": "NONE"},

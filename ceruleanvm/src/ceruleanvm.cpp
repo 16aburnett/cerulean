@@ -1239,6 +1239,99 @@ void CeruleanVM::execute_instruction () {
             break;
         }
         // ========================================================================================
+        // Comparison Instructions
+        // ========================================================================================
+        case Opcode::EQ: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare equality (sign-agnostic, width-agnostic)
+            uint64_t a = registers.get<uint64_t>(src1);
+            uint64_t b = registers.get<uint64_t>(src2);
+            registers.set<uint64_t>(dest, (a == b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LT: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than (signed)
+            int64_t a = registers.get<int64_t>(src1);
+            int64_t b = registers.get<int64_t>(src2);
+            registers.set<uint64_t>(dest, (a < b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LTU: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than (unsigned)
+            uint64_t a = registers.get<uint64_t>(src1);
+            uint64_t b = registers.get<uint64_t>(src2);
+            registers.set<uint64_t>(dest, (a < b) ? 1 : 0);
+            break;
+        }
+        case Opcode::EQF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare equality (float32)
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
+            registers.set<uint64_t>(dest, (a == b) ? 1 : 0);
+            break;
+        }
+        case Opcode::EQF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare equality (float64)
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
+            registers.set<uint64_t>(dest, (a == b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LTF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than (float32)
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
+            registers.set<uint64_t>(dest, (a < b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LTF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than (float64)
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
+            registers.set<uint64_t>(dest, (a < b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LEF32: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than or equal (float32)
+            float a = registers.get<float>(src1);
+            float b = registers.get<float>(src2);
+            registers.set<uint64_t>(dest, (a <= b) ? 1 : 0);
+            break;
+        }
+        case Opcode::LEF64: {
+            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            // Compare less than or equal (float64)
+            double a = registers.get<double>(src1);
+            double b = registers.get<double>(src2);
+            registers.set<uint64_t>(dest, (a <= b) ? 1 : 0);
+            break;
+        }
+        // ========================================================================================
         // Function Instructions
         // ========================================================================================
         case Opcode::CALL: {

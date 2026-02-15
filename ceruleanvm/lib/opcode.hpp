@@ -354,6 +354,37 @@ enum Opcode : const uint8_t {
     JMP = 0x76,
 
     // ============================================================================================
+    // Comparison Instructions - 0x77-0x7f
+    // These set dest to 1 (true) or 0 (false) based on comparison result
+    // EQ dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (sign-agnostic, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQ = 0x77,
+    // LT dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (signed, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LT = 0x78,
+    // LTU dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (unsigned, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTU = 0x79,
+    // EQF32 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQF32 = 0x7a,
+    // EQF64 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQF64 = 0x7b,
+    // LTF32 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTF32 = 0x7c,
+    // LTF64 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTF64 = 0x7d,
+    // LEF32 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LEF32 = 0x7e,
+    // LEF64 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LEF64 = 0x7f,
+
+    // ============================================================================================
     // Function instructions - 0x80-0x90
     // CALL addr
     // 1. pushes return address on to the stack
