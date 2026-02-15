@@ -935,19 +935,6 @@ void CeruleanVM::execute_instruction () {
             registers.set<int64_t>(dest, c);
             break;
         }
-        case Opcode::OR32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // Read from registers
-            uint32_t a = registers.get<uint32_t>(src1);
-            uint32_t b = registers.get<uint32_t>(src2);
-            // Perform instruction
-            uint32_t c = a | b;
-            // Write to register
-            registers.set<uint32_t>(dest, c);
-            break;
-        }
         case Opcode::OR64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
@@ -961,19 +948,6 @@ void CeruleanVM::execute_instruction () {
             registers.set<uint64_t>(dest, c);
             break;
         }
-        case Opcode::AND32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // Read from registers
-            uint32_t a = registers.get<uint32_t>(src1);
-            uint32_t b = registers.get<uint32_t>(src2);
-            // Perform instruction
-            uint32_t c = a & b;
-            // Write to register
-            registers.set<uint32_t>(dest, c);
-            break;
-        }
         case Opcode::AND64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
@@ -985,19 +959,6 @@ void CeruleanVM::execute_instruction () {
             uint64_t c = a & b;
             // Write to register
             registers.set<uint64_t>(dest, c);
-            break;
-        }
-        case Opcode::XOR32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
-            // Read from registers
-            uint32_t a = registers.get<uint32_t>(src1);
-            uint32_t b = registers.get<uint32_t>(src2);
-            // Perform instruction
-            uint32_t c = a ^ b;
-            // Write to register
-            registers.set<uint32_t>(dest, c);
             break;
         }
         case Opcode::XOR64: {
@@ -1015,9 +976,9 @@ void CeruleanVM::execute_instruction () {
         }
         case Opcode::NOT32: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            // Read from registers
-            uint32_t a = registers.get<uint32_t>(src1);
+            uint8_t src    = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from register
+            uint32_t a = registers.get<uint32_t>(src);
             // Perform instruction
             uint32_t c = ~a;
             // Write to register
@@ -1026,9 +987,9 @@ void CeruleanVM::execute_instruction () {
         }
         case Opcode::NOT64: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            // Read from registers
-            uint64_t a = registers.get<uint64_t>(src1);
+            uint8_t src    = (0b00000000000011110000000000000000 & instruction) >> 16;
+            // Read from register
+            uint64_t a = registers.get<uint64_t>(src);
             // Perform instruction
             uint64_t c = ~a;
             // Write to register
@@ -1110,18 +1071,6 @@ void CeruleanVM::execute_instruction () {
             registers.set<int64_t>(dest, c);
             break;
         }
-        case Opcode::OR32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
-            // Read from registers
-            int32_t a = registers.get<int32_t>(src1);
-            // Perform instruction
-            int32_t c = a | imm;
-            // Write to register
-            registers.set<int32_t>(dest, c);
-            break;
-        }
         case Opcode::OR64I: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
@@ -1134,18 +1083,6 @@ void CeruleanVM::execute_instruction () {
             registers.set<int64_t>(dest, c);
             break;
         }
-        case Opcode::AND32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
-            // Read from registers
-            int32_t a = registers.get<int32_t>(src1);
-            // Perform instruction
-            int32_t c = a & imm;
-            // Write to register
-            registers.set<int32_t>(dest, c);
-            break;
-        }
         case Opcode::AND64I: {
             uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
             uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
@@ -1156,18 +1093,6 @@ void CeruleanVM::execute_instruction () {
             int64_t c = a & imm;
             // Write to register
             registers.set<int64_t>(dest, c);
-            break;
-        }
-        case Opcode::XOR32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
-            // Read from registers
-            int32_t a = registers.get<int32_t>(src1);
-            // Perform instruction
-            int32_t c = a ^ imm;
-            // Write to register
-            registers.set<int32_t>(dest, c);
             break;
         }
         case Opcode::XOR64I: {

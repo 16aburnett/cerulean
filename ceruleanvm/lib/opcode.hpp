@@ -265,30 +265,21 @@ enum Opcode : const uint8_t {
     // SRA64 dest, src1, src2 - shift right arithmetic (fills with sign bit) (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRA64 = 0x55,
-    // OR32  dest, src1, src2 - bitwise OR (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    OR32  = 0x56,
     // OR64  dest, src1, src2 - bitwise OR (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    OR64  = 0x57,
-    // AND32 dest, src1, src2 - bitwise AND (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    AND32 = 0x58,
+    OR64  = 0x56,
     // AND64 dest, src1, src2 - bitwise AND (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    AND64 = 0x59,
-    // XOR32 dest, src1, src2 - bitwise XOR (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    XOR32 = 0x5a,
+    AND64 = 0x57,
     // XOR64 dest, src1, src2 - bitwise XOR (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    XOR64 = 0x5b,
-    // NOT32 dest, src1 - bitwise NOT (32-bit)
+    XOR64 = 0x58,
+    // NOT32 dest, src - bitwise NOT (32-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    NOT32 = 0x5c,
-    // NOT64 dest, src1 - bitwise NOT (64-bit)
+    NOT32 = 0x59,
+    // NOT64 dest, src - bitwise NOT (64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    NOT64 = 0x5d,
+    NOT64 = 0x5a,
 
     // ============================================================================================
     // Logical/Bitwise Instructions with immediates - 0x60-0x70
@@ -310,24 +301,15 @@ enum Opcode : const uint8_t {
     // SRA64I dest, src1, imm - shift right arithmetic with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRA64I = 0x65,
-    // OR32I  dest, src1, imm - bitwise or with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    OR32I  = 0x66,
     // OR64I  dest, src1, imm - bitwise or with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    OR64I  = 0x67,
-    // AND32I dest, src1, imm - bitwise and with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    AND32I = 0x68,
+    OR64I  = 0x66,
     // AND64I dest, src1, imm - bitwise and with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    AND64I = 0x69,
-    // XOR32I dest, src1, imm - bitwise xor  with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    XOR32I = 0x6a,
+    AND64I = 0x67,
     // XOR64I dest, src1, imm - bitwise xor  with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    XOR64I = 0x6b,
+    XOR64I = 0x68,
 
     // ============================================================================================
     // Control flow / Branching Instructions - 0x70-0x80
