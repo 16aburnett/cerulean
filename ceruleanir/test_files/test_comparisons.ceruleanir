@@ -1,0 +1,287 @@
+// Test file for comparison and branching instructions
+// Tests: clt, cle, cgt, cge, ceq, cne, jl, jle, jg, jge, jne
+// Author: Amy Burnett
+//========================================================================
+
+function void @print_test_name (ptr(%name), int32(%length)) {
+    block entry {
+        %i_ptr = alloca (type(int32), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
+        jge (int32(%i_curr), int32(%length), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %char = load (type(char), ptr(%name), int32(%i_curr))
+        call @__builtin__print__char (char(%char))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (int32(%i_curr), int32(1))
+        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        call @__builtin__print__char (char(58))   // ':'
+        call @__builtin__print__char (char(32))   // ' '
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @print_pass () {
+    block entry {
+        call @__builtin__print__char (char(80))   // 'P'
+        call @__builtin__print__char (char(65))   // 'A'
+        call @__builtin__print__char (char(83))   // 'S'
+        call @__builtin__print__char (char(83))   // 'S'
+        call @__builtin__println ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @print_fail () {
+    block entry {
+        call @__builtin__print__char (char(70))   // 'F'
+        call @__builtin__print__char (char(65))   // 'A'
+        call @__builtin__print__char (char(73))   // 'I'
+        call @__builtin__print__char (char(76))   // 'L'
+        call @__builtin__println ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @assert_true (int32(%value)) {
+    block entry {
+        jne (int32(%value), int32(0), block(pass))
+        jmp (block(fail))
+    }
+    block pass {
+        call @print_pass ()
+        return ()
+    }
+    block fail {
+        call @print_fail ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @assert_false (int32(%value)) {
+    block entry {
+        %is_zero = ceq (int32(%value), int32(0))
+        jne (int32(%is_zero), int32(0), block(pass))
+        jmp (block(fail))
+    }
+    block pass {
+        call @print_pass ()
+        return ()
+    }
+    block fail {
+        call @print_fail ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @test_comparisons () {
+    block entry {
+        %a = value (int32(5))
+        %b = value (int32(10))
+        %c = value (int32(5))
+        
+        // Test clt: 5 < 10 = true, 10 < 5 = false, 5 < 5 = false
+        %test1 = value (ptr("clt(5, 10)"))
+        call @print_test_name (ptr(%test1), int32(10))
+        %r1 = clt (int32(%a), int32(%b))
+        call @assert_true (int32(%r1))
+        
+        %test2 = value (ptr("clt(10, 5)"))
+        call @print_test_name (ptr(%test2), int32(10))
+        %r2 = clt (int32(%b), int32(%a))
+        call @assert_false (int32(%r2))
+        
+        %test3 = value (ptr("clt(5, 5)"))
+        call @print_test_name (ptr(%test3), int32(9))
+        %r3 = clt (int32(%a), int32(%c))
+        call @assert_false (int32(%r3))
+        
+        // Test cle: 5 <= 10 = true, 10 <= 5 = false, 5 <= 5 = true
+        %test4 = value (ptr("cle(5, 10)"))
+        call @print_test_name (ptr(%test4), int32(10))
+        %r4 = cle (int32(%a), int32(%b))
+        call @assert_true (int32(%r4))
+        
+        %test5 = value (ptr("cle(10, 5)"))
+        call @print_test_name (ptr(%test5), int32(10))
+        %r5 = cle (int32(%b), int32(%a))
+        call @assert_false (int32(%r5))
+        
+        %test6 = value (ptr("cle(5, 5)"))
+        call @print_test_name (ptr(%test6), int32(9))
+        %r6 = cle (int32(%a), int32(%c))
+        call @assert_true (int32(%r6))
+        
+        // Test cgt: 5 > 10 = false, 10 > 5 = true, 5 > 5 = false
+        %test7 = value (ptr("cgt(5, 10)"))
+        call @print_test_name (ptr(%test7), int32(10))
+        %r7 = cgt (int32(%a), int32(%b))
+        call @assert_false (int32(%r7))
+        
+        %test8 = value (ptr("cgt(10, 5)"))
+        call @print_test_name (ptr(%test8), int32(10))
+        %r8 = cgt (int32(%b), int32(%a))
+        call @assert_true (int32(%r8))
+        
+        %test9 = value (ptr("cgt(5, 5)"))
+        call @print_test_name (ptr(%test9), int32(9))
+        %r9 = cgt (int32(%a), int32(%c))
+        call @assert_false (int32(%r9))
+        
+        // Test cge: 5 >= 10 = false, 10 >= 5 = true, 5 >= 5 = true
+        %test10 = value (ptr("cge(5, 10)"))
+        call @print_test_name (ptr(%test10), int32(10))
+        %r10 = cge (int32(%a), int32(%b))
+        call @assert_false (int32(%r10))
+        
+        %test11 = value (ptr("cge(10, 5)"))
+        call @print_test_name (ptr(%test11), int32(10))
+        %r11 = cge (int32(%b), int32(%a))
+        call @assert_true (int32(%r11))
+        
+        %test12 = value (ptr("cge(5, 5)"))
+        call @print_test_name (ptr(%test12), int32(9))
+        %r12 = cge (int32(%a), int32(%c))
+        call @assert_true (int32(%r12))
+        
+        // Test ceq: 5 == 10 = false, 5 == 5 = true
+        %test13 = value (ptr("ceq(5, 10)"))
+        call @print_test_name (ptr(%test13), int32(10))
+        %r13 = ceq (int32(%a), int32(%b))
+        call @assert_false (int32(%r13))
+        
+        %test14 = value (ptr("ceq(5, 5)"))
+        call @print_test_name (ptr(%test14), int32(9))
+        %r14 = ceq (int32(%a), int32(%c))
+        call @assert_true (int32(%r14))
+        
+        // Test cne: 5 != 10 = true, 5 != 5 = false
+        %test15 = value (ptr("cne(5, 10)"))
+        call @print_test_name (ptr(%test15), int32(10))
+        %r15 = cne (int32(%a), int32(%b))
+        call @assert_true (int32(%r15))
+        
+        %test16 = value (ptr("cne(5, 5)"))
+        call @print_test_name (ptr(%test16), int32(9))
+        %r16 = cne (int32(%a), int32(%c))
+        call @assert_false (int32(%r16))
+        
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @test_branches () {
+    block entry {
+        %a = value (int32(5))
+        %b = value (int32(10))
+        
+        // Test jl: jump if 5 < 10 (should jump)
+        %test1 = value (ptr("jl(5, 10)"))
+        call @print_test_name (ptr(%test1), int32(9))
+        jl (int32(%a), int32(%b), block(jl_pass))
+        call @print_fail ()
+        jmp (block(test_jle))
+    }
+    block jl_pass {
+        call @print_pass ()
+        jmp (block(test_jle))
+    }
+    block test_jle {
+        // Test jle: jump if 10 <= 10 (should jump)
+        %test2 = value (ptr("jle(10, 10)"))
+        call @print_test_name (ptr(%test2), int32(11))
+        jle (int32(%b), int32(%b), block(jle_pass))
+        call @print_fail ()
+        jmp (block(test_jg))
+    }
+    block jle_pass {
+        call @print_pass ()
+        jmp (block(test_jg))
+    }
+    block test_jg {
+        // Test jg: jump if 10 > 5 (should jump)
+        %test3 = value (ptr("jg(10, 5)"))
+        call @print_test_name (ptr(%test3), int32(9))
+        jg (int32(%b), int32(%a), block(jg_pass))
+        call @print_fail ()
+        jmp (block(test_jge))
+    }
+    block jg_pass {
+        call @print_pass ()
+        jmp (block(test_jge))
+    }
+    block test_jge {
+        // Test jge: jump if 5 >= 5 (should jump)
+        %test4 = value (ptr("jge(5, 5)"))
+        call @print_test_name (ptr(%test4), int32(9))
+        jge (int32(%a), int32(%a), block(jge_pass))
+        call @print_fail ()
+        jmp (block(test_jne))
+    }
+    block jge_pass {
+        call @print_pass ()
+        jmp (block(test_jne))
+    }
+    block test_jne {
+        // Test jne: jump if 5 != 10 (should jump)
+        %test5 = value (ptr("jne(5, 10)"))
+        call @print_test_name (ptr(%test5), int32(10))
+        jne (int32(%a), int32(%b), block(jne_pass))
+        call @print_fail ()
+        jmp (block(test_jne_false))
+    }
+    block jne_pass {
+        call @print_pass ()
+        jmp (block(test_jne_false))
+    }
+    block test_jne_false {
+        // Test jne: jump if 5 != 5 (should NOT jump)
+        %test6 = value (ptr("jne(5, 5) no jump"))
+        call @print_test_name (ptr(%test6), int32(17))
+        jne (int32(%a), int32(%a), block(jne_fail))
+        call @print_pass ()
+        jmp (block(done))
+    }
+    block jne_fail {
+        call @print_fail ()
+        jmp (block(done))
+    }
+    block done {
+        return ()
+    }
+}
+
+//========================================================================
+
+function int32 @main () {
+    block entry {
+        // Each test prints its name followed by PASS or FAIL
+        // Expected: 22 lines, all PASS
+        call @test_comparisons ()
+        call @test_branches ()
+        
+        return (int32(0))
+    }
+}

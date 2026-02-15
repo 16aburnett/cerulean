@@ -21,30 +21,50 @@ enum Opcode : const uint8_t {
     // Example: LLI r0, 0x5678
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LLI = 0x02,
-    // LOAD8 dest, offset(src) - load 
+    // LOAD8 dest, offset(src) - load byte with sign-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD8 = 0x03,
-    // LOAD16 dest, offset(src) - load half (2 bytes)
+    // LOADU8 dest, offset(src) - load byte with zero-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD16 = 0x04,
-    // LOAD32 dest, offset(src) - load word (4 bytes)
+    LOADU8 = 0x04,
+    // LOAD16 dest, offset(src) - load half (2 bytes) with sign-extend
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD32 = 0x05,
+    LOAD16 = 0x05,
+    // LOADU16 dest, offset(src) - load half (2 bytes) with zero-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOADU16 = 0x06,
+    // LOAD32 dest, offset(src) - load word (4 bytes) with sign-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOAD32 = 0x07,
+    // LOADU32 dest, offset(src) - load word (4 bytes) with zero-extend
+    // offset is 16-bit signed integer
+    // XXXXXXXX ddddssss oooooooo oooooooo
+    LOADU32 = 0x08,
     // LOAD64 dest, offset(src) - load double word (8 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    LOAD64 = 0x06,
+    LOAD64 = 0x09,
     // STORE8 offset(dest), src - store byte
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE8 = 0x07,
+    STORE8 = 0x0a,
     // STORE16 offset(dest), src - store half (2 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE16 = 0x08,
+    STORE16 = 0x0b,
     // STORE32 offset(dest), src - store word (4 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE32 = 0x09,
+    STORE32 = 0x0c,
     // STORE64 offset(dest), src - store double word (8 bytes)
+    // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
-    STORE64 = 0x0a,
+    STORE64 = 0x0d,
 
     // ============================================================================================
     // Integer Arithmetic - 0x10-0x20
@@ -184,52 +204,44 @@ enum Opcode : const uint8_t {
 
     // ============================================================================================
     // Type Conversion - 0x40-0x50
-    // Int-Int Conversions
-    // CVTI32I64 dest, src1 - convert int32 to int64
+    // Integer-to-Integer Conversions (Sign/Zero Extension)
+    // SEXT8 dest, src - sign-extend byte (8-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI32I64 = 0x40,
-    // CVTI64I32 dest, src1 - convert int64 to int32
+    SEXT8 = 0x40,
+    // SEXT16 dest, src - sign-extend halfword (16-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI64I32 = 0x41,
-    // Uint-Uint Conversions
-    // CVTU32U64 dest, src1 - convert uint32 to uint64
+    SEXT16 = 0x41,
+    // SEXT32 dest, src - sign-extend word (32-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU32U64 = 0x42,
-    // CVTU64U32 dest, src1 - convert uint64 to uint32
+    SEXT32 = 0x42,
+    // ZEXT8 dest, src - zero-extend byte (8-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU64U32 = 0x43,
-    // Int-Float Conversions
-    // CVTF32I32 dest, src1 - convert float32 to int32
+    ZEXT8 = 0x43,
+    // ZEXT16 dest, src - zero-extend halfword (16-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32I32 = 0x44,
-    // CVTI32F32 dest, src1 - convert int32 to float32
+    ZEXT16 = 0x44,
+    // ZEXT32 dest, src - zero-extend word (32-bit to 64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTI32F32 = 0x45,
-    // CVTF64I64 dest, src1 - convert float64 to int64
+    ZEXT32 = 0x45,
+    // Floating-Point to/from Integer Conversions
+    // CVTI32F32 dest, src - convert int32 to float32
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64I64 = 0x46,
-    // CVTI64F64 dest, src1 - convert int64 to float64
+    CVTI32F32 = 0x46,
+    // CVTI64F64 dest, src - convert int64 to float64
     // XXXXXXXX ddddssss 00000000 00000000
     CVTI64F64 = 0x47,
-    // CVTF32U32 dest, src1 - convert float32 to uint32
+    // CVTF32I32 dest, src - convert float32 to int32
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32U32 = 0x48,
-    // CVTU32F32 dest, src1 - convert uint32 to float32
+    CVTF32I32 = 0x48,
+    // CVTF64I64 dest, src - convert float64 to int64
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU32F32 = 0x49,
-    // CVTF64U64 dest, src1 - convert float64 to uint64
+    CVTF64I64 = 0x49,
+    // CVTF64F32 dest, src - convert float64 to float32 (double to single)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64U64 = 0x4a,
-    // CVTU64F64 dest, src1 - convert uint64 to float64
+    CVTF64F32 = 0x4a,
+    // CVTF32F64 dest, src - convert float32 to float64 (single to double)
     // XXXXXXXX ddddssss 00000000 00000000
-    CVTU64F64 = 0x4b,
-    // Float-Float Conversions
-    // CVTF32F64 dest, src1 - convert float32 to float64
-    // XXXXXXXX ddddssss 00000000 00000000
-    CVTF32F64 = 0x4c,
-    // CVTF64F32 dest, src1 - convert float64 to float32
-    // XXXXXXXX ddddssss 00000000 00000000
-    CVTF64F32 = 0x4d,
+    CVTF32F64 = 0x4b,
 
     // ============================================================================================
     // Logical/Bitwise Instructions - 0x50-0x60
@@ -253,30 +265,21 @@ enum Opcode : const uint8_t {
     // SRA64 dest, src1, src2 - shift right arithmetic (fills with sign bit) (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRA64 = 0x55,
-    // OR32  dest, src1, src2 - bitwise OR (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    OR32  = 0x56,
     // OR64  dest, src1, src2 - bitwise OR (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    OR64  = 0x57,
-    // AND32 dest, src1, src2 - bitwise AND (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    AND32 = 0x58,
+    OR64  = 0x56,
     // AND64 dest, src1, src2 - bitwise AND (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    AND64 = 0x59,
-    // XOR32 dest, src1, src2 - bitwise XOR (32-bit)
-    // XXXXXXXX ddddssss ssss0000 00000000
-    XOR32 = 0x5a,
+    AND64 = 0x57,
     // XOR64 dest, src1, src2 - bitwise XOR (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
-    XOR64 = 0x5b,
-    // NOT32 dest, src1 - bitwise NOT (32-bit)
+    XOR64 = 0x58,
+    // NOT32 dest, src - bitwise NOT (32-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    NOT32 = 0x5c,
-    // NOT64 dest, src1 - bitwise NOT (64-bit)
+    NOT32 = 0x59,
+    // NOT64 dest, src - bitwise NOT (64-bit)
     // XXXXXXXX ddddssss 00000000 00000000
-    NOT64 = 0x5d,
+    NOT64 = 0x5a,
 
     // ============================================================================================
     // Logical/Bitwise Instructions with immediates - 0x60-0x70
@@ -298,24 +301,15 @@ enum Opcode : const uint8_t {
     // SRA64I dest, src1, imm - shift right arithmetic with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRA64I = 0x65,
-    // OR32I  dest, src1, imm - bitwise or with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    OR32I  = 0x66,
     // OR64I  dest, src1, imm - bitwise or with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    OR64I  = 0x67,
-    // AND32I dest, src1, imm - bitwise and with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    AND32I = 0x68,
+    OR64I  = 0x66,
     // AND64I dest, src1, imm - bitwise and with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    AND64I = 0x69,
-    // XOR32I dest, src1, imm - bitwise xor  with immediate (32-bit)
-    // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    XOR32I = 0x6a,
+    AND64I = 0x67,
     // XOR64I dest, src1, imm - bitwise xor  with immediate (64-bit)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
-    XOR64I = 0x6b,
+    XOR64I = 0x68,
 
     // ============================================================================================
     // Control flow / Branching Instructions - 0x70-0x80
@@ -325,21 +319,52 @@ enum Opcode : const uint8_t {
     // BNE src1, src2, addr - if src1 != src2 then pc <- addr
     // XXXXXXXX ssssssss aaaa0000 00000000
     BNE = 0x71,
-    // BLT src1, src2, addr - if src1 <  src2 then pc <- addr
+    // BLT src1, src2, addr - if src1 < src2 then pc <- addr (signed)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BLT = 0x72,
-    // BLE src1, src2, addr - if src1 <= src2 then pc <- addr
+    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr (signed)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BLE = 0x73,
-    // BGT src1, src2, addr - if src1 >  src2 then pc <- addr
+    BGE = 0x73,
+    // BLTU src1, src2, addr - if src1 < src2 then pc <- addr (unsigned)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BGT = 0x74,
-    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr
+    BLTU = 0x74,
+    // BGEU src1, src2, addr - if src1 >= src2 then pc <- addr (unsigned)
     // XXXXXXXX ssssssss aaaa0000 00000000
-    BGE = 0x75,
-    // JMP addr - pc <- addr
+    BGEU = 0x75,
+    // JMP addr - pc <- addr (unconditional jump)
     // XXXXXXXX aaaa0000 00000000 00000000
     JMP = 0x76,
+
+    // ============================================================================================
+    // Comparison Instructions - 0x77-0x7f
+    // These set dest to 1 (true) or 0 (false) based on comparison result
+    // EQ dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (sign-agnostic, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQ = 0x77,
+    // LT dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (signed, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LT = 0x78,
+    // LTU dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (unsigned, width-agnostic)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTU = 0x79,
+    // EQF32 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQF32 = 0x7a,
+    // EQF64 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    EQF64 = 0x7b,
+    // LTF32 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTF32 = 0x7c,
+    // LTF64 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LTF64 = 0x7d,
+    // LEF32 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float32)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LEF32 = 0x7e,
+    // LEF64 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float64)
+    // XXXXXXXX ddddssss ssss0000 00000000
+    LEF64 = 0x7f,
 
     // ============================================================================================
     // Function instructions - 0x80-0x90

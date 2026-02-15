@@ -299,8 +299,15 @@ class EmitterVisitor(ASMASTVisitor):
                 scratch = scratchRegs[i % len(scratchRegs)]
                 self._emitLoad(arg, scratch)
                 self.emitLine(f"push {scratch}")
+            # Handle immediate/literal arguments - must load into register first
+            # TODO: Move push instruction generation to lowering pass
+            elif isinstance(arg, (ASM_AST.IntLiteralNode, ASM_AST.FloatLiteralNode, ASM_AST.CharLiteralNode)):
+                scratch = scratchRegs[i % len(scratchRegs)]
+                argValue = self.visit(arg)
+                self.emitLine(f"lli {scratch}, {argValue}")
+                self.emitLine(f"push {scratch}")
             else:
-                # Handle normal arguments (physical registers or literals)
+                # Handle normal arguments (physical registers)
                 argValue = self.visit(arg)
                 self.emitLine(f"push {argValue}")
         

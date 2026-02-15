@@ -16,6 +16,11 @@ python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean --debug --e
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
 # Compiling to CeruleanASM
 python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --emitIRAST
+# python3 -m ceruleanir.compiler cerulean/test_files/test_comparisons.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler cerulean/test_files/helloworld.ceruleanasm -o cerulean/test_files/helloworld.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker cerulean/test_files/helloworld.ceruleanobj -o cerulean/test_files/helloworld.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm cerulean/test_files/helloworld.ceruleanbc
+
 
 
 # simple tests
@@ -147,6 +152,16 @@ ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld5.ceruleanbc
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
 
+# test_comparisons
+# Test target=ceruleanasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanasm.assembler ceruleanir/test_files/test_comparisons.ceruleanasm -o ceruleanir/test_files/test_comparisons.ceruleanobj --debug --emitTokens --emitAST
+python3 -m ceruleanld.linker ceruleanir/test_files/test_comparisons.ceruleanobj -o ceruleanir/test_files/test_comparisons.ceruleanbc --debug
+ceruleanvm/build/ceruleanvm ceruleanir/test_files/test_comparisons.ceruleanbc
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_comparisons.amyasm
+
 
 ```
 
@@ -189,8 +204,6 @@ double c = a + b;
 // Write to register
 registers[dest] = std::bit_cast<uint64_t>(c);
 ```
-
-
 
 - [TODO] rename localvariableexpression to register
 - [] IR could have required extern? use an external function - must declare extern and linker will handle symbol finding?
@@ -498,4 +511,27 @@ Additionals
     - figure out a way to use MD files so it is easier
 - make an IR interpreter
 - this is separate from AmyScript, but make an AmyScript->IR frontend, why not?    
+
+
+
+
+# CeruleanASM notes
+Conditional Sets (Write 1 or 0 to Register)
+- These are useful for evaluating boolean expressions (e.g., bool x = (a < b);).
+- SEQ (Set Equal)
+- SLT (Set Less Than, Signed)
+- SLTU (Set Less Than, Unsigned)
+- FEQ / FLT / FLE (Floating Point versions)
+
+
+Desired Operation | Logical Equivalent | Synthesis Strategy
+-- | -- | --
+Less Than (A<B) | A<B | Use SLT or SLTU directly.
+Greater Than (A>B) | B<A | Swap operands: Use SLT dest, B, A.
+Less or Equal (A≤B) | NOT (B<A) | Perform SLT temp, B, A, then XORI dest, temp, 1.
+Greater or Equal (A≥B) | NOT (A<B) | Perform SLT temp, A, B, then XORI dest, temp, 1.
+Equal (A=B) | A=B | Use SEQ directly.
+Not Equal (A≠B) | NOT (A=B) | Perform SEQ temp, A, B, then XORI dest, temp, 1.
+
+
 

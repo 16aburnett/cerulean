@@ -14,6 +14,8 @@
 #include "test_arithmetic.cpp"
 #include "test_arithmetic_float.cpp"
 #include "test_control_flow.cpp"
+#include "test_conversions.cpp"
+#include "test_comparisons.cpp"
 
 bool g_debug = false;
 

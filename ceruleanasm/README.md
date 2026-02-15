@@ -70,5 +70,5 @@ ceruleanvm/build/ceruleanvm ceruleanasm/test_files/helloworld5.ceruleanbc
 
 CeruleanASM unit tests use the python unittest package. The following command can run all of the tests for CeruleanASM.
 ```bash
-python3 -m unittest discover -s ceruleanasm/unittests -p "test_*.py"
+python3 -m unittest discover -s ceruleanasm/unittests -p "test_*.py" -v
 ```

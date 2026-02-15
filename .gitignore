@@ -21,6 +21,10 @@ cerulean/test_files/*.irast
 cerulean/test_files/*.tokens
 cerulean/test_files/*.ceruleanasm
 cerulean/test_files/*.ast_lowered
+cerulean/test_files/*.virtasm
+cerulean/test_files/*.virtasmast
+cerulean/test_files/*.ceruleanbc
+cerulean/test_files/*.ceruleanobj
 
 ceruleanasm/test_files/*.ast
 ceruleanasm/test_files/*.ast_lowered
