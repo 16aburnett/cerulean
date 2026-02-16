@@ -2,37 +2,40 @@
 testing/test_tmp
 
 # Generated test artifacts
-# Keep .ceruleanir source files, ignore all generated outputs
+# Cerulean test files: keep *.cerulean and clean up the rest
+cerulean/test_files/*.amyasm
+cerulean/test_files/*.ast
+cerulean/test_files/*.ir
+cerulean/test_files/*.irast
+cerulean/test_files/*.tokens
+cerulean/test_files/*.crisc
+cerulean/test_files/*.ast_lowered
+cerulean/test_files/*.virtasm
+cerulean/test_files/*.virtasmast
+cerulean/test_files/*.criscbc
+cerulean/test_files/*.crisco
+
+# CeruleanIR test files: keep *.ceruleanir and clean up the rest
 ceruleanir/test_files/*.amyasm
-ceruleanir/test_files/*.ceruleanasm
+ceruleanir/test_files/*.crisc
 ceruleanir/test_files/*.tokens
 ceruleanir/test_files/*.ast
 ceruleanir/test_files/*.ast_lowered
 ceruleanir/test_files/*.ir
 ceruleanir/test_files/*.virtasm
 ceruleanir/test_files/*.virtasmast
-ceruleanir/test_files/*.ceruleanbc
-ceruleanir/test_files/*.ceruleanobj
+ceruleanir/test_files/*.criscbc
+ceruleanir/test_files/*.crisco
 
-cerulean/test_files/*.amyasm
-cerulean/test_files/*.ast
-cerulean/test_files/*.ir
-cerulean/test_files/*.irast
-cerulean/test_files/*.tokens
-cerulean/test_files/*.ceruleanasm
-cerulean/test_files/*.ast_lowered
-cerulean/test_files/*.virtasm
-cerulean/test_files/*.virtasmast
-cerulean/test_files/*.ceruleanbc
-cerulean/test_files/*.ceruleanobj
+# CeruleanRISC Assembler test files: keep *.crisc and clean up the rest
+ceruleanrisc/assembler/test_files/*.ast
+ceruleanrisc/assembler/test_files/*.ast_lowered
+ceruleanrisc/assembler/test_files/*.tokens
+ceruleanrisc/assembler/test_files/*.criscbc
+ceruleanrisc/assembler/test_files/*.crisco
 
-ceruleanasm/test_files/*.ast
-ceruleanasm/test_files/*.ast_lowered
-ceruleanasm/test_files/*.tokens
-ceruleanasm/test_files/*.ceruleanbc
-ceruleanasm/test_files/*.ceruleanobj
-
-ceruleanld/test_files/*.ceruleanbc
+# CeruleanRISC Linker test files: keep *.crisco and clean up the rest
+ceruleanrisc/linker/test_files/*.criscbc
 
 
 # Byte-compiled / optimized / DLL files

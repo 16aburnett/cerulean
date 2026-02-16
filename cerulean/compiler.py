@@ -21,7 +21,7 @@ if __name__ == "__main__":
     from .codegen import CodeGenVisitor
     from .irGenerator import IRGeneratorVisitor
     from backend.compiler import CeruleanIRBackendCompiler, TargetLang
-    from backend.backends.ceruleanasm.codegen import AllocatorStrategy
+    from backend.backends.ceruleanrisc.codegen import AllocatorStrategy
 else:
     from .preprocessor import CeruleanPreprocessor
     from .tokenizer import tokenize
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 
     mainFilename = args.sourceFiles[0]
     otherFilenames = args.sourceFiles[1:]
-    destFilename = "a.amy.assembly"
+    destFilename = "a.amyasm"
     if args.outputFilename:
         destFilename = args.outputFilename
 

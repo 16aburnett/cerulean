@@ -17,7 +17,7 @@ from .parser import Parser
 # Backend components (shared IR definitions and compilation)
 from backend.ceruleanIRAST import *
 from backend.compiler import CeruleanIRBackendCompiler, TargetLang
-from backend.backends.ceruleanasm.codegen import AllocatorStrategy
+from backend.backends.ceruleanrisc.codegen import AllocatorStrategy
 
 # ========================================================================
 
@@ -116,8 +116,8 @@ if __name__ == "__main__":
     destFilename = None
     if args.outputFilename: # provided target filename
         destFilename = args.outputFilename
-    elif target == TargetLang.CERULEANASM:
-        destFilename = os.path.splitext (sourceFilename)[0] + ".ceruleanasm"
+    elif target == TargetLang.CERULEANRISC:
+        destFilename = os.path.splitext (sourceFilename)[0] + ".crisc"
     elif target == TargetLang.AMYASM:
         destFilename = os.path.splitext (sourceFilename)[0] + ".amyasm"
     elif target == TargetLang.X86:

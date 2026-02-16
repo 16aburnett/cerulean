@@ -14,14 +14,14 @@ from .irEmitter import IREmitterVisitor
 from .visitor import *
 from .builtins import addBuiltinsToSymbolTable
 from .semanticAnalyzer import *
-from .backends.ceruleanasm.codegen import CodeGenVisitor_CeruleanASM, AllocatorStrategy
+from .backends.ceruleanrisc.codegen import CodeGenVisitor_CeruleanRISC, AllocatorStrategy
 from .backends.amyasm.codegen_amyasm import CodeGenVisitor_AmyAssembly
 from .backends.x86.codegen_x86 import CodeGenVisitor_x86
 
 # ========================================================================
 
 class TargetLang(Enum):
-    CERULEANASM = "ceruleanasm"
+    CERULEANRISC = "ceruleanrisc"
     AMYASM = "amyasm"
     X86    = "x86"
     # PYTHON = "python"
@@ -93,8 +93,8 @@ class CeruleanIRBackendCompiler:
         #=== CODE GENERATION =============================================
 
         self.printDebug (f"Generating code...")
-        if target == TargetLang.CERULEANASM:
-            codeGenerator = CodeGenVisitor_CeruleanASM (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
+        if target == TargetLang.CERULEANRISC:
+            codeGenerator = CodeGenVisitor_CeruleanRISC (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (sourceCodeLines)
         elif target == TargetLang.X86:

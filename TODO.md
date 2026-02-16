@@ -12,14 +12,12 @@ python3 -m testing.runner --frontend all
 # run as a module for correct import between cerulean and ceruleanIR backend
 # needs to run from root of repo
 python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/helloworld.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/helloworld.cerulean.ir -o cerulean/test_files/helloworld.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
-# Compiling to CeruleanASM
-python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR --emitIRAST
-# python3 -m ceruleanir.compiler cerulean/test_files/test_comparisons.cerulean -o cerulean/test_files/helloworld.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler cerulean/test_files/helloworld.ceruleanasm -o cerulean/test_files/helloworld.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker cerulean/test_files/helloworld.ceruleanobj -o cerulean/test_files/helloworld.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm cerulean/test_files/helloworld.ceruleanbc
+# Compiling to CeruleanRISC
+python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR --emitIRAST
+python3 -m ceruleanrisc.assembler.assembler cerulean/test_files/helloworld.crisc -o cerulean/test_files/helloworld.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker cerulean/test_files/helloworld.crisco -o cerulean/test_files/helloworld.criscbc --debug
+ceruleanrisc/vm/build/criscvm cerulean/test_files/helloworld.criscbc
 
 
 
@@ -98,66 +96,66 @@ python3 -m ceruleanir.compiler ceruleanir/test_files/test_cmp.ceruleanir -o ceru
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_cmp.amyasm
 
 # helloworld0
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld0.ceruleanir -o ceruleanir/test_files/helloworld0.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/helloworld0.ceruleanasm -o ceruleanir/test_files/helloworld0.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/helloworld0.ceruleanobj -o ceruleanir/test_files/helloworld0.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld0.ceruleanbc
-# Test target=ceruleanasm
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld0.ceruleanir -o ceruleanir/test_files/helloworld0.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld0.crisc -o ceruleanir/test_files/helloworld0.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld0.crisco -o ceruleanir/test_files/helloworld0.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld0.criscbc
+# Test target=ceruleanrisc
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld0.ceruleanir -o ceruleanir/test_files/helloworld0.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld0.amyasm
 
 
 # helloworld1
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld1.ceruleanir -o ceruleanir/test_files/helloworld1.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/helloworld1.ceruleanasm -o ceruleanir/test_files/helloworld1.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/helloworld1.ceruleanobj -o ceruleanir/test_files/helloworld1.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld1.ceruleanbc
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld1.ceruleanir -o ceruleanir/test_files/helloworld1.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld1.crisc -o ceruleanir/test_files/helloworld1.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld1.crisco -o ceruleanir/test_files/helloworld1.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld1.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld1.ceruleanir -o ceruleanir/test_files/helloworld1.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld1.amyasm
 
 
 # helloworld3
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld3.ceruleanir -o ceruleanir/test_files/helloworld3.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/helloworld3.ceruleanasm -o ceruleanir/test_files/helloworld3.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/helloworld3.ceruleanobj -o ceruleanir/test_files/helloworld3.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld3.ceruleanbc
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld3.ceruleanir -o ceruleanir/test_files/helloworld3.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld3.crisc -o ceruleanir/test_files/helloworld3.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld3.crisco -o ceruleanir/test_files/helloworld3.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld3.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld3.ceruleanir -o ceruleanir/test_files/helloworld3.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld3.amyasm
 
 
 # helloworld4
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld4.ceruleanir -o ceruleanir/test_files/helloworld4.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/helloworld4.ceruleanasm -o ceruleanir/test_files/helloworld4.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/helloworld4.ceruleanobj -o ceruleanir/test_files/helloworld4.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld4.ceruleanbc
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld4.ceruleanir -o ceruleanir/test_files/helloworld4.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld4.crisc -o ceruleanir/test_files/helloworld4.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld4.crisco -o ceruleanir/test_files/helloworld4.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld4.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld4.ceruleanir -o ceruleanir/test_files/helloworld4.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld4.amyasm
 
 # helloworld5: helloworld5.ceruleanir print_string.ceruleanir
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanir.compiler ceruleanir/test_files/print_string.ceruleanir -o ceruleanir/test_files/print_string.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/helloworld5.ceruleanasm -o ceruleanir/test_files/helloworld5.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanasm.assembler ceruleanir/test_files/print_string.ceruleanasm -o ceruleanir/test_files/print_string.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/helloworld5.ceruleanobj ceruleanir/test_files/print_string.ceruleanobj -o ceruleanir/test_files/helloworld5.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/helloworld5.ceruleanbc
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanir.compiler ceruleanir/test_files/print_string.ceruleanir -o ceruleanir/test_files/print_string.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld5.crisc -o ceruleanir/test_files/helloworld5.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/print_string.crisc -o ceruleanir/test_files/print_string.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld5.crisco ceruleanir/test_files/print_string.crisco -o ceruleanir/test_files/helloworld5.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld5.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
 
 # test_comparisons
-# Test target=ceruleanasm
-python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.ceruleanasm --target=ceruleanasm --debug --emitTokens --emitAST --emitIR
-python3 -m ceruleanasm.assembler ceruleanir/test_files/test_comparisons.ceruleanasm -o ceruleanir/test_files/test_comparisons.ceruleanobj --debug --emitTokens --emitAST
-python3 -m ceruleanld.linker ceruleanir/test_files/test_comparisons.ceruleanobj -o ceruleanir/test_files/test_comparisons.ceruleanbc --debug
-ceruleanvm/build/ceruleanvm ceruleanir/test_files/test_comparisons.ceruleanbc
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/test_comparisons.crisc -o ceruleanir/test_files/test_comparisons.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/test_comparisons.crisco -o ceruleanir/test_files/test_comparisons.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_comparisons.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_comparisons.amyasm
@@ -168,8 +166,8 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test
 ### NOTES ################################################################
 
 
-#### CeruleanIR -> CeruleanASM
-- lower CeruleanIR to a new IR that is closer to CeruleanASM (still virtual infinite registers)
+#### CeruleanIR -> CeruleanRISC
+- lower CeruleanIR to a new IR that is closer to CeruleanRISC (still virtual infinite registers)
     - Handles type info conversions to respective instructions
         - `add int32(%0), int32(%1)` -> `add32 %0, %1`
         - `add float64(%0), float64(%1)` -> `addf64 %0, %1`
@@ -177,7 +175,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test
         - `add float64(%0), float64(3.14159265)` -> `load64 %temp0, %float0, 0 ; addf64 %0, %temp0`
             - float literals (and string literals) need to be stored in mem since there are no float instr with immediates
             - visiting arguments can generate instructions!
-    - this also might generate more instructions for if CeruleanASM doesnt support a size like int16 - which might need to sign extended to int32
+    - this also might generate more instructions for if CeruleanRISC doesnt support a size like int16 - which might need to sign extended to int32
     - should handle moving imm to data section if >16-bit imm
 - register allocation
     - converts virtual infinite registers to finite physical registers
@@ -273,7 +271,7 @@ Architecture:
 ```
 ceruleanCompiler     -> lex/parse -> AST -> semantic-passes -|                                                       |-> codegen_x86
 ceruleanPPCompiler   -> lex/parse -> AST -> semantic-passes -|-> CeruleanIR_AST -> semantic-passes -> optimizations -|-> codegen_amyasm
-ceruleanFuncCompiler -> lex/parse -> AST -> semantic-passes -|         |                                             |-> codegen_ceruleanasm
+ceruleanFuncCompiler -> lex/parse -> AST -> semantic-passes -|         |                                             |-> codegen_ceruleanrisc
 ceruleanIRCompiler   -> lex/parse -> AST -> semantic-passes -|         |-> CeruleanIR emitter/codegen
 ```
 
@@ -515,7 +513,7 @@ Additionals
 
 
 
-# CeruleanASM notes
+# CeruleanRISC notes
 Conditional Sets (Write 1 or 0 to Register)
 - These are useful for evaluating boolean expressions (e.g., bool x = (a < b);).
 - SEQ (Set Equal)
