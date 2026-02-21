@@ -10,23 +10,12 @@ from sys import exit
 
 if __name__ == "ceruleanAST":
     from visitor import *
+    from types import Type
 else:
     from .visitor import *
+    from .types import Type
 
 # ========================================================================
-
-class Type(Enum):
-    BOOL     = 1
-    BYTE     = 2
-    CHAR     = 3
-    INT32    = 4
-    INT64    = 5
-    FLOAT32  = 6
-    FLOAT64  = 7
-    VOID     = 8
-    USERTYPE = 9
-    NULL     = 10
-    UNKNOWN  = 11
 
 class Security (Enum):
     PUBLIC = 1

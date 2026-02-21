@@ -1,6 +1,5 @@
 # Cerulean IR Compiler - Abstract Syntax Tree
 # By Amy Burnett
-# April 24 2021
 # ========================================================================
 
 # for abstract classes 
@@ -9,23 +8,7 @@ from enum import Enum
 from sys import exit
 
 from .visitor import *
-
-# ========================================================================
-
-class Type(Enum):
-    BOOL     = 0
-    BYTE     = 1
-    CHAR     = 2
-    INT32    = 3
-    INT64    = 4
-    FLOAT32  = 5
-    FLOAT64  = 6
-    VOID     = 7
-    BLOCK    = 8
-    TYPE     = 9
-    PTR      = 10
-    UNKNOWN  = 11
-    USERTYPE = 12 # SHOULD NOT BE USED - YET
+from .irTypes import Type
 
 # ========================================================================
 
