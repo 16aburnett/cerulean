@@ -193,7 +193,7 @@ class AllocationVisitor(ASMASTVisitor):
             else:
                 allocatedFunctions.append(function)
         
-        return ASM_AST.ProgramNode(allocatedFunctions, node.externSymbols)
+        return ASM_AST.ProgramNode(allocatedFunctions, node.externSymbols, node.globalVars)
     
     def visitFunctionNode(self, node):
         """
@@ -305,6 +305,10 @@ class AllocationVisitor(ASMASTVisitor):
         return node
     
     def visitStringLiteralNode(self, node):
+        return node
+    
+    def visitGlobalVariableNode(self, node):
+        # Global variables are in data section, no allocation needed
         return node
 
 # =================================================================================================

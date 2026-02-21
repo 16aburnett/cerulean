@@ -31,26 +31,93 @@ class LoweringVisitor (ASTVisitor):
     def debugPrint (self, *args, **kwargs):
         if (self.shouldPrintDebug):
             print ("[debug] [lowering]", *args, **kwargs)
+    
+    def emitLoadImmediate64(self, destReg, value):
+        """
+        Generate instructions to load a 64-bit immediate value into a register.
+        
+        Since lli/lui only modify 16 bits at a time, we need to generate
+        a full sequence to properly initialize the entire register:
+        1. lui - load upper 16 bits (bits 48-63)
+        2. lli - load next 16 bits (bits 32-47)
+        3. sll64i - shift left 16 bits
+        4. lli - load next 16 bits (bits 16-31)
+        5. sll64i - shift left 16 bits  
+        6. lli - load lower 16 bits (bits 0-15)
+        
+        Args:
+            destReg: The destination register (AST node)
+            value: The integer value to load (or IntLiteralNode/CharLiteralNode)
+            
+        Returns:
+            List of instruction nodes
+        """
+        # For character literals, zero out register then load character
+        if isinstance(value, ASM_AST.CharLiteralNode):
+            # XOR register with itself to zero it, then load the char into lower bits
+            return [
+                ASM_AST.InstructionNode("xor64", [destReg, destReg, destReg]),  # Zero out register
+                ASM_AST.InstructionNode("lli", [destReg, value])  # Load char literal
+            ]
+        
+        # Extract the integer value if it's wrapped in a node
+        if isinstance(value, ASM_AST.IntLiteralNode):
+            val = value.value
+        else:
+            val = value
+        
+        # Split 64-bit value into 4 x 16-bit chunks
+        # Handle negative numbers with two's complement
+        val = val & 0xFFFFFFFFFFFFFFFF  # Ensure 64-bit value
+        
+        lo = val & 0xFFFF
+        ml = (val >> 16) & 0xFFFF
+        mh = (val >> 32) & 0xFFFF
+        hi = (val >> 48) & 0xFFFF
+        
+        return [
+            ASM_AST.InstructionNode("lui", [destReg, ASM_AST.IntLiteralNode(hi)]),
+            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(mh)]),
+            ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(16)]),
+            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(ml)]),
+            ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(16)]),
+            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(lo)])
+        ]
 
     # === VISITOR FUNCTIONS =======================================================================
 
     def visitProgramNode (self, node):
         codeunits = []
         externSymbols = []
+        globalVars = []  # Track global variable declarations
+        
+        self.debugPrint(f"Processing program with {len(node.codeunits)} codeunits")
+        
         for codeunit in node.codeunits:
             if codeunit != None:
+                self.debugPrint(f"  Codeunit type: {type(codeunit).__name__}, id: {getattr(codeunit, 'id', 'N/A')}")
+                
+                # Check if this is a global variable declaration
+                if isinstance(codeunit, GlobalVariableDeclarationNode):
+                    globalVar = codeunit.accept(self)
+                    if globalVar:
+                        globalVars.append(globalVar)
+                    self.debugPrint(f"Found global variable: {codeunit.id}")
                 # Check if this is an extern function before lowering
-                if isinstance(codeunit, FunctionNode) and codeunit.isExtern:
+                elif isinstance(codeunit, FunctionNode) and codeunit.isExtern:
                     # Strip @ prefix if present
                     funcName = codeunit.id[1:] if codeunit.id.startswith('@') else codeunit.id
                     externSymbols.append(funcName)
                     self.debugPrint(f"Found extern function: {funcName}")
-                    continue  # Skip lowering extern functions
-                newCodeunit = codeunit.accept (self)
-                if newCodeunit:
-                    codeunits += [newCodeunit]
+                    # Skip lowering extern functions
+                else:
+                    newCodeunit = codeunit.accept (self)
+                    if newCodeunit:
+                        codeunits += [newCodeunit]
+        
         self.debugPrint(f"Total extern symbols: {externSymbols}")
-        return ASM_AST.ProgramNode (codeunits, externSymbols)
+        self.debugPrint(f"Total global variables: {len(globalVars)}")
+        return ASM_AST.ProgramNode (codeunits, externSymbols, globalVars)
 
     # =============================================================================================
 
@@ -67,7 +134,41 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitGlobalVariableDeclarationNode (self, node):
-        return ASM_AST.VirtualRegisterNode (node.id)
+        # Global variables go in the data section, not as virtual registers
+        # Structure: global @name = command (type(value))
+        # Example: global @length = value (int32(14))
+        # Example: global @greeting = value (ptr("Hello"))
+        
+        # Strip @ prefix from global variable name if present
+        globalId = node.id[1:] if node.id.startswith('@') else node.id
+        # Sanitize label name - replace periods and other invalid characters with underscores
+        globalId = globalId.replace('.', '_')
+        
+        # Extract type from the first argument (if available)
+        typeStr = "int64"  # default
+        initialValueNode = None  # Will be AST node (literal or string)
+        
+        if hasattr(node, 'arguments') and len(node.arguments) > 0:
+            arg = node.arguments[0]
+            
+            # Get type from argument
+            if hasattr(arg, 'type') and arg.type:
+                typeStr = arg.type.accept(self) if hasattr(arg.type, 'accept') else str(arg.type)
+            
+            # Get initial value from argument expression
+            # We need to lower it to get the proper ASM node
+            if hasattr(arg, 'expression') and arg.expression:
+                initialValueNode = arg.expression.accept(self)
+        
+        # Get size in bytes
+        size = getTypeSize(typeStr)
+        
+        # Create global variable node for data section
+        # Emitter will place this in the data section with appropriate directive
+        # initialValueNode can be IntLiteralNode, StringLiteralNode, etc.
+        self.debugPrint(f"Creating global variable '{globalId}' of type '{typeStr}' (size={size} bytes)")
+        globalVar = ASM_AST.GlobalVariableNode(globalId, size=size, initialValue=initialValueNode)
+        return globalVar
 
     # =============================================================================================
 
@@ -235,9 +336,14 @@ class LoweringVisitor (ASTVisitor):
             if isinstance (asmArguments[0], ASM_AST.RegisterNode):
                 asmInstruction = ASM_AST.InstructionNode ("mv64", [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
-            # Usage 2: String Literal (needs loada for address)
-            # CeruleanIR : <dest> = value (ptr("string"))
+            # Usage 2: Global Variable or String Literal (needs loada for address)
+            # CeruleanIR : <dest> = value (global_var) OR <dest> = value (ptr("string"))
             # CeruleanRISC: loada <dest>, <label>
+            # Both global variables and string literals are represented as LabelNode or StringLiteralNode
+            elif isinstance (asmArguments[0], ASM_AST.LabelNode):
+                # Global variable reference - load its address
+                asmInstruction = ASM_AST.InstructionNode ("loada", [lhsReg, *asmArguments])
+                asmInstructions += [asmInstruction]
             elif isinstance (asmArguments[0], ASM_AST.StringLiteralNode):
                 # String literals are handled by the emitter (creates data section)
                 # For now, keep the string literal and let emitter handle it
@@ -246,11 +352,9 @@ class LoweringVisitor (ASTVisitor):
                 asmInstructions += [asmInstruction]
             # Usage 3: Imm
             # CeruleanIR : <dest> = value (<imm>)
-            # CeruleanRISC: lli <dest>, <imm>
-            # NOTE: Imm must fit in 16-bits
+            # CeruleanRISC: Full 64-bit load sequence
             else: # assuming imm is the only other option
-                asmInstruction = ASM_AST.InstructionNode ("lli", [lhsReg, *asmArguments])
-                asmInstructions += [asmInstruction]
+                asmInstructions += self.emitLoadImmediate64(lhsReg, asmArguments[0])
         elif commandName == "alloca":
             # CeruleanIR: <ptr> = alloca(<type>, <count>)
             # Allocates <count> elements of <type> on the stack
@@ -304,6 +408,17 @@ class LoweringVisitor (ASTVisitor):
             }
             loadOp = typeToLoadOp.get(typeArg, "load64")  # Default to 64-bit
             
+            # Handle case where base address is a label (global variable)
+            # Need to load address into a register first
+            baseReg = asmArguments[1]
+            if isinstance (baseReg, ASM_AST.LabelNode):
+                # CeruleanIR : <dest> = load (<type>, <global_label>, <offset>)
+                # CeruleanRISC: loada r<temp>, <global_label>
+                #              load<size> r<dest>, r<temp>, imm<offset>
+                tempReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode ("loada", [tempReg, baseReg])]
+                baseReg = tempReg
+            
             # Usage 1: reg offset
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
             # CeruleanRISC: add64 r<temp>, r<ptr>, r<offset>
@@ -312,14 +427,14 @@ class LoweringVisitor (ASTVisitor):
                 self.debugPrint (f">>> lowering load(R,R) to add(R,R,R) and {loadOp}(R,R,I)")
                 tempReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += [
-                    ASM_AST.InstructionNode ("add64", [tempReg, asmArguments[1], asmArguments[2]]),
+                    ASM_AST.InstructionNode ("add64", [tempReg, baseReg, asmArguments[2]]),
                     ASM_AST.InstructionNode (loadOp, [lhsReg, tempReg, ASM_AST.IntLiteralNode (0)])
                 ]
             # Usage 2: imm offset
             # CeruleanIR : <dest> = load (<type>, <pointer>, <offset>)
             # CeruleanRISC: load<size> r<dest>, r<ptr>, imm<offset>
             elif isinstance (asmArguments[2], ASM_AST.LiteralNode):
-                asmInstructions += [ASM_AST.InstructionNode (loadOp, [lhsReg, asmArguments[1], asmArguments[2]])]
+                asmInstructions += [ASM_AST.InstructionNode (loadOp, [lhsReg, baseReg, asmArguments[2]])]
             else:
                 print (f"Lowering Error: Unexpected argument type {asmArguments[2]}")
                 exit (1)
@@ -345,6 +460,17 @@ class LoweringVisitor (ASTVisitor):
             }
             storeOp = typeToStoreOp.get(valueType, "store64")  # Default to 64-bit
             
+            # Handle case where base address is a label (global variable)
+            # Need to load address into a register first
+            baseReg = asmArguments[0]
+            if isinstance (baseReg, ASM_AST.LabelNode):
+                # CeruleanIR : store (<global_label>, <offset>, <value>)
+                # CeruleanRISC: loada r<temp>, <global_label>
+                #              store<size> r<temp>, r<value>, imm<offset>
+                tempReg = ASM_AST.VirtualTempRegisterNode()
+                asmInstructions += [ASM_AST.InstructionNode ("loada", [tempReg, baseReg])]
+                baseReg = tempReg
+            
             # Usage 1: reg offset, reg value
             # CeruleanIR : store (<pointer>, <offset_reg>, <value>)
             # CeruleanRISC: add64 r<temp>, r<ptr>, r<offset>
@@ -353,7 +479,7 @@ class LoweringVisitor (ASTVisitor):
                 self.debugPrint (f">>> lowering store(R,R,R) to add(R,R,R) and {storeOp}(R,R,I)")
                 tempReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += [
-                    ASM_AST.InstructionNode ("add64", [tempReg, asmArguments[0], asmArguments[1]]),
+                    ASM_AST.InstructionNode ("add64", [tempReg, baseReg, asmArguments[1]]),
                     ASM_AST.InstructionNode (storeOp, [tempReg, asmArguments[2], ASM_AST.IntLiteralNode (0)])
                 ]
             # Usage 2: imm offset, reg value
@@ -362,16 +488,16 @@ class LoweringVisitor (ASTVisitor):
             elif isinstance (asmArguments[1], ASM_AST.LiteralNode):
                 # Check if value is reg or imm
                 if isinstance (asmArguments[2], ASM_AST.RegisterNode):
-                    asmInstructions += [ASM_AST.InstructionNode (storeOp, [asmArguments[0], asmArguments[2], asmArguments[1]])]
+                    asmInstructions += [ASM_AST.InstructionNode (storeOp, [baseReg, asmArguments[2], asmArguments[1]])]
                 # Usage 3: imm offset, imm value
                 # CeruleanIR : store (<pointer>, <offset_imm>, <imm_value>)
-                # CeruleanRISC: lli r<temp>, imm<value>
+                # CeruleanRISC: Full 64-bit load sequence to temp register
                 #              store<size> r<ptr>, r<temp>, imm<offset>
                 else:
                     tempReg = ASM_AST.VirtualTempRegisterNode()
+                    asmInstructions += self.emitLoadImmediate64(tempReg, asmArguments[2])
                     asmInstructions += [
-                        ASM_AST.InstructionNode ("lli", [tempReg, asmArguments[2]]),
-                        ASM_AST.InstructionNode (storeOp, [asmArguments[0], tempReg, asmArguments[1]])
+                        ASM_AST.InstructionNode (storeOp, [baseReg, tempReg, asmArguments[1]])
                     ]
             else:
                 print (f"Lowering Error: Unexpected argument type for store offset: {asmArguments[1]}")
@@ -385,11 +511,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, a, b])]
         elif commandName == "cle":
@@ -403,11 +529,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [
                 ASM_AST.InstructionNode("lt", [lhsReg, b, a]),
@@ -423,11 +549,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, b, a])]
         elif commandName == "cge":
@@ -441,11 +567,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [
                 ASM_AST.InstructionNode("lt", [lhsReg, a, b]),
@@ -460,11 +586,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [ASM_AST.InstructionNode("eq", [lhsReg, a, b])]
         elif commandName == "cne":
@@ -478,11 +604,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 tempA = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempA, a])]
+                asmInstructions += self.emitLoadImmediate64(tempA, a)
                 a = tempA
             if isinstance(b, ASM_AST.LiteralNode):
                 tempB = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [tempB, b])]
+                asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
             asmInstructions += [
                 ASM_AST.InstructionNode("eq", [lhsReg, a, b]),
@@ -516,11 +642,11 @@ class LoweringVisitor (ASTVisitor):
             # Handle immediate condition
             if isinstance(cond, ASM_AST.LiteralNode):
                 condReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [condReg, cond])]
+                asmInstructions += self.emitLoadImmediate64(condReg, cond)
                 cond = condReg
             
+            asmInstructions += self.emitLoadImmediate64(tempZero, 0)
             asmInstructions += [
-                ASM_AST.InstructionNode("lli", [tempZero, ASM_AST.IntLiteralNode(0)]),
                 ASM_AST.InstructionNode("loada", [tempFalse, labelFalse]),
                 ASM_AST.InstructionNode("beq", [cond, tempZero, tempFalse]),
                 ASM_AST.InstructionNode("loada", [tempTrue, labelTrue]),
@@ -537,11 +663,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 aReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                asmInstructions += self.emitLoadImmediate64(aReg, a)
                 a = aReg
             if isinstance(b, ASM_AST.LiteralNode):
                 bReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
@@ -561,13 +687,13 @@ class LoweringVisitor (ASTVisitor):
             # If lhs is immediate, load into temp
             if isinstance(lhs, ASM_AST.LiteralNode):
                 lhsReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [lhsReg, lhs])]
+                asmInstructions += self.emitLoadImmediate64(lhsReg, lhs)
                 lhs = lhsReg
             
             # If rhs is immediate, load into temp
             if isinstance(rhs, ASM_AST.LiteralNode):
                 rhsReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [rhsReg, rhs])]
+                asmInstructions += self.emitLoadImmediate64(rhsReg, rhs)
                 rhs = rhsReg
             
             asmInstructions += [
@@ -585,11 +711,11 @@ class LoweringVisitor (ASTVisitor):
             # Handle immediate operands
             if isinstance(a, ASM_AST.LiteralNode):
                 aReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                asmInstructions += self.emitLoadImmediate64(aReg, a)
                 a = aReg
             if isinstance(b, ASM_AST.LiteralNode):
                 bReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
@@ -606,11 +732,11 @@ class LoweringVisitor (ASTVisitor):
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
                 aReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                asmInstructions += self.emitLoadImmediate64(aReg, a)
                 a = aReg
             if isinstance(b, ASM_AST.LiteralNode):
                 bReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
@@ -627,11 +753,11 @@ class LoweringVisitor (ASTVisitor):
             # Handle immediate operands
             if isinstance(a, ASM_AST.LiteralNode):
                 aReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [aReg, a])]
+                asmInstructions += self.emitLoadImmediate64(aReg, a)
                 a = aReg
             if isinstance(b, ASM_AST.LiteralNode):
                 bReg = ASM_AST.VirtualTempRegisterNode()
-                asmInstructions += [ASM_AST.InstructionNode("lli", [bReg, b])]
+                asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
@@ -667,16 +793,15 @@ class LoweringVisitor (ASTVisitor):
                 ]
             # Usage 3: return imm
             # CeruleanIR : return (imm)
-            # CeruleanRISC: lli ra, imm
+            # CeruleanRISC: load immediate into ra
             #              loada r<temp> <functionEpilogueLabel>
             #              jmp r<temp>
-            # NOTE: Imm needs to fit in 16-bit
             elif isinstance (asmArguments[0], ASM_AST.LiteralNode):
                 returnReg = ASM_AST.PhysicalRegisterNode ("ra")
                 tempReg = ASM_AST.VirtualTempRegisterNode ()
                 functionEpilogueLabel = ASM_AST.LabelNode ("<function_epilogue_placeholder>")
+                asmInstructions += self.emitLoadImmediate64(returnReg, asmArguments[0])
                 asmInstructions += [
-                    ASM_AST.InstructionNode ("lli", [returnReg, asmArguments[0]]),
                     ASM_AST.InstructionNode ("loada", [tempReg, functionEpilogueLabel]),
                     ASM_AST.InstructionNode ("jmp", [tempReg])
                 ]
@@ -713,7 +838,14 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitGlobalVariableExpressionNode (self, node):
-        return ASM_AST.VirtualRegisterNode (node.id)
+        # Global variables are accessed via their label (address in data section)
+        # Return a label node so it works with loada instruction
+        # This is similar to how string literals work
+        # Strip @ prefix from global variable name if present
+        globalId = node.id[1:] if node.id.startswith('@') else node.id
+        # Sanitize label name - replace periods and other invalid characters with underscores
+        globalId = globalId.replace('.', '_')
+        return ASM_AST.LabelNode (globalId)
 
     # =============================================================================================
 

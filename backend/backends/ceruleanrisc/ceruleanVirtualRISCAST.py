@@ -42,21 +42,22 @@ class Node (ABC):
 
 class ProgramNode (Node):
 
-    def __init__ (self, codeunits, externSymbols=None):
+    def __init__ (self, codeunits, externSymbols=None, globalVars=None):
         self.codeunits = codeunits
         self.externSymbols = externSymbols if externSymbols is not None else []
+        self.globalVars = globalVars if globalVars is not None else []
 
     def accept (self, visitor):
         return visitor.visitProgramNode (self)
 
     def copy (self):
-        node = ProgramNode (None, self.externSymbols[:])
+        node = ProgramNode (None, self.externSymbols[:], self.globalVars[:])
         for codeunit in self.codeunits:
             node.codeunits += [codeunit.copy ()]
         return node
 
     def __repr__ (self):
-        return f"Program({repr (self.codeunits)})"
+        return f"Program({repr (self.codeunits)}, globals={repr(self.globalVars)})"
 
     def __str__ (self):
         return "\n".join ([str (codeunit) for codeunit in self.codeunits])
@@ -361,3 +362,29 @@ class StringLiteralNode (LiteralNode):
 
     def __str__ (self):
         return str (self.value)
+
+# ========================================================================
+
+class GlobalVariableNode (Node):
+    """
+    Represents a global variable declaration in the data section.
+    Global variables are stored in memory (data section) rather than registers.
+    """
+
+    def __init__ (self, id, size=8, initialValue=0):
+        super ().__init__ ()
+        self.id = id
+        self.size = size  # Size in bytes
+        self.initialValue = initialValue
+
+    def accept (self, visitor):
+        return visitor.visitGlobalVariableNode (self)
+
+    def copy (self):
+        return GlobalVariableNode (self.id, self.size, self.initialValue)
+
+    def __repr__ (self):
+        return f"GlobalVar({repr (self.id)}, size={self.size}, init={self.initialValue})"
+
+    def __str__ (self):
+        return f"{self.id}"
