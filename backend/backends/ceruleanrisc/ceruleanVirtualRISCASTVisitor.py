@@ -62,3 +62,7 @@ class ASMASTVisitor (ABC):
     @abstractmethod
     def visitStringLiteralNode (self, node):
         pass
+
+    @abstractmethod
+    def visitGlobalVariableNode (self, node):
+        pass

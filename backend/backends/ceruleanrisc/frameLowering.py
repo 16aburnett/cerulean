@@ -63,7 +63,7 @@ class FrameLoweringVisitor(ASMASTVisitor):
             else:
                 processedFunctions.append(function)
         
-        return ASM_AST.ProgramNode(processedFunctions, node.externSymbols)
+        return ASM_AST.ProgramNode(processedFunctions, node.externSymbols, node.globalVars)
     
     def visitFunctionNode(self, node):
         """
@@ -149,6 +149,10 @@ class FrameLoweringVisitor(ASMASTVisitor):
         return node
     
     def visitStringLiteralNode(self, node):
+        return node
+    
+    def visitGlobalVariableNode(self, node):
+        # Global variables are in data section, no frame lowering needed
         return node
 
 # =================================================================================================
