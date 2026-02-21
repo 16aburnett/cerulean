@@ -116,6 +116,8 @@ if __name__ == "__main__":
     destFilename = None
     if args.outputFilename: # provided target filename
         destFilename = args.outputFilename
+    elif target == TargetLang.CERULEANIR:
+        destFilename = os.path.splitext (sourceFilename)[0] + ".ceruleanir"
     elif target == TargetLang.CERULEANRISC:
         destFilename = os.path.splitext (sourceFilename)[0] + ".crisc"
     elif target == TargetLang.AMYASM:

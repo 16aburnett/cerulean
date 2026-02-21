@@ -15,6 +15,8 @@ python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean --debug --e
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
 # Compiling to CeruleanRISC
 python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR --emitIRAST
+# python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.ceruleanir --target=ceruleanir --debug --emitTokens --emitAST --emitIR --emitIRAST
+# python3 -m ceruleanir.compiler cerulean/test_files/helloworld.ceruleanir -o cerulean/test_files/helloworld.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
 python3 -m ceruleanrisc.assembler.assembler cerulean/test_files/helloworld.crisc -o cerulean/test_files/helloworld.crisco --debug --emitTokens --emitAST
 python3 -m ceruleanrisc.linker.linker cerulean/test_files/helloworld.crisco -o cerulean/test_files/helloworld.criscbc --debug
 ceruleanrisc/vm/build/criscvm cerulean/test_files/helloworld.criscbc

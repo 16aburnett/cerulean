@@ -21,6 +21,7 @@ from .backends.x86.codegen_x86 import CodeGenVisitor_x86
 # ========================================================================
 
 class TargetLang(Enum):
+    CERULEANIR = "ceruleanir"
     CERULEANRISC = "ceruleanrisc"
     AMYASM = "amyasm"
     X86    = "x86"
@@ -93,22 +94,33 @@ class CeruleanIRBackendCompiler:
         #=== CODE GENERATION =============================================
 
         self.printDebug (f"Generating code...")
-        if target == TargetLang.CERULEANRISC:
+        if target == TargetLang.CERULEANIR:
+            # For IR target, use the IR emitter directly
+            irEmitter = IREmitterVisitor ()
+            generatedCode = irEmitter.emit (ast)
+        elif target == TargetLang.CERULEANRISC:
             codeGenerator = CodeGenVisitor_CeruleanRISC (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
+            generatedCode = codeGenerator.generate (ast)
+            # Ensure codegen was successful
+            if not codeGenerator.wasSuccessful:
+                print (f"Error: codegen failed")
+                exit (1)
         elif target == TargetLang.AMYASM:
             codeGenerator = CodeGenVisitor_AmyAssembly (sourceCodeLines)
+            generatedCode = codeGenerator.generate (ast)
+            # Ensure codegen was successful
+            if not codeGenerator.wasSuccessful:
+                print (f"Error: codegen failed")
+                exit (1)
         elif target == TargetLang.X86:
             codeGenerator = CodeGenVisitor_x86 (sourceCodeLines)
+            generatedCode = codeGenerator.generate (ast)
+            # Ensure codegen was successful
+            if not codeGenerator.wasSuccessful:
+                print (f"Error: codegen failed")
+                exit (1)
         else:
             print (f"Error: unknown target language '{target}'")
-            exit (1)
-
-        # generate code
-        generatedCode = codeGenerator.generate (ast)
-
-        # Ensure codegen was successful
-        if not codeGenerator.wasSuccessful:
-            print (f"Error: codegen failed")
             exit (1)
 
         return generatedCode

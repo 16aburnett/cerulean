@@ -6,6 +6,7 @@ testing/test_tmp
 cerulean/test_files/*.amyasm
 cerulean/test_files/*.ast
 cerulean/test_files/*.ir
+cerulean/test_files/*.ceruleanir
 cerulean/test_files/*.irast
 cerulean/test_files/*.tokens
 cerulean/test_files/*.crisc
