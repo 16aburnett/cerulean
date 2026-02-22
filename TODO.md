@@ -25,38 +25,36 @@ ceruleanrisc/vm/build/criscvm cerulean/test_files/helloworld.criscbc
 
 # simple tests
 python3 -m cerulean.compiler cerulean/test_files/simple.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/simple.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/simple.cerulean.ir -o cerulean/test_files/simple.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/simple.amyasm
 
 # test arrays and memory
 python3 -m cerulean.compiler cerulean/test_files/arrays.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/arrays.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/arrays.cerulean.ir -o cerulean/test_files/arrays.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/arrays.amyasm
 
 # test conditionals
 python3 -m cerulean.compiler cerulean/test_files/test_conditionals.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_conditionals.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_conditionals.cerulean.ir -o cerulean/test_files/test_conditionals.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_conditionals.amyasm
 
 # test loops
 python3 -m cerulean.compiler cerulean/test_files/test_loops.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_loops.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_loops.cerulean.ir -o cerulean/test_files/test_loops.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_loops.amyasm
 
 # test operators
 python3 -m cerulean.compiler cerulean/test_files/test_operators.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_operators.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_operators.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_operators.amyasm
 
 # test logical operators
 python3 -m cerulean.compiler cerulean/test_files/test_logicals.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_logicals.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_logicals.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_logicals.amyasm
 
 # test stdin input
 python3 -m cerulean.compiler cerulean/test_files/test_input.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_input.amyasm
-# python3 -m backend.ceruleanIRCompiler cerulean/test_files/test_operators.cerulean.ir -o cerulean/test_files/test_logicals.amyasm --debug --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_input.amyasm
+
+# test unsigned
+python3 -m cerulean.compiler cerulean/test_files/test_unsigned.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/test_unsigned.amyasm
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_unsigned.amyasm
+
 ```
 
 
@@ -161,6 +159,26 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_comparisons.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_comparisons.amyasm
+
+# test unsigned
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned.ceruleanir -o ceruleanir/test_files/test_unsigned.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/test_unsigned.crisc -o ceruleanir/test_files/test_unsigned.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/test_unsigned.crisco -o ceruleanir/test_files/test_unsigned.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_unsigned.criscbc
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned.ceruleanir -o ceruleanir/test_files/test_unsigned.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_unsigned.amyasm
+
+# test unsigned comprehensive
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned_comprehensive.ceruleanir -o ceruleanir/test_files/test_unsigned_comprehensive.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/test_unsigned_comprehensive.crisc -o ceruleanir/test_files/test_unsigned_comprehensive.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/test_unsigned_comprehensive.crisco -o ceruleanir/test_files/test_unsigned_comprehensive.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_unsigned_comprehensive.criscbc
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned_comprehensive.ceruleanir -o ceruleanir/test_files/test_unsigned_comprehensive.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_unsigned_comprehensive.amyasm
 
 
 ```

@@ -1,6 +1,6 @@
 # Cerulean Compiler - x86 backend 
 # By Amy Burnett
-# April 11 2021
+# Feb 21, 2026
 # ========================================================================
 
 import os 
@@ -158,8 +158,14 @@ class IRGeneratorVisitor (ASTVisitor):
         elif node.type == Type.BOOL    : [type, name] = [irast.Type.BOOL, "bool"]
         elif node.type == Type.BYTE    : [type, name] = [irast.Type.BYTE, "byte"]
         elif node.type == Type.CHAR    : [type, name] = [irast.Type.CHAR, "char"]
+        elif node.type == Type.INT8    : [type, name] = [irast.Type.INT8, "int8"]
+        elif node.type == Type.INT16   : [type, name] = [irast.Type.INT16, "int16"]
         elif node.type == Type.INT32   : [type, name] = [irast.Type.INT32, "int32"]
         elif node.type == Type.INT64   : [type, name] = [irast.Type.INT64, "int64"]
+        elif node.type == Type.UINT8   : [type, name] = [irast.Type.UINT8, "uint8"]
+        elif node.type == Type.UINT16  : [type, name] = [irast.Type.UINT16, "uint16"]
+        elif node.type == Type.UINT32  : [type, name] = [irast.Type.UINT32, "uint32"]
+        elif node.type == Type.UINT64  : [type, name] = [irast.Type.UINT64, "uint64"]
         elif node.type == Type.FLOAT32 : [type, name] = [irast.Type.FLOAT32, "float32"]
         elif node.type == Type.FLOAT64 : [type, name] = [irast.Type.FLOAT64, "float64"]
         elif node.type == Type.VOID    : [type, name] = [irast.Type.VOID, "void"]

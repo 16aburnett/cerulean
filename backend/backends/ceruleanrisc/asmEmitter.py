@@ -531,47 +531,31 @@ class EmitterVisitor(ASMASTVisitor):
     
     def visitGlobalVariableNode(self, node):
         """Visit a global variable node - add to data section."""
-        # Map size to appropriate directive for integers
-        sizeToDirective = {
-            1: '.int8',   # 8-bit
-            2: '.int16',  # 16-bit
-            4: '.int32',  # 32-bit
-            8: '.int64'   # 64-bit
-        }
-        
-        directive = sizeToDirective.get(node.size, '.int64')  # Default to 64-bit
-        
-        # Process initial value - it can be a node or a simple value
         initialValueStr = "0"  # default
-        isAddress = False  # Track if this is an address/pointer value
         
+        # Process initial value
         if node.initialValue is not None:
             if isinstance(node.initialValue, ASM_AST.StringLiteralNode):
-                # String literal - emit it and use its label
-                label = self.visit(node.initialValue)  # This returns the string's label
+                # String literal - emit it to data section and use its label as the pointer value
+                # NOTE: String literals should be handled by the lowering pass, not here
+                label = self.visit(node.initialValue)
                 initialValueStr = label
-                isAddress = True  # String literals are addresses
+            elif isinstance(node.initialValue, ASM_AST.FloatLiteralNode):
+                # Float literal - extract the value
+                initialValueStr = str(node.initialValue.value)
             elif isinstance(node.initialValue, ASM_AST.IntLiteralNode):
                 # Integer literal - extract the value
                 initialValueStr = str(node.initialValue.value)
             elif isinstance(node.initialValue, ASM_AST.CharLiteralNode):
                 # Char literal - extract the value
                 initialValueStr = str(ord(node.initialValue.value))
-            elif isinstance(node.initialValue, ASM_AST.FloatLiteralNode):
-                # Float literal - extract the value
-                initialValueStr = str(node.initialValue.value)
-                directive = '.float32' if node.size == 4 else '.float64'
             else:
                 # Fallback - try to convert to string
                 initialValueStr = str(node.initialValue)
         
-        # Use .addr directive for pointer/address values
-        if isAddress:
-            directive = '.addr'
-        
         # Emit global variable to data section with its label
-        self.emitter.debugPrint(f"Emitting global variable '{node.id}' ({directive}, init={initialValueStr})")
-        self.emitData(f'{directive} {initialValueStr}', node.id)
+        self.emitter.debugPrint(f"Emitting global variable '{node.id}' ({node.directive}, init={initialValueStr})")
+        self.emitData(f'{node.directive} {initialValueStr}', node.id)
         
         # Return the label for use in instructions
         return node.id

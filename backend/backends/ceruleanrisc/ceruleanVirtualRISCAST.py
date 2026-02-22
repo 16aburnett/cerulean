@@ -4,27 +4,7 @@
 
 # for abstract classes 
 from abc import ABC, abstractmethod
-from enum import Enum
 from sys import exit
-
-# from .visitor import *
-
-# ========================================================================
-
-class Type (Enum):
-    BOOL     = 0
-    BYTE     = 1
-    CHAR     = 2
-    INT32    = 3
-    INT64    = 4
-    FLOAT32  = 5
-    FLOAT64  = 6
-    VOID     = 7
-    BLOCK    = 8
-    TYPE     = 9
-    PTR      = 10
-    UNKNOWN  = 11
-    USERTYPE = 12 # SHOULD NOT BE USED - YET
 
 # ========================================================================
 
@@ -264,7 +244,6 @@ class LiteralNode (Node):
 
     def __init__ (self, value):
         super ().__init__ ()
-        self.type = Type.INT32
         self.value = value
 
     def accept (self, visitor):
@@ -285,7 +264,6 @@ class IntLiteralNode (LiteralNode):
 
     def __init__ (self, value:int):
         super ().__init__ (value)
-        self.type = Type.INT32
         self.value = value
 
     def accept (self, visitor):
@@ -306,7 +284,6 @@ class FloatLiteralNode (LiteralNode):
 
     def __init__ (self, value:float):
         super ().__init__ (value)
-        self.type = Type.FLOAT32
         self.value = value
 
     def accept (self, visitor):
@@ -327,7 +304,6 @@ class CharLiteralNode (LiteralNode):
 
     def __init__ (self, value:chr):
         super ().__init__ (value)
-        self.type = Type.BYTE
         self.value = value
 
     def accept (self, visitor):
@@ -348,7 +324,6 @@ class StringLiteralNode (LiteralNode):
 
     def __init__ (self, value:str):
         super ().__init__ (value)
-        self.type = Type.PTR
         self.value = value
 
     def accept (self, visitor):
@@ -371,20 +346,21 @@ class GlobalVariableNode (Node):
     Global variables are stored in memory (data section) rather than registers.
     """
 
-    def __init__ (self, id, size=8, initialValue=0):
+    def __init__ (self, id, size=8, initialValue=0, directive=".int64"):
         super ().__init__ ()
         self.id = id
         self.size = size  # Size in bytes
         self.initialValue = initialValue
+        self.directive = directive  # Assembly directive (e.g., ".uint32", ".int8")
 
     def accept (self, visitor):
         return visitor.visitGlobalVariableNode (self)
 
     def copy (self):
-        return GlobalVariableNode (self.id, self.size, self.initialValue)
+        return GlobalVariableNode (self.id, self.size, self.initialValue, self.directive)
 
     def __repr__ (self):
-        return f"GlobalVar({repr (self.id)}, size={self.size}, init={self.initialValue})"
+        return f"GlobalVar({repr (self.id)}, size={self.size}, directive={self.directive}, init={self.initialValue})"
 
     def __str__ (self):
         return f"{self.id}"
