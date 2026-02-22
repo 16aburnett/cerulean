@@ -1,18 +1,18 @@
 
-function int32 min(int32 a, int32 b) {
+function i32 min(i32 a, i32 b) {
     if (a <= b)
         return a;
     return b;
 }
 
-function int32 max(int32 a, int32 b) {
+function i32 max(i32 a, i32 b) {
     if (a >= b)
         return a;
     return b;
 }
 
-function int32 main() {
-    int32 x = 10;
+function i32 main() {
+    i32 x = 10;
 
     // Conditionals look and work the same as C/C++
     if (x > 10) {

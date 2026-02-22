@@ -1,0 +1,215 @@
+// Comprehensive test for unsigned integer support
+// Tests: division, modulo, comparisons, loads, stores
+// Author: Amy Burnett
+//========================================================================
+
+function void @print_test_name (ptr(%name), i32(%length)) {
+    block entry {
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%length), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %char = load (type(char), ptr(%name), i32(%i_curr))
+        call @__builtin__print__char (char(%char))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @print_pass () {
+    block entry {
+        call @__builtin__print__char (char(80))   // 'P'
+        call @__builtin__print__char (char(65))   // 'A'
+        call @__builtin__print__char (char(83))   // 'S'
+        call @__builtin__print__char (char(83))   // 'S'
+        call @__builtin__println ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @print_fail () {
+    block entry {
+        call @__builtin__print__char (char(70))   // 'F'
+        call @__builtin__print__char (char(65))   // 'A'
+        call @__builtin__print__char (char(73))   // 'I'
+        call @__builtin__print__char (char(76))   // 'L'
+        call @__builtin__println ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @assert_true (i32(%value)) {
+    block entry {
+        jne (i32(%value), i32(0), block(pass))
+        jmp (block(fail))
+    }
+    block pass {
+        call @print_pass ()
+        return ()
+    }
+    block fail {
+        call @print_fail ()
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @test_unsigned_division_modulo () {
+    block entry {
+        // Test: unsigned 10 / 3 = 3
+        %test_name0 = value (ptr("Test: unsigned 10 / 3 =          "))
+        call @print_test_name (ptr(%test_name0), i32(33))
+        %a = value (u32(10))
+        %b = value (u32(3))
+        %quot_u = div (u32(%a), u32(%b))
+        %test1 = ceq (u32(%quot_u), u32(3))
+        call @assert_true (i32(%test1))
+        
+        // Test: unsigned 10 % 3 = 1
+        %test_name1 = value (ptr("Test: unsigned 10 % 3 =          "))
+        call @print_test_name (ptr(%test_name1), i32(33))
+        %rem_u = mod (u32(%a), u32(%b))
+        %test2 = ceq (u32(%rem_u), u32(1))
+        call @assert_true (i32(%test2))
+        
+        // Test: signed 10 / 3 = 3
+        %test_name2 = value (ptr("Test: signed 10 / 3 =            "))
+        call @print_test_name (ptr(%test_name2), i32(33))
+        %c = value (i32(10))
+        %d = value (i32(3))
+        %quot_s = div (i32(%c), i32(%d))
+        %test3 = ceq (i32(%quot_s), i32(3))
+        call @assert_true (i32(%test3))
+        
+        // Test: signed 10 % 3 = 1
+        %test_name3 = value (ptr("Test: signed 10 % 3 =            "))
+        call @print_test_name (ptr(%test_name3), i32(33))
+        %rem_s = mod (i32(%c), i32(%d))
+        %test4 = ceq (i32(%rem_s), i32(1))
+        call @assert_true (i32(%test4))
+        
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @test_unsigned_comparisons () {
+    block entry {
+        // Test: unsigned 10 < 4294967290 should be true
+        %test_name4 = value (ptr("Test: unsigned 10 < 4294967290 = "))
+        call @print_test_name (ptr(%test_name4), i32(33))
+        %a = value (u32(4294967290))
+        %b = value (u32(10))
+        %cmp_u = clt (u32(%b), u32(%a))
+        call @assert_true (i32(%cmp_u))
+        
+        // Test: signed 10 > -6 should be true
+        %test_name5 = value (ptr("Test: signed 10 > -6 =            "))
+        call @print_test_name (ptr(%test_name5), i32(33))
+        %c = value (i32(10))
+        %zero = value (i32(0))
+        %six = value (i32(6))
+        %d = sub (i32(%zero), i32(%six))  // 0 - 6 = -6
+        %cmp_s = cgt (i32(%c), i32(%d))
+        call @assert_true (i32(%cmp_s))
+        
+        // Test: unsigned branch (bltu)
+        %test_name6 = value (ptr("Test: unsigned branch =          "))
+        call @print_test_name (ptr(%test_name6), i32(33))
+        %branch_result = value (i32(0))
+        jl (u32(%b), u32(%a), block(unsigned_branch))
+        jmp (block(branch_end))
+    }
+    block unsigned_branch {
+        %branch_result2 = value (i32(1))
+        call @assert_true (i32(%branch_result2))
+        return ()
+    }
+    block branch_end {
+        call @assert_true (i32(%branch_result))
+        return ()
+    }
+}
+
+//========================================================================
+
+function void @test_load_store_signedness () {
+    block entry {
+        %ptr = alloca (type(u8), i32(100))
+        
+        // Test: char zero-extension (255 -> 255)
+        %test_name7 = value (ptr("Test: char zero-extension =      "))
+        call @print_test_name (ptr(%test_name7), i32(33))
+        %char_val = value (char(255))
+        store (ptr(%ptr), i32(0), char(%char_val))
+        %loaded_char = load (type(char), ptr(%ptr), i32(0))
+        %test1 = ceq (char(%loaded_char), char(255))
+        call @assert_true (i32(%test1))
+        
+        // Test: u8 zero-extension (255 -> 255)
+        %test_name8 = value (ptr("Test: u8 zero-extension =        "))
+        call @print_test_name (ptr(%test_name8), i32(33))
+        %uint8_val = value (u8(255))
+        store (ptr(%ptr), i32(1), u8(%uint8_val))
+        %loaded_uint8 = load (type(u8), ptr(%ptr), i32(1))
+        %test2 = ceq (u8(%loaded_uint8), u8(255))
+        call @assert_true (i32(%test2))
+        
+        // Test: u16 zero-extension (65535 -> 65535)
+        %test_name9 = value (ptr("Test: u16 zero-extension =       "))
+        call @print_test_name (ptr(%test_name9), i32(33))
+        %uint16_val = value (u16(65535))
+        store (ptr(%ptr), i32(2), u16(%uint16_val))
+        %loaded_uint16 = load (type(u16), ptr(%ptr), i32(2))
+        %test3 = ceq (u16(%loaded_uint16), u16(65535))
+        call @assert_true (i32(%test3))
+        
+        // Test: i8 sign-extension
+        // Store 0xFF (255) and load as i8 (should be -1)
+        %test_name10 = value (ptr("Test: i8 sign-extension =        "))
+        call @print_test_name (ptr(%test_name10), i32(33))
+        %byte_255 = value (u8(255))
+        store (ptr(%ptr), i32(10), u8(%byte_255))
+        %loaded_int8 = load (type(i8), ptr(%ptr), i32(10))
+        %zero_i8 = value (i8(0))
+        %one_i8 = value (i8(1))
+        %int8_neg1 = sub (i8(%zero_i8), i8(%one_i8))  // 0 - 1 = -1
+        %test4 = ceq (i8(%loaded_int8), i8(%int8_neg1))
+        call @assert_true (i32(%test4))
+        
+        return ()
+    }
+}
+
+//========================================================================
+
+function i32 @main () {
+    block entry {
+        call @test_unsigned_division_modulo ()
+        call @test_unsigned_comparisons ()
+        call @test_load_store_signedness ()
+        
+        return (i32(0))
+    }
+}

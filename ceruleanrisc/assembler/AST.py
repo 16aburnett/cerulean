@@ -15,10 +15,10 @@ class Type (Enum):
     BOOL     = 1
     BYTE     = 2
     CHAR     = 3
-    INT32    = 4
-    INT64    = 5
-    FLOAT32  = 6
-    FLOAT64  = 7
+    I32      = 4
+    I64      = 5
+    F32      = 6
+    F64      = 7
     VOID     = 8
     USERTYPE = 9
     NULL     = 10

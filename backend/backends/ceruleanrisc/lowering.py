@@ -1,14 +1,16 @@
 # CeruleanIR Compiler - Lowering step
-# 
 # By Amy Burnett
+# Feb 21, 2026
 # =================================================================================================
 
 from sys import exit
 
 from ...ceruleanIRAST import *
 from ...visitor import ASTVisitor
-from ...typeUtils import getTypeSize
+from ...typeUtils import getTypeSize, isUnsignedType
+from ...irTypes import Type as IRType
 from . import ceruleanVirtualRISCAST as ASM_AST
+from .types import getDataDirective
 
 # =================================================================================================
 
@@ -122,7 +124,8 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitTypeSpecifierNode (self, node):
-        return node.id
+        # Return the IRType enum instead of the string
+        return node.type
 
     # =============================================================================================
 
@@ -145,29 +148,28 @@ class LoweringVisitor (ASTVisitor):
         globalId = globalId.replace('.', '_')
         
         # Extract type from the first argument (if available)
-        typeStr = "int64"  # default
+        irType = IRType.I64  # default
         initialValueNode = None  # Will be AST node (literal or string)
         
         if hasattr(node, 'arguments') and len(node.arguments) > 0:
             arg = node.arguments[0]
             
-            # Get type from argument
-            if hasattr(arg, 'type') and arg.type:
-                typeStr = arg.type.accept(self) if hasattr(arg.type, 'accept') else str(arg.type)
+            # Get type enum from argument's TypeSpecifierNode
+            if hasattr(arg, 'type') and arg.type and hasattr(arg.type, 'type'):
+                irType = arg.type.type  # Extract IRType enum from TypeSpecifierNode
             
             # Get initial value from argument expression
             # We need to lower it to get the proper ASM node
             if hasattr(arg, 'expression') and arg.expression:
                 initialValueNode = arg.expression.accept(self)
         
-        # Get size in bytes
-        size = getTypeSize(typeStr)
+        # Get size in bytes and data directive directly from IRType
+        size = getTypeSize(irType)
+        directive = getDataDirective(irType)
         
         # Create global variable node for data section
-        # Emitter will place this in the data section with appropriate directive
-        # initialValueNode can be IntLiteralNode, StringLiteralNode, etc.
-        self.debugPrint(f"Creating global variable '{globalId}' of type '{typeStr}' (size={size} bytes)")
-        globalVar = ASM_AST.GlobalVariableNode(globalId, size=size, initialValue=initialValueNode)
+        self.debugPrint(f"Creating global variable '{globalId}' of type {irType} (size={size} bytes, directive={directive})")
+        globalVar = ASM_AST.GlobalVariableNode(globalId, size=size, initialValue=initialValueNode, directive=directive)
         return globalVar
 
     # =============================================================================================
@@ -291,35 +293,47 @@ class LoweringVisitor (ASTVisitor):
                 asmInstructions += [asmInstruction]
         elif commandName == "div":
             lhsReg = node.lhsVariable.accept (self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             # Usage 1: Reg, Reg
             # CeruleanIR : <dest> = div (<src0>, <src1>)
-            # CeruleanRISC: divi<size> <dest>, <src0>, <src1>
-            # NOTE: Currently only using ints
+            # CeruleanRISC: divi<size> <dest>, <src0>, <src1>  (signed)
+            #              divu<size> <dest>, <src0>, <src1>  (unsigned)
             if isinstance (asmArguments[1], ASM_AST.RegisterNode):
-                asmInstruction = ASM_AST.InstructionNode ("divi64", [lhsReg, *asmArguments])
+                opcode = "divu64" if isUnsigned else "divi64"
+                asmInstruction = ASM_AST.InstructionNode (opcode, [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
             # Usage 2: Reg, Imm
             # CeruleanIR : <dest> = div (<src0>, <imm>)
-            # CeruleanRISC: divi<size>i <dest>, <src0>, <imm>
-            # NOTE: Currently only using ints
+            # CeruleanRISC: divi<size>i <dest>, <src0>, <imm>  (signed)
+            #              divu<size>i <dest>, <src0>, <imm>  (unsigned)
             else: # assuming imm is the only other option
-                asmInstruction = ASM_AST.InstructionNode ("divi64i", [lhsReg, *asmArguments])
+                opcode = "divu64i" if isUnsigned else "divi64i"
+                asmInstruction = ASM_AST.InstructionNode (opcode, [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
         elif commandName == "mod":
             lhsReg = node.lhsVariable.accept (self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+
             # Usage 1: Reg, Reg
             # CeruleanIR : <dest> = mod (<src0>, <src1>)
-            # CeruleanRISC: modi<size> <dest>, <src0>, <src1>
-            # NOTE: Currently only using ints
+            # CeruleanRISC: modi<size> <dest>, <src0>, <src1>  (signed)
+            #              modu<size> <dest>, <src0>, <src1>  (unsigned)
             if isinstance (asmArguments[1], ASM_AST.RegisterNode):
-                asmInstruction = ASM_AST.InstructionNode ("divi64", [lhsReg, *asmArguments])
+                opcode = "modu64" if isUnsigned else "modi64"
+                asmInstruction = ASM_AST.InstructionNode (opcode, [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
             # Usage 2: Reg, Imm
             # CeruleanIR : <dest> = mod (<src0>, <imm>)
-            # CeruleanRISC: modi<size>i <dest>, <src0>, <imm>
-            # NOTE: Currently only using ints
+            # CeruleanRISC: modi<size>i <dest>, <src0>, <imm>  (signed)
+            #              modu<size>i <dest>, <src0>, <imm>  (unsigned)
             else: # assuming imm is the only other option
-                asmInstruction = ASM_AST.InstructionNode ("modi64i", [lhsReg, *asmArguments])
+                opcode = "modu64i" if isUnsigned else "modi64i"
+                asmInstruction = ASM_AST.InstructionNode (opcode, [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
         elif commandName == "lnot":
             lhsReg = node.lhsVariable.accept (self)
@@ -367,7 +381,7 @@ class LoweringVisitor (ASTVisitor):
             typeArg = node.arguments[0].accept (self)
             countNode = node.arguments[1]
             
-            # Calculate size in bytes using centralized type utilities
+            # Calculate size in bytes using centralized type utilities (typeArg is IRType enum)
             elementSize = getTypeSize(typeArg)
             
             # Get count value
@@ -392,21 +406,21 @@ class LoweringVisitor (ASTVisitor):
             exit (1)
         elif commandName == "load":
             lhsReg = node.lhsVariable.accept (self)
-            # Determine load instruction size based on type
-            typeArg = node.arguments[0].accept (self)
+            # Determine load instruction size and signedness based on type (irType is IRType enum)
+            irType = node.arguments[0].accept (self)
             
-            # Map type to load instruction
-            typeToLoadOp = {
-                "char": "load8",
-                "int8": "load8",
-                "int16": "load16",
-                "int32": "load32",
-                "int64": "load64",
-                "float32": "load32",
-                "float64": "load64",
-                "ptr": "load64"
-            }
-            loadOp = typeToLoadOp.get(typeArg, "load64")  # Default to 64-bit
+            # Get size in bytes and check if unsigned integer type
+            irTypeSize = getTypeSize(irType)
+            isUnsignedInt = isUnsignedType(irType)  # True for char, u8, u16, u32, u64
+            
+            # Map to instruction width with proper sign/zero extension
+            # - Signed integers (int8/16/32): sign-extend with load8/16/32
+            # - Unsigned integers (char, u8/16/32): zero-extend with loadu8/loadu16/loadu32
+            # - Floats (float32/64): just load bits with load32/64 (no sign extension)
+            # - 64-bit types: load64 (fills entire register, no extension)
+            sizeToBits = {1: "8", 2: "16", 4: "32", 8: "64"}
+            sizeStr = sizeToBits.get(irTypeSize, '64')
+            loadOp = f"loadu{sizeStr}" if (isUnsignedInt and irTypeSize < 8) else f"load{sizeStr}"
             
             # Handle case where base address is a label (global variable)
             # Need to load address into a register first
@@ -443,22 +457,12 @@ class LoweringVisitor (ASTVisitor):
             # Stores <value> at memory location <pointer> + <offset>
             # Extract type from the value argument (3rd argument in IR)
             valueNode = node.arguments[2]
-            valueType = None
-            if hasattr(valueNode, 'type'):
-                valueType = valueNode.type.id if hasattr(valueNode.type, 'id') else str(valueNode.type)
+            valueType = valueNode.type.type  # Get IRType enum from TypeSpecifierNode
             
-            # Map type to store instruction
-            typeToStoreOp = {
-                "char": "store8",
-                "int8": "store8",
-                "int16": "store16",
-                "int32": "store32",
-                "int64": "store64",
-                "float32": "store32",
-                "float64": "store64",
-                "ptr": "store64"
-            }
-            storeOp = typeToStoreOp.get(valueType, "store64")  # Default to 64-bit
+            # Get size in bytes and map to instruction width
+            typeSize = getTypeSize(valueType)
+            sizeToBits = {1: "8", 2: "16", 4: "32", 8: "64"}
+            storeOp = f"store{sizeToBits.get(typeSize, '64')}"
             
             # Handle case where base address is a label (global variable)
             # Need to load address into a register first
@@ -504,9 +508,14 @@ class LoweringVisitor (ASTVisitor):
                 exit (1)
         elif commandName == "clt":
             # CeruleanIR: <dest> = clt(<a>, <b>)
-            # Returns 1 if a < b, 0 otherwise (signed)
-            # CeruleanRISC: lt <dest>, <a>, <b>
+            # Returns 1 if a < b, 0 otherwise
+            # CeruleanRISC: lt <dest>, <a>, <b>  (signed)
+            #              ltu <dest>, <a>, <b> (unsigned)
             lhsReg = node.lhsVariable.accept(self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -517,14 +526,20 @@ class LoweringVisitor (ASTVisitor):
                 tempB = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
-            asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, a, b])]
+            opcode = "ltu" if isUnsigned else "lt"
+            asmInstructions += [ASM_AST.InstructionNode(opcode, [lhsReg, a, b])]
         elif commandName == "cle":
             # CeruleanIR: <dest> = cle(<a>, <b>)
-            # Returns 1 if a <= b, 0 otherwise (signed)
+            # Returns 1 if a <= b, 0 otherwise
             # Strategy: a <= b is !(a > b) = !(b < a)
-            # CeruleanRISC: lt <dest>, <b>, <a>
+            # CeruleanRISC: lt <dest>, <b>, <a>    (signed)
+            #              ltu <dest>, <b>, <a>    (unsigned)
             #              xor64i <dest>, <dest>, 1
             lhsReg = node.lhsVariable.accept(self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -535,16 +550,22 @@ class LoweringVisitor (ASTVisitor):
                 tempB = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
+            opcode = "ltu" if isUnsigned else "lt"
             asmInstructions += [
-                ASM_AST.InstructionNode("lt", [lhsReg, b, a]),
+                ASM_AST.InstructionNode(opcode, [lhsReg, b, a]),
                 ASM_AST.InstructionNode("xor64i", [lhsReg, lhsReg, ASM_AST.IntLiteralNode(1)])
             ]
         elif commandName == "cgt":
             # CeruleanIR: <dest> = cgt(<a>, <b>)
-            # Returns 1 if a > b, 0 otherwise (signed)
+            # Returns 1 if a > b, 0 otherwise
             # Strategy: a > b is b < a (swap operands)
-            # CeruleanRISC: lt <dest>, <b>, <a>
+            # CeruleanRISC: lt <dest>, <b>, <a>  (signed)
+            #              ltu <dest>, <b>, <a> (unsigned)
             lhsReg = node.lhsVariable.accept(self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -555,14 +576,20 @@ class LoweringVisitor (ASTVisitor):
                 tempB = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
-            asmInstructions += [ASM_AST.InstructionNode("lt", [lhsReg, b, a])]
+            opcode = "ltu" if isUnsigned else "lt"
+            asmInstructions += [ASM_AST.InstructionNode(opcode, [lhsReg, b, a])]
         elif commandName == "cge":
             # CeruleanIR: <dest> = cge(<a>, <b>)
-            # Returns 1 if a >= b, 0 otherwise (signed)
+            # Returns 1 if a >= b, 0 otherwise
             # Strategy: a >= b is !(a < b)
-            # CeruleanRISC: lt <dest>, <a>, <b>
+            # CeruleanRISC: lt <dest>, <a>, <b>    (signed)
+            #              ltu <dest>, <a>, <b>    (unsigned)
             #              xor64i <dest>, <dest>, 1
             lhsReg = node.lhsVariable.accept(self)
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -573,8 +600,9 @@ class LoweringVisitor (ASTVisitor):
                 tempB = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(tempB, b)
                 b = tempB
+            opcode = "ltu" if isUnsigned else "lt"
             asmInstructions += [
-                ASM_AST.InstructionNode("lt", [lhsReg, a, b]),
+                ASM_AST.InstructionNode(opcode, [lhsReg, a, b]),
                 ASM_AST.InstructionNode("xor64i", [lhsReg, lhsReg, ASM_AST.IntLiteralNode(1)])
             ]
         elif commandName == "ceq":
@@ -654,11 +682,16 @@ class LoweringVisitor (ASTVisitor):
             ]
         elif commandName == "jg":
             # CeruleanIR: jg(<a>, <b>, block(label))
-            # Jump to label if a > b (signed)
-            # Strategy: a > b is b < a (swap operands for BLT)
+            # Jump to label if a > b
+            # Strategy: a > b is b < a (swap operands for BLT/BLTU)
             # CeruleanRISC: loada r<temp>, <label>
-            #              blt r<b>, r<a>, r<temp>
+            #              blt r<b>, r<a>, r<temp>   (signed)
+            #              bltu r<b>, r<a>, r<temp>  (unsigned)
             tempReg = ASM_AST.VirtualTempRegisterNode()
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -669,16 +702,21 @@ class LoweringVisitor (ASTVisitor):
                 bReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
+            opcode = "bltu" if isUnsigned else "blt"
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
-                ASM_AST.InstructionNode("blt", [b, a, tempReg])
+                ASM_AST.InstructionNode(opcode, [b, a, tempReg])
             ]
         elif commandName == "jge":
-            # CeruleanIR: jge (int32(lhs), int32(rhs), block(label))
+            # CeruleanIR: jge (type(lhs), type(rhs), block(label))
             # Jump to label if lhs >= rhs
             # CeruleanRISC: loada r<temp>, <label>
-            #              bge r<lhs>, r<rhs>, r<temp>
+            #              bge r<lhs>, r<rhs>, r<temp>   (signed)
+            #              bgeu r<lhs>, r<rhs>, r<temp>  (unsigned)
             tempReg = ASM_AST.VirtualTempRegisterNode()
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
             
             # Handle immediate operands - load into temp registers
             lhs = asmArguments[0]
@@ -696,16 +734,22 @@ class LoweringVisitor (ASTVisitor):
                 asmInstructions += self.emitLoadImmediate64(rhsReg, rhs)
                 rhs = rhsReg
             
+            opcode = "bgeu" if isUnsigned else "bge"
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
-                ASM_AST.InstructionNode("bge", [lhs, rhs, tempReg])
+                ASM_AST.InstructionNode(opcode, [lhs, rhs, tempReg])
             ]
         elif commandName == "jl":
             # CeruleanIR: jl(<a>, <b>, block(label))
-            # Jump to label if a < b (signed)
+            # Jump to label if a < b
             # CeruleanRISC: loada r<temp>, <label>
-            #              blt r<a>, r<b>, r<temp>
+            #              blt r<a>, r<b>, r<temp>   (signed)
+            #              bltu r<a>, r<b>, r<temp>  (unsigned)
             tempReg = ASM_AST.VirtualTempRegisterNode()
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             # Handle immediate operands
@@ -717,17 +761,23 @@ class LoweringVisitor (ASTVisitor):
                 bReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
+            opcode = "bltu" if isUnsigned else "blt"
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
-                ASM_AST.InstructionNode("blt", [a, b, tempReg])
+                ASM_AST.InstructionNode(opcode, [a, b, tempReg])
             ]
         elif commandName == "jle":
             # CeruleanIR: jle(<a>, <b>, block(label))
-            # Jump to label if a <= b (signed)
-            # Strategy: a <= b is b >= a (swap operands for BGE)
+            # Jump to label if a <= b
+            # Strategy: a <= b is b >= a (swap operands for BGE/BGEU)
             # CeruleanRISC: loada r<temp>, <label>
-            #              bge r<b>, r<a>, r<temp>
+            #              bge r<b>, r<a>, r<temp>   (signed)
+            #              bgeu r<b>, r<a>, r<temp>  (unsigned)
             tempReg = ASM_AST.VirtualTempRegisterNode()
+            # Get type from first argument to determine signed vs unsigned
+            argType = node.arguments[0].type.type if hasattr(node.arguments[0], 'type') else None
+            isUnsigned = isUnsignedType(argType) if argType else False
+            
             a = asmArguments[0]
             b = asmArguments[1]
             if isinstance(a, ASM_AST.LiteralNode):
@@ -738,9 +788,10 @@ class LoweringVisitor (ASTVisitor):
                 bReg = ASM_AST.VirtualTempRegisterNode()
                 asmInstructions += self.emitLoadImmediate64(bReg, b)
                 b = bReg
+            opcode = "bgeu" if isUnsigned else "bge"
             asmInstructions += [
                 ASM_AST.InstructionNode("loada", [tempReg, asmArguments[2]]),
-                ASM_AST.InstructionNode("bge", [b, a, tempReg])
+                ASM_AST.InstructionNode(opcode, [b, a, tempReg])
             ]
         elif commandName == "jne":
             # CeruleanIR: jne(<a>, <b>, block(label))

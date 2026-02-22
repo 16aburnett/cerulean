@@ -9,6 +9,11 @@ from sys import exit
 import re
 import sys
 
+if __name__ == "tokenizer":
+    from types import TYPE_KEYWORDS
+else:
+    from .types import TYPE_KEYWORDS
+
 # ========================================================================
 
 class Token(NamedTuple):
@@ -180,23 +185,9 @@ def tokenize(code, mainFilename, debugLines=[]):
                 kind = "SIZEOF"
             elif (lexeme == "null"):
                 kind = "NULL"
-            # Types
-            elif (lexeme == "bool"):
-                kind = "TYPE_BOOL"
-            elif (lexeme == "byte"):
-                kind = "TYPE_BYTE"
-            elif (lexeme == "char"):
-                kind = "TYPE_CHAR"
-            elif (lexeme == "int32"):
-                kind = "TYPE_INT32"
-            elif (lexeme == "int64"):
-                kind = "TYPE_INT64"
-            elif (lexeme == "float32"):
-                kind = "TYPE_FLOAT32"
-            elif (lexeme == "float64"):
-                kind = "TYPE_FLOAT64"
-            elif (lexeme == "void"):
-                kind = "TYPE_VOID"
+            # Types - use TYPE_KEYWORDS map
+            elif lexeme in TYPE_KEYWORDS:
+                kind = TYPE_KEYWORDS[lexeme]
         # get original line numbers and filename
         originalFile = mainFilename
         originalLine = line_num

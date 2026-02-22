@@ -858,8 +858,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         node.rhs.accept (self)
         node.type = node.rhs.type 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT32
-                and node.rhs.type.type != Type.FLOAT32)
+        if ((node.rhs.type.type != Type.I32
+                and node.rhs.type.type != Type.F32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for pre-increment operator")
             printToken (node.op)
@@ -871,8 +871,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         node.rhs.accept (self)
         node.type = node.rhs.type 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT32
-                and node.rhs.type.type != Type.FLOAT32)
+        if ((node.rhs.type.type != Type.I32
+                and node.rhs.type.type != Type.F32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for pre-decrement operator")
             printToken (node.op)
@@ -884,8 +884,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         node.rhs.accept (self)
         node.type = node.rhs.type 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT32
-                and node.rhs.type.type != Type.FLOAT32)
+        if ((node.rhs.type.type != Type.I32
+                and node.rhs.type.type != Type.F32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for negation operator")
             printToken (node.op)
@@ -897,8 +897,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         node.rhs.accept (self)
         node.type = node.rhs.type 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT32
-                and node.rhs.type.type != Type.FLOAT32)
+        if ((node.rhs.type.type != Type.I32
+                and node.rhs.type.type != Type.F32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for logical not operator")
             printToken (node.op)
@@ -910,8 +910,8 @@ class SymbolTableVisitor2 (ASTVisitor):
         node.rhs.accept (self)
         node.type = node.rhs.type 
         # ensure types work 
-        if ((node.rhs.type.type != Type.INT32
-                and node.rhs.type.type != Type.FLOAT32)
+        if ((node.rhs.type.type != Type.I32
+                and node.rhs.type.type != Type.F32)
                 or node.rhs.type.arrayDimensions > 0):
             print (f"Semantic Error: invalid type for bitwise negation operator")
             printToken (node.op)

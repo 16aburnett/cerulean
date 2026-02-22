@@ -8,9 +8,11 @@ from sys import exit
 if __name__ == "parser":
     from tokenizer import printToken
     from ceruleanAST import *
+    from types import TYPE_TOKEN_MAP
 else:
     from .tokenizer import printToken
     from .ceruleanAST import *
+    from .types import TYPE_TOKEN_MAP
 
 # ========================================================================
 
@@ -389,22 +391,16 @@ class Parser:
     # ====================================================================
 
     def isType (self):
-        # <typeSpecifier> -> INTTYPE
-        return self.tokens[self.currentToken].type == 'TYPE_BYTE'   \
-            or self.tokens[self.currentToken].type == 'TYPE_CHAR'   \
-            or self.tokens[self.currentToken].type == 'TYPE_INT32'  \
-            or self.tokens[self.currentToken].type == 'TYPE_INT64'  \
-            or self.tokens[self.currentToken].type == 'TYPE_FLOAT32'\
-            or self.tokens[self.currentToken].type == 'TYPE_FLOAT64'\
-            or self.tokens[self.currentToken].type == 'TYPE_BOOL'   \
-            or self.tokens[self.currentToken].type == 'TYPE_VOID'
+        if not hasattr(self, '_type_token_set'):
+            self._type_token_set = set(TYPE_TOKEN_MAP.keys())
+        return self.tokens[self.currentToken].type in self._type_token_set
 
     # <typeSpecifier> -> TYPE_BYTE { '[' ']' }
     #                  | TYPE_CHAR { '[' ']' }
-    #                  | TYPE_INT32 { '[' ']' }
-    #                  | TYPE_INT64 { '[' ']' }
-    #                  | TYPE_FLOAT32 { '[' ']' }
-    #                  | TYPE_FLOAT64 { '[' ']' }
+    #                  | TYPE_I32 { '[' ']' }
+    #                  | TYPE_I64 { '[' ']' }
+    #                  | TYPE_F32 { '[' ']' }
+    #                  | TYPE_F64 { '[' ']' }
     #                  | TYPE_BOOL { '[' ']' }
     #                  | TYPE_VOID { '[' ']' }
     #                  | IDENTIFIER { '[' ']' }
@@ -415,38 +411,12 @@ class Parser:
         type = None
         temp = self.currentToken
 
-        # <typeSpecifier> -> TYPE_BOOL
-        if (self.tokens[self.currentToken].type == 'TYPE_BOOL'):
-            self.match ("typeSpecifier", 'TYPE_BOOL')
-            type = TypeSpecifierNode (Type.BOOL, "bool", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_BYTE
-        elif (self.tokens[self.currentToken].type == 'TYPE_BYTE'):
-            self.match ("typeSpecifier", 'TYPE_BYTE')
-            type = TypeSpecifierNode (Type.BYTE, "byte", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_CHAR
-        elif (self.tokens[self.currentToken].type == 'TYPE_CHAR'):
-            self.match ("typeSpecifier", 'TYPE_CHAR')
-            type = TypeSpecifierNode (Type.CHAR, "char", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_INT32
-        elif (self.tokens[self.currentToken].type == 'TYPE_INT32'):
-            self.match ("typeSpecifier", 'TYPE_INT32')
-            type = TypeSpecifierNode (Type.INT32, "int32", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_INT64
-        elif (self.tokens[self.currentToken].type == 'TYPE_INT64'):
-            self.match ("typeSpecifier", 'TYPE_INT64')
-            type = TypeSpecifierNode (Type.INT64, "int64", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_FLOAT32
-        elif (self.tokens[self.currentToken].type == 'TYPE_FLOAT32'):
-            self.match ("typeSpecifier", 'TYPE_FLOAT32')
-            type = TypeSpecifierNode (Type.FLOAT32, "float32", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_FLOAT64
-        elif (self.tokens[self.currentToken].type == 'TYPE_FLOAT64'):
-            self.match ("typeSpecifier", 'TYPE_FLOAT64')
-            type = TypeSpecifierNode (Type.FLOAT64, "float64", self.tokens[self.currentToken])
-        # <typeSpecifier> -> TYPE_VOID
-        elif (self.tokens[self.currentToken].type == 'TYPE_VOID'):
-            self.match ("typeSpecifier", 'TYPE_VOID')
-            type = TypeSpecifierNode (Type.VOID, "void", self.tokens[self.currentToken])
+        # Check if current token is a built-in type
+        token_type = self.tokens[self.currentToken].type
+        if token_type in TYPE_TOKEN_MAP:
+            enum_val, type_str = TYPE_TOKEN_MAP[token_type]
+            type = TypeSpecifierNode (enum_val, type_str, self.tokens[self.currentToken])
+            self.match ("typeSpecifier", token_type)
         # <typeSpecifier> -> IDENTIFIER
         elif (self.tokens[self.currentToken].type == 'IDENTIFIER'):
             type = TypeSpecifierNode (Type.USERTYPE, self.tokens[self.currentToken].lexeme, self.tokens[self.currentToken])
@@ -570,8 +540,8 @@ class Parser:
     # Global Variable Declaration
     # <globalVariable> -> GLOBAL <typeSpecifier> IDENTIFIER ( ASSIGN <literal> ) SEMI
     # Example:
-    # 1.  global int32 x;
-    # 2.  global int32 x = 10;
+    # 1.  global i32 x;
+    # 2.  global i32 x = 10;
 
     def globalVariableDeclaration (self):
         self.enter ("globalVariableDeclaration")

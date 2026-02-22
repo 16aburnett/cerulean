@@ -10,23 +10,12 @@ from sys import exit
 
 if __name__ == "ceruleanAST":
     from visitor import *
+    from types import Type
 else:
     from .visitor import *
+    from .types import Type
 
 # ========================================================================
-
-class Type(Enum):
-    BOOL     = 1
-    BYTE     = 2
-    CHAR     = 3
-    INT32    = 4
-    INT64    = 5
-    FLOAT32  = 6
-    FLOAT64  = 7
-    VOID     = 8
-    USERTYPE = 9
-    NULL     = 10
-    UNKNOWN  = 11
 
 class Security (Enum):
     PUBLIC = 1
@@ -1372,7 +1361,7 @@ class IntLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, token, value:int):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.INT32, "int32", None)
+        self.type = TypeSpecifierNode (Type.I32, "i32", None)
         self.token = token
         self.value = value
 
@@ -1392,7 +1381,7 @@ class FloatLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, token, value:float):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.FLOAT32, "float32", None)
+        self.type = TypeSpecifierNode (Type.F32, "f32", None)
         self.token = token
         self.value = value
 

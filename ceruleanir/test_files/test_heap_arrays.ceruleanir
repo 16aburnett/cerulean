@@ -2,28 +2,28 @@
 // Author: Amy Burnett
 //========================================================================
 
-function void @fill (ptr(%arr_ptr), int32(%N))
+function void @fill (ptr(%arr_ptr), i32(%N))
 {
     block entry {
-        %i_ptr = alloca (type(int32), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(0))
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
         jmp (block(for_cond))
     }
     block for_cond {
-        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
-        jge (int32(%i_curr), int32(%N), block(for_end))
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%N), block(for_end))
         jmp (block(for_body))
     }
     block for_body {
-        %i0 = load (type(int32), ptr(%i_ptr), int32(0))
-        %i1 = value (int32(%i0))
-        %i2 = mul (int32(%i0), int32(%i1))
-        store (ptr(%arr_ptr), int32(%i_curr), int32(%i2))
+        %i0 = load (type(i32), ptr(%i_ptr), i32(0))
+        %i1 = value (i32(%i0))
+        %i2 = mul (i32(%i0), i32(%i1))
+        store (ptr(%arr_ptr), i32(%i_curr), i32(%i2))
         jmp (block(for_update))
     }
     block for_update {
-        %i_next = add (int32(%i_curr), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
         jmp (block(for_cond))
     }
     block for_end {
@@ -32,26 +32,26 @@ function void @fill (ptr(%arr_ptr), int32(%N))
 }
 //========================================================================
 
-function void @print (ptr(%arr_ptr), int32(%N))
+function void @print (ptr(%arr_ptr), i32(%N))
 {
     block entry {
-        %i_ptr = alloca (type(int32), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(0))
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
         jmp (block(for_cond))
     }
     block for_cond {
-        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
-        jge (int32(%i_curr), int32(%N), block(for_end))
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%N), block(for_end))
         jmp (block(for_body))
     }
     block for_body {
-        %value = load (type(int32), ptr(%arr_ptr), int32(%i_curr))
-        call @__builtin__println__int32 (int32(%value))
+        %value = load (type(i32), ptr(%arr_ptr), i32(%i_curr))
+        call @__builtin__println__int32 (i32(%value))
         jmp (block(for_update))
     }
     block for_update {
-        %i_next = add (int32(%i_curr), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
         jmp (block(for_cond))
     }
     block for_end {
@@ -61,22 +61,22 @@ function void @print (ptr(%arr_ptr), int32(%N))
 
 //========================================================================
 
-function int32 @main ()
+function i32 @main ()
 {
     block entry {
         // Allocating memory on the heap via malloc instruction
-        %N = value (int32(10))
-        %arr_ptr = malloc (type(int32), int32(%N))
+        %N = value (i32(10))
+        %arr_ptr = malloc (type(i32), i32(%N))
 
         // Assignment to an array
-        call @fill (ptr(%arr_ptr), int32(%N))
+        call @fill (ptr(%arr_ptr), i32(%N))
 
         // Reading from memory
-        call @print (ptr(%arr_ptr), int32(%N))
+        call @print (ptr(%arr_ptr), i32(%N))
 
         // Free heap memory with the free instruction
         free (ptr(%arr_ptr))
 
-        return (int32(0))
+        return (i32(0))
     }
 }

@@ -8,6 +8,8 @@ from sys import exit
 import re
 import sys
 
+from backend.irTypes import TYPE_KEYWORDS
+
 # ========================================================================
 
 class Token(NamedTuple):
@@ -134,27 +136,9 @@ def tokenize(code, filename):
             pass
         # match keywords 
         elif kind == 'IDENTIFIER':
-            # PRIMITIVE TYPE IDENTIFIERS
-            if (lexeme == "byte"): # byte
-                kind = "TYPE_BYTE"
-            elif (lexeme == "char"): # char
-                kind = "TYPE_CHAR"
-            elif (lexeme == "int32"): # int
-                kind = "TYPE_INT32"
-            elif (lexeme == "int64"): # long int
-                kind = "TYPE_INT64"
-            elif (lexeme == "float32"): # float
-                kind = "TYPE_FLOAT32"
-            elif (lexeme == "float64"): # double
-                kind = "TYPE_FLOAT64"
-            elif (lexeme == "void"): # void - no type
-                kind = "TYPE_VOID"
-            elif (lexeme == "block"): # basic block
-                kind = "TYPE_BLOCK"
-            elif (lexeme == "type"): # type (typically for passing a type as a param)
-                kind = "TYPE_TYPE"
-            elif (lexeme == "ptr"): # pointers/addresses to memory
-                kind = "TYPE_PTR"
+            # PRIMITIVE TYPE IDENTIFIERS - use TYPE_KEYWORDS map
+            if lexeme in TYPE_KEYWORDS:
+                kind = TYPE_KEYWORDS[lexeme]
             # KEYWORDS
             elif (lexeme == "extern"):
                 kind = "EXTERN"

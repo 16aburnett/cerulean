@@ -1,6 +1,6 @@
 # Cerulean Compiler - x86 backend 
 # By Amy Burnett
-# April 11 2021
+# Feb 21, 2026
 # ========================================================================
 
 import os 
@@ -158,10 +158,16 @@ class IRGeneratorVisitor (ASTVisitor):
         elif node.type == Type.BOOL    : [type, name] = [irast.Type.BOOL, "bool"]
         elif node.type == Type.BYTE    : [type, name] = [irast.Type.BYTE, "byte"]
         elif node.type == Type.CHAR    : [type, name] = [irast.Type.CHAR, "char"]
-        elif node.type == Type.INT32   : [type, name] = [irast.Type.INT32, "int32"]
-        elif node.type == Type.INT64   : [type, name] = [irast.Type.INT64, "int64"]
-        elif node.type == Type.FLOAT32 : [type, name] = [irast.Type.FLOAT32, "float32"]
-        elif node.type == Type.FLOAT64 : [type, name] = [irast.Type.FLOAT64, "float64"]
+        elif node.type == Type.I8      : [type, name] = [irast.Type.I8, "i8"]
+        elif node.type == Type.I16     : [type, name] = [irast.Type.I16, "i16"]
+        elif node.type == Type.I32     : [type, name] = [irast.Type.I32, "i32"]
+        elif node.type == Type.I64     : [type, name] = [irast.Type.I64, "i64"]
+        elif node.type == Type.U8      : [type, name] = [irast.Type.U8, "u8"]
+        elif node.type == Type.U16     : [type, name] = [irast.Type.U16, "u16"]
+        elif node.type == Type.U32     : [type, name] = [irast.Type.U32, "u32"]
+        elif node.type == Type.U64     : [type, name] = [irast.Type.U64, "u64"]
+        elif node.type == Type.F32     : [type, name] = [irast.Type.F32, "f32"]
+        elif node.type == Type.F64     : [type, name] = [irast.Type.F64, "f64"]
         elif node.type == Type.VOID    : [type, name] = [irast.Type.VOID, "void"]
         elif node.type == Type.NULL    : [type, name] = [irast.Type.PTR, "ptr"]
         else                           : [type, name] = [irast.Type.UNKNOWN, "<unkown>"]
@@ -177,13 +183,13 @@ class IRGeneratorVisitor (ASTVisitor):
         # Use alloca to store on the stack to support reassignment
         ptrReg = irast.LocalVariableExpressionNode (f"%{node.id}.ptr", None, None, None)
         arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (ptrReg.id, None), "alloca", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
         # Store param's value to the stack
         offset = irast.IntLiteralExpressionNode (0)
         arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), ptrReg)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offset)
         arg2 = irast.ArgumentExpressionNode (irType, reg)
         instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
         self.containingBasicBlock.instructions += [instruction]
@@ -217,7 +223,7 @@ class IRGeneratorVisitor (ASTVisitor):
             reg = irast.LocalVariableExpressionNode (f"%{node.id}.ptr", node.token, None, None)
             # Use alloca to store on the stack to support reassignment
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), varIRType)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (reg.id, None), "alloca", [arg0, arg1])
             self.containingBasicBlock.instructions += [instruction]
             return reg
@@ -342,7 +348,7 @@ class IRGeneratorVisitor (ASTVisitor):
         # NOTE: No need to contain first if condition in a block
         # just add to current block
         condReg = node.cond.accept (self)
-        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
         # jump to next elif if there is one 
         if (len(node.elifs) > 0):
             falseBlockExpr = irast.BasicBlockExpressionNode (firstElifLabel, None, None, None)
@@ -352,8 +358,8 @@ class IRGeneratorVisitor (ASTVisitor):
         # no elif or else, jump to end of if-chain
         else:
             falseBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
-        # jcmp (int32(%cmp), block(if_body), block(<falseBlock>))
-        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        # jcmp (i32(%cmp), block(if_body), block(<falseBlock>))
+        condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
         bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
         bodyBlockExpr = irast.BasicBlockExpressionNode (ifBodyLabel, None, None, None)
         falseBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
@@ -393,7 +399,7 @@ class IRGeneratorVisitor (ASTVisitor):
             self.containingIRFunction.basicBlocks += [condBlock]
             self.containingBasicBlock = condBlock
             condReg = elifNode.cond.accept (self)
-            condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+            condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
             # jump to next elif if there is one 
             if (i+1 < len(node.elifs)):
                 nextElifLabel = f"elif_cond{ifIndex}x{elifIndex+1}"
@@ -404,8 +410,8 @@ class IRGeneratorVisitor (ASTVisitor):
             # no elif or else, jump to end of if-chain
             else:
                 falseBlockExpr = irast.BasicBlockExpressionNode (ifEndLabel, None, None, None)
-            # jcmp (int32(%cmp), block(elif_body), block(<falseBlock>))
-            condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+            # jcmp (i32(%cmp), block(elif_body), block(<falseBlock>))
+            condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
             bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
             bodyBlockExpr = irast.BasicBlockExpressionNode (elifBodyLabel, None, None, None)
             falseBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
@@ -502,7 +508,7 @@ class IRGeneratorVisitor (ASTVisitor):
         self.containingBasicBlock = condBlock
         condReg = node.cond.accept (self)
         # jump to body or end based on loop condition
-        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
         bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
         bodyBlockExpr = irast.BasicBlockExpressionNode (bodyLabel, None, None, None)
         endBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
@@ -571,9 +577,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.containingIRFunction.basicBlocks += [condBlock]
         self.containingBasicBlock = condBlock
         condReg = node.cond.accept (self)
-        condRegType = irast.TypeSpecifierNode (irast.Type.INT32, "int32", None)
+        condRegType = irast.TypeSpecifierNode (irast.Type.I32, "i32", None)
         # jump to body or end based on loop condition
-        # jcmp (int32(%cond), block(while_body), block(while_end))
+        # jcmp (i32(%cond), block(while_body), block(while_end))
         bodyBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
         bodyBlockExpr = irast.BasicBlockExpressionNode (bodyLabel, None, None, None)
         endBlockExprType = irast.TypeSpecifierNode (irast.Type.BLOCK, "block", None)
@@ -712,11 +718,11 @@ class IRGeneratorVisitor (ASTVisitor):
         # Read lhs if we need it
         if (node.token.type != "ASSIGN"):
             if isMem:
-                # %lhsValue = load (type(<type>), ptr(<lhs>), int32(<offset>))
+                # %lhsValue = load (type(<type>), ptr(<lhs>), i32(<offset>))
                 lhsValueReg = self.newLocalReg ()
                 arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
                 arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-                arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+                arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
                 instruction = irast.InstructionNode (irast.VariableDeclarationNode (lhsValueReg.id, None), "load", [arg0, arg1, arg2])
                 self.containingBasicBlock.instructions += [instruction]
             else:
@@ -765,7 +771,7 @@ class IRGeneratorVisitor (ASTVisitor):
         # Perform assign
         if isMem:
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             arg2 = irast.ArgumentExpressionNode (irType, resultReg)
             instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -779,8 +785,8 @@ class IRGeneratorVisitor (ASTVisitor):
     def visitLogicalOrExpressionNode (self, node):
         # Cerulean  : lhs || rhs
         # CeruleanIR: <eval_lhs>
-        #             %lorLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
-        #             %lorResult.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
+        #             %lorLHSResult = cne (i32(lhs_reg), i32(0)) // is lhs not 0 (aka true)
+        #             %lorResult.ptr = alloca (type(i32), i32(1)) // need to allocate on the stack since double assign
         #             store (ptr(%lorResult.ptr), int32(0), int32(%lorLHSResult))
         #             jcmp (int32(%lorLHSResult), block(lor_end0), block(lor_rhs0)) // skip rhs of lor if true
         #          lor_rhs0:
@@ -804,29 +810,29 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %lorLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
         lorLHSResult = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorLHSResult.id, None), "cne", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lhsReg),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Alloca space for result
         #             %lorResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
         lorResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.token, None, None)
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorResultPtr.id, None), "alloca", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (1))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (1))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Set result to LHS
         #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorLHSResult))
         instruction = irast.InstructionNode (None, "store", [
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorLHSResult)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), lorLHSResult)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jcmp (int32(%lorLHSResult), block(lor_end0), block(lor_rhs0)) // skip rhs of lor if true
         instruction = irast.InstructionNode (None, "jcmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), lorLHSResult),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (rhsLabel, None, None, None))
         ])
@@ -840,14 +846,14 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %lorRHSResult = value (int32(rhs_reg))
         lorRHSResultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (lorRHSResultReg.id, None), "value", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), rhsReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), rhsReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             store (ptr(%lorResult0.ptr), int32(0), int32(%lorRHSResult))
         instruction = irast.InstructionNode (None, "store", [
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lorRHSResultReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), lorRHSResultReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jmp (block(lor_end0))
@@ -862,9 +868,9 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %result = load (type(int32), ptr(%lorResult.ptr), int32(0))
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token)),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), lorResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             // return %result
@@ -898,29 +904,29 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %landLHSResult = cne (int32(lhs_reg), int32(0)) // is lhs not 0 (aka true)
         landLHSResult = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landLHSResult.id, None), "cne", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), lhsReg),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), lhsReg),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Alloca space for result
         #             %landResult0.ptr = alloca (type(int32), int32(1)) // need to allocate on the stack since double assign
         landResultPtr = irast.LocalVariableExpressionNode (resultPtrName, node.token, None, None)
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landResultPtr.id, None), "alloca", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (1))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (1))
         ])
         self.containingBasicBlock.instructions += [instruction]
         # Set result to LHS
         #             store (ptr(%landResult0.ptr), int32(0), int32(%landLHSResult))
         instruction = irast.InstructionNode (None, "store", [
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landLHSResult)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), landLHSResult)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jcmp (int32(%landLHSResult), block(land_rhs0), block(land_end0)) // run rhs IFF lhs is true
         instruction = irast.InstructionNode (None, "jcmp", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landLHSResult),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), landLHSResult),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (rhsLabel, None, None, None)),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.BLOCK, "block", node.token), irast.BasicBlockExpressionNode (endLabel, None, None, None)),
         ])
@@ -934,14 +940,14 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %landRHSResult = value (int32(rhs_reg))
         landRHSResultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (landRHSResultReg.id, None), "value", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), rhsReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), rhsReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             store (ptr(%landResult0.ptr), int32(0), int32(%landRHSResult))
         instruction = irast.InstructionNode (None, "store", [
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0)),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), landRHSResultReg)
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), landRHSResultReg)
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             jmp (block(land_end0))
@@ -956,9 +962,9 @@ class IRGeneratorVisitor (ASTVisitor):
         #             %result = load (type(int32), ptr(%landResult.ptr), int32(0))
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token)),
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", node.token), irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token)),
             irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", node.token), landResultPtr),
-            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", node.token), irast.IntLiteralExpressionNode (0))
+            irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", node.token), irast.IntLiteralExpressionNode (0))
         ])
         self.containingBasicBlock.instructions += [instruction]
         #             // return %result
@@ -1094,7 +1100,7 @@ class IRGeneratorVisitor (ASTVisitor):
             rhsValueReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
-            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (rhsValueReg.id, None), "load", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
         else:
@@ -1103,14 +1109,14 @@ class IRGeneratorVisitor (ASTVisitor):
         # Perform increment
         resultReg = self.newLocalReg ()
         arg0 = irast.ArgumentExpressionNode (irType, rhsValueReg)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "add", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
 
         # Write back value
         if isMem:
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             arg2 = irast.ArgumentExpressionNode (irType, resultReg)
             instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -1182,7 +1188,7 @@ class IRGeneratorVisitor (ASTVisitor):
             rhsValueReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
-            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (rhsValueReg.id, None), "load", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
         else:
@@ -1191,14 +1197,14 @@ class IRGeneratorVisitor (ASTVisitor):
         # Perform decrement
         resultReg = self.newLocalReg ()
         arg0 = irast.ArgumentExpressionNode (irType, rhsValueReg)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "sub", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
 
         # Write back value
         if isMem:
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), rhsReg)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             arg2 = irast.ArgumentExpressionNode (irType, resultReg)
             instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -1300,7 +1306,7 @@ class IRGeneratorVisitor (ASTVisitor):
             lhsValueReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (lhsValueReg.id, None), "load", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
         else:
@@ -1309,14 +1315,14 @@ class IRGeneratorVisitor (ASTVisitor):
         # Perform increment
         resultReg = self.newLocalReg ()
         arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "add", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
 
         # Write back value
         if isMem:
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             arg2 = irast.ArgumentExpressionNode (irType, resultReg)
             instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -1388,7 +1394,7 @@ class IRGeneratorVisitor (ASTVisitor):
             lhsValueReg = self.newLocalReg ()
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE, "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (lhsValueReg.id, None), "load", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
         else:
@@ -1397,14 +1403,14 @@ class IRGeneratorVisitor (ASTVisitor):
         # Perform decrement
         resultReg = self.newLocalReg ()
         arg0 = irast.ArgumentExpressionNode (irType, lhsValueReg)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), irast.IntLiteralExpressionNode (1))
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), irast.IntLiteralExpressionNode (1))
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "sub", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]
 
         # Write back value
         if isMem:
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR, "ptr", None), lhsReg)
-            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+            arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
             arg2 = irast.ArgumentExpressionNode (irType, resultReg)
             instruction = irast.InstructionNode (None, "store", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -1422,7 +1428,7 @@ class IRGeneratorVisitor (ASTVisitor):
         offsetReg = node.offset.accept (self)
         arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), irType)
         arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR  , "ptr", None), ptrReg)
-        arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offsetReg)
+        arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offsetReg)
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [arg0, arg1, arg2])
         self.containingBasicBlock.instructions += [instruction]
@@ -1617,7 +1623,7 @@ class IRGeneratorVisitor (ASTVisitor):
             offset = irast.IntLiteralExpressionNode (0)
             arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), irType)
             arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.PTR  , "ptr", None), ptr)
-            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), offset)
+            arg2 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), offset)
             resultReg = self.newLocalReg ()
             instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "load", [arg0, arg1, arg2])
             self.containingBasicBlock.instructions += [instruction]
@@ -1629,7 +1635,7 @@ class IRGeneratorVisitor (ASTVisitor):
         elementType = node.elementType.accept (self)
         sizeReg = node.sizeExpr.accept (self)
         arg0 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.TYPE , "type", None), elementType)
-        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.INT32, "int32", None), sizeReg)
+        arg1 = irast.ArgumentExpressionNode (irast.TypeSpecifierNode (irast.Type.I32, "i32", None), sizeReg)
         resultReg = self.newLocalReg ()
         instruction = irast.InstructionNode (irast.VariableDeclarationNode (resultReg.id, None), "malloc", [arg0, arg1])
         self.containingBasicBlock.instructions += [instruction]

@@ -2,10 +2,10 @@
 letsgoooo:
 string_addr:
     .ascii "Hello, World!\n"
-    .float32 3.1415
-    .int64 1337
+    .f32 3.1415
+    .i64 1337
     .addr main
-    .int8 16
+    .i8 16
 
 // This should be correctly aligned, despite above not ending at a 32bit alignment
     @global main

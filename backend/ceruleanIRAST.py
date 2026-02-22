@@ -1,6 +1,5 @@
 # Cerulean IR Compiler - Abstract Syntax Tree
 # By Amy Burnett
-# April 24 2021
 # ========================================================================
 
 # for abstract classes 
@@ -9,23 +8,7 @@ from enum import Enum
 from sys import exit
 
 from .visitor import *
-
-# ========================================================================
-
-class Type(Enum):
-    BOOL     = 0
-    BYTE     = 1
-    CHAR     = 2
-    INT32    = 3
-    INT64    = 4
-    FLOAT32  = 5
-    FLOAT64  = 6
-    VOID     = 7
-    BLOCK    = 8
-    TYPE     = 9
-    PTR      = 10
-    UNKNOWN  = 11
-    USERTYPE = 12 # SHOULD NOT BE USED - YET
+from .irTypes import Type
 
 # ========================================================================
 
@@ -411,7 +394,7 @@ class IntLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, value:int):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.INT32, "int32", None)
+        self.type = TypeSpecifierNode (Type.I32, "i32", None)
         self.value = value
 
         self.lineNumber = 0
@@ -430,7 +413,7 @@ class FloatLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, value:float):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.FLOAT32, "float32", None)
+        self.type = TypeSpecifierNode (Type.F32, "f32", None)
         self.value = value
 
         self.lineNumber = 0

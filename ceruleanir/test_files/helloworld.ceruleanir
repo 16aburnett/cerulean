@@ -5,29 +5,29 @@
 // You can specify static global info outside of functions
 // global variables are denoted by the @ symbol
 global @customary_greeting = value (ptr("Hello, World!"))
-global @length = value (int32(14))
+global @length = value (i32(14))
 
 //========================================================================
 
-function void @print_greeting (ptr(%greeting), int32(%length)) {
+function void @print_greeting (ptr(%greeting), i32(%length)) {
     block entry {
-        %i_ptr = alloca (type(int32), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(0))
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
         jmp (block(for_cond))
     }
     block for_cond {
-        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
-        jge (int32(%i_curr), int32(%length), block(for_end))
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%length), block(for_end))
         jmp (block(for_body))
     }
     block for_body {
-        %char = load (type(char), ptr(%greeting), int32(%i_curr))
+        %char = load (type(char), ptr(%greeting), i32(%i_curr))
         call @__builtin__print__char (char(%char))
         jmp (block(for_update))
     }
     block for_update {
-        %i_next = add (int32(%i_curr), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
         jmp (block(for_cond))
     }
     block for_end {
@@ -38,11 +38,11 @@ function void @print_greeting (ptr(%greeting), int32(%length)) {
 
 //========================================================================
 
-function int32 @main () {
+function i32 @main () {
     block entry {
-        %0 = load (type(ptr), ptr(@customary_greeting), int32(0))
-        %1 = load (type(ptr), ptr(@length), int32(0))
-        call @print_greeting (ptr(%0), int32(%1))
-        return (int32(0))
+        %0 = load (type(ptr), ptr(@customary_greeting), i32(0))
+        %1 = load (type(ptr), ptr(@length), i32(0))
+        call @print_greeting (ptr(%0), i32(%1))
+        return (i32(0))
     }
 }

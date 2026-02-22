@@ -1,8 +1,8 @@
 
 
-function int32 main () {
+function i32 main () {
     // For-loops are identical to C/C++ for-loops
-    for (int32 i = 0; i < 10; i = i + 1)
+    for (i32 i = 0; i < 10; i = i + 1)
     {
         print (i);
         print (' ');
@@ -10,7 +10,7 @@ function int32 main () {
     println ();
 
     // Using a different loop variable since scoping is not implemented yet
-    for (int32 j = 0; j < 10; j = j + 1)
+    for (i32 j = 0; j < 10; j = j + 1)
     {
         print (j);
         print (' ');
@@ -18,7 +18,7 @@ function int32 main () {
     println ();
 
     // While-loops are also identical to C/C++ while-loops
-    int32 k = 0;
+    i32 k = 0;
     while (k < 10) {
         print (k);
         print (' ');
@@ -27,10 +27,10 @@ function int32 main () {
     println ();
 
     // Nested loops
-    int32 N = 10;
-    for (int32 x = 0; x < N; x = x + 1)
+    i32 N = 10;
+    for (i32 x = 0; x < N; x = x + 1)
     {
-        for (int32 y = 0; y < N; y = y + 1)
+        for (i32 y = 0; y < N; y = y + 1)
         {
             if (x == y)
                 print ('.');
@@ -45,7 +45,7 @@ function int32 main () {
 
     // Continue statement
     println ("Continue when x is even:");
-    for (int32 a = 0; a < 10; a = a + 1)
+    for (i32 a = 0; a < 10; a = a + 1)
     {
         if (a % 2 == 0)
             continue;
@@ -56,7 +56,7 @@ function int32 main () {
 
     // Continue statement + infinite while loop condition
     println ("Break when x > 5:");
-    int32 b = 0;
+    i32 b = 0;
     while (1)
     {
         if (b > 5)
