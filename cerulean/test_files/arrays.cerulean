@@ -2,19 +2,19 @@
 // Author: Amy Burnett
 //========================================================================
 
-function void fill (int32[] array, int32 N, int32 value)
+function void fill (i32[] array, i32 N, i32 value)
 {
-    for (int32 i = 0; i < N; i = i + 1)
+    for (i32 i = 0; i < N; i = i + 1)
         array[i] = i * value;
 }
 
 //========================================================================
 
-function void print (int32[] array, int32 N)
+function void print (i32[] array, i32 N)
 {
     print ("[");
     print (array[0]);
-    for (int32 i = 1; i < N; i = i + 1)
+    for (i32 i = 1; i < N; i = i + 1)
     {
         print (", ");
         print (array[i]);
@@ -24,11 +24,11 @@ function void print (int32[] array, int32 N)
 
 //========================================================================
 
-function int32 main ()
+function i32 main ()
 {
     // Allocating arrays on the heap
-    int32 N = 10;
-    int32[] values = heapalloc (int32, N);
+    i32 N = 10;
+    i32[] values = heapalloc (i32, N);
 
     // Assign array values
     fill (values, N, 7);

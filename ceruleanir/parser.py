@@ -287,10 +287,10 @@ class Parser:
         return self.tokens[self.currentToken].type in self._type_token_set
 
     # <typeSpecifier> -> TYPE_BYTE
-    #                  | TYPE_INT32
-    #                  | TYPE_INT64
-    #                  | TYPE_FLOAT32
-    #                  | TYPE_FLOAT64
+    #                  | TYPE_I32
+    #                  | TYPE_I64
+    #                  | TYPE_F32
+    #                  | TYPE_F64
     #                  | TYPE_VOID
     #                  | TYPE_BLOCK
     #                  | TYPE_TYPE

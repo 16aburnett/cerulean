@@ -1,12 +1,12 @@
 
 struct Point
 {
-    float32 x;
-    float32 y;
-    float32 z;
+    f32 x;
+    f32 y;
+    f32 z;
 }
 
-function int32 main ()
+function i32 main ()
 {
     Point p = Point {x: 1.0, y: 2.0, z: 3.14};
     return 0;

@@ -397,10 +397,10 @@ class Parser:
 
     # <typeSpecifier> -> TYPE_BYTE { '[' ']' }
     #                  | TYPE_CHAR { '[' ']' }
-    #                  | TYPE_INT32 { '[' ']' }
-    #                  | TYPE_INT64 { '[' ']' }
-    #                  | TYPE_FLOAT32 { '[' ']' }
-    #                  | TYPE_FLOAT64 { '[' ']' }
+    #                  | TYPE_I32 { '[' ']' }
+    #                  | TYPE_I64 { '[' ']' }
+    #                  | TYPE_F32 { '[' ']' }
+    #                  | TYPE_F64 { '[' ']' }
     #                  | TYPE_BOOL { '[' ']' }
     #                  | TYPE_VOID { '[' ']' }
     #                  | IDENTIFIER { '[' ']' }
@@ -540,8 +540,8 @@ class Parser:
     # Global Variable Declaration
     # <globalVariable> -> GLOBAL <typeSpecifier> IDENTIFIER ( ASSIGN <literal> ) SEMI
     # Example:
-    # 1.  global int32 x;
-    # 2.  global int32 x = 10;
+    # 1.  global i32 x;
+    # 2.  global i32 x = 10;
 
     def globalVariableDeclaration (self):
         self.enter ("globalVariableDeclaration")

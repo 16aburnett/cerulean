@@ -1361,7 +1361,7 @@ class IntLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, token, value:int):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.INT32, "int32", None)
+        self.type = TypeSpecifierNode (Type.I32, "i32", None)
         self.token = token
         self.value = value
 
@@ -1381,7 +1381,7 @@ class FloatLiteralExpressionNode (ExpressionNode):
 
     def __init__(self, token, value:float):
         super ().__init__ ()
-        self.type = TypeSpecifierNode (Type.FLOAT32, "float32", None)
+        self.type = TypeSpecifierNode (Type.F32, "f32", None)
         self.token = token
         self.value = value
 

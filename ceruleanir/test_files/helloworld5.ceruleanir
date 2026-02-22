@@ -7,15 +7,15 @@
 // Forward Declarations - Functions that are defined outside this file
 
 // Need to decide on forward declaration syntax - should have a special keyword
-extern function void @println_string (ptr(%string_ptr), int32(%string_length));
+extern function void @println_string (ptr(%string_ptr), i32(%string_length));
 
 //========================================================================
 
-function int32 @main () {
+function i32 @main () {
     block entry {
         %greeting = value (ptr("Hello, World!"))
-        %length = value(int32(13))
-        call @println_string (ptr(%greeting), int32(%length))
-        return (int32(0))
+        %length = value(i32(13))
+        call @println_string (ptr(%greeting), i32(%length))
+        return (i32(0))
     }
 }

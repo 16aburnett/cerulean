@@ -3,25 +3,25 @@
 // Author: Amy Burnett
 //========================================================================
 
-function void @print_test_name (ptr(%name), int32(%length)) {
+function void @print_test_name (ptr(%name), i32(%length)) {
     block entry {
-        %i_ptr = alloca (type(int32), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(0))
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
         jmp (block(for_cond))
     }
     block for_cond {
-        %i_curr = load (type(int32), ptr(%i_ptr), int32(0))
-        jge (int32(%i_curr), int32(%length), block(for_end))
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%length), block(for_end))
         jmp (block(for_body))
     }
     block for_body {
-        %char = load (type(char), ptr(%name), int32(%i_curr))
+        %char = load (type(char), ptr(%name), i32(%i_curr))
         call @__builtin__print__char (char(%char))
         jmp (block(for_update))
     }
     block for_update {
-        %i_next = add (int32(%i_curr), int32(1))
-        store (ptr(%i_ptr), int32(0), int32(%i_next))
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
         jmp (block(for_cond))
     }
     block for_end {
@@ -57,9 +57,9 @@ function void @print_fail () {
 
 //========================================================================
 
-function void @assert_true (int32(%value)) {
+function void @assert_true (i32(%value)) {
     block entry {
-        jne (int32(%value), int32(0), block(pass))
+        jne (i32(%value), i32(0), block(pass))
         jmp (block(fail))
     }
     block pass {
@@ -78,35 +78,35 @@ function void @test_unsigned_division_modulo () {
     block entry {
         // Test: unsigned 10 / 3 = 3
         %test_name0 = value (ptr("Test: unsigned 10 / 3 =          "))
-        call @print_test_name (ptr(%test_name0), int32(33))
-        %a = value (uint32(10))
-        %b = value (uint32(3))
-        %quot_u = div (uint32(%a), uint32(%b))
-        %test1 = ceq (uint32(%quot_u), uint32(3))
-        call @assert_true (int32(%test1))
+        call @print_test_name (ptr(%test_name0), i32(33))
+        %a = value (u32(10))
+        %b = value (u32(3))
+        %quot_u = div (u32(%a), u32(%b))
+        %test1 = ceq (u32(%quot_u), u32(3))
+        call @assert_true (i32(%test1))
         
         // Test: unsigned 10 % 3 = 1
         %test_name1 = value (ptr("Test: unsigned 10 % 3 =          "))
-        call @print_test_name (ptr(%test_name1), int32(33))
-        %rem_u = mod (uint32(%a), uint32(%b))
-        %test2 = ceq (uint32(%rem_u), uint32(1))
-        call @assert_true (int32(%test2))
+        call @print_test_name (ptr(%test_name1), i32(33))
+        %rem_u = mod (u32(%a), u32(%b))
+        %test2 = ceq (u32(%rem_u), u32(1))
+        call @assert_true (i32(%test2))
         
         // Test: signed 10 / 3 = 3
         %test_name2 = value (ptr("Test: signed 10 / 3 =            "))
-        call @print_test_name (ptr(%test_name2), int32(33))
-        %c = value (int32(10))
-        %d = value (int32(3))
-        %quot_s = div (int32(%c), int32(%d))
-        %test3 = ceq (int32(%quot_s), int32(3))
-        call @assert_true (int32(%test3))
+        call @print_test_name (ptr(%test_name2), i32(33))
+        %c = value (i32(10))
+        %d = value (i32(3))
+        %quot_s = div (i32(%c), i32(%d))
+        %test3 = ceq (i32(%quot_s), i32(3))
+        call @assert_true (i32(%test3))
         
         // Test: signed 10 % 3 = 1
         %test_name3 = value (ptr("Test: signed 10 % 3 =            "))
-        call @print_test_name (ptr(%test_name3), int32(33))
-        %rem_s = mod (int32(%c), int32(%d))
-        %test4 = ceq (int32(%rem_s), int32(1))
-        call @assert_true (int32(%test4))
+        call @print_test_name (ptr(%test_name3), i32(33))
+        %rem_s = mod (i32(%c), i32(%d))
+        %test4 = ceq (i32(%rem_s), i32(1))
+        call @assert_true (i32(%test4))
         
         return ()
     }
@@ -118,36 +118,36 @@ function void @test_unsigned_comparisons () {
     block entry {
         // Test: unsigned 10 < 4294967290 should be true
         %test_name4 = value (ptr("Test: unsigned 10 < 4294967290 = "))
-        call @print_test_name (ptr(%test_name4), int32(33))
-        %a = value (uint32(4294967290))
-        %b = value (uint32(10))
-        %cmp_u = clt (uint32(%b), uint32(%a))
-        call @assert_true (int32(%cmp_u))
+        call @print_test_name (ptr(%test_name4), i32(33))
+        %a = value (u32(4294967290))
+        %b = value (u32(10))
+        %cmp_u = clt (u32(%b), u32(%a))
+        call @assert_true (i32(%cmp_u))
         
         // Test: signed 10 > -6 should be true
         %test_name5 = value (ptr("Test: signed 10 > -6 =            "))
-        call @print_test_name (ptr(%test_name5), int32(33))
-        %c = value (int32(10))
-        %zero = value (int32(0))
-        %six = value (int32(6))
-        %d = sub (int32(%zero), int32(%six))  // 0 - 6 = -6
-        %cmp_s = cgt (int32(%c), int32(%d))
-        call @assert_true (int32(%cmp_s))
+        call @print_test_name (ptr(%test_name5), i32(33))
+        %c = value (i32(10))
+        %zero = value (i32(0))
+        %six = value (i32(6))
+        %d = sub (i32(%zero), i32(%six))  // 0 - 6 = -6
+        %cmp_s = cgt (i32(%c), i32(%d))
+        call @assert_true (i32(%cmp_s))
         
         // Test: unsigned branch (bltu)
         %test_name6 = value (ptr("Test: unsigned branch =          "))
-        call @print_test_name (ptr(%test_name6), int32(33))
-        %branch_result = value (int32(0))
-        jl (uint32(%b), uint32(%a), block(unsigned_branch))
+        call @print_test_name (ptr(%test_name6), i32(33))
+        %branch_result = value (i32(0))
+        jl (u32(%b), u32(%a), block(unsigned_branch))
         jmp (block(branch_end))
     }
     block unsigned_branch {
-        %branch_result2 = value (int32(1))
-        call @assert_true (int32(%branch_result2))
+        %branch_result2 = value (i32(1))
+        call @assert_true (i32(%branch_result2))
         return ()
     }
     block branch_end {
-        call @assert_true (int32(%branch_result))
+        call @assert_true (i32(%branch_result))
         return ()
     }
 }
@@ -156,47 +156,47 @@ function void @test_unsigned_comparisons () {
 
 function void @test_load_store_signedness () {
     block entry {
-        %ptr = alloca (type(uint8), int32(100))
+        %ptr = alloca (type(u8), i32(100))
         
         // Test: char zero-extension (255 -> 255)
         %test_name7 = value (ptr("Test: char zero-extension =      "))
-        call @print_test_name (ptr(%test_name7), int32(33))
+        call @print_test_name (ptr(%test_name7), i32(33))
         %char_val = value (char(255))
-        store (ptr(%ptr), int32(0), char(%char_val))
-        %loaded_char = load (type(char), ptr(%ptr), int32(0))
+        store (ptr(%ptr), i32(0), char(%char_val))
+        %loaded_char = load (type(char), ptr(%ptr), i32(0))
         %test1 = ceq (char(%loaded_char), char(255))
-        call @assert_true (int32(%test1))
+        call @assert_true (i32(%test1))
         
-        // Test: uint8 zero-extension (255 -> 255)
-        %test_name8 = value (ptr("Test: uint8 zero-extension =     "))
-        call @print_test_name (ptr(%test_name8), int32(33))
-        %uint8_val = value (uint8(255))
-        store (ptr(%ptr), int32(1), uint8(%uint8_val))
-        %loaded_uint8 = load (type(uint8), ptr(%ptr), int32(1))
-        %test2 = ceq (uint8(%loaded_uint8), uint8(255))
-        call @assert_true (int32(%test2))
+        // Test: u8 zero-extension (255 -> 255)
+        %test_name8 = value (ptr("Test: u8 zero-extension =        "))
+        call @print_test_name (ptr(%test_name8), i32(33))
+        %uint8_val = value (u8(255))
+        store (ptr(%ptr), i32(1), u8(%uint8_val))
+        %loaded_uint8 = load (type(u8), ptr(%ptr), i32(1))
+        %test2 = ceq (u8(%loaded_uint8), u8(255))
+        call @assert_true (i32(%test2))
         
-        // Test: uint16 zero-extension (65535 -> 65535)
-        %test_name9 = value (ptr("Test: uint16 zero-extension =    "))
-        call @print_test_name (ptr(%test_name9), int32(33))
-        %uint16_val = value (uint16(65535))
-        store (ptr(%ptr), int32(2), uint16(%uint16_val))
-        %loaded_uint16 = load (type(uint16), ptr(%ptr), int32(2))
-        %test3 = ceq (uint16(%loaded_uint16), uint16(65535))
-        call @assert_true (int32(%test3))
+        // Test: u16 zero-extension (65535 -> 65535)
+        %test_name9 = value (ptr("Test: u16 zero-extension =       "))
+        call @print_test_name (ptr(%test_name9), i32(33))
+        %uint16_val = value (u16(65535))
+        store (ptr(%ptr), i32(2), u16(%uint16_val))
+        %loaded_uint16 = load (type(u16), ptr(%ptr), i32(2))
+        %test3 = ceq (u16(%loaded_uint16), u16(65535))
+        call @assert_true (i32(%test3))
         
-        // Test: int8 sign-extension
-        // Store 0xFF (255) and load as int8 (should be -1)
-        %test_name10 = value (ptr("Test: int8 sign-extension =      "))
-        call @print_test_name (ptr(%test_name10), int32(33))
-        %byte_255 = value (uint8(255))
-        store (ptr(%ptr), int32(10), uint8(%byte_255))
-        %loaded_int8 = load (type(int8), ptr(%ptr), int32(10))
-        %zero_i8 = value (int8(0))
-        %one_i8 = value (int8(1))
-        %int8_neg1 = sub (int8(%zero_i8), int8(%one_i8))  // 0 - 1 = -1
-        %test4 = ceq (int8(%loaded_int8), int8(%int8_neg1))
-        call @assert_true (int32(%test4))
+        // Test: i8 sign-extension
+        // Store 0xFF (255) and load as i8 (should be -1)
+        %test_name10 = value (ptr("Test: i8 sign-extension =        "))
+        call @print_test_name (ptr(%test_name10), i32(33))
+        %byte_255 = value (u8(255))
+        store (ptr(%ptr), i32(10), u8(%byte_255))
+        %loaded_int8 = load (type(i8), ptr(%ptr), i32(10))
+        %zero_i8 = value (i8(0))
+        %one_i8 = value (i8(1))
+        %int8_neg1 = sub (i8(%zero_i8), i8(%one_i8))  // 0 - 1 = -1
+        %test4 = ceq (i8(%loaded_int8), i8(%int8_neg1))
+        call @assert_true (i32(%test4))
         
         return ()
     }
@@ -204,12 +204,12 @@ function void @test_load_store_signedness () {
 
 //========================================================================
 
-function int32 @main () {
+function i32 @main () {
     block entry {
         call @test_unsigned_division_modulo ()
         call @test_unsigned_comparisons ()
         call @test_load_store_signedness ()
         
-        return (int32(0))
+        return (i32(0))
     }
 }

@@ -2,7 +2,7 @@
 // Author: Amy Burnett
 //========================================================================
 
-function int32 @main () {
+function i32 @main () {
     block entry {
         %char0 = value (char('H'))
         call @__builtin__print__char (char(%char0))
@@ -32,6 +32,6 @@ function int32 @main () {
         call @__builtin__print__char (char(%char12))
         %char13 = value (char('\n'))
         call @__builtin__print__char (char(%char13))
-        return (int32(0))
+        return (i32(0))
     }
 }

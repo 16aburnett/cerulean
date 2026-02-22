@@ -1,8 +1,8 @@
-float32 pie = 3.14;
-function int32 main () {
-    int32 x = 1 + 2;
+f32 pie = 3.14;
+function i32 main () {
+    i32 x = 1 + 2;
     println (x);
-    int32 y = x * 10;
+    i32 y = x * 10;
     println (y);
     y = y = (x + y) % 3;
     pie = 13.37;

@@ -49,8 +49,8 @@ allCeruleanTests = TestGroup ("All Cerulean Tests", "", [
                 Test (
                     "Test0", 
                     code="""function void main(){
-int32 x = (-17 + 42 * (2 + 2) + 1) * -1;
-int32 y = x * 23;
+i32 x = (-17 + 42 * (2 + 2) + 1) * -1;
+i32 y = x * 23;
 print (y);
 }""", 
                     expectedOutput="-3496",
@@ -60,17 +60,17 @@ print (y);
         ])
     ]),
     TestGroup ("Variables", "", [
-        Test ("Declaration", code="function void main(){int32 x; int32 y = 10;}", expectedOutput="", sourceLang=TestSource.Cerulean),
-        Test ("Assignment", code="function void main(){int32 x = 10;}", expectedOutput="", sourceLang=TestSource.Cerulean),
-        Test ("Variable value", code="function void main(){float32 x = 3.14;print(x);}", expectedOutput="3.14", sourceLang=TestSource.Cerulean),
-        Test ("Arithmetic With Variables", code="function void main(){int32 x = 30; int32 y = 42; print ((x + y) / 8);}", expectedOutput="9", sourceLang=TestSource.Cerulean),
-        Test ("Reassign Variables", code="function void main(){int32 x = 10; x = 42; print(x);}", expectedOutput="42", sourceLang=TestSource.Cerulean),
-        Test ("Ensure reference before assignment fails", code="function void main(){int32 x; print (x);}", shouldCompile=False, expectedCompilerOutput="", sourceLang=TestSource.Cerulean),
+        Test ("Declaration", code="function void main(){i32 x; i32 y = 10;}", expectedOutput="", sourceLang=TestSource.Cerulean),
+        Test ("Assignment", code="function void main(){i32 x = 10;}", expectedOutput="", sourceLang=TestSource.Cerulean),
+        Test ("Variable value", code="function void main(){f32 x = 3.14;print(x);}", expectedOutput="3.14", sourceLang=TestSource.Cerulean),
+        Test ("Arithmetic With Variables", code="function void main(){i32 x = 30; i32 y = 42; print ((x + y) / 8);}", expectedOutput="9", sourceLang=TestSource.Cerulean),
+        Test ("Reassign Variables", code="function void main(){i32 x = 10; x = 42; print(x);}", expectedOutput="42", sourceLang=TestSource.Cerulean),
+        Test ("Ensure reference before assignment fails", code="function void main(){i32 x; print (x);}", shouldCompile=False, expectedCompilerOutput="", sourceLang=TestSource.Cerulean),
     ]),
     TestGroup ("Misc", "", [
-        Test ("Test0", code="function void main(){int32 x = 10;print (x);}", expectedOutput="10", sourceLang=TestSource.Cerulean),
-        Test ("Test1", code="function void main(){int32 x = 10;print (x+2);}", expectedOutput="12", sourceLang=TestSource.Cerulean),
-        Test ("Test2", code="function void main(){int32 x = 10;print (x*2);}", expectedOutput="20", sourceLang=TestSource.Cerulean),
+        Test ("Test0", code="function void main(){i32 x = 10;print (x);}", expectedOutput="10", sourceLang=TestSource.Cerulean),
+        Test ("Test1", code="function void main(){i32 x = 10;print (x+2);}", expectedOutput="12", sourceLang=TestSource.Cerulean),
+        Test ("Test2", code="function void main(){i32 x = 10;print (x*2);}", expectedOutput="20", sourceLang=TestSource.Cerulean),
     ]),
     TestGroup ("Functions", "", [
         Test ("Super Simple Function Declaration", code=
@@ -85,7 +85,7 @@ print (y);
             """, expectedOutput="10", sourceLang=TestSource.Cerulean),
         Test ("Test Parameters", code=
             """
-            function void printint (int32 a)
+            function void printint (i32 a)
             {
                 print (a);
             }
@@ -95,7 +95,7 @@ print (y);
             """, expectedOutput="42", sourceLang=TestSource.Cerulean),
         Test ("Test Return", code=
             """
-            function float32 getPI ()
+            function f32 getPI ()
             {
                 return 3.14;
             }
@@ -116,7 +116,7 @@ print (y);
         TestGroup (
             "Max function", 
             """
-            function int32 max (int32 a, int32 b)
+            function i32 max (i32 a, i32 b)
             {
                 if (a >= b)
                     return a;

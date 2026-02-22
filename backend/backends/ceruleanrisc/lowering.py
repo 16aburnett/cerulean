@@ -148,7 +148,7 @@ class LoweringVisitor (ASTVisitor):
         globalId = globalId.replace('.', '_')
         
         # Extract type from the first argument (if available)
-        irType = IRType.INT64  # default
+        irType = IRType.I64  # default
         initialValueNode = None  # Will be AST node (literal or string)
         
         if hasattr(node, 'arguments') and len(node.arguments) > 0:

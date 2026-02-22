@@ -45,25 +45,25 @@ def addBuiltinsToSymbolTable (symbolTable):
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}print__int32",
-        [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None, 0), "val", None)]
     )
     #  void print__int64 (int64 val);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}print__int64",
-        [ParameterNode(TypeSpecifierNode (Type.INT64, "int64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I64, "i64", None, 0), "val", None)]
     )
     #  void @print__float32 (float32 val);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}print__float32",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F32, "f32", None, 0), "val", None)]
     )
     #  void @print__float64 (float64 val);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}print__float64",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT64, "float64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F64, "f64", None, 0), "val", None)]
     )
     #  void @print__char (char val);
     add_builtin_function (
@@ -98,25 +98,25 @@ def addBuiltinsToSymbolTable (symbolTable):
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}println__int32",
-        [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None, 0), "intToPrint", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None, 0), "intToPrint", None)]
     )
     #  void println (int64 intToPrint);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}println__int64",
-        [ParameterNode(TypeSpecifierNode (Type.INT64, "int64", None, 0), "intToPrint", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I64, "i64", None, 0), "intToPrint", None)]
     )
     #  void println (float32 floatToPrint);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}println__float32",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None, 0), "floatToPrint", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F32, "f32", None, 0), "floatToPrint", None)]
     )
     #  void println (float64 floatToPrint);
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}println__float64",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT64, "float64", None, 0), "floatToPrint", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F64, "f64", None, 0), "floatToPrint", None)]
     )
     #  void println (char c);
     add_builtin_function (
@@ -158,55 +158,55 @@ def addBuiltinsToSymbolTable (symbolTable):
     add_builtin_function (
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}exit__int32",
-        [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None), "exit_status", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "exit_status", None)]
     )
     #  float32 float32 ();
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT32, "float32", None, 0),
+        TypeSpecifierNode (Type.F32, "f32", None, 0),
         f"{BUILTIN_PREFIX}float32",
         []
     )
     #  float64 float64 ();
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT64, "float64", None, 0),
+        TypeSpecifierNode (Type.F64, "f64", None, 0),
         f"{BUILTIN_PREFIX}float64",
         []
     )
     # float32 int32ToFloat32 (int32 val);
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT32, "float32", None, 0),
+        TypeSpecifierNode (Type.F32, "f32", None, 0),
         f"{BUILTIN_PREFIX}int32ToFloat32",
-        [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None, 0), "val", None)]
     )
     # float64 int64ToFloat64 (int64 val);
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT64, "float64", None, 0),
+        TypeSpecifierNode (Type.F64, "f64", None, 0),
         f"{BUILTIN_PREFIX}int64ToFloat64",
-        [ParameterNode(TypeSpecifierNode (Type.INT64, "int64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I64, "i64", None, 0), "val", None)]
     )
     # TODO: float64 int32ToFloat64 (int32 val);
     # TODO: float32 int64ToFloat32 (int64 val);
     #  float32 stringToFloat32 (char[]);
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT32, "float32", None, 0),
+        TypeSpecifierNode (Type.F32, "f32", None, 0),
         f"{BUILTIN_PREFIX}stringToFloat32__char__1",
         [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
     )
     #  float64 stringToFloat64 (char[]);
     add_builtin_function (
-        TypeSpecifierNode (Type.FLOAT64, "float64", None, 0),
+        TypeSpecifierNode (Type.F64, "f64", None, 0),
         f"{BUILTIN_PREFIX}stringToFloat64__char__1",
         [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
     )
     #  int32 int32 ();
     add_builtin_function (
-        TypeSpecifierNode (Type.INT32, "int32", None, 0),
+        TypeSpecifierNode (Type.I32, "i32", None, 0),
         f"{BUILTIN_PREFIX}int32",
         []
     )
     #  int64 int64 ();
     add_builtin_function (
-        TypeSpecifierNode (Type.INT64, "int64", None, 0),
+        TypeSpecifierNode (Type.I64, "i64", None, 0),
         f"{BUILTIN_PREFIX}int64",
         []
     )
@@ -218,39 +218,39 @@ def addBuiltinsToSymbolTable (symbolTable):
     )
     #  int32 float32ToInt32 (float32);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT32, "int32", None, 0),
+        TypeSpecifierNode (Type.I32, "i32", None, 0),
         f"{BUILTIN_PREFIX}float32ToInt32__float32",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F32, "f32", None, 0), "val", None)]
     )
     #  int64 float64ToInt64 (float64);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT64, "int64", None, 0),
+        TypeSpecifierNode (Type.I64, "i64", None, 0),
         f"{BUILTIN_PREFIX}float64ToInt64__float64",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT64, "float64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F64, "f64", None, 0), "val", None)]
     )
     # TODO: int32 float64ToInt64 (float64 val);
     # TODO: int64 float64ToInt64 (float32 val);
     #  int32 stringToInt32 (char[]);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT32, "int32", None, 0),
+        TypeSpecifierNode (Type.I32, "i32", None, 0),
         f"{BUILTIN_PREFIX}stringToInt32__char__1",
         [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
     )
     #  int64 stringToInt64 (char[]);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT64, "int64", None, 0),
+        TypeSpecifierNode (Type.I64, "i64", None, 0),
         f"{BUILTIN_PREFIX}stringToInt64__char__1",
         [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
     )
     #  int32 charToInt32 (char);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT32, "int32", None, 0),
+        TypeSpecifierNode (Type.I32, "i32", None, 0),
         f"{BUILTIN_PREFIX}charToInt32__char",
         [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 0), "val", None)]
     )
     #  int64 charToInt64 (char);
     add_builtin_function (
-        TypeSpecifierNode (Type.INT64, "int64", None, 0),
+        TypeSpecifierNode (Type.I64, "i64", None, 0),
         f"{BUILTIN_PREFIX}charToInt64__char",
         [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 0), "val", None)]
     )
@@ -258,25 +258,25 @@ def addBuiltinsToSymbolTable (symbolTable):
     add_builtin_function (
         TypeSpecifierNode (Type.PTR, "ptr", None, 0),
         f"{BUILTIN_PREFIX}string__int32",
-        [ParameterNode(TypeSpecifierNode (Type.INT32, "int32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None, 0), "val", None)]
     )
     #  char[] string (int64);
     add_builtin_function (
         TypeSpecifierNode (Type.PTR, "ptr", None, 0),
         f"{BUILTIN_PREFIX}string__int64",
-        [ParameterNode(TypeSpecifierNode (Type.INT64, "int64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.I64, "i64", None, 0), "val", None)]
     )
     #  char[] string (float32);
     add_builtin_function (
         TypeSpecifierNode (Type.PTR, "ptr", None, 0),
         f"{BUILTIN_PREFIX}string__float32",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT32, "float32", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F32, "f32", None, 0), "val", None)]
     )
     #  char[] string (float64);
     add_builtin_function (
         TypeSpecifierNode (Type.PTR, "ptr", None, 0),
         f"{BUILTIN_PREFIX}string__float64",
-        [ParameterNode(TypeSpecifierNode (Type.FLOAT64, "float64", None, 0), "val", None)]
+        [ParameterNode(TypeSpecifierNode (Type.F64, "f64", None, 0), "val", None)]
     )
     #  void* null ();
     add_builtin_function (

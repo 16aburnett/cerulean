@@ -1,8 +1,8 @@
 
 
-function int32 main() {
+function i32 main() {
     // Assign
-    int32 x = 10;
+    i32 x = 10;
     print ("x = 10 =>"); println (x =  10);
     print ("x      =>"); println (x);
     // Assign: add

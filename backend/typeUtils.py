@@ -15,19 +15,19 @@
 # Maps CeruleanIR type names to their size in bytes
 # These sizes are part of the CeruleanIR specification and should not change.
 TYPE_SIZES = {
-    "char": 1,      # 8-bit character
-    "int8": 1,      # 8-bit signed integer
-    "int16": 2,     # 16-bit signed integer
-    "int32": 4,     # 32-bit signed integer
-    "int64": 8,     # 64-bit signed integer
-    "uint8": 1,     # 8-bit unsigned integer
-    "uint16": 2,    # 16-bit unsigned integer
-    "uint32": 4,    # 32-bit unsigned integer
-    "uint64": 8,    # 64-bit unsigned integer
-    "float32": 4,   # 32-bit floating point
-    "float64": 8,   # 64-bit floating point
-    "ptr": 8,       # Pointer (default 64-bit, can be overridden by backend)
-    "void": 0,      # void has no size
+    "char": 1,   # 8-bit character
+    "i8": 1,     # 8-bit signed integer
+    "i16": 2,    # 16-bit signed integer
+    "i32": 4,    # 32-bit signed integer
+    "i64": 8,    # 64-bit signed integer
+    "u8": 1,     # 8-bit unsigned integer
+    "u16": 2,    # 16-bit unsigned integer
+    "u32": 4,    # 32-bit unsigned integer
+    "u64": 8,    # 64-bit unsigned integer
+    "f32": 4,    # 32-bit floating point
+    "f64": 8,    # 64-bit floating point
+    "ptr": 8,    # Pointer (default 64-bit, can be overridden by backend)
+    "void": 0,   # void has no size
 }
 
 # Default type size for unknown types
@@ -92,7 +92,7 @@ def isUnsignedType(typeEnum):
     typeName = typeEnum.name.lower()
     
     # char is treated as unsigned (u8 equivalent) to avoid sign-extending characters
-    return typeName in ["char", "uint8", "uint16", "uint32", "uint64"]
+    return typeName in ["char", "u8", "u16", "u32", "u64"]
 
 def isSignedIntegerType(typeEnum):
     """
@@ -102,11 +102,11 @@ def isSignedIntegerType(typeEnum):
         typeEnum: IRType enum value (from backend.irTypes)
         
     Returns:
-        True if the type is a signed integer (int8, int16, int32, int64, byte, char), False otherwise
+        True if the type is a signed integer (i8, i16, i32, i64, byte, char), False otherwise
     """
     # Convert enum to lowercase string for comparison
     typeName = typeEnum.name.lower()
     
-    return typeName in ["int8", "int16", "int32", "int64", "byte", "char"]
+    return typeName in ["i8", "i16", "i32", "i64", "byte", "char"]
 
 # =================================================================================================

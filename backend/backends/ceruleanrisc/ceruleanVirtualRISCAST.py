@@ -346,12 +346,12 @@ class GlobalVariableNode (Node):
     Global variables are stored in memory (data section) rather than registers.
     """
 
-    def __init__ (self, id, size=8, initialValue=0, directive=".int64"):
+    def __init__ (self, id, size=8, initialValue=0, directive=".i64"):
         super ().__init__ ()
         self.id = id
         self.size = size  # Size in bytes
         self.initialValue = initialValue
-        self.directive = directive  # Assembly directive (e.g., ".uint32", ".int8")
+        self.directive = directive  # Assembly directive (e.g., ".u32", ".i8")
 
     def accept (self, visitor):
         return visitor.visitGlobalVariableNode (self)

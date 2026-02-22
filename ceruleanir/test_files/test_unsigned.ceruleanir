@@ -2,39 +2,39 @@
 // Author: Amy Burnett
 
 // Global unsigned values
-global @max_uint8 = value (uint8(255))
-global @max_uint16 = value (uint16(65535))
-global @max_uint32 = value (uint32(4294967295))
+global @max_uint8 = value (u8(255))
+global @max_uint16 = value (u16(65535))
+global @max_uint32 = value (u32(4294967295))
 
 //========================================================================
 
-function uint32 @test_unsigned_ops () {
+function u32 @test_unsigned_ops () {
     block entry {
         // Test unsigned division (should use divu, not divi)
-        %a = value (uint32(10))
-        %b = value (uint32(3))
-        %quot = div (uint32(%a), uint32(%b))
+        %a = value (u32(10))
+        %b = value (u32(3))
+        %quot = div (u32(%a), u32(%b))
         
         // Test unsigned modulo (should use modu, not modi)
-        %rem = mod (uint32(%a), uint32(%b))
+        %rem = mod (u32(%a), u32(%b))
         
         // Test unsigned comparisons (should use ltu, not lt)
-        %c = value (uint32(4294967290))  // very large unsigned value
-        %d = value (uint32(10))
+        %c = value (u32(4294967290))  // very large unsigned value
+        %d = value (u32(10))
         
         // 4294967290 > 10 as unsigned (should be true)
-        // but 4294967290 < 10 as signed int32 (would be false if treated as signed)
-        %cmp_result = clt (uint32(%d), uint32(%c))  // should use ltu
+        // but 4294967290 < 10 as signed i32 (would be false if treated as signed)
+        %cmp_result = clt (u32(%d), u32(%c))  // should use ltu
         
-        return (uint32(%quot))
+        return (u32(%quot))
     }
 }
 
 //========================================================================
 
-function int32 @main () {
+function i32 @main () {
     block entry {
         %result = call @test_unsigned_ops ()
-        return (int32(0))
+        return (i32(0))
     }
 }

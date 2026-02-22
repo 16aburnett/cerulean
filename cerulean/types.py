@@ -11,16 +11,16 @@ class Type(Enum):
     BOOL     = 1
     BYTE     = 2
     CHAR     = 3
-    INT8     = 4
-    INT16    = 5
-    INT32    = 6
-    INT64    = 7
-    UINT8    = 8
-    UINT16   = 9
-    UINT32   = 10
-    UINT64   = 11
-    FLOAT32  = 12
-    FLOAT64  = 13
+    I8       = 4
+    I16      = 5
+    I32      = 6
+    I64      = 7
+    U8       = 8
+    U16      = 9
+    U32      = 10
+    U64      = 11
+    F32      = 12
+    F64      = 13
     VOID     = 14
     USERTYPE = 15
     NULL     = 16
@@ -33,36 +33,36 @@ class Type(Enum):
 # Used by parser to convert tokens to TypeSpecifierNodes
 
 TYPE_TOKEN_MAP = {
-    'TYPE_BOOL':    (Type.BOOL,    "bool"),
-    'TYPE_BYTE':    (Type.BYTE,    "byte"),
-    'TYPE_CHAR':    (Type.CHAR,    "char"),
-    'TYPE_INT8':    (Type.INT8,    "int8"),
-    'TYPE_INT16':   (Type.INT16,   "int16"),
-    'TYPE_INT32':   (Type.INT32,   "int32"),
-    'TYPE_INT64':   (Type.INT64,   "int64"),
-    'TYPE_UINT8':   (Type.UINT8,   "uint8"),
-    'TYPE_UINT16':  (Type.UINT16,  "uint16"),
-    'TYPE_UINT32':  (Type.UINT32,  "uint32"),
-    'TYPE_UINT64':  (Type.UINT64,  "uint64"),
-    'TYPE_FLOAT32': (Type.FLOAT32, "float32"),
-    'TYPE_FLOAT64': (Type.FLOAT64, "float64"),
-    'TYPE_VOID':    (Type.VOID,    "void"),
+    'TYPE_BOOL':  (Type.BOOL,  "bool"),
+    'TYPE_BYTE':  (Type.BYTE,  "byte"),
+    'TYPE_CHAR':  (Type.CHAR,  "char"),
+    'TYPE_I8':    (Type.I8,    "i8"),
+    'TYPE_I16':   (Type.I16,   "i16"),
+    'TYPE_I32':   (Type.I32,   "i32"),
+    'TYPE_I64':   (Type.I64,   "i64"),
+    'TYPE_U8':    (Type.U8,    "u8"),
+    'TYPE_U16':   (Type.U16,   "u16"),
+    'TYPE_U32':   (Type.U32,   "u32"),
+    'TYPE_U64':   (Type.U64,   "u64"),
+    'TYPE_F32':   (Type.F32,   "f32"),
+    'TYPE_F64':   (Type.F64,   "f64"),
+    'TYPE_VOID':  (Type.VOID,  "void"),
 }
 
 # Maps type keywords to token types (for tokenizer)
 TYPE_KEYWORDS = {
-    "bool":    "TYPE_BOOL",
-    "byte":    "TYPE_BYTE",
-    "char":    "TYPE_CHAR",
-    "int8":    "TYPE_INT8",
-    "int16":   "TYPE_INT16",
-    "int32":   "TYPE_INT32",
-    "int64":   "TYPE_INT64",
-    "uint8":   "TYPE_UINT8",
-    "uint16":  "TYPE_UINT16",
-    "uint32":  "TYPE_UINT32",
-    "uint64":  "TYPE_UINT64",
-    "float32": "TYPE_FLOAT32",
-    "float64": "TYPE_FLOAT64",
-    "void":    "TYPE_VOID",
+    "bool":  "TYPE_BOOL",
+    "byte":  "TYPE_BYTE",
+    "char":  "TYPE_CHAR",
+    "i8":    "TYPE_I8",
+    "i16":   "TYPE_I16",
+    "i32":   "TYPE_I32",
+    "i64":   "TYPE_I64",
+    "u8":    "TYPE_U8",
+    "u16":   "TYPE_U16",
+    "u32":   "TYPE_U32",
+    "u64":   "TYPE_U64",
+    "f32":   "TYPE_F32",
+    "f64":   "TYPE_F64",
+    "void":  "TYPE_VOID",
 }
