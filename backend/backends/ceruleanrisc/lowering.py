@@ -411,11 +411,11 @@ class LoweringVisitor (ASTVisitor):
             
             # Get size in bytes and check if unsigned integer type
             irTypeSize = getTypeSize(irType)
-            isUnsignedInt = isUnsignedType(irType)  # True for char, uint8, uint16, uint32, uint64
+            isUnsignedInt = isUnsignedType(irType)  # True for char, u8, u16, u32, u64
             
             # Map to instruction width with proper sign/zero extension
             # - Signed integers (int8/16/32): sign-extend with load8/16/32
-            # - Unsigned integers (char, uint8/16/32): zero-extend with loadu8/loadu16/loadu32
+            # - Unsigned integers (char, u8/16/32): zero-extend with loadu8/loadu16/loadu32
             # - Floats (float32/64): just load bits with load32/64 (no sign extension)
             # - 64-bit types: load64 (fills entire register, no extension)
             sizeToBits = {1: "8", 2: "16", 4: "32", 8: "64"}
