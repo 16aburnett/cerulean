@@ -3,25 +3,25 @@ import struct
 
 DATA_DIRECTIVES = {
     # 8-bit signed integer
-    "int8"    : {"size": 1   , "format": '<b', "alignment": 1},
+    "i8"      : {"size": 1   , "format": '<b', "alignment": 1},
     # 8-bit unsigned integer
-    "uint8"   : {"size": 1   , "format": '<B', "alignment": 1},
+    "u8"      : {"size": 1   , "format": '<B', "alignment": 1},
     # 16-bit signed integer
-    "int16"   : {"size": 2   , "format": '<h', "alignment": 2},
+    "i16"     : {"size": 2   , "format": '<h', "alignment": 2},
     # 16-bit unsigned integer
-    "uint16"  : {"size": 2   , "format": '<H', "alignment": 2},
+    "u16"     : {"size": 2   , "format": '<H', "alignment": 2},
     # 32-bit signed integer
-    "int32"   : {"size": 4   , "format": '<i', "alignment": 4},
+    "i32"     : {"size": 4   , "format": '<i', "alignment": 4},
     # 32-bit unsigned integer
-    "uint32"  : {"size": 4   , "format": '<I', "alignment": 4},
+    "u32"     : {"size": 4   , "format": '<I', "alignment": 4},
     # 64-bit signed integer
-    "int64"   : {"size": 8   , "format": '<q', "alignment": 8},
+    "i64"     : {"size": 8   , "format": '<q', "alignment": 8},
     # 64-bit unsigned integer
-    "uint64"  : {"size": 8   , "format": '<Q', "alignment": 8},
+    "u64"     : {"size": 8   , "format": '<Q', "alignment": 8},
     # 32-bit IEEE-754 float
-    "float32" : {"size": 4   , "format": '<f', "alignment": 4},
+    "f32"     : {"size": 4   , "format": '<f', "alignment": 4},
     # 64-bit IEEE-754 double
-    "float64" : {"size": 8   , "format": '<d', "alignment": 8},
+    "f64"     : {"size": 8   , "format": '<d', "alignment": 8},
     # 64-bit address (can take a label as an argument)
     "addr"    : {"size": 8   , "format": '<Q', "alignment": 8},
     # Raw ASCII bytes (not null-terminated), size is variable
@@ -32,13 +32,13 @@ DATA_DIRECTIVES = {
 
 def getDirectiveSize (directive, value):
     # Fixed-width types
-    if directive in {'int8', 'uint8'}:
+    if directive in {'i8', 'u8'}:
         return 1
-    elif directive in {'int16', 'uint16'}:
+    elif directive in {'i16', 'u16'}:
         return 2
-    elif directive in {'int32', 'uint32', 'float32'}:
+    elif directive in {'i32', 'u32', 'f32'}:
         return 4
-    elif directive in {'int64', 'uint64', 'float64', 'addr'}:
+    elif directive in {'i64', 'u64', 'f64', 'addr'}:
         return 8
     # Variable-length string types
     elif directive == 'ascii':

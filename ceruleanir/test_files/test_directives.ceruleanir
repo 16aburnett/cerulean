@@ -1,0 +1,20 @@
+// Test file to verify data directive generation
+
+global @test_i8 = value (int8(127))
+global @test_i16 = value (int16(32767))
+global @test_i32 = value (int32(2147483647))
+global @test_i64 = value (int64(9223372036854775807))
+
+global @test_u8 = value (uint8(255))
+global @test_u16 = value (uint16(65535))
+global @test_u32 = value (uint32(4294967295))
+global @test_u64 = value (uint64(18446744073709551615))
+
+global @test_char = value (char('A'))
+global @test_bool = value (bool(1))
+
+function int32 @main () {
+    block entry {
+        return (int32(0))
+    }
+}
