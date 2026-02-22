@@ -9,7 +9,6 @@ from sys import exit
 from enum import Enum
 
 from .ceruleanIRAST import *
-from .printVisitor import PrintVisitor
 from .irEmitter import IREmitterVisitor
 from .visitor import *
 from .builtins import addBuiltinsToSymbolTable
@@ -71,8 +70,7 @@ class CeruleanIRBackendCompiler:
         if emitAST:
             astFilename = f"{sourceFilename}.ast"
             self.printDebug (f"Printing AST to '{astFilename}'...")
-            printVisitor = PrintVisitor ()
-            output = printVisitor.print (ast)
+            output = repr (ast)
             astFile = open (astFilename, "w")
             astFile.write (output)
             astFile.close ()

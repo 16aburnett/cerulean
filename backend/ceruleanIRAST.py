@@ -12,6 +12,10 @@ from .irTypes import Type
 
 # ========================================================================
 
+TAB_SPACE = "    "
+
+# ========================================================================
+
 class Node (ABC):
     @abstractmethod
     def accept (self, visitor):
@@ -40,13 +44,6 @@ class TypeSpecifierNode (Node):
         self.lineNumber = 0
         self.columnNumber = 0
 
-    def __str__(self):
-        # <type>{*}
-        s = [self.id]
-        for i in range(self.arrayDimensions):
-            s += ["*"]
-        return "".join(s)
-
     def accept (self, visitor):
         return visitor.visitTypeSpecifierNode (self)
 
@@ -56,6 +53,16 @@ class TypeSpecifierNode (Node):
         node.decl = self.decl
         node.isGeneric = self.isGeneric
         return node
+
+    def __repr__ (self):
+        return f"TypeSpecifierNode(type={self.type}, id='{self.id}', arrayDimensions={self.arrayDimensions})"
+
+    def __str__(self):
+        # <type>{*}
+        s = [self.id]
+        for i in range(self.arrayDimensions):
+            s += ["*"]
+        return "".join(s)
 
 # ========================================================================
 # ProgramNode: the top-most level node for defining a complete program
@@ -81,6 +88,16 @@ class ProgramNode (Node):
             node.codeunits += [codeunit.copy ()]
         node.localVariables = [n.copy() for n in self.localVariables]
         return node
+
+    def __repr__ (self):
+        codeunits_repr = f",\n{TAB_SPACE}".join(repr(cu) for cu in self.codeunits)
+        return f"ProgramNode(codeunits=[\n{TAB_SPACE}{codeunits_repr}\n], localVariables={repr(self.localVariables)}, floatLiterals={repr(self.floatLiterals)}, stringLiterals={repr(self.stringLiterals)})"
+
+    def __str__(self):
+        s = []
+        for codeunit in self.codeunits:
+            s += [str(codeunit)]
+        return "\n".join(s)
 
 # ========================================================================
 # Default declaration node - should not be used
@@ -108,6 +125,12 @@ class DeclarationNode (Node):
         node.scopeName = self.scopeName
         return node
 
+    def __repr__ (self):
+        return f"DeclarationNode(id='{self.id}', scopeName='{self.scopeName}')"
+
+    def __str__ (self):
+        return self.id
+
 # ========================================================================
 
 class VariableDeclarationNode (DeclarationNode):
@@ -131,6 +154,12 @@ class VariableDeclarationNode (DeclarationNode):
         node.stackOffset = self.stackOffset
         return node
 
+    def __repr__ (self):
+        return f"VariableDeclarationNode(id='{self.id}', stackOffset={self.stackOffset})"
+
+    def __str__ (self):
+        return self.id
+
 # ========================================================================
 
 class GlobalVariableDeclarationNode (DeclarationNode):
@@ -147,6 +176,14 @@ class GlobalVariableDeclarationNode (DeclarationNode):
 
     def copy (self):
         return GlobalVariableDeclarationNode (self.id.copy (), self.command.copy (), [argument.copy () for argument in self.arguments])
+
+    def __repr__ (self):
+        args_repr = ', '.join(repr(arg) for arg in self.arguments)
+        return f"GlobalVariableDeclarationNode(id='{self.id}', command='{self.command}', arguments=[{args_repr}])"
+
+    def __str__ (self):
+        args_str = ', '.join(str(arg) for arg in self.arguments)
+        return f"global {self.id} = {self.command} ({args_str})"
 
 # ========================================================================
 
@@ -172,6 +209,12 @@ class ParameterNode (DeclarationNode):
         node = ParameterNode (self.type.copy(), self.id, self.token)
         node.stackOffset = self.stackOffset
         return node
+
+    def __repr__ (self):
+        return f"ParameterNode(type={repr(self.type)}, id='{self.id}')"
+
+    def __str__ (self):
+        return f"{self.type}({self.id})"
 
 # ========================================================================
 # FunctionNode - represents both function definitions and extern declarations
@@ -222,6 +265,16 @@ class FunctionNode (Node):
         node.localVariables = [n.copy() for n in self.localVariables]
         return node
 
+    def __repr__ (self):
+        basicblocks_repr = f',\n{TAB_SPACE}{TAB_SPACE}'.join(repr(bb) for bb in self.basicBlocks) if self.basicBlocks else "None"
+        params_repr = ', '.join(repr(p) for p in self.params)
+        return f"FunctionNode(type={repr(self.type)}, id='{self.id}', params=[{params_repr}], basicBlocks=[\n{TAB_SPACE}{TAB_SPACE}{basicblocks_repr}\n{TAB_SPACE}], isExtern={self.isExtern})"
+
+    def __str__ (self):
+        params_str = ', '.join(str(p) for p in self.params)
+        extern_prefix = "extern " if self.isExtern else ""
+        return f"{extern_prefix}function {self.type} {self.id} ({params_str})"
+
 # ========================================================================
 # basic block - represents a group of instructions
 
@@ -240,6 +293,14 @@ class BasicBlockNode (Node):
     def copy (self):
         return BasicBlockNode (self.name, [instruction.copy () for instruction in self.instructions])
 
+    def __repr__ (self):
+        instructions_repr = f',\n{TAB_SPACE}{TAB_SPACE}{TAB_SPACE}'.join(repr(instr) for instr in self.instructions)
+        return f"BasicBlockNode(name='{self.name}', instructions=[\n{TAB_SPACE}{TAB_SPACE}{TAB_SPACE}{instructions_repr}\n{TAB_SPACE}{TAB_SPACE}], token={repr(self.token)})"
+
+    def __str__ (self):
+        instr_str = '\n        '.join(str(i) for i in self.instructions)
+        return f"    block {self.name} {{\n        {instr_str}\n    }}"
+
 # ========================================================================
 
 class InstructionNode (Node):
@@ -257,6 +318,16 @@ class InstructionNode (Node):
 
     def copy (self):
         return InstructionNode (self.lhsVariable.copy (), self.command.copy (), [argument.copy () for argument in self.arguments])
+
+    def __repr__ (self):
+        args_repr = ', '.join(repr(arg) for arg in self.arguments)
+        lhs_repr = repr(self.lhsVariable) if self.hasAssignment else "None"
+        return f"InstructionNode(lhs={lhs_repr}, command='{self.command}', arguments=[{args_repr}])"
+
+    def __str__ (self):
+        args_str = ', '.join(str(arg) for arg in self.arguments)
+        lhs_str = f"{self.lhsVariable} = " if self.hasAssignment else ""
+        return f"{lhs_str}{self.command} ({args_str})"
 
 # ========================================================================
 
@@ -277,6 +348,16 @@ class CallInstructionNode (Node):
 
     def copy (self):
         return CallInstructionNode (self.lhsVariable.copy (), self.function_name.copy (), self.token.copy (), [argument.copy () for argument in self.arguments])
+
+    def __repr__ (self):
+        args_repr = ', '.join(repr(arg) for arg in self.arguments)
+        lhs_repr = repr(self.lhsVariable) if self.hasAssignment else "None"
+        return f"CallInstructionNode(lhs={lhs_repr}, function='{self.function_name}', arguments=[{args_repr}])"
+
+    def __str__ (self):
+        args_str = ', '.join(str(arg) for arg in self.arguments)
+        lhs_str = f"{self.lhsVariable} = " if self.hasAssignment else ""
+        return f"{lhs_str}call {self.function_name} ({args_str})"
 
 # ========================================================================
 # An argument expression looks like the following
@@ -303,6 +384,12 @@ class ArgumentExpressionNode (Node):
         node.stackOffset = self.stackOffset
         return node
 
+    def __repr__ (self):
+        return f"ArgumentExpressionNode(type={repr(self.type)}, expression={repr(self.expression)})"
+
+    def __str__ (self):
+        return f"{self.type}({self.expression})"
+
 # ========================================================================
 
 class ExpressionNode (Node):
@@ -317,6 +404,12 @@ class ExpressionNode (Node):
 
     def copy (self):
         return ExpressionNode()
+
+    def __repr__ (self):
+        return "ExpressionNode()"
+
+    def __str__ (self):
+        return "<expr>"
 
 # ========================================================================
 # id - string
@@ -341,6 +434,12 @@ class GlobalVariableExpressionNode (ExpressionNode):
     def copy (self):
         return GlobalVariableExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
 
+    def __repr__ (self):
+        return f"GlobalVariableExpressionNode(id='{self.id}')"
+
+    def __str__ (self):
+        return self.id
+
 # ========================================================================
 # id - string
 
@@ -363,6 +462,12 @@ class LocalVariableExpressionNode (ExpressionNode):
 
     def copy (self):
         return LocalVariableExpressionNode (self.id, self.token, self.lineNumber, self.columnNumber)
+
+    def __repr__ (self):
+        return f"LocalVariableExpressionNode(id='{self.id}')"
+
+    def __str__ (self):
+        return self.id
 
 # ========================================================================
 # id - string
@@ -387,6 +492,12 @@ class BasicBlockExpressionNode (ExpressionNode):
     def copy (self):
         return BasicBlockExpressionNode(self.id, self.token, self.lineNumber, self.columnNumber)
 
+    def __repr__ (self):
+        return f"BasicBlockExpressionNode(id='{self.id}')"
+
+    def __str__ (self):
+        return f"block({self.id})"
+
 # ========================================================================
 # value - int
 
@@ -405,6 +516,12 @@ class IntLiteralExpressionNode (ExpressionNode):
 
     def copy (self):
         return IntLiteralExpressionNode(self.value)
+
+    def __repr__ (self):
+        return f"IntLiteralExpressionNode({self.value})"
+
+    def __str__ (self):
+        return str(self.value)
 
 # ========================================================================
 # value - float
@@ -428,6 +545,12 @@ class FloatLiteralExpressionNode (ExpressionNode):
     def copy (self):
         return FloatLiteralExpressionNode(self.value)
 
+    def __repr__ (self):
+        return f"FloatLiteralExpressionNode({self.value})"
+
+    def __str__ (self):
+        return str(self.value)
+
 # ========================================================================
 # value - char
 
@@ -446,6 +569,12 @@ class CharLiteralExpressionNode (ExpressionNode):
 
     def copy (self):
         return CharLiteralExpressionNode(self.value)
+
+    def __repr__ (self):
+        return f"CharLiteralExpressionNode('{self.value}')"
+
+    def __str__ (self):
+        return f"'{self.value}'"
 
 # ========================================================================
 # value - string
@@ -469,6 +598,12 @@ class StringLiteralExpressionNode (ExpressionNode):
     def copy (self):
         return StringLiteralExpressionNode(self.value)
 
+    def __repr__ (self):
+        return f"StringLiteralExpressionNode({repr(self.value)})"
+
+    def __str__ (self):
+        return f'"{self.value}"'
+
 # ========================================================================
 
 class NullExpressionNode (ExpressionNode):
@@ -486,5 +621,11 @@ class NullExpressionNode (ExpressionNode):
 
     def copy (self):
         return NullExpressionNode(self.lineNumber, self.columnNumber)
+
+    def __repr__ (self):
+        return "NullExpressionNode()"
+
+    def __str__ (self):
+        return "null"
 
 # ========================================================================
