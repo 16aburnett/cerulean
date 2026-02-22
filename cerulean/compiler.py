@@ -142,10 +142,7 @@ class CeruleanCompiler:
 
         if (self.debug):
             print ("Converting to IR...")
-        irGeneratorVisitor = IRGeneratorVisitor (lines)
-        # Generate IR AST
-        ast.accept (irGeneratorVisitor)
-        irAST = irGeneratorVisitor.ast
+        irAST = IRGeneratorVisitor (lines).generate (ast)
         
         #=== BACKEND COMPILATION =================================================
         # Backend handles: IR semantic analysis, IR emission, AST printing, code generation, and more

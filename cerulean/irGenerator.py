@@ -55,6 +55,9 @@ class IRGeneratorVisitor (ASTVisitor):
         self.floatZeroLabel = ".floatZero"
         self.floatOneLabel = ".floatOne"
 
+    def generate (self, ast):
+        return ast.accept (self)
+
     # === HELPER FUNCTIONS ===============================================
 
     def enterScope (self, name):
@@ -150,6 +153,8 @@ class IRGeneratorVisitor (ASTVisitor):
         # self.printLabel (f"{self.floatNegOneLabel}: dq -1.0")
         # self.printLabel (f"{self.floatZeroLabel}: dq 0.0")
         # self.printLabel (f"{self.floatOneLabel}: dq 1.0")
+
+        return self.ast
 
     def visitTypeSpecifierNode (self, node):
         # Convert Cerulean type to CeruleanIR type
