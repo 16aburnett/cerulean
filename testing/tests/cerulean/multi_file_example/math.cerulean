@@ -1,9 +1,0 @@
-// Math utilities
-
-function i32 add(i32 a, i32 b) {
-    return a + b;
-}
-
-function i32 multiply(i32 a, i32 b) {
-    return a * b;
-}

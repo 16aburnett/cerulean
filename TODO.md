@@ -1,9 +1,11 @@
 
 # Testing framework
 ```bash
-python3 -m testing.runner --frontend all
-
-
+python3 testing/run_tests.py
+python3 testing/run_tests.py --frontend cerulean
+python3 testing/run_tests.py --frontend ceruleanir
+python3 testing/run_tests.py --backend ceruleanrisc
+python3 testing/run_tests.py --backend amyasm
 ```
 
 # Cerulean tests

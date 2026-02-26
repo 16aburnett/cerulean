@@ -6,22 +6,22 @@ A golden file testing system for the Cerulean compiler suite that supports multi
 
 Run all tests:
 ```bash
-python testing/run_tests.py
+python3 testing/run_tests.py
 ```
 
 Run a specific test:
 ```bash
-python testing/run_tests.py helloworld
+python3 testing/run_tests.py helloworld
 ```
 
 Run tests for a specific frontend:
 ```bash
-python testing/run_tests.py --frontend cerulean
+python3 testing/run_tests.py --frontend cerulean
 ```
 
 Run tests for a specific backend:
 ```bash
-python testing/run_tests.py --backend ceruleanrisc
+python3 testing/run_tests.py --backend ceruleanrisc
 ```
 
 ## Test Structure
@@ -119,27 +119,27 @@ python testing/run_tests.py [options] [test_names...]
 
 List all available tests:
 ```bash
-python testing/run_tests.py --list
+python3 testing/run_tests.py --list
 ```
 
 Run all control flow tests:
 ```bash
-python testing/run_tests.py "control_*"
+python3 testing/run_tests.py "control_*"
 ```
 
 Run helloworld with only CeruleanRISC backend:
 ```bash
-python testing/run_tests.py helloworld --backend ceruleanrisc
+python3 testing/run_tests.py helloworld --backend ceruleanrisc
 ```
 
 Update expected output for all tests (use with caution!):
 ```bash
-python testing/run_tests.py --update-expected
+python3 testing/run_tests.py --update-expected
 ```
 
 Debug a failing test with verbose output:
 ```bash
-python testing/run_tests.py factorial --verbose
+python3 testing/run_tests.py factorial --verbose
 ```
 
 ## Adding New Tests
@@ -152,7 +152,7 @@ python testing/run_tests.py factorial --verbose
 
 Or use `--update-expected` to automatically create the expected file:
 ```bash
-python testing/run_tests.py mytest --update-expected
+python3 testing/run_tests.py mytest --update-expected
 ```
 
 Optionally add `test.json` for advanced configuration (compilation order, backend skipping, etc.).
