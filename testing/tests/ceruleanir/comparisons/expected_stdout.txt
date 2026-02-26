@@ -1,0 +1,22 @@
+clt(5, 10): PASS
+clt(10, 5): PASS
+clt(5, 5): PASS
+cle(5, 10): PASS
+cle(10, 5): PASS
+cle(5, 5): PASS
+cgt(5, 10): PASS
+cgt(10, 5): PASS
+cgt(5, 5): PASS
+cge(5, 10): PASS
+cge(10, 5): PASS
+cge(5, 5): PASS
+ceq(5, 10): PASS
+ceq(5, 5): PASS
+cne(5, 10): PASS
+cne(5, 5): PASS
+jl(5, 10): PASS
+jle(10, 10): PASS
+jg(10, 5): PASS
+jge(5, 5): PASS
+jne(5, 10): PASS
+jne(5, 5) no jump: PASS

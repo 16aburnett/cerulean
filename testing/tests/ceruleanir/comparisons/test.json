@@ -1,0 +1,7 @@
+{
+  "entry": "test_comparisons.ceruleanir",
+  "compile_order": ["test_comparisons.ceruleanir"],
+  "_comment": "Skipping AmyASM bc it fails with \"'JL' is not a command\"",
+  "skip_backends": ["amyasm"],
+  "timeout": 10
+}

@@ -1,0 +1,6 @@
+{
+  "entry": "helloworld5.ceruleanir",
+  "compile_order": ["print_string.ceruleanir", "helloworld5.ceruleanir"],
+  "skip_backends": ["amyasm"],
+  "timeout": 10
+}

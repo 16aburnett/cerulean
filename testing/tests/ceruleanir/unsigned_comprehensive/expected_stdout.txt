@@ -1,0 +1,11 @@
+Test: unsigned 10 / 3 =          PASS
+Test: unsigned 10 % 3 =          PASS
+Test: signed 10 / 3 =            PASS
+Test: signed 10 % 3 =            PASS
+Test: unsigned 10 < 4294967290 = PASS
+Test: signed 10 > -6 =           PASS
+Test: unsigned branch =          PASS
+Test: char zero-extension =      PASS
+Test: u8 zero-extension =        PASS
+Test: u16 zero-extension =       PASS
+Test: i8 sign-extension =        PASS

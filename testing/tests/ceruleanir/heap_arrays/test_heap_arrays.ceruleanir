@@ -1,0 +1,82 @@
+// Testing arrays
+// Author: Amy Burnett
+//========================================================================
+
+function void @fill (ptr(%arr_ptr), i32(%N))
+{
+    block entry {
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%N), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %i0 = load (type(i32), ptr(%i_ptr), i32(0))
+        %i1 = value (i32(%i0))
+        %i2 = mul (i32(%i0), i32(%i1))
+        store (ptr(%arr_ptr), i32(%i_curr), i32(%i2))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        return ()
+    }
+}
+//========================================================================
+
+function void @print (ptr(%arr_ptr), i32(%N))
+{
+    block entry {
+        %i_ptr = alloca (type(i32), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(0))
+        jmp (block(for_cond))
+    }
+    block for_cond {
+        %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
+        jge (i32(%i_curr), i32(%N), block(for_end))
+        jmp (block(for_body))
+    }
+    block for_body {
+        %value = load (type(i32), ptr(%arr_ptr), i32(%i_curr))
+        call @__builtin__println__int32 (i32(%value))
+        jmp (block(for_update))
+    }
+    block for_update {
+        %i_next = add (i32(%i_curr), i32(1))
+        store (ptr(%i_ptr), i32(0), i32(%i_next))
+        jmp (block(for_cond))
+    }
+    block for_end {
+        return ()
+    }
+}
+
+//========================================================================
+
+function i32 @main ()
+{
+    block entry {
+        // Allocating memory on the heap via malloc instruction
+        %N = value (i32(10))
+        %arr_ptr = malloc (type(i32), i32(%N))
+
+        // Assignment to an array
+        call @fill (ptr(%arr_ptr), i32(%N))
+
+        // Reading from memory
+        call @print (ptr(%arr_ptr), i32(%N))
+
+        // Free heap memory with the free instruction
+        free (ptr(%arr_ptr))
+
+        return (i32(0))
+    }
+}

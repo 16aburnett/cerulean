@@ -385,7 +385,7 @@ def compile_cerulean(test: Test, backend: Backend, output_file: Path,
 def compile_ceruleanir(test: Test, backend: Backend, output_file: Path,
                       temp_dir: Path, verbose: bool = False) -> bool:
     """Compile a CeruleanIR source file."""
-    entry_file = test.get_entry_file()
+    source_files = test.get_source_files()
     
     # Get backend-specific info
     try:
@@ -394,12 +394,81 @@ def compile_ceruleanir(test: Test, backend: Backend, output_file: Path,
         print(f"Error: {e}")
         return False
     
+    # CeruleanIR compiler doesn't support multi-file compilation in a single invocation
+    # For CeruleanRISC backend with multiple files: compile and assemble each separately, then link
+    if backend == Backend.CERULEANRISC and len(source_files) > 1:
+        object_files = []
+        
+        # Compile and assemble each source file separately
+        for i, source_file in enumerate(source_files):
+            # Compile to .crisc
+            crisc_file = temp_dir / f"{source_file.stem}.crisc"
+            cmd = [
+                sys.executable, "-m", "ceruleanir.compiler",
+                str(source_file),
+                "--target", target,
+                "-o", str(crisc_file)
+            ]
+            
+            if verbose:
+                print(f"  Compiling: {' '.join(cmd)}")
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=test.config.timeout)
+            if result.returncode != 0:
+                if verbose:
+                    print(f"  Compilation failed:")
+                    print(f"  stdout: {result.stdout}")
+                    print(f"  stderr: {result.stderr}")
+                return False
+            
+            # Assemble to .crisco
+            crisco_file = temp_dir / f"{source_file.stem}.crisco"
+            cmd = [
+                sys.executable, "-m", "ceruleanrisc.assembler.assembler",
+                str(crisc_file),
+                "-o", str(crisco_file)
+            ]
+            
+            if verbose:
+                print(f"  Assembling: {' '.join(cmd)}")
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=test.config.timeout)
+            if result.returncode != 0:
+                if verbose:
+                    print(f"  Assembly failed:")
+                    print(f"  stdout: {result.stdout}")
+                    print(f"  stderr: {result.stderr}")
+                return False
+            
+            object_files.append(crisco_file)
+        
+        # Link all object files
+        cmd = [
+            sys.executable, "-m", "ceruleanrisc.linker.linker"
+        ]
+        for obj_file in object_files:
+            cmd.append(str(obj_file))
+        cmd.extend(["-o", str(output_file)])
+        
+        if verbose:
+            print(f"  Linking: {' '.join(cmd)}")
+        
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=test.config.timeout)
+        if result.returncode != 0:
+            if verbose:
+                print(f"  Linking failed:")
+                print(f"  stdout: {result.stdout}")
+                print(f"  stderr: {result.stderr}")
+            return False
+        
+        return True
+    
+    # Single file or AmyASM backend: compile all files in one invocation
     compile_output = temp_dir / f"output{output_ext}"
     
-    # Build command - CeruleanIR uses its frontend compiler which calls the backend
     cmd = [
         sys.executable, "-m", "ceruleanir.compiler",
-        str(entry_file),
+        str(source_files[0]),  # CeruleanIR compiler only takes one file
         "--target", target,
         "-o", str(compile_output)
     ]
