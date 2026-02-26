@@ -1,0 +1,27 @@
+function void fill (i32[] array, i32 N, i32 value)
+{
+    for (i32 i = 0; i < N; i = i + 1)
+        array[i] = i * value;
+}
+
+function void print_array (i32[] array, i32 N)
+{
+    print ("[");
+    print (array[0]);
+    for (i32 i = 1; i < N; i = i + 1)
+    {
+        print (", ");
+        print (array[i]);
+    }
+    println ("]");
+}
+
+function i32 main ()
+{
+    i32 N = 10;
+    i32[] values = heapalloc (i32, N);
+    fill (values, N, 7);
+    print_array (values, N);
+    free (values);
+    return 0;
+}

@@ -1,0 +1,6 @@
+{
+  "entry": "main.cerulean",
+  "compile_order": ["math.cerulean", "main.cerulean"],
+  "skip_backends": ["amyasm"],
+  "timeout": 10
+}

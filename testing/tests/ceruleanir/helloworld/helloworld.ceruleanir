@@ -1,8 +1,4 @@
 
-from ...test import *
-
-allCeruleanIRTests = TestGroup ("All CeruleanIR Tests", "", [
-    Test ("Hello World", code="""
 function i32 @main () {
     block entry {
         %i_ptr = alloca (type(i32), i32(1))
@@ -28,5 +24,4 @@ function i32 @main () {
         call @__builtin__println ()
         return ()
     }
-}""", expectedOutput="Hello, World!\n", sourceLang=TestSource.CeruleanIR),
-])
+}

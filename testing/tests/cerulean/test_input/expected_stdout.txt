@@ -1,0 +1,4 @@
+Enter your name => Hello, Amy
+
+Enter an integer => 42 * 2 = 84
+Enter a floating point number => 3.14 * 2.0 = 6.28

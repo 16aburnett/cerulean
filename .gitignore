@@ -1,5 +1,6 @@
-# Testing temp directory
-testing/test_tmp
+# Testing
+*.virtasm
+*.virtasmast
 
 # Generated test artifacts
 # Cerulean test files: keep *.cerulean and clean up the rest
