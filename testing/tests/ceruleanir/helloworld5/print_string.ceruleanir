@@ -1,9 +1,8 @@
+// Additional file for Helloworld5 example
+// Author: Amy Burnett
+//========================================================================
 
-from ...test import *
-
-allCeruleanIRTests = TestGroup ("All CeruleanIR Tests", "", [
-    Test ("Hello World", code="""
-function i32 @main () {
+function void @println_string (ptr(%string_ptr), i32(%string_length)) {
     block entry {
         %i_ptr = alloca (type(i32), i32(1))
         store (ptr(%i_ptr), i32(0), i32(0))
@@ -11,11 +10,11 @@ function i32 @main () {
     }
     block for_cond {
         %i_curr = load (type(i32), ptr(%i_ptr), i32(0))
-        jge (i32(%i_curr), i32(13), block(for_end))
+        jge (i32(%i_curr), i32(%string_length), block(for_end))
         jmp (block(for_body))
     }
     block for_body {
-        %char = load (type(char), ptr("Hello, World!"), i32(%i_curr))
+        %char = load (type(char), ptr(%string_ptr), i32(%i_curr))
         call @__builtin__print__char (char(%char))
         jmp (block(for_update))
     }
@@ -26,7 +25,6 @@ function i32 @main () {
     }
     block for_end {
         call @__builtin__println ()
-        return ()
+        return (i32(0))
     }
-}""", expectedOutput="Hello, World!\n", sourceLang=TestSource.CeruleanIR),
-])
+}

@@ -1,0 +1,30 @@
+
+function i32 min(i32 a, i32 b) {
+    if (a <= b)
+        return a;
+    return b;
+}
+
+function i32 max(i32 a, i32 b) {
+    if (a >= b)
+        return a;
+    return b;
+}
+
+function i32 main() {
+    i32 x = 10;
+
+    // Conditionals look and work the same as C/C++
+    if (x > 10) {
+        println ("x > 10");
+    } elif (x == 10) {
+        println ("x == 10");
+    } else { // x < 10
+        println ("x < 10");
+    }
+
+    println (min (7, 3));
+    println (max (7, 3));
+
+    return 0;
+}

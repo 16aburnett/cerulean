@@ -1,0 +1,10 @@
+function void main() {
+    i32 x = 10;
+    i32 y = 20;
+    
+    println(x + y);
+    println(x - y);
+    println(x * y);
+    println(y / x);
+    println(y % x);
+}

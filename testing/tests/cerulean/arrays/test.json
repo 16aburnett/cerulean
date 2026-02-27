@@ -1,0 +1,4 @@
+{
+  "skip_backends": ["amyasm", "ceruleanrisc"],
+  "timeout": 10
+}

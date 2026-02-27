@@ -1,0 +1,99 @@
+// Testing cmp instructions
+// Author: Amy Burnett
+//========================================================================
+
+function i32 @main () {
+    block entry {
+        // Less Than
+        %clt0 = clt (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%clt0 = clt (i32(7), i32(9)) = (7 <  9) = "))
+        call @__builtin__println__int32 (i32(%clt0))
+        %clt1 = clt (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%clt1 = clt (i32(9), i32(7)) = (9 <  7) = "))
+        call @__builtin__println__int32 (i32(%clt1))
+        %clt2 = clt (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%clt2 = clt (i32(7), i32(7)) = (7 <  7) = "))
+        call @__builtin__println__int32 (i32(%clt2))
+        call @__builtin__println ()
+
+        // Less than or equal to
+        %cle0 = cle (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%cle0 = cle (i32(7), i32(9)) = (7 <= 9) = "))
+        call @__builtin__println__int32 (i32(%cle0))
+        %cle1 = cle (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%cle1 = cle (i32(9), i32(7)) = (9 <= 7) = "))
+        call @__builtin__println__int32 (i32(%cle1))
+        %cle2 = cle (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%cle2 = cle (i32(7), i32(7)) = (7 <= 7) = "))
+        call @__builtin__println__int32 (i32(%cle2))
+        call @__builtin__println ()
+
+        // Greater than
+        %cgt0 = cgt (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%cgt0 = cgt (i32(7), i32(9)) = (7 >  9) = "))
+        call @__builtin__println__int32 (i32(%cgt0))
+        %cgt1 = cgt (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%cgt1 = cgt (i32(9), i32(7)) = (9 >  7) = "))
+        call @__builtin__println__int32 (i32(%cgt1))
+        %cgt2 = cgt (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%cgt2 = cgt (i32(7), i32(7)) = (7 >  7) = "))
+        call @__builtin__println__int32 (i32(%cgt2))
+        call @__builtin__println ()
+
+        // Greater than or equal to
+        %cge0 = cge (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%cge0 = cge (i32(7), i32(9)) = (7 >= 9) = "))
+        call @__builtin__println__int32 (i32(%cge0))
+        %cge1 = cge (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%cge1 = cge (i32(9), i32(7)) = (9 >= 7) = "))
+        call @__builtin__println__int32 (i32(%cge1))
+        %cge2 = cge (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%cge2 = cge (i32(7), i32(7)) = (7 >= 7) = "))
+        call @__builtin__println__int32 (i32(%cge2))
+        call @__builtin__println ()
+
+        // Equal to
+        %ceq0 = ceq (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%ceq0 = ceq (i32(7), i32(9)) = (7 == 9) = "))
+        call @__builtin__println__int32 (i32(%ceq0))
+        %ceq1 = ceq (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%ceq1 = ceq (i32(9), i32(7)) = (9 == 7) = "))
+        call @__builtin__println__int32 (i32(%ceq1))
+        %ceq2 = ceq (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%ceq2 = ceq (i32(7), i32(7)) = (7 == 7) = "))
+        call @__builtin__println__int32 (i32(%ceq2))
+        call @__builtin__println ()
+
+        // Not equal to
+        %cne0 = cne (i32(7), i32(9))
+        call @__builtin__print__char__1 (ptr("%cne0 = cne (i32(7), i32(9)) = (7 != 9) = "))
+        call @__builtin__println__int32 (i32(%cne0))
+        %cne1 = cne (i32(9), i32(7))
+        call @__builtin__print__char__1 (ptr("%cne1 = cne (i32(9), i32(7)) = (9 != 7) = "))
+        call @__builtin__println__int32 (i32(%cne1))
+        %cne2 = cne (i32(7), i32(7))
+        call @__builtin__print__char__1 (ptr("%cne2 = cne (i32(7), i32(7)) = (7 != 7) = "))
+        call @__builtin__println__int32 (i32(%cne2))
+        call @__builtin__println ()
+
+        %a = value (i32(7))
+        %b = value (i32(9))
+        %cmp = clt (i32(%a), i32(%b))
+        jcmp (i32(%cmp), block(if_then), block(else))
+    }
+    block if_then {
+        call @__builtin__print__int32 (i32(%a))
+        call @__builtin__print__char__1 (ptr(" < "))
+        call @__builtin__println__int32 (i32(%b))
+        jmp (block(end_if))
+    }
+    block else {
+        call @__builtin__print__int32 (i32(%a))
+        call @__builtin__print__char__1 (ptr(" >= "))
+        call @__builtin__println__int32 (i32(%b))
+        jmp (block(end_if))
+    }
+    block end_if {
+        return (i32(0))
+    }
+}
