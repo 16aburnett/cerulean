@@ -28,7 +28,7 @@ class CeruleanIRCompiler:
 
     #---------------------------------------------------------------------
 
-    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE):
+    def compile (self, rawSourceCode, sourceFilename, emitTokens=False, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE, emitVirtualASM=False):
 
         sourceCodeLines = rawSourceCode.split ("\n")
 
@@ -79,7 +79,7 @@ class CeruleanIRCompiler:
         self.printDebug (f"Generating code...")
         backendCompiler = CeruleanIRBackendCompiler (debug=self.shouldPrintDebug)
         generatedCode = backendCompiler.compile (ast, sourceCodeLines, sourceFilename,
-            emitAST=emitAST, emitIR=emitIR, target=target, regalloc=regalloc)
+            emitAST=emitAST, emitIR=emitIR, target=target, regalloc=regalloc, emitVirtualASM=emitVirtualASM)
 
         return generatedCode
 
@@ -99,6 +99,7 @@ if __name__ == "__main__":
     argparser.add_argument("--emitTokens", dest="emitTokens", action="store_true", help="output the parsed tokens to a file")
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the Abstract Syntax Tree (AST)")
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the IR")
+    argparser.add_argument("--emitVirtualASM", dest="emitVirtualASM", action="store_true", help="output the virtual assembly (for CeruleanRISC target)")
     argparser.add_argument("--target", dest="target", type=str,
         choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
         help="specifies the target language to compile to [default: amyasm]")
@@ -145,7 +146,8 @@ if __name__ == "__main__":
         emitAST=args.emitAST,
         emitIR=args.emitIR,
         target=target,
-        regalloc=regalloc
+        regalloc=regalloc,
+        emitVirtualASM=args.emitVirtualASM
     )
 
     # Write target code

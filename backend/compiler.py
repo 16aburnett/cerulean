@@ -38,7 +38,7 @@ class CeruleanIRBackendCompiler:
 
     #---------------------------------------------------------------------
 
-    def compile (self, ast, sourceCodeLines, sourceFilename, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE):
+    def compile (self, ast, sourceCodeLines, sourceFilename, emitAST=False, emitIR=False, target=TargetLang.AMYASM, regalloc=AllocatorStrategy.NAIVE, emitVirtualASM=False):
 
         #=== SEMANTIC ANALYSIS ===========================================
 
@@ -97,7 +97,7 @@ class CeruleanIRBackendCompiler:
             irEmitter = IREmitterVisitor ()
             generatedCode = irEmitter.emit (ast)
         elif target == TargetLang.CERULEANRISC:
-            codeGenerator = CodeGenVisitor_CeruleanRISC (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=True, allocatorStrategy=regalloc)
+            codeGenerator = CodeGenVisitor_CeruleanRISC (sourceCodeLines, sourceFilename, shouldPrintDebug=self.shouldPrintDebug, emitVirtualASM=emitVirtualASM, allocatorStrategy=regalloc)
             generatedCode = codeGenerator.generate (ast)
             # Ensure codegen was successful
             if not codeGenerator.wasSuccessful:

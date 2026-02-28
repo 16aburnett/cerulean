@@ -39,7 +39,7 @@ else:
 
 class CeruleanCompiler:
 
-    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitIRAST=False, emitPreprocessed=False, preprocess=False, target=TargetLang.AMYASM):
+    def __init__(self, mainFilename, otherFilenames, destFilename="a.amy.assembly", debug=False, emitTokens=False, emitAST=False, emitIR=False, emitIRAST=False, emitPreprocessed=False, preprocess=False, target=TargetLang.AMYASM, emitVirtualASM=False):
         self.mainFilename = mainFilename
         self.otherFilenames = otherFilenames
         self.destFilename = destFilename
@@ -56,6 +56,7 @@ class CeruleanCompiler:
         self.irFilename = mainFilename + ".ir"
         self.emitIRAST = emitIRAST
         self.irASTFilename = mainFilename + ".irast"
+        self.emitVirtualASM = emitVirtualASM
 
         self.debugLines = []
 
@@ -151,7 +152,7 @@ class CeruleanCompiler:
             print (f"Offloading code to backend...")
         backendCompiler = CeruleanIRBackendCompiler(debug=self.debug)
         code = backendCompiler.compile(irAST, lines, self.mainFilename, 
-            emitAST=self.emitIRAST, emitIR=self.emitIR, target=self.target, regalloc=AllocatorStrategy.NAIVE)
+            emitAST=self.emitIRAST, emitIR=self.emitIR, target=self.target, regalloc=AllocatorStrategy.NAIVE, emitVirtualASM=self.emitVirtualASM)
 
         #=== OUTPUT ==============================================================
 
@@ -176,6 +177,7 @@ if __name__ == "__main__":
     argparser.add_argument("--emitAST", dest="emitAST", action="store_true", help="output the ast")
     argparser.add_argument("--emitIR", dest="emitIR", action="store_true", help="output the generated IR")
     argparser.add_argument("--emitIRAST", dest="emitIRAST", action="store_true", help="output the AST of the generated IR")
+    argparser.add_argument("--emitVirtualASM", dest="emitVirtualASM", action="store_true", help="output the virtual assembly (for CeruleanRISC target)")
     argparser.add_argument("--preprocess", dest="preprocess", action="store_true", help="only run preprocessor")
     argparser.add_argument("--target", dest="target", type=str,
         choices=[lang.value for lang in TargetLang], default=TargetLang.AMYASM.value,
@@ -207,7 +209,8 @@ if __name__ == "__main__":
         emitIRAST=args.emitIRAST,
         emitPreprocessed=args.emitPreprocessed, 
         preprocess=args.preprocess,
-        target=target
+        target=target,
+        emitVirtualASM=args.emitVirtualASM
     )
     destCode = compiler.compile ()
 
