@@ -29,7 +29,31 @@ def builtin_print_char(args):
         print(f"ERROR: __builtin__print__char expects 1 argument, got {len(args)}")
         sys.exit(1)
     char_value = args[0]
+    # Convert integer character code to character if needed
+    if isinstance(char_value, int):
+        char_value = chr(char_value)
     print(char_value, end='')
+    return None
+
+@register_builtin("@__builtin__print__char__1")
+def builtin_print_char_1(args):
+    """Print a string (array of characters) given a pointer."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__print__char__1 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    string_value = args[0]
+    # If it's already a string, print it
+    if isinstance(string_value, str):
+        print(string_value, end='')
+    # If it's a list/array, iterate and print each character
+    elif isinstance(string_value, list):
+        for char in string_value:
+            if isinstance(char, int):
+                print(chr(char), end='')
+            else:
+                print(char, end='')
+    else:
+        print(string_value, end='')
     return None
 
 @register_builtin("@__builtin__print__i32")
@@ -37,6 +61,16 @@ def builtin_print_i32(args):
     """Print a 32-bit integer."""
     if len(args) != 1:
         print(f"ERROR: __builtin__print__i32 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    int_value = args[0]
+    print(int_value, end='')
+    return None
+
+@register_builtin("@__builtin__print__int32")
+def builtin_print_int32(args):
+    """Print a 32-bit integer."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__print__int32 expects 1 argument, got {len(args)}")
         sys.exit(1)
     int_value = args[0]
     print(int_value, end='')
@@ -79,6 +113,68 @@ def builtin_println(args):
         print(f"ERROR: __builtin__println expects 0 arguments, got {len(args)}")
         sys.exit(1)
     print()  # Print newline
+    return None
+
+@register_builtin("@__builtin__println__int32")
+def builtin_println_i32(args):
+    """Print a 32-bit integer followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__int32 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    int_value = args[0]
+    print(int_value)
+    return None
+
+@register_builtin("@__builtin__println__int64")
+def builtin_println_i64(args):
+    """Print a 64-bit integer followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__int64 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    int_value = args[0]
+    print(int_value)
+    return None
+
+@register_builtin("@__builtin__println__float32")
+def builtin_println_f32(args):
+    """Print a 32-bit float followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__float32 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    float_value = args[0]
+    print(float_value)
+    return None
+
+@register_builtin("@__builtin__println__float64")
+def builtin_println_f64(args):
+    """Print a 64-bit float followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__float64 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    float_value = args[0]
+    print(float_value)
+    return None
+
+@register_builtin("@__builtin__println__char__1")
+def builtin_println_char_1(args):
+    """Print a string (array of characters) followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__char__1 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    string_value = args[0]
+    # If it's already a string, print it
+    if isinstance(string_value, str):
+        print(string_value)
+    # If it's a list/array, iterate and print each character
+    elif isinstance(string_value, list):
+        for char in string_value:
+            if isinstance(char, int):
+                print(chr(char), end='')
+            else:
+                print(char, end='')
+        print()  # Add newline
+    else:
+        print(string_value)
     return None
 
 # =================================================================================================

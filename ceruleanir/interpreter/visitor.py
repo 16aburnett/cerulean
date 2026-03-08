@@ -68,15 +68,16 @@ class InterpreterVisitor(ASTVisitor):
         
         func_node = self.functions[func_name]
         
-        # Push new local variable frame
+        # Push new local variable frame and save function state
         self.locals_stack.append({})
         old_function = self.current_function
+        old_blocks = self.blocks  # Save the caller's blocks dictionary
         self.current_function = func_node
         
         # Initialize parameters with argument values
         for i, param in enumerate(func_node.params):
             if i < len(args):
-                self.locals_stack[-1][param.name] = args[i]
+                self.locals_stack[-1][param.id] = args[i]
         
         # Build blocks map for this function
         self.blocks = {block.name: block for block in func_node.basicBlocks}
@@ -88,10 +89,10 @@ class InterpreterVisitor(ASTVisitor):
         else:
             result = None
         
-        # Pop local variable frame
+        # Pop local variable frame and restore function state
         self.locals_stack.pop()
         self.current_function = old_function
-        self.blocks = {}
+        self.blocks = old_blocks  # Restore the caller's blocks dictionary
         
         return result
     
@@ -129,13 +130,26 @@ class InterpreterVisitor(ASTVisitor):
     
     def visitGlobalVariableDeclarationNode(self, node):
         """Initialize global variables."""
-        # TODO: Handle initialization expressions
-        self.globals[node.name] = None
+        # Handle initialization expressions
+        # Format: global @name = value(<type>(<value>))
+        # Global variables are memory locations, so we wrap values in a list
+        if node.command == "value":
+            # Evaluate the argument to get the actual value
+            if len(node.arguments) > 0:
+                value = node.arguments[0].accept(self)
+                # Wrap in a list to make it a memory location that can be loaded from
+                self.globals[node.id] = [value]
+            else:
+                self.globals[node.id] = [None]
+        else:
+            # Other initialization commands can be added here if needed
+            print(f"WARNING: Unsupported global initialization command: {node.command}")
+            self.globals[node.id] = [None]
         return None
     
     def visitVariableDeclarationNode(self, node):
         """Declare local variables (alloca)."""
-        # TODO: Implement memory allocation
+        # Memory allocation is handled in visitInstructionNode for 'alloca' instruction
         pass
     
     def visitFunctionNode(self, node):
@@ -157,26 +171,121 @@ class InterpreterVisitor(ASTVisitor):
         if command == "alloca":
             # Allocate memory on stack
             # Format: %ptr = alloca(type(<type>), i32(<count>))
-            # TODO: Implement alloca
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: alloca instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Argument 0 is the type (metadata)
+            # Argument 1 is the count
+            count = node.arguments[1].accept(self)
+            
+            # Allocate a list of None values
+            allocated_memory = [None] * count
+            
+            # Store the pointer in local variable
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = allocated_memory
+            
+            return None
         
         elif command == "load":
             # Load value from memory
             # Format: %dest = load(type(<type>), ptr(%ptr), i32(<offset>))
-            # TODO: Implement load
-            pass
+            if len(node.arguments) != 3:
+                print(f"ERROR: load instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Argument 0 is the type (just metadata, skip it)
+            # Argument 1 is the pointer
+            ptr_value = node.arguments[1].accept(self)
+            # Argument 2 is the offset
+            offset = node.arguments[2].accept(self)
+            
+            # Load the value at ptr[offset]
+            if isinstance(ptr_value, str):
+                # String indexing
+                if offset < len(ptr_value):
+                    value = ptr_value[offset]
+                else:
+                    print(f"ERROR: String index out of bounds: {offset} >= {len(ptr_value)}")
+                    sys.exit(1)
+            elif isinstance(ptr_value, list):
+                # Array indexing
+                if offset < len(ptr_value):
+                    value = ptr_value[offset]
+                else:
+                    print(f"ERROR: Array index out of bounds: {offset} >= {len(ptr_value)}")
+                    sys.exit(1)
+            else:
+                print(f"ERROR: Cannot load from non-pointer type: {type(ptr_value)}")
+                sys.exit(1)
+            
+            # Store result in local variable
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = value
+            
+            return None
         
         elif command == "store":
             # Store value to memory
             # Format: store(ptr(%ptr), i32(<offset>), <type>(<value>))
-            # TODO: Implement store
-            pass
+            if len(node.arguments) != 3:
+                print(f"ERROR: store instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Argument 0 is the pointer
+            ptr_value = node.arguments[0].accept(self)
+            # Argument 1 is the offset
+            offset = node.arguments[1].accept(self)
+            # Argument 2 is the value to store
+            value = node.arguments[2].accept(self)
+            
+            # Store the value at ptr[offset]
+            if isinstance(ptr_value, list):
+                if offset < len(ptr_value):
+                    ptr_value[offset] = value
+                else:
+                    print(f"ERROR: Array index out of bounds: {offset} >= {len(ptr_value)}")
+                    sys.exit(1)
+            else:
+                print(f"ERROR: Cannot store to non-pointer type: {type(ptr_value)}")
+                sys.exit(1)
+            
+            return None
         
         elif command == "malloc":
             # Allocate memory on heap
             # Format: %ptr = malloc(type(<type>), i32(<count>))
-            # TODO: Implement malloc
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: malloc instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Argument 0 is the type (metadata)
+            # Argument 1 is the count
+            count = node.arguments[1].accept(self)
+            
+            # Allocate a list of None values (heap vs stack doesn't matter in interpreter)
+            allocated_memory = [None] * count
+            
+            # Store the pointer in local variable
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = allocated_memory
+            
+            return None
+        
+        elif command == "free":
+            # Free allocated memory
+            # Format: free(ptr(%ptr))
+            # In Python interpreter, this is a no-op since Python handles memory management
+            if len(node.arguments) != 1:
+                print(f"ERROR: free instruction expects 1 argument, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # We evaluate the argument to ensure it's valid, but don't need to do anything
+            # Python's garbage collector will handle cleanup automatically
+            node.arguments[0].accept(self)
+            
+            return None
         
         elif command == "value":
             # Load immediate value
@@ -197,70 +306,310 @@ class InterpreterVisitor(ASTVisitor):
         # Arithmetic Operations
         elif command == "add":
             # Addition: %dest = add(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement add
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: add instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = lhs + rhs
+            
+            # Store result in local variable
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "sub":
             # Subtraction: %dest = sub(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement sub
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: sub instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = lhs - rhs
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "mul":
             # Multiplication: %dest = mul(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement mul
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: mul instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = lhs * rhs
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "div":
             # Division: %dest = div(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement div
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: div instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            
+            if rhs == 0:
+                print(f"ERROR: Division by zero")
+                sys.exit(1)
+            
+            # Integer division for integers, float division otherwise
+            if isinstance(lhs, int) and isinstance(rhs, int):
+                result = lhs // rhs
+            else:
+                result = lhs / rhs
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "mod":
             # Modulo: %dest = mod(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement mod
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: mod instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            
+            if rhs == 0:
+                print(f"ERROR: Modulo by zero")
+                sys.exit(1)
+            
+            result = lhs % rhs
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         # Comparison Operations
         elif command == "ceq":
             # Equal: %dest = ceq(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement ceq
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: ceq instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs == rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "cne":
             # Not equal: %dest = cne(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement cne
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: cne instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs != rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "clt":
             # Less than: %dest = clt(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement clt
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: clt instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs < rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "cle":
             # Less than or equal: %dest = cle(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement cle
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: cle instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs <= rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "cgt":
             # Greater than: %dest = cgt(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement cgt
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: cgt instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs > rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         elif command == "cge":
             # Greater than or equal: %dest = cge(<type>(%lhs), <type>(%rhs))
-            # TODO: Implement cge
-            pass
+            if len(node.arguments) != 2:
+                print(f"ERROR: cge instruction expects 2 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            result = 1 if lhs >= rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
         
         # Control Flow Operations
         elif command == "jmp":
             # Unconditional jump: jmp(block(<label>))
-            # TODO: Implement jmp
-            pass
+            if len(node.arguments) != 1:
+                print(f"ERROR: jmp instruction expects 1 argument, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Get the target block label
+            target_block = node.arguments[0].accept(self)
+            
+            # Set next block to jump to
+            self.next_block = target_block
+            
+            return None
         
         elif command == "jcmp":
             # Conditional jump: jcmp(<type>(%condition), block(<true_label>), block(<false_label>))
-            # TODO: Implement jcmp
-            pass
+            if len(node.arguments) != 3:
+                print(f"ERROR: jcmp instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            # Evaluate condition
+            condition = node.arguments[0].accept(self)
+            # Get true and false block labels
+            true_label = node.arguments[1].accept(self)
+            false_label = node.arguments[2].accept(self)
+            
+            # Jump based on condition (non-zero is true)
+            if condition:
+                self.next_block = true_label
+            else:
+                self.next_block = false_label
+            
+            return None
+        
+        # Jump-if comparison instructions (convenience instructions)
+        elif command == "jg":
+            # Jump if greater: jg(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jg instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs > rhs:
+                self.next_block = label
+            
+            return None
+        
+        elif command == "jge":
+            # Jump if greater or equal: jge(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jge instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs >= rhs:
+                self.next_block = label
+            
+            return None
+        
+        elif command == "jl":
+            # Jump if less: jl(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jl instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs < rhs:
+                self.next_block = label
+            
+            return None
+        
+        elif command == "jle":
+            # Jump if less or equal: jle(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jle instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs <= rhs:
+                self.next_block = label
+            
+            return None
+        
+        elif command == "jne":
+            # Jump if not equal: jne(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jne instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs != rhs:
+                self.next_block = label
+            
+            return None
+        
+        elif command == "jeq":
+            # Jump if equal: jeq(<type>(%lhs), <type>(%rhs), block(<label>))
+            if len(node.arguments) != 3:
+                print(f"ERROR: jeq instruction expects 3 arguments, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            lhs = node.arguments[0].accept(self)
+            rhs = node.arguments[1].accept(self)
+            label = node.arguments[2].accept(self)
+            
+            if lhs == rhs:
+                self.next_block = label
+            
+            return None
         
         elif command == "return":
             # Return from function: return(<type>(%value)) or return()
@@ -310,9 +659,9 @@ class InterpreterVisitor(ASTVisitor):
     
     def visitGlobalVariableExpressionNode(self, node):
         """Load global variable value."""
-        if node.name in self.globals:
-            return self.globals[node.name]
-        print(f"ERROR: Undefined global variable: {node.name}")
+        if node.id in self.globals:
+            return self.globals[node.id]
+        print(f"ERROR: Undefined global variable: {node.id}")
         sys.exit(1)
     
     def visitLocalVariableExpressionNode(self, node):
@@ -338,19 +687,24 @@ class InterpreterVisitor(ASTVisitor):
         """Return character literal value."""
         # Decode escape sequences
         value = node.value
-        if isinstance(value, str) and len(value) == 2 and value[0] == '\\':
-            # Handle common escape sequences
-            escape_map = {
-                'n': '\n',
-                't': '\t',
-                'r': '\r',
-                '0': '\0',
-                '\\': '\\',
-                "'": "'",
-                '"': '"'
-            }
-            if value[1] in escape_map:
-                return escape_map[value[1]]
+        if isinstance(value, str):
+            # Strip surrounding single quotes if present
+            if len(value) >= 2 and value[0] == "'" and value[-1] == "'":
+                value = value[1:-1]
+            
+            # Handle escape sequences
+            if len(value) == 2 and value[0] == '\\':
+                escape_map = {
+                    'n': '\n',
+                    't': '\t',
+                    'r': '\r',
+                    '0': '\0',
+                    '\\': '\\',
+                    "'": "'",
+                    '"': '"'
+                }
+                if value[1] in escape_map:
+                    return escape_map[value[1]]
         return value
     
     def visitStringLiteralExpressionNode(self, node):
@@ -358,6 +712,10 @@ class InterpreterVisitor(ASTVisitor):
         # Decode escape sequences in strings
         value = node.value
         if isinstance(value, str):
+            # Strip surrounding quotes
+            if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+                value = value[1:-1]
+            
             # Python's encode().decode('unicode_escape') would work but can have issues
             # Manual replacement is safer
             value = value.replace('\\n', '\n')

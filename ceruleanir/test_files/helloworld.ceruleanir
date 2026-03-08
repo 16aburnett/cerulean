@@ -5,7 +5,7 @@
 // You can specify static global info outside of functions
 // global variables are denoted by the @ symbol
 global @customary_greeting = value (ptr("Hello, World!"))
-global @length = value (i32(14))
+global @length = value (i32(13))
 
 //========================================================================
 

@@ -84,18 +84,26 @@ ceruleanirc <source_files> -o <dest_filename>
 # helloworld
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld.ceruleanir -o ceruleanir/test_files/helloworld.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld.ceruleanir
 
 # test_math
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_math.ceruleanir -o ceruleanir/test_files/test_math.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_math.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_math.ceruleanir
 
 # test_heap_arrays
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_heap_arrays.ceruleanir -o ceruleanir/test_files/test_heap_arrays.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_heap_arrays.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_heap_arrays.ceruleanir
 
 # test_cmp
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_cmp.ceruleanir -o ceruleanir/test_files/test_cmp.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_cmp.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_cmp.ceruleanir
 
 # helloworld0
 # Test target=ceruleanrisc
