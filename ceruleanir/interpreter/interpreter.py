@@ -4,9 +4,15 @@
 # Author: Amy Burnett
 # =================================================================================================
 
+import sys
+
 # Use existing tokenizer and parser from ceruleanir frontend
 from ..tokenizer import tokenize
 from ..parser import Parser
+
+# Import semantic analyzer from backend
+from backend.semanticAnalyzer import SemanticAnalysisVisitor
+from backend.builtins import addBuiltinsToSymbolTable
 
 # Import the interpreter visitor
 from .visitor import InterpreterVisitor
@@ -44,6 +50,27 @@ class CeruleanIRInterpreter:
             print("Parsing...")
         parser = Parser(tokens, sourceCodeLines, doDebug=self.debug)
         ast = parser.parse()
+        
+        # === SEMANTIC ANALYSIS ===
+        if self.debug:
+            print("Analyzing semantics...")
+        semanticAnalyzer = SemanticAnalysisVisitor(sourceCodeLines, debug=False)
+        
+        # Add built-in functions to symbol table so they're recognized
+        addBuiltinsToSymbolTable(semanticAnalyzer.table)
+        
+        # Check AST for semantic errors:
+        # - Undefined variables
+        # - SSA violations (variable reassignments)
+        # - Redeclared functions/blocks
+        # - Variables used before assignment
+        wasSuccessful = semanticAnalyzer.analyze(ast)
+        if not wasSuccessful:
+            print("ERROR: Semantic analysis failed")
+            sys.exit(1)
+        
+        if self.debug:
+            print("Semantic analysis passed")
         
         # === INTERPRETATION ===
         if self.debug:

@@ -59,7 +59,7 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/test_u
 
 ```
 
-
+# CeruleanIR Tests
 ```bash
 # Building CeruleanIRBackend
 # this does not seem to work??
@@ -204,6 +204,23 @@ python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned_comprehensive
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_unsigned_comprehensive.amyasm
 # Test target=ceruleanir - oh hey! its already there, just run it.
 python3 -m ceruleanir.interpreter ceruleanir/test_files/test_unsigned_comprehensive.ceruleanir
+
+
+# Negative tests (expected to fail)
+
+# Test SSA violation
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_ssa_violation.ceruleanir -o ceruleanir/test_files/test_ssa_violation.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+# python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_ssa_violation.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_ssa_violation.ceruleanir
+
+# Test undefined var
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_undefined_var.ceruleanir -o ceruleanir/test_files/test_undefined_var.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
+# python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_undefined_var.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_undefined_var.ceruleanir
 
 
 ```
