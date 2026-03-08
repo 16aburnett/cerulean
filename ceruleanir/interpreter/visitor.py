@@ -98,27 +98,33 @@ class InterpreterVisitor(ASTVisitor):
     
     def execute_block(self, block_label):
         """Execute all instructions in a basic block."""
-        if block_label not in self.blocks:
-            print(f"ERROR: Undefined block: {block_label}")
-            sys.exit(1)
+        current_label = block_label
         
-        block = self.blocks[block_label]
-        self.current_block = block_label
-        self.next_block = None
-        
-        if self.debug:
-            print(f"Executing block: {block_label}")
-        
-        for instruction in block.instructions:
-            result = instruction.accept(self)
+        while current_label is not None:
+            if current_label not in self.blocks:
+                print(f"ERROR: Undefined block: {current_label}")
+                sys.exit(1)
             
-            # Check for return
-            if isinstance(result, tuple) and result[0] == "RETURN":
-                return result[1]
+            block = self.blocks[current_label]
+            self.current_block = current_label
+            self.next_block = None
             
-            # Check for control flow change
-            if self.next_block is not None:
-                return self.execute_block(self.next_block)
+            if self.debug:
+                print(f"Executing block: {current_label}")
+            
+            for instruction in block.instructions:
+                result = instruction.accept(self)
+                
+                # Check for return
+                if isinstance(result, tuple) and result[0] == "RETURN":
+                    return result[1]
+                
+                # Check for control flow change
+                if self.next_block is not None:
+                    break  # Exit instruction loop to jump to next block
+            
+            # Move to next block, or exit if no jump occurred
+            current_label = self.next_block
         
         return None
     
