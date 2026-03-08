@@ -103,10 +103,11 @@ python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld0.ceruleanir -o c
 python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/helloworld0.crisc -o ceruleanir/test_files/helloworld0.crisco --debug --emitTokens --emitAST
 python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/helloworld0.crisco -o ceruleanir/test_files/helloworld0.criscbc --debug
 ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld0.criscbc
-# Test target=ceruleanrisc
+# Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld0.ceruleanir -o ceruleanir/test_files/helloworld0.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld0.amyasm
-
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld0.ceruleanir
 
 # helloworld1
 # Test target=ceruleanrisc
@@ -117,7 +118,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld1.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld1.ceruleanir -o ceruleanir/test_files/helloworld1.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld1.amyasm
-
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld1.ceruleanir
 
 # helloworld3
 # Test target=ceruleanrisc
@@ -128,6 +130,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld3.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld3.ceruleanir -o ceruleanir/test_files/helloworld3.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld3.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld3.ceruleanir
 
 
 # helloworld4
@@ -139,6 +143,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld4.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld4.ceruleanir -o ceruleanir/test_files/helloworld4.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld4.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld4.ceruleanir
 
 # helloworld5: helloworld5.ceruleanir print_string.ceruleanir
 # Test target=ceruleanrisc
@@ -151,6 +157,9 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld5.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+# TBD!!!
+# python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld5.ceruleanir
 
 # test_comparisons
 # Test target=ceruleanrisc
@@ -161,6 +170,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_comparisons.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_comparisons.ceruleanir -o ceruleanir/test_files/test_comparisons.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_comparisons.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_comparisons.ceruleanir
 
 # test unsigned
 # Test target=ceruleanrisc
@@ -171,6 +182,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_unsigned.criscbc
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned.ceruleanir -o ceruleanir/test_files/test_unsigned.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_unsigned.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_unsigned.ceruleanir
 
 # test unsigned comprehensive
 # Test target=ceruleanrisc
@@ -181,6 +194,8 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_unsigned_comprehensive.
 # Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_unsigned_comprehensive.ceruleanir -o ceruleanir/test_files/test_unsigned_comprehensive.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_unsigned_comprehensive.amyasm
+# Test target=ceruleanir - oh hey! its already there, just run it.
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_unsigned_comprehensive.ceruleanir
 
 
 ```
@@ -553,5 +568,37 @@ Greater or Equal (A≥B) | NOT (A<B) | Perform SLT temp, A, B, then XORI dest, t
 Equal (A=B) | A=B | Use SEQ directly.
 Not Equal (A≠B) | NOT (A=B) | Perform SEQ temp, A, B, then XORI dest, temp, 1.
 
+
+# MLIR
+
+Excellent question! Let me clarify the MLIR/LLVM relationship:
+
+In Real LLVM
+```
+Frontend → MLIR dialects → LLVM IR → LLVM Backend → Machine code
+           (high-level)    (low-level)
+```
+MLIR lowers to LLVM IR, then uses the same LLVM backend! MLIR is a framework for building multiple IR dialects at different abstraction levels, but it ultimately targets LLVM IR.
+
+For Your Project - Two Paths:
+```
+Option 1: MLIR → CeruleanIR (MLIR as higher-level)
+cerulean/   ──┐
+mlir/       ──┼──> CeruleanIR ──> backend/ ──> targets
+ceruleanir/ ──┘
+```
+MLIR would be another frontend that produces CeruleanIR AST.
+
+Option 2: Separate IR systems
+```
+cerulean/   ──> CeruleanIR ──> backend/ceruleanir/ ──> targets
+mlir/       ──> MLIR       ──> backend/mlir/      ──> targets
+```
+Different IRs with different backends (more complex).
+
+Most Likely Path
+If you adopt MLIR, you'd probably use Option 1: MLIR as a meta-framework that lowers to your CeruleanIR, which then uses your existing backend. Just like MLIR→LLVM IR in real LLVM.
+
+Interpreter placement unchanged: Still ceruleanir/interpreter/ for executing CeruleanIR specifically.
 
 
