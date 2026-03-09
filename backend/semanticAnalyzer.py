@@ -46,9 +46,84 @@ class SemanticAnalysisVisitor (ASTVisitor):
         # keep track of the root node 
         self.programNode = node
 
+        # Two-pass analysis for multi-file support:
+        # Pass 1: Collect all function and global signatures
+        # This ensures forward references work across file boundaries
         for codeunit in node.codeunits:
             if codeunit != None:
-                codeunit.accept (self)
+                if isinstance(codeunit, FunctionNode):
+                    # Just collect signature, don't analyze body yet
+                    self._collectFunctionSignature(codeunit)
+                elif isinstance(codeunit, GlobalVariableDeclarationNode):
+                    # Add global variables to symbol table
+                    codeunit.accept(self)
+        
+        # Pass 2: Analyze function bodies
+        for codeunit in node.codeunits:
+            if codeunit != None and isinstance(codeunit, FunctionNode):
+                # Now analyze the function body
+                self._analyzeFunctionBody(codeunit)
+    
+    def _collectFunctionSignature(self, node):
+        """Collect function signature and add to symbol table without analyzing body."""
+        node.type.accept(self)
+        # create signature for node
+        signature = [f"{node.id}"]
+        signature += [f"("]
+        if len(node.params) > 0:
+            signature += [node.params[0].type.__str__()]
+        for i in range(1, len(node.params)):
+            signature += [f", {node.params[i].type.__str__()}"]
+        signature += [")"]
+        signature = "".join(signature)
+        node.signature = signature
+
+        # Insert function into symbol table
+        if self.insertFunc:
+            wasSuccessful = self.table.insert(node, node.id, Kind.FUNC)
+
+            if (not wasSuccessful):
+                originalDec = self.table.lookup(node.id, Kind.FUNC, node.params)
+                print(f"Semantic Error: Redeclaration of function '{node.signature}'")
+                print(f"   Original:")
+                printToken(originalDec.token, "      ")
+                print(f"   Redeclaration:")
+                printToken(node.token, "      ")
+                print()
+                self.wasSuccessful = False
+        else:
+            self.insertFunc = True
+    
+    def _analyzeFunctionBody(self, node):
+        """Analyze function parameters and body."""
+        self.table.enterScope(ScopeType.FUNCTION)
+        # check parameters
+        for p in node.params:
+            p.accept(self)
+        
+        # Skip body analysis for extern functions
+        if node.isExtern:
+            self.table.exitScope()
+            return
+        
+        # containing function keeps track of what function 
+        # we're currently in 
+        self.containingFunction += [node]
+        for i in range(0, len(node.basicBlocks)):
+            basicBlock = node.basicBlocks[i]
+            basicBlock.accept(self)
+            # Ensure this basic block name is unique
+            for j in range(i + 1, len(node.basicBlocks)):
+                if node.basicBlocks[i].name == node.basicBlocks[j].name:
+                    print(f"Semantic Error: Redeclaration of basic block '{node.basicBlocks[i].name}' in function '{node.signature}'")
+                    print(f"   Original:")
+                    printToken(node.basicBlocks[i].token, "      ")
+                    print(f"   Redeclaration:")
+                    printToken(node.basicBlocks[j].token, "      ")
+                    print()
+                    self.wasSuccessful = False
+        self.containingFunction.pop()
+        self.table.exitScope()
 
     # ====================================================================
 

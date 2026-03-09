@@ -11,24 +11,37 @@ from .interpreter import CeruleanIRInterpreter
 # =================================================================================================
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description="CeruleanIR Interpreter")
+    argparser = argparse.ArgumentParser(
+        description="CeruleanIR Interpreter - Execute CeruleanIR programs directly from the command line"
+    )
     
-    argparser.add_argument("sourceFile", help="CeruleanIR source file to interpret")
-    argparser.add_argument("-d", "--debug", action="store_true", help="Enable debug output")
+    argparser.add_argument(
+        "sourceFiles",
+        nargs='+',
+        help="CeruleanIR source file(s) to interpret"
+    )
+    argparser.add_argument(
+        "-d", "--debug",
+        action="store_true",
+        help="Enable debug output"
+    )
     
     args = argparser.parse_args()
     
-    # Read source file
-    source_path = Path(args.sourceFile)
-    if not source_path.exists():
-        print(f"ERROR: File not found: {args.sourceFile}")
-        sys.exit(1)
-    
-    with open(source_path, "r") as f:
-        source_code = f.read()
-    
-    # Run interpreter
+    # Create interpreter
     interpreter = CeruleanIRInterpreter(debug=args.debug)
-    exit_code = interpreter.interpret(source_code, args.sourceFile)
     
+    # Load all source files
+    for source_file in args.sourceFiles:
+        source_path = Path(source_file)
+        if not source_path.exists():
+            print(f"ERROR: File not found: {source_file}")
+            sys.exit(1)
+        
+        interpreter.load_file(source_file)
+    
+    # Execute linked program
+    exit_code = interpreter.run()
+    
+    # Propagate exit code to the shell
     sys.exit(exit_code)

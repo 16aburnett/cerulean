@@ -1,0 +1,6 @@
+function i32 @main () {
+    block entry {
+        call @__builtin__println__char__1 (ptr("Duplicate main from file1!"))
+        return (i32(42))
+    }
+}

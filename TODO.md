@@ -13,6 +13,7 @@ python3 testing/run_tests.py --backend amyasm
 
 # run as a module for correct import between cerulean and ceruleanIR backend
 # needs to run from root of repo
+# Compiling to amyasm
 python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean --debug --emitTokens --emitAST --emitIR --emitIRAST -o cerulean/test_files/helloworld.amyasm
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py cerulean/test_files/helloworld.amyasm
 # Compiling to CeruleanRISC
@@ -22,6 +23,9 @@ python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean
 python3 -m ceruleanrisc.assembler.assembler cerulean/test_files/helloworld.crisc -o cerulean/test_files/helloworld.crisco --debug --emitTokens --emitAST
 python3 -m ceruleanrisc.linker.linker cerulean/test_files/helloworld.crisco -o cerulean/test_files/helloworld.criscbc --debug
 ceruleanrisc/vm/build/criscvm cerulean/test_files/helloworld.criscbc
+# Compiling to CeruleanIR
+python3 -m cerulean.compiler cerulean/test_files/helloworld.cerulean -o cerulean/test_files/helloworld.ceruleanir --debug --emitTokens --emitAST --emitIR --emitIRAST --target=ceruleanir
+python3 -m ceruleanir.interpreter cerulean/test_files/helloworld.ceruleanir
 
 
 
@@ -166,8 +170,7 @@ ceruleanrisc/vm/build/criscvm ceruleanir/test_files/helloworld5.criscbc
 python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o ceruleanir/test_files/helloworld5.amyasm --target=amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
 # Test target=ceruleanir - oh hey! its already there, just run it.
-# TBD!!!
-# python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld5.ceruleanir
+python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld5.ceruleanir ceruleanir/test_files/print_string.ceruleanir
 
 # test_comparisons
 # Test target=ceruleanrisc
