@@ -6,6 +6,7 @@ python3 testing/run_tests.py --frontend cerulean
 python3 testing/run_tests.py --frontend ceruleanir
 python3 testing/run_tests.py --backend ceruleanrisc
 python3 testing/run_tests.py --backend amyasm
+python3 testing/run_tests.py --backend ceruleanir
 ```
 
 # Cerulean tests

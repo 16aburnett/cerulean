@@ -79,6 +79,7 @@ class Backend(Enum):
     """
     CERULEANRISC = "ceruleanrisc"
     AMYASM = "amyasm"
+    CERULEANIR = "ceruleanir"
 
 @dataclass
 class TestConfig:
@@ -273,6 +274,8 @@ def get_backend_info(backend: Backend) -> tuple[str, str]:
         return "ceruleanrisc", ".crisc"
     elif backend == Backend.AMYASM:
         return "amyasm", ".amyasm"
+    elif backend == Backend.CERULEANIR:
+        return "ceruleanir", ".ceruleanir"
     else:
         raise ValueError(f"Unknown backend: {backend}")
 
@@ -332,6 +335,11 @@ def postprocess_backend_output(compile_output: Path, output_file: Path,
             shutil.move(compile_output, output_file)
         return True
     
+    elif backend == Backend.CERULEANIR:
+        # For CeruleanIR interpreter, no post-processing needed
+        # Files are already in the right place for interpretation
+        return True
+    
     else:
         print(f"Error: Unknown backend {backend}")
         return False
@@ -348,6 +356,34 @@ def compile_cerulean(test: Test, backend: Backend, output_file: Path,
     except ValueError as e:
         print(f"Error: {e}")
         return False
+    
+    # CeruleanIR interpreter backend: compile Cerulean to CeruleanIR
+    if backend == Backend.CERULEANIR:
+        # Compile each Cerulean file to CeruleanIR
+        for source_file in source_files:
+            ir_file = temp_dir / f"{source_file.stem}.ceruleanir"
+            cmd = [
+                sys.executable, "-m", "cerulean.compiler",
+                str(source_file),
+                "--target", "ceruleanir",
+                "-o", str(ir_file)
+            ]
+            
+            if verbose:
+                print(f"  Compiling to IR: {' '.join(cmd)}")
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=test.config.timeout)
+            if result.returncode != 0:
+                if verbose:
+                    print(f"  Compilation to IR failed:")
+                    print(f"  stdout: {result.stdout}")
+                    print(f"  stderr: {result.stderr}")
+                return False
+        
+        # For CeruleanIR interpreter, output_file is a marker file
+        # The actual .ceruleanir files are in temp_dir
+        output_file.write_text("ceruleanir")
+        return True
     
     # CeruleanRISC backend with multiple files: compile and assemble each separately, then link
     if backend == Backend.CERULEANRISC and len(source_files) > 1:
@@ -462,6 +498,19 @@ def compile_ceruleanir(test: Test, backend: Backend, output_file: Path,
     except ValueError as e:
         print(f"Error: {e}")
         return False
+    
+    # CeruleanIR interpreter backend: just copy CeruleanIR files to temp directory
+    if backend == Backend.CERULEANIR:
+        if verbose:
+            print(f"  Copying CeruleanIR files for interpretation")
+        
+        for source_file in source_files:
+            dest_file = temp_dir / source_file.name
+            shutil.copy(source_file, dest_file)
+        
+        # For CeruleanIR interpreter, output_file is a marker file
+        output_file.write_text("ceruleanir")
+        return True
     
     # CeruleanIR compiler doesn't support multi-file compilation in a single invocation
     # For CeruleanRISC backend with multiple files: compile and assemble each separately, then link
@@ -594,6 +643,20 @@ def execute_program(executable: Path, backend: Backend, timeout: int = 10,
         
         cmd = [sys.executable, amyasm_path, str(executable)]
     
+    elif backend == Backend.CERULEANIR:
+        # For CeruleanIR interpreter, executable is a marker file
+        # The actual .ceruleanir files are in the same directory
+        temp_dir = executable.parent
+        ceruleanir_files = sorted(temp_dir.glob("*.ceruleanir"))
+        
+        if not ceruleanir_files:
+            print(f"Error: No .ceruleanir files found in {temp_dir}")
+            return None
+        
+        cmd = [sys.executable, "-m", "ceruleanir.interpreter"]
+        for f in ceruleanir_files:
+            cmd.append(str(f))
+    
     else:
         print(f"Error: Unknown backend {backend}")
         return None
@@ -653,6 +716,10 @@ def run_test(test: Test, backend: Backend, verbose: bool = False,
             output_file = temp_dir / "output.criscbc"
         elif backend == Backend.AMYASM:
             output_file = temp_dir / "output.amyasm"
+        elif backend == Backend.CERULEANIR:
+            # For CeruleanIR interpreter, use a marker file
+            # Actual .ceruleanir files will be in temp_dir
+            output_file = temp_dir / "ceruleanir.marker"
         else:
             return TestResult(
                 test_name=test.name,

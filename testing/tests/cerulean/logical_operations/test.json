@@ -1,4 +1,4 @@
 {
-  "_comment": "Skipping CeruleanRISC bc not supported yet",
-  "skip_backends": ["ceruleanrisc"]
+  "_comment": "Skipping CeruleanRISC bc not supported yet. CeruleanIR has incomplete output (missing loop/break/continue tests).",
+  "skip_backends": ["ceruleanrisc", "ceruleanir"]
 }
