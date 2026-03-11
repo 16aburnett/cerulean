@@ -284,6 +284,45 @@ def addBuiltinsToSymbolTable (symbolTable):
         f"{BUILTIN_PREFIX}null",
         []
     )
+    
+    # === Additional builtins for interpreter ===
+    # Shorter type name aliases
+    #  void print__i32 (i32 val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}print__i32",
+        [ParameterNode(TypeSpecifierNode (Type.I32, "i32", None, 0), "val", None)]
+    )
+    #  void print__i64 (i64 val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}print__i64",
+        [ParameterNode(TypeSpecifierNode (Type.I64, "i64", None, 0), "val", None)]
+    )
+    #  void print__f32 (f32 val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}print__f32",
+        [ParameterNode(TypeSpecifierNode (Type.F32, "f32", None, 0), "val", None)]
+    )
+    #  void print__f64 (f64 val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}print__f64",
+        [ParameterNode(TypeSpecifierNode (Type.F64, "f64", None, 0), "val", None)]
+    )
+    #  i32 input__i32 ();
+    add_builtin_function (
+        TypeSpecifierNode (Type.I32, "i32", None, 0),
+        f"{BUILTIN_PREFIX}input__i32",
+        []
+    )
+    #  f64 input__f64 ();
+    add_builtin_function (
+        TypeSpecifierNode (Type.F64, "f64", None, 0),
+        f"{BUILTIN_PREFIX}input__f64",
+        []
+    )
 
 
     # # LIBRARY OBJECTS

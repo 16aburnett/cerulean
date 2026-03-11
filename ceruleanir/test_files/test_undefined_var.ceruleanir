@@ -1,0 +1,13 @@
+// Test undefined variable usage
+// Should be caught by semantic analysis
+
+function i32 @main () {
+    block entry {
+        %x = value (i32(10))
+        // Using undefined variable %y
+        %z = add (i32(%x), i32(%y))
+        call @__builtin__print__i32 (i32(%z))
+        call @__builtin__println ()
+        return (i32(0))
+    }
+}

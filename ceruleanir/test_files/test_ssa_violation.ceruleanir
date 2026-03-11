@@ -1,0 +1,12 @@
+// Test SSA violation
+
+function i32 @main () {
+    block entry {
+        %x = value (i32(10))
+        // SSA violation - reassigning %x
+        %x = value (i32(20))
+        call @__builtin__print__i32 (i32(%x))
+        call @__builtin__println ()
+        return (i32(0))
+    }
+}

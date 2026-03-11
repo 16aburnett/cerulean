@@ -1,0 +1,11 @@
+function i32 @main () {
+    block entry {
+        %sum = call @add_numbers (i32(10), i32(20))
+        call @__builtin__println__int32 (i32(%sum))
+        
+        %product = call @multiply_numbers (i32(5), i32(7))
+        call @__builtin__println__int32 (i32(%product))
+        
+        return (i32(0))
+    }
+}
