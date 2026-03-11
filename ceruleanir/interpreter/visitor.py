@@ -29,6 +29,8 @@ class InterpreterVisitor(ASTVisitor):
         self.functions = {}         # Function definitions: name -> FunctionNode
         self.current_function = None
         self.blocks = {}            # Basic blocks in current function: label -> BasicBlockNode
+        self.block_order = {}       # Block order for fall-through: label -> index
+        self.block_list = []        # List of blocks in order for fall-through
         self.current_block = None
         self.next_block = None      # For control flow (jmp, jcmp)
         
@@ -72,6 +74,8 @@ class InterpreterVisitor(ASTVisitor):
         self.locals_stack.append({})
         old_function = self.current_function
         old_blocks = self.blocks  # Save the caller's blocks dictionary
+        old_block_order = self.block_order  # Save block order
+        old_block_list = self.block_list  # Save block list
         self.current_function = func_node
         
         # Initialize parameters with argument values
@@ -81,6 +85,9 @@ class InterpreterVisitor(ASTVisitor):
         
         # Build blocks map for this function
         self.blocks = {block.name: block for block in func_node.basicBlocks}
+        # Build block order map (block name -> index) for fall-through
+        self.block_order = {block.name: i for i, block in enumerate(func_node.basicBlocks)}
+        self.block_list = func_node.basicBlocks
         
         # Start execution at first block (typically "entry")
         if func_node.basicBlocks:
@@ -93,6 +100,8 @@ class InterpreterVisitor(ASTVisitor):
         self.locals_stack.pop()
         self.current_function = old_function
         self.blocks = old_blocks  # Restore the caller's blocks dictionary
+        self.block_order = old_block_order  # Restore block order
+        self.block_list = old_block_list  # Restore block list
         
         return result
     
@@ -122,6 +131,15 @@ class InterpreterVisitor(ASTVisitor):
                 # Check for control flow change
                 if self.next_block is not None:
                     break  # Exit instruction loop to jump to next block
+            
+            # If no explicit jump, implement fall-through to next block
+            # NOTE: a block without a jump or return is invalid CeruleanIR code
+            # So we should probably disallow this.
+            if self.next_block is None:
+                current_index = self.block_order.get(current_label)
+                if current_index is not None and current_index + 1 < len(self.block_list):
+                    # Fall through to next block
+                    self.next_block = self.block_list[current_index + 1].name
             
             # Move to next block, or exit if no jump occurred
             current_label = self.next_block
@@ -485,6 +503,22 @@ class InterpreterVisitor(ASTVisitor):
             lhs = node.arguments[0].accept(self)
             rhs = node.arguments[1].accept(self)
             result = 1 if lhs >= rhs else 0
+            
+            if node.hasAssignment and self.locals_stack:
+                self.locals_stack[-1][node.lhsVariable.id] = result
+            
+            return None
+        
+        # Logical Operations
+        elif command == "lnot":
+            # Logical NOT: %dest = lnot(<type>(%value))
+            if len(node.arguments) != 1:
+                print(f"ERROR: lnot instruction expects 1 argument, got {len(node.arguments)}")
+                sys.exit(1)
+            
+            value = node.arguments[0].accept(self)
+            # Logical NOT: returns 1 if value is 0 (false), 0 if value is non-zero (true)
+            result = 1 if value == 0 else 0
             
             if node.hasAssignment and self.locals_stack:
                 self.locals_stack[-1][node.lhsVariable.id] = result

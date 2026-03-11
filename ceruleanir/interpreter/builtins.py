@@ -96,6 +96,11 @@ def builtin_print_f32(args):
     print(float_value, end='')
     return None
 
+@register_builtin("@__builtin__print__float32")
+def builtin_print_float32(args):
+    """Print a 32-bit float (alias for f32)."""
+    return builtin_print_f32(args)
+
 @register_builtin("@__builtin__print__f64")
 def builtin_print_f64(args):
     """Print a 64-bit float."""
@@ -203,6 +208,53 @@ def builtin_input_f64(args):
         return float(input())
     except ValueError:
         print("ERROR: Invalid float input")
+        sys.exit(1)
+
+# =================================================================================================
+# Input Functions
+# =================================================================================================
+
+@register_builtin("@__builtin__input")
+def builtin_input(args):
+    """Read a line from stdin and return as string (char array).
+    
+    Note: This returns the string WITH a trailing newline to match
+    the expected behavior from other backends (AmyASM, etc.)."""
+    if len(args) != 0:
+        print(f"ERROR: __builtin__input expects 0 arguments, got {len(args)}")
+        sys.exit(1)
+    # Python's input() strips the newline, but the Cerulean input()
+    # builtin is expected to include it. We also strip any \r to handle
+    # Windows line endings uniformly
+    line = input().rstrip('\r')
+    return line + '\n'
+# String Conversion Functions
+# =================================================================================================
+
+@register_builtin("@__builtin__stringToInt32__char__1")
+def builtin_string_to_int32(args):
+    """Convert a string to a 32-bit integer."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__stringToInt32__char__1 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    string_value = args[0]
+    try:
+        return int(string_value)
+    except ValueError:
+        print(f"ERROR: Invalid integer string: '{string_value}'")
+        sys.exit(1)
+
+@register_builtin("@__builtin__stringToFloat32__char__1")
+def builtin_string_to_float32(args):
+    """Convert a string to a 32-bit float."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__stringToFloat32__char__1 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    string_value = args[0]
+    try:
+        return float(string_value)
+    except ValueError:
+        print(f"ERROR: Invalid float string: '{string_value}'")
         sys.exit(1)
 
 # =================================================================================================

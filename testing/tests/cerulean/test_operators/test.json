@@ -1,4 +1,4 @@
 {
-  "_comment": "Skipping CeruleanRISC bc not supported yet. CeruleanIR missing lnot instruction.",
-  "skip_backends": ["ceruleanrisc", "ceruleanir"]
+  "_comment": "Skipping CeruleanRISC bc not supported yet.",
+  "skip_backends": ["ceruleanrisc"]
 }

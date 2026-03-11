@@ -11,6 +11,11 @@ This project is a work-in-progress. Currently, the following are implemented:
 - **CeruleanIR** - A low-level Intermediate Representation (IR) programming language with its own frontend compiler (`ceruleanir/compiler.py`)
     - This is the main glue language of the Cerulean project as all the frontends compile to CeruleanIR and the backend compiles this IR to many target languages
     - The CeruleanIR Frontend compiler just converts CeruleanIR text-code to an IR AST that is passed to the backend compiler
+- **CeruleanIR Interpreter** - A tree-walking interpreter for CeruleanIR programs (`ceruleanir/interpreter/`)
+    - Executes CeruleanIR programs directly without compilation to a target architecture
+    - Supports multi-file programs with extern declarations
+    - Useful for rapid prototyping and debugging of CeruleanIR code
+    - See [CeruleanIR Interpreter README](ceruleanir/interpreter/README.md) for usage and features
 - **Backend** - The backend compiler (`backend/compiler.py`)
     - This takes in IR code (in AST form) and generates equivalent target-language code
 - **CeruleanRISC (CRISC)** - A custom RISC-like ISA with complete toolchain (`ceruleanrisc/`)
