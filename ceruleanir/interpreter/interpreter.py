@@ -44,11 +44,12 @@ class CeruleanIRInterpreter:
         interpreter.run()
     """
     
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, visitor=None):
         self.debug = debug
         self.modules = []           # List of (filename, source_lines, ast) tuples
         self.linked_ast = None      # Merged program AST
         self.needs_relink = True    # Track if linking is needed
+        self.visitor = visitor      # Optional custom visitor (for debugging)
     
     # ========================================================================
     # Loading Phase - Parse files into ASTs
@@ -209,8 +210,20 @@ class CeruleanIRInterpreter:
         if self.debug:
             print("Executing...")
         
-        visitor = InterpreterVisitor(debug=self.debug)
+        # Use custom visitor if provided (e.g., for debugging), otherwise create a new one
+        visitor = self.visitor if self.visitor else InterpreterVisitor(debug=self.debug)
         result = self.linked_ast.accept(visitor)
+        
+        # If result is a generator (debug mode), we need to consume it
+        # This happens when visitor has debug_callback set
+        if hasattr(result, '__iter__') and hasattr(result, '__next__'):
+            # It's a generator, consume it to get return value
+            try:
+                while True:
+                    next(result)
+            except StopIteration as e:
+                # Generator returns result via StopIteration.value
+                result = e.value if hasattr(e, 'value') else 0
         
         return result if result is not None else 0
     

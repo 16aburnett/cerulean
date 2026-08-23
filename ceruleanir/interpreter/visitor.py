@@ -20,8 +20,9 @@ class InterpreterVisitor(ASTVisitor):
     This is the core execution engine.
     """
     
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, debug_callback=None):
         self.debug = debug
+        self.debug_callback = debug_callback  # Optional debugger hook
         
         # Runtime state
         self.globals = {}           # Global variable storage: name -> value
@@ -33,6 +34,12 @@ class InterpreterVisitor(ASTVisitor):
         self.block_list = []        # List of blocks in order for fall-through
         self.current_block = None
         self.next_block = None      # For control flow (jmp, jcmp)
+        self.current_instruction_index = 0  # Index of current instruction in block
+        self.call_stack_names = []  # Track function call stack for debugging
+        
+        # Pause/resume support for debugger
+        self.execution_generator = None  # Generator for resumable execution
+        self.should_yield = False   # Set to true to pause execution
         
     def visitProgramNode(self, node):
         """Execute the entire program."""
@@ -49,13 +56,23 @@ class InterpreterVisitor(ASTVisitor):
         
         # Execute main function if it exists
         if "@main" in self.functions:
-            result = self.call_function("@main", [])
+            # If we have a debug callback, use generator-based execution
+            if self.debug_callback:
+                result = yield from self._execute_main_with_yields()
+            else:
+                result = self.call_function("@main", [])
+            
             if self.debug:
                 print(f"=== Program exited with code: {result} ===")
             return result
         else:
             print("ERROR: No main function found")
             sys.exit(1)
+    
+    def _execute_main_with_yields(self):
+        """Execute main function as generator for debugging."""
+        result = yield from self._call_function_generator("@main", [])
+        return result
     
     def call_function(self, func_name, args):
         """Call a function with given arguments."""
@@ -69,6 +86,9 @@ class InterpreterVisitor(ASTVisitor):
             sys.exit(1)
         
         func_node = self.functions[func_name]
+        
+        # Track call stack for debugging
+        self.call_stack_names.append(func_name)
         
         # Push new local variable frame and save function state
         self.locals_stack.append({})
@@ -103,6 +123,62 @@ class InterpreterVisitor(ASTVisitor):
         self.block_order = old_block_order  # Restore block order
         self.block_list = old_block_list  # Restore block list
         
+        # Pop call stack
+        self.call_stack_names.pop()
+        
+        return result
+    
+    def _call_function_generator(self, func_name, args):
+        """Generator version of call_function for debugging support."""
+        # Check if it's a builtin function first
+        if builtins.is_builtin(func_name):
+            result = builtins.call_builtin(func_name, args)
+            return result
+        
+        # Otherwise, execute user-defined function
+        if func_name not in self.functions:
+            print(f"ERROR: Undefined function: {func_name}")
+            sys.exit(1)
+        
+        func_node = self.functions[func_name]
+        
+        # Track call stack for debugging
+        self.call_stack_names.append(func_name)
+        
+        # Push new local variable frame and save function state
+        self.locals_stack.append({})
+        old_function = self.current_function
+        old_blocks = self.blocks
+        old_block_order = self.block_order
+        old_block_list = self.block_list
+        self.current_function = func_node
+        
+        # Initialize parameters with argument values
+        for i, param in enumerate(func_node.params):
+            if i < len(args):
+                self.locals_stack[-1][param.id] = args[i]
+        
+        # Build blocks map for this function
+        self.blocks = {block.name: block for block in func_node.basicBlocks}
+        self.block_order = {block.name: i for i, block in enumerate(func_node.basicBlocks)}
+        self.block_list = func_node.basicBlocks
+        
+        # Start execution at first block (typically \"entry\")
+        result = None
+        if func_node.basicBlocks:
+            self.current_block = func_node.basicBlocks[0].name
+            result = yield from self._execute_block_generator(self.current_block)
+        
+        # Pop local variable frame and restore function state
+        self.locals_stack.pop()
+        self.current_function = old_function
+        self.blocks = old_blocks
+        self.block_order = old_block_order
+        self.block_list = old_block_list
+        
+        # Pop call stack
+        self.call_stack_names.pop()
+        
         return result
     
     def execute_block(self, block_label):
@@ -121,7 +197,28 @@ class InterpreterVisitor(ASTVisitor):
             if self.debug:
                 print(f"Executing block: {current_label}")
             
-            for instruction in block.instructions:
+            for instr_index, instruction in enumerate(block.instructions):
+                self.current_instruction_index = instr_index
+                
+                # Call debug callback before executing instruction (non-generator version)
+                if self.debug_callback:
+                    from ..debugger.debugger import DebugContext, DebuggerBreakException
+                    context = DebugContext(
+                        instruction=instruction,
+                        function_name=self.current_function.id if self.current_function else "<none>",
+                        block_name=current_label,
+                        instruction_index=instr_index,
+                        locals_dict=self.locals_stack[-1] if self.locals_stack else {},
+                        globals_dict=self.globals,
+                        call_stack=self.call_stack_names.copy()
+                    )
+                    try:
+                        self.debug_callback(context)
+                    except DebuggerBreakException:
+                        # Debugger wants to pause - re-raise to propagate
+                        raise
+                
+                # Execute the instruction
                 result = instruction.accept(self)
                 
                 # Check for return
@@ -145,6 +242,101 @@ class InterpreterVisitor(ASTVisitor):
             current_label = self.next_block
         
         return None
+    
+    def _execute_block_generator(self, block_label):
+        """Generator version of execute_block for debugging support."""
+        current_label = block_label
+        
+        while current_label is not None:
+            if current_label not in self.blocks:
+                print(f"ERROR: Undefined block: {current_label}")
+                sys.exit(1)
+            
+            block = self.blocks[current_label]
+            self.current_block = current_label
+            self.next_block = None
+            
+            if self.debug:
+                print(f"Executing block: {current_label}")
+            
+            for instr_index, instruction in enumerate(block.instructions):
+                self.current_instruction_index = instr_index
+                
+                # Call debug callback before executing instruction
+                if self.debug_callback:
+                    from ..debugger.debugger import DebugContext, DebuggerBreakException
+                    context = DebugContext(
+                        instruction=instruction,
+                        function_name=self.current_function.id if self.current_function else "<none>",
+                        block_name=current_label,
+                        instruction_index=instr_index,
+                        locals_dict=self.locals_stack[-1] if self.locals_stack else {},
+                        globals_dict=self.globals,
+                        call_stack=self.call_stack_names.copy()
+                    )
+                    try:
+                        self.debug_callback(context)
+                        # Yield control after debug callback - allows debugger to pause
+                        yield ('STEP', context)
+                    except DebuggerBreakException as e:
+                        # Debugger wants to pause - yield with reason
+                        if e.is_breakpoint:
+                            yield ('BREAK', context)
+                        else:
+                            yield ('STEP', context)
+                
+                # Execute the instruction
+                result = self._execute_instruction_generator(instruction)
+                # If instruction returns a generator (e.g., function call), delegate to it
+                if hasattr(result, '__iter__') and not isinstance(result, (str, bytes, tuple, dict)):
+                    try:
+                        result = yield from result
+                    except TypeError:
+                        # Not a generator, just use the value
+                        pass
+                
+                # Check for return
+                if isinstance(result, tuple) and result[0] == "RETURN":
+                    return result[1]
+                
+                # Check for control flow change
+                if self.next_block is not None:
+                    break  # Exit instruction loop to jump to next block
+            
+            # If no explicit jump, implement fall-through to next block
+            if self.next_block is None:
+                current_index = self.block_order.get(current_label)
+                if current_index is not None and current_index + 1 < len(self.block_list):
+                    # Fall through to next block
+                    self.next_block = self.block_list[current_index + 1].name
+            
+            # Move to next block, or exit if no jump occurred
+            current_label = self.next_block
+        
+        return None
+    
+    def _execute_instruction_generator(self, instruction):
+        """Execute instruction with generator support for function calls."""
+        # Check if this is a function call
+        if isinstance(instruction, CallInstructionNode):
+            # Call nodes need special handling to support generators
+            func_name = instruction.function_name
+            # Evaluate arguments
+            args = [arg.accept(self) for arg in instruction.arguments]
+            
+            # If it's a user function and we're debugging, use generator version
+            if func_name in self.functions and self.debug_callback:
+                result = yield from self._call_function_generator(func_name, args)
+                # Store result if assignment
+                if instruction.hasAssignment and instruction.lhsVariable:
+                    self.locals_stack[-1][instruction.lhsVariable.id] = result
+                return None
+            else:
+                # Builtin or non-debug mode - execute normally
+                return instruction.accept(self)
+        else:
+            # Regular instruction - execute normally
+            return instruction.accept(self)
     
     def visitTypeSpecifierNode(self, node):
         pass  # Types are handled during execution

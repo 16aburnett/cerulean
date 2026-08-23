@@ -172,6 +172,7 @@ python3 -m ceruleanir.compiler ceruleanir/test_files/helloworld5.ceruleanir -o c
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/helloworld5.amyasm
 # Test target=ceruleanir - oh hey! its already there, just run it.
 python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld5.ceruleanir ceruleanir/test_files/print_string.ceruleanir
+python3 -m ceruleanir.debugger ceruleanir/test_files/helloworld5.ceruleanir ceruleanir/test_files/print_string.ceruleanir
 
 # test_comparisons
 # Test target=ceruleanrisc
