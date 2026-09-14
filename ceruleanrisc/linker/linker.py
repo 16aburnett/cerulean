@@ -7,6 +7,7 @@ import sys
 import argparse
 import json
 from ceruleanrisc.assembler.opcodes import *
+from ceruleanrisc.assembler.encoders import encodeRI, encodeRRI, encodeR, encodeNONE
 
 # =================================================================================================
 
@@ -76,19 +77,25 @@ class Linker:
             print (f"   No global '{self.entrySymbol}' function found in linked object files")
             print (f"   Hint: Define a global '{self.entrySymbol}' function in your main module to mark where execution begins.")
             exit (1)
-        # Setup init object that generates __start and calls main
+        # Setup init object that generates __start and calls main (using r1)
+        lui_op = INSTRUCTION_MAPPING["LUI"]["opcode"]
+        lli_op = INSTRUCTION_MAPPING["LLI"]["opcode"]
+        sll_op = INSTRUCTION_MAPPING["SLL64I"]["opcode"]
+        call_op = INSTRUCTION_MAPPING["CALL"]["opcode"]
+        halt_op = INSTRUCTION_MAPPING["HALT"]["opcode"]
+
         setupObject = {
             "filename": "<entry>",
             "bytecode": [
                 # Load address of main and call it, exact address is not known yet
-                INSTRUCTION_MAPPING["LUI"   ]["opcode"], 0x00, 0x00, 0x00, # lui r0, %hi(main)
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %mh(main)
-                INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %ml(main)
-                INSTRUCTION_MAPPING["SLL64I"]["opcode"], 0x00, 0x10, 0x00, # sll64i r0, r0, 16
-                INSTRUCTION_MAPPING["LLI"   ]["opcode"], 0x00, 0x00, 0x00, # lli r0, %lo(main)
-                INSTRUCTION_MAPPING["CALL"  ]["opcode"], 0x00, 0x00, 0x00, # call r0 ; call main
-                INSTRUCTION_MAPPING["HALT"  ]["opcode"], 0x00, 0x00, 0x00, # halt
+                *encodeRI(lui_op, 1, 0),      # [0]  lui r1, %hi(main)
+                *encodeRI(lli_op, 1, 0),      # [4]  lli r1, %mh(main)
+                *encodeRRI(sll_op, 1, 1, 16), # [8]  sll64i r1, r1, 16
+                *encodeRI(lli_op, 1, 0),      # [12] lli r1, %ml(main)
+                *encodeRRI(sll_op, 1, 1, 16), # [16] sll64i r1, r1, 16
+                *encodeRI(lli_op, 1, 0),      # [20] lli r1, %lo(main)
+                *encodeR(call_op, 1),         # [24] call r1
+                *encodeNONE(halt_op),         # [28] halt
             ],
             "symbols": {
                 # The linker generates __start at address 0
@@ -187,21 +194,41 @@ class Linker:
     # ---------------------------------------------------------------------------------------------
 
     # Processes the address based on relocType and returns the (little endian) bytes to patch
-    def convertAddressToBytes (self, address, relocType):
-        # Assuming little endian
+    def convertAddressToBytes(self, address, relocType):
+        # 16-bit immediates inside instructions must be written in numeric order:
+        #   immHigh first, immLow second
+        # 64-bit addresses in memory remain little-endian.
+
         if relocType == 'imm16_abs_lo':
-            return ((address      ) & 0xFFFF).to_bytes (2, 'little')
+            imm = address & 0xFFFF
+            immHigh = (imm >> 8) & 0xFF
+            immLow  = imm & 0xFF
+            return bytes([immHigh, immLow])
+
         elif relocType == 'imm16_abs_ml':
-            return ((address >> 16) & 0xFFFF).to_bytes (2, 'little')
+            imm = (address >> 16) & 0xFFFF
+            immHigh = (imm >> 8) & 0xFF
+            immLow  = imm & 0xFF
+            return bytes([immHigh, immLow])
+
         elif relocType == 'imm16_abs_mh':
-            return ((address >> 32) & 0xFFFF).to_bytes (2, 'little')
+            imm = (address >> 32) & 0xFFFF
+            immHigh = (imm >> 8) & 0xFF
+            immLow  = imm & 0xFF
+            return bytes([immHigh, immLow])
+
         elif relocType == 'imm16_abs_hi':
-            return ((address >> 48) & 0xFFFF).to_bytes (2, 'little')
+            imm = (address >> 48) & 0xFFFF
+            immHigh = (imm >> 8) & 0xFF
+            immLow  = imm & 0xFF
+            return bytes([immHigh, immLow])
+
         elif relocType == 'addr64':
-            return (address).to_bytes (8, 'little')
-        # Reaches here if there is a relocType, and we dont have a rule for it
-        print (f"ERROR: Unknown relocation type '{relocType}'")
-        exit (1)
+            # Real memory values stay little-endian
+            return address.to_bytes(8, 'little')
+
+        print(f"ERROR: Unknown relocation type '{relocType}'")
+        exit(1)
 
     # ---------------------------------------------------------------------------------------------
 

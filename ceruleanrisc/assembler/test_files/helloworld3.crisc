@@ -2,12 +2,12 @@
     @global main
 main:
     // load string_addr
-    lui       r0, %hi(string_addr) // 0x0000000012340000
-    lli       r0, %mh(string_addr) // 0x0000000012345678
-    sll64i    r0, r0, 16    // 0x0000123456780000
-    lli       r0, %ml(string_addr) // 0x0000123456789abc
-    sll64i    r0, r0, 16    // 0x123456789abc0000
-    lli       r0, %lo(string_addr) // 0x123456789abcdef0
+    lui       r6, %hi(string_addr) // 0x0000000012340000
+    lli       r6, %mh(string_addr) // 0x0000000012345678
+    sll64i    r6, r6, 16    // 0x0000123456780000
+    lli       r6, %ml(string_addr) // 0x0000123456789abc
+    sll64i    r6, r6, 16    // 0x123456789abc0000
+    lli       r6, %lo(string_addr) // 0x123456789abcdef0
 
     // load loop_cond
     lui       r3, %hi(loop_cond) // 0x0000000012340000
@@ -28,12 +28,12 @@ main:
     lli       r5, 0 // null-byte
 
 loop_cond:
-    load8     r2, r0, 0  // load char from mem
+    load8     r2, r6, 0  // load char from mem
     beq       r2, r5, r4 // if *str == null then jmp loop_end
 loop_body:
     putchar   r2         // putchar(r2)
 loop_update:
-    add32i    r0, r0, 1  // move to next char
+    add32i    r6, r6, 1  // move to next char
     jmp       r3         // jmp loop_cond
 loop_end:
     halt
