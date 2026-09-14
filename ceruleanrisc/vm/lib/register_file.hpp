@@ -2,8 +2,8 @@
 #include <bit>
 #include <cstddef>
 
-// We are limited to 4-bits for identifying registers so we can only have 16 registers
-constexpr size_t numRegisters = 16;
+// We have 32 64-bit registers (r0-r31) with r0 hardwired to zero
+constexpr size_t numRegisters = 32;
 constexpr size_t registerSize = sizeof(uint64_t);
 
 // Performance notes
@@ -21,6 +21,7 @@ public:
     inline T get (size_t index) const {
         static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");
         static_assert(alignof(T) <= alignof(std::max_align_t), "T must be safely aligned");
+        if (index == 0) return T{};
         return *reinterpret_cast<const T*>(data + index * registerSize);
     }
 
@@ -28,24 +29,29 @@ public:
     inline void set (size_t index, T value) {
         static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");
         static_assert(alignof(T) <= alignof(std::max_align_t), "T must be safely aligned");
+        if (index == 0) return;
         *reinterpret_cast<T*>(data + index * registerSize) = value;
     }
 
     // 32-bit low half
     inline uint32_t getLo32(size_t index) const {
+        if (index == 0) return 0;
         return *reinterpret_cast<const uint32_t*>(&data[index * registerSize]);
     }
 
     inline void setLo32(size_t index, uint32_t value) {
+        if (index == 0) return;
         *reinterpret_cast<uint32_t*>(&data[index * registerSize]) = value;
     }
 
     // 32-bit high half
     inline uint32_t getHi32(size_t index) const {
+        if (index == 0) return 0;
         return *reinterpret_cast<const uint32_t*>(&data[index * registerSize + 4]);
     }
 
     inline void setHi32(size_t index, uint32_t value) {
+        if (index == 0) return;
         *reinterpret_cast<uint32_t*>(&data[index * registerSize + 4]) = value;
     }
 

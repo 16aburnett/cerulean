@@ -46,11 +46,25 @@ bool CeruleanRISCVM::isHalted () {
 void CeruleanRISCVM::execute_instruction () {
     // Instruction is 4 bytes (assuming big-endian)
     uint32_t instruction = 
-        (code[pc + 0] << 24) |
-        (code[pc + 1] << 16) |
-        (code[pc + 2] << 8)  |
-        (code[pc + 3]);
-    Opcode opcode = static_cast<Opcode> ((0b11111111000000000000000000000000 & instruction) >> 24);
+        (static_cast<uint32_t>(code[pc + 0]) << 24) |
+        (static_cast<uint32_t>(code[pc + 1]) << 16) |
+        (static_cast<uint32_t>(code[pc + 2]) << 8)  |
+        (static_cast<uint32_t>(code[pc + 3]));
+    Opcode opcode = static_cast<Opcode>((instruction >> 24) & 0xFF);
+
+    uint8_t r_dest = (instruction >> 19) & 0x1F;
+    uint8_t r_src1 = (instruction >> 14) & 0x1F;
+    uint8_t r_src2 = (instruction >> 9) & 0x1F;
+
+    auto get_imm14 = [instruction]() -> int16_t {
+        uint16_t raw = instruction & 0x3FFF;
+        return (raw & 0x2000) ? static_cast<int16_t>(raw | 0xC000) : static_cast<int16_t>(raw);
+    };
+
+    auto get_imm16 = [instruction]() -> int16_t {
+        return static_cast<int16_t>((instruction >> 3) & 0xFFFF);
+    };
+
     if (debug)
     {
         // print address
@@ -78,7 +92,7 @@ void CeruleanRISCVM::execute_instruction () {
             (0b00000000000000000000000000001111 & instruction) >>  0
         );
         // Print registers
-        for (int32_t i = 0; i < 16; ++i)
+        for (int32_t i = 0; i < 32; ++i)
         {
             printf ("%lx, ", registers.get<uint64_t>(i));
         }
@@ -93,8 +107,8 @@ void CeruleanRISCVM::execute_instruction () {
         // Load/Store Instructions
         // ========================================================================================
         case Opcode::LUI: {
-            uint8_t dest = (0b00000000111100000000000000000000 & instruction) >> 20;
-            int16_t imm  = *(int16_t*)&code[pc+2];
+            uint8_t dest = r_dest;
+            int16_t imm  = get_imm16();
             // imm acts as the upper 16 bits of the register
             uint64_t regContents = registers.get<uint64_t>(dest);
             regContents = (regContents & 0xFFFFFFFF0000FFFFULL) | (static_cast<uint64_t>(imm & 0xFFFF) << 16);
@@ -102,8 +116,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LLI: {
-            uint8_t dest = (0b00000000111100000000000000000000 & instruction) >> 20;
-            int16_t imm  = *(int16_t*)&code[pc+2];
+            uint8_t dest = r_dest;
+            int16_t imm  = get_imm16();
             // imm acts as the lower 16 bits of the register
             uint64_t regContents = registers.get<uint64_t>(dest);
             regContents = (regContents & 0xFFFFFFFFFFFF0000ULL) | (static_cast<uint64_t>(imm & 0xFFFF) << 0);
@@ -111,117 +125,106 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LOAD8: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in byte and sign-extend to 64-bit
             int8_t value = static_cast<int8_t>(memory.read8(address + offset));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::LOADU8: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in byte and zero-extend to 64-bit
             uint8_t value = memory.read8(address + offset);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD16: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in half word (2 bytes) and sign-extend to 64-bit
             int16_t value = static_cast<int16_t>(memory.read16(address + offset));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::LOADU16: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in half word (2 bytes) and zero-extend to 64-bit
             uint16_t value = memory.read16(address + offset);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in word (4 bytes) and sign-extend to 64-bit
             int32_t value = static_cast<int32_t>(memory.read32(address + offset));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::LOADU32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in word (4 bytes) and zero-extend to 64-bit
             uint32_t value = memory.read32(address + offset);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::LOAD64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(src1);
-            // read offset in little endian
-            int64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // read in double word (8 bytes)
             registers.set<uint64_t>(dest, memory.read64(address + offset));
             break;
         }
         case Opcode::STORE8: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(dest);
-            // read offset in little endian
-            uint64_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // store byte
             memory.write8 (address + offset, registers.get<uint8_t>(src1));
             break;
         }
         case Opcode::STORE16: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(dest);
-            // read offset in little endian
-            int32_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // store half word (2 bytes)
             memory.write16 (address + offset, registers.get<uint16_t>(src1));
             break;
         }
         case Opcode::STORE32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(dest);
-            // read offset in little endian
-            int32_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // store word (4 bytes)
             memory.write32 (address + offset, registers.get<uint32_t>(src1));
             break;
         }
         case Opcode::STORE64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             uint64_t address = registers.get<uint64_t>(dest);
-            // read offset in little endian
-            int32_t offset = *(int16_t*)&code[pc + 2];
+            int64_t offset = get_imm14();
             // store double word (8 bytes)
             memory.write64 (address + offset, registers.get<uint64_t>(src1));
             break;
@@ -230,9 +233,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Integer Arithmetic Instructions
         // ========================================================================================
         case Opcode::ADD32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -243,9 +246,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::ADD64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -256,9 +259,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUB32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -269,9 +272,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUB64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -282,9 +285,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MUL32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -295,9 +298,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MUL64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -308,9 +311,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVI32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -321,9 +324,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVI64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -334,9 +337,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVU32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             uint32_t b = registers.get<uint32_t>(src2);
@@ -347,9 +350,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVU64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -360,9 +363,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODI32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -373,9 +376,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODI64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -386,9 +389,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODU32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             uint32_t b = registers.get<uint32_t>(src2);
@@ -399,9 +402,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODU64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -415,9 +418,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Integer Arithmetic Instructions with Immediates
         // ========================================================================================
         case Opcode::ADD32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -427,9 +430,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::ADD64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -439,9 +442,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUB32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -451,9 +454,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUB64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -463,9 +466,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MUL32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -475,9 +478,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MUL64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -487,9 +490,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVI32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -499,9 +502,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVI64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -511,9 +514,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVU32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint32_t imm   = *(uint16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint32_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             // Perform instruction
@@ -523,9 +526,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVU64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t imm   = *(uint16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint64_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             // Perform instruction
@@ -535,9 +538,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODI32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -547,9 +550,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODI64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -559,9 +562,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODU32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint32_t imm   = *(uint16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint32_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             // Perform instruction
@@ -571,9 +574,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MODU64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t imm   = *(uint16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint64_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             // Perform instruction
@@ -586,9 +589,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Floating Point Arithmetic Instructions
         // ========================================================================================
         case Opcode::ADDF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -599,9 +602,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::ADDF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -612,9 +615,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUBF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -625,9 +628,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SUBF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -638,9 +641,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MULF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -651,9 +654,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::MULF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -664,9 +667,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -677,9 +680,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::DIVF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -690,8 +693,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SQRTF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             float a = registers.get<float>(src1);
             // Perform instruction
@@ -701,8 +704,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SQRTF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             double a = registers.get<double>(src1);
             // Perform instruction
@@ -712,8 +715,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::ABSF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             float a = registers.get<float>(src1);
             // Perform instruction
@@ -723,8 +726,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::ABSF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             double a = registers.get<double>(src1);
             // Perform instruction
@@ -734,8 +737,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::NEGF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             float a = registers.get<float>(src1);
             // Perform instruction
@@ -745,8 +748,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::NEGF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read from registers
             double a = registers.get<double>(src1);
             // Perform instruction
@@ -759,96 +762,96 @@ void CeruleanRISCVM::execute_instruction () {
         // Type Conversion Instructions
         // ========================================================================================
         case Opcode::SEXT8: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read byte and sign-extend to 64-bit
             int8_t value = static_cast<int8_t>(registers.get<uint8_t>(src1));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::SEXT16: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read halfword and sign-extend to 64-bit
             int16_t value = static_cast<int16_t>(registers.get<uint16_t>(src1));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::SEXT32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read word and sign-extend to 64-bit
             int32_t value = static_cast<int32_t>(registers.get<uint32_t>(src1));
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::ZEXT8: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read byte and zero-extend to 64-bit
             uint8_t value = registers.get<uint8_t>(src1);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::ZEXT16: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read halfword and zero-extend to 64-bit
             uint16_t value = registers.get<uint16_t>(src1);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::ZEXT32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Read word and zero-extend to 64-bit
             uint32_t value = registers.get<uint32_t>(src1);
             registers.set<uint64_t>(dest, static_cast<uint64_t>(value));
             break;
         }
         case Opcode::CVTI32F32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert int32 to float32
             int32_t value = registers.get<int32_t>(src1);
             registers.set<float>(dest, static_cast<float>(value));
             break;
         }
         case Opcode::CVTI64F64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert int64 to float64
             int64_t value = registers.get<int64_t>(src1);
             registers.set<double>(dest, static_cast<double>(value));
             break;
         }
         case Opcode::CVTF32I32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert float32 to int32
             float value = registers.get<float>(src1);
             registers.set<int32_t>(dest, static_cast<int32_t>(value));
             break;
         }
         case Opcode::CVTF64I64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert float64 to int64
             double value = registers.get<double>(src1);
             registers.set<int64_t>(dest, static_cast<int64_t>(value));
             break;
         }
         case Opcode::CVTF64F32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert float64 to float32
             double value = registers.get<double>(src1);
             registers.set<float>(dest, static_cast<float>(value));
             break;
         }
         case Opcode::CVTF32F64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
             // Convert float32 to float64
             float value = registers.get<float>(src1);
             registers.set<double>(dest, static_cast<double>(value));
@@ -858,9 +861,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Logical/Bitwise Instructions
         // ========================================================================================
         case Opcode::SLL32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -871,9 +874,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SLL64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -884,9 +887,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRL32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             uint32_t b = registers.get<uint32_t>(src2);
@@ -897,9 +900,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRL64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -910,9 +913,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRA32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             int32_t b = registers.get<int32_t>(src2);
@@ -923,9 +926,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRA64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -936,9 +939,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::OR64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -949,9 +952,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::AND64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -962,9 +965,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::XOR64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -978,9 +981,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Logical/Bitwise Instructions with Immediates
         // ========================================================================================
         case Opcode::SLL32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -990,9 +993,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SLL64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -1002,9 +1005,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRL32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint32_t imm   = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint32_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint32_t a = registers.get<uint32_t>(src1);
             // Perform instruction
@@ -1014,9 +1017,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRL64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint64_t imm   = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint64_t imm   = static_cast<uint16_t>(get_imm14());
             // Read from registers
             uint64_t a = registers.get<uint64_t>(src1);
             // Perform instruction
@@ -1026,9 +1029,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRA32I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int32_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int32_t imm    = get_imm14();
             // Read from registers
             int32_t a = registers.get<int32_t>(src1);
             // Perform instruction
@@ -1038,9 +1041,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SRA64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -1050,9 +1053,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::OR64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -1062,9 +1065,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::AND64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -1074,9 +1077,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::XOR64I: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            int64_t imm    = *(int16_t*)&code[pc+2];
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            int64_t imm    = get_imm14();
             // Read from registers
             int64_t a = registers.get<int64_t>(src1);
             // Perform instruction
@@ -1089,55 +1092,55 @@ void CeruleanRISCVM::execute_instruction () {
         // Control Flow / Branching Instructions
         // ========================================================================================
         case Opcode::BEQ: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<uint32_t>(src1) == registers.get<uint32_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::BNE: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<uint32_t>(src1) != registers.get<uint32_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::BLT: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<int64_t>(src1) < registers.get<int64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::BGE: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<int64_t>(src1) >= registers.get<int64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::BLTU: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<uint64_t>(src1) < registers.get<uint64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::BGEU: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src2   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t addr   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t src1   = r_dest;
+            uint8_t src2   = r_src1;
+            uint8_t addr   = r_src2;
             if (registers.get<uint64_t>(src1) >= registers.get<uint64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
         case Opcode::JMP: {
-            uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t addr   = r_dest;
             pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
@@ -1145,9 +1148,9 @@ void CeruleanRISCVM::execute_instruction () {
         // Comparison Instructions
         // ========================================================================================
         case Opcode::EQ: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare equality (sign-agnostic, width-agnostic)
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -1155,9 +1158,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LT: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than (signed)
             int64_t a = registers.get<int64_t>(src1);
             int64_t b = registers.get<int64_t>(src2);
@@ -1165,9 +1168,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LTU: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than (unsigned)
             uint64_t a = registers.get<uint64_t>(src1);
             uint64_t b = registers.get<uint64_t>(src2);
@@ -1175,9 +1178,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::EQF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare equality (float32)
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -1185,9 +1188,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::EQF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare equality (float64)
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -1195,9 +1198,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LTF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than (float32)
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -1205,9 +1208,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LTF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than (float64)
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -1215,9 +1218,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LEF32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than or equal (float32)
             float a = registers.get<float>(src1);
             float b = registers.get<float>(src2);
@@ -1225,9 +1228,9 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::LEF64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src1   = (0b00000000000011110000000000000000 & instruction) >> 16;
-            uint8_t src2   = (0b00000000000000001111000000000000 & instruction) >> 12;
+            uint8_t dest   = r_dest;
+            uint8_t src1   = r_src1;
+            uint8_t src2   = r_src2;
             // Compare less than or equal (float64)
             double a = registers.get<double>(src1);
             double b = registers.get<double>(src2);
@@ -1238,7 +1241,7 @@ void CeruleanRISCVM::execute_instruction () {
         // Function Instructions
         // ========================================================================================
         case Opcode::CALL: {
-            uint8_t addr   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t addr   = r_dest;
             // push return address onto stack 
             registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) - 8); // stack grows towards 0
             memory.write64 (registers.get<uint64_t>(sp), pc);
@@ -1248,7 +1251,8 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::SYSCALL: {
-            std::cout << "Error: Opcode::SYSCALL not yet implemented" << std::endl;
+            uint16_t sym_id = (instruction >> 8) & 0xFFFF;
+            handle_syscall (sym_id);
             break;
         }
         case Opcode::RET: {
@@ -1258,13 +1262,13 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::PUSH: {
-            uint8_t src    = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src    = r_dest;
             registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) - 8); // stack grows towards 0
             memory.write64 (registers.get<uint64_t>(sp), registers.get<uint64_t>(src));
             break;
         }
         case Opcode::POP: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t dest   = r_dest;
             registers.set<uint64_t>(dest, memory.read64 (registers.get<uint64_t>(sp))); 
             registers.set<uint64_t>(sp, registers.get<uint64_t>(sp) + 8); // stack shrinks towards MEM_SIZE
             break;
@@ -1281,12 +1285,12 @@ void CeruleanRISCVM::execute_instruction () {
             break;
         }
         case Opcode::GETCHAR: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t dest   = r_dest;
             registers.set<uint8_t>(dest, getchar ());
             break;
         }
         case Opcode::PUTCHAR: {
-            uint8_t src1   = (0b00000000111100000000000000000000 & instruction) >> 20;
+            uint8_t src1   = r_dest;
             if (debug) printf ("Output = '");
             // Using std::cout so unit tests can capture output
             std::cout << registers.get<uint8_t>(src1);
@@ -1305,7 +1309,7 @@ void CeruleanRISCVM::execute_instruction () {
     pc += 4;
 }
 
-void CeruleanRISCVM::handle_syscall (uint8_t sym_id) {
+void CeruleanRISCVM::handle_syscall (uint16_t sym_id) {
     // switch (sym_id) {
     //     case SYSCALL_PUTS: {
     //         const char* str = reinterpret_cast<const char*> (registers.get<uint64_t>(0));

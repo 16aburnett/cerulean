@@ -1,5 +1,6 @@
 #include "test_framework.hpp"
 #include "criscvm.hpp"
+#include "encoders.hpp"
 #include "tee_buf.hpp"
 #include <fstream>
 #include <vector>
@@ -11,36 +12,41 @@ extern bool g_debug;
 
 // Helloworld3 - Uses a loop to print the Hello World string
 TEST_CASE(test_helloworld3) {
-    std::vector<uint8_t> bytecode = {
-        Opcode::LLI,     0x00, 0x50, 0x00, // [0x00] r0.0 <- string_addr ; our iterator
-        Opcode::LUI,     0x00, 0x00, 0x00, // [0x04] r0.1 <- string_addr ; out iterator
-        Opcode::LLI,     0x10, 0x5e, 0x00, // [0x08] r1.0 <- string_end_addr ; end condition
-        Opcode::LUI,     0x10, 0x00, 0x00, // [0x0c] r1.1 <- string_end_addr ; end condition
-        Opcode::LLI,     0x30, 0x20, 0x00, // [0x10] r3.0 <- loop_cond
-        Opcode::LUI,     0x30, 0x00, 0x00, // [0x14] r3.1 <- loop_cond
-        Opcode::LLI,     0x40, 0x34, 0x00, // [0x18] r4.0 <- loop_end
-        Opcode::LUI,     0x40, 0x00, 0x00, // [0x1c] r4.1 <- loop_end
-        // loop_cond:
-        Opcode::BGE,     0x01, 0x40, 0x00, // [0x20] bge r0, r1, loop_end; iter >= end
-        // loop_body:
-        Opcode::LOAD8,   0x20, 0x00, 0x00, // [0x24] lb r2, r0, 0x00 ; load char from mem
-        Opcode::PUTCHAR, 0x20, 0x00, 0x00, // [0x28] putchar(r2)
-        // loop_update:
-        Opcode::ADD32I,  0x00, 0x01, 0x00, // [0x2c] addi r0, r0, 1 ; move to next char
-        Opcode::JMP,     0x30, 0x00, 0x00, // [0x30] jmp r3 ; jmp loop_cond
-        // loop_end:
-        Opcode::HALT,    0x00, 0x00, 0x00, // [0x34]
-        0x00,            0x00, 0x00, 0x00, // [0x38] buffer
-        0x00,            0x00, 0x00, 0x00, // [0x3c] buffer
-        0x00,            0x00, 0x00, 0x00, // [0x40] buffer
-        0x00,            0x00, 0x00, 0x00, // [0x44] buffer
-        0x00,            0x00, 0x00, 0x00, // [0x48] buffer
-        0x00,            0x00, 0x00, 0x00, // [0x4c] buffer
-        'H',              'e',  'l',  'l', // [0x50] string_addr
-        'o',              ',',  ' ',  'W', // [0x54]
-        'o',              'r',  'l',  'd', // [0x58]
-        '!',             '\n', 0x00, 0x00, // [0x5c]
-    };
+    std::vector<uint8_t> bytecode;
+    const std::string msg = "Hello, World!\n";
+    uint16_t str_addr = 0x38;
+    uint16_t str_end  = str_addr + msg.size();
+    uint16_t loop_cond = 0x20;
+    uint16_t loop_end  = 0x34;
+
+    pushInstr(bytecode, encodeRI(Opcode::LLI, 5, str_addr));
+    pushInstr(bytecode, encodeRI(Opcode::LUI, 5, 0));
+    pushInstr(bytecode, encodeRI(Opcode::LLI, 1, str_end));
+    pushInstr(bytecode, encodeRI(Opcode::LUI, 1, 0));
+    pushInstr(bytecode, encodeRI(Opcode::LLI, 3, loop_cond));
+    pushInstr(bytecode, encodeRI(Opcode::LUI, 3, 0));
+    pushInstr(bytecode, encodeRI(Opcode::LLI, 4, loop_end));
+    pushInstr(bytecode, encodeRI(Opcode::LUI, 4, 0));
+
+    // [0x20] loop_cond: bge r5, r1, r4
+    pushInstr(bytecode, encodeRRR(Opcode::BGE, 5, 1, 4));
+    // [0x24] lb r2, 0(r5)
+    pushInstr(bytecode, encodeRRI(Opcode::LOAD8, 2, 5, 0));
+    // [0x28] putchar(r2)
+    pushInstr(bytecode, encodeR(Opcode::PUTCHAR, 2));
+    // [0x2C] addi r5, r5, 1
+    pushInstr(bytecode, encodeRRI(Opcode::ADD32I, 5, 5, 1));
+    // [0x30] jmp r3
+    pushInstr(bytecode, encodeR(Opcode::JMP, 3));
+    // [0x34] loop_end: halt
+    pushInstr(bytecode, encodeNONE(Opcode::HALT));
+
+    while (bytecode.size() < str_addr) {
+        bytecode.push_back(0x00);
+    }
+    for (char c : msg) {
+        bytecode.push_back(c);
+    }
 
     // Temporarily redirect std::cout to dualOut
     std::ostringstream captured;
