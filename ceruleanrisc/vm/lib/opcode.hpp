@@ -9,360 +9,360 @@ enum Opcode : const uint8_t {
 
     // ============================================================================================
     // Memory Instructions - 0x01-0x10
-    // LUI dest, imm        - loads upper immediate 16 bits into given register
+    // LUI dest, imm        - loads upper immediate 16 bits into given register (Format: RI)
     // NOTE: This assumes 32-bit register and ignores endian-ness
     // loads upper 16-bits: 0x[1234]5678
     // Example: LUI r0, 0x1234
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LUI = 0x01,
-    // LLI dest, imm        - loads lower immediate 16 bits into given register
+    // LLI dest, imm        - loads lower immediate 16 bits into given register (Format: RI)
     // NOTE: This assumes 32-bit register and ignores endian-ness
     // loads lower 16-bits: 0x1234[5678]
     // Example: LLI r0, 0x5678
     // XXXXXXXX dddd0000 iiiiiiii iiiiiiii
     LLI = 0x02,
-    // LOAD8 dest, offset(src) - load byte with sign-extend
+    // LOAD8 dest, offset(src) - load byte with sign-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD8 = 0x03,
-    // LOADU8 dest, offset(src) - load byte with zero-extend
+    // LOADU8 dest, offset(src) - load byte with zero-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOADU8 = 0x04,
-    // LOAD16 dest, offset(src) - load half (2 bytes) with sign-extend
+    // LOAD16 dest, offset(src) - load half (2 bytes) with sign-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD16 = 0x05,
-    // LOADU16 dest, offset(src) - load half (2 bytes) with zero-extend
+    // LOADU16 dest, offset(src) - load half (2 bytes) with zero-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOADU16 = 0x06,
-    // LOAD32 dest, offset(src) - load word (4 bytes) with sign-extend
+    // LOAD32 dest, offset(src) - load word (4 bytes) with sign-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD32 = 0x07,
-    // LOADU32 dest, offset(src) - load word (4 bytes) with zero-extend
+    // LOADU32 dest, offset(src) - load word (4 bytes) with zero-extend (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOADU32 = 0x08,
-    // LOAD64 dest, offset(src) - load double word (8 bytes)
+    // LOAD64 dest, offset(src) - load double word (8 bytes) (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     LOAD64 = 0x09,
-    // STORE8 offset(dest), src - store byte
+    // STORE8 offset(dest), src - store byte (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     STORE8 = 0x0a,
-    // STORE16 offset(dest), src - store half (2 bytes)
+    // STORE16 offset(dest), src - store half (2 bytes) (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     STORE16 = 0x0b,
-    // STORE32 offset(dest), src - store word (4 bytes)
+    // STORE32 offset(dest), src - store word (4 bytes) (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     STORE32 = 0x0c,
-    // STORE64 offset(dest), src - store double word (8 bytes)
+    // STORE64 offset(dest), src - store double word (8 bytes) (Format: RRI)
     // offset is 16-bit signed integer
     // XXXXXXXX ddddssss oooooooo oooooooo
     STORE64 = 0x0d,
 
     // ============================================================================================
     // Integer Arithmetic - 0x10-0x20
-    // ADD32 dest, src1, src2 - integer addition (sign-agnostic 32-bit)
+    // ADD32 dest, src1, src2 - integer addition (sign-agnostic 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     ADD32 = 0x10,
-    // ADD64 dest, src1, src2 - integer addition (sign-agnostic 64-bit)
+    // ADD64 dest, src1, src2 - integer addition (sign-agnostic 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     ADD64 = 0x11,
-    // SUB32 dest, src1, src2 - integer subtraction (sign-agnostic 32-bit)
+    // SUB32 dest, src1, src2 - integer subtraction (sign-agnostic 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SUB32 = 0x12,
-    // SUB64 dest, src1, src2 - integer subtraction (sign-agnostic 64-bit)
+    // SUB64 dest, src1, src2 - integer subtraction (sign-agnostic 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SUB64 = 0x13,
-    // MUL32 dest, src1, src2 - integer multiplication (sign-agnostic 32-bit)
+    // MUL32 dest, src1, src2 - integer multiplication (sign-agnostic 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MUL32 = 0x14,
-    // MUL64 dest, src1, src2 - integer multiplication (sign-agnostic 64-bit)
+    // MUL64 dest, src1, src2 - integer multiplication (sign-agnostic 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MUL64 = 0x15,
-    // DIVI32 dest, src1, src2 - integer division (signed 32-bit)
+    // DIVI32 dest, src1, src2 - integer division (signed 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVI32 = 0x16,
-    // DIVI64 dest, src1, src2 - integer division (signed 64-bit)
+    // DIVI64 dest, src1, src2 - integer division (signed 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVI64 = 0x17,
-    // DIVU32 dest, src1, src2 - integer division (unsigned 32-bit)
+    // DIVU32 dest, src1, src2 - integer division (unsigned 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVU32 = 0x18,
-    // DIVU64 dest, src1, src2 - integer division (unsigned 64-bit)
+    // DIVU64 dest, src1, src2 - integer division (unsigned 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVU64 = 0x19,
-    // MODI32 dest, src1, src2 - integer division remainder (signed 32-bit)
+    // MODI32 dest, src1, src2 - integer division remainder (signed 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MODI32 = 0x1a,
-    // MODI64 dest, src1, src2 - integer division remainder (signed 64-bit)
+    // MODI64 dest, src1, src2 - integer division remainder (signed 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MODI64 = 0x1b,
-    // MODU32 dest, src1, src2 - integer division remainder (unsigned 32-bit)
+    // MODU32 dest, src1, src2 - integer division remainder (unsigned 32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MODU32 = 0x1c,
-    // MODU64 dest, src1, src2 - integer division remainder (unsigned 64-bit)
+    // MODU64 dest, src1, src2 - integer division remainder (unsigned 64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MODU64 = 0x1d,
 
     // ============================================================================================
     // Integer arithmetic with immediates - 0x20-0x30
     // immediate values are 16-bit signed
-    // ADD32I dest, src1, imm - integer addition with immediate
+    // ADD32I dest, src1, imm - integer addition with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     ADD32I = 0x20,
-    // ADD64I dest, src1, imm - integer addition with immediate
+    // ADD64I dest, src1, imm - integer addition with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     ADD64I = 0x21,
-    // SUB32I dest, src1, imm - integer subtraction with immediate
+    // SUB32I dest, src1, imm - integer subtraction with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SUB32I = 0x22,
-    // SUB64I dest, src1, imm - integer subtraction with immediate
+    // SUB64I dest, src1, imm - integer subtraction with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SUB64I = 0x23,
-    // MUL32I dest, src1, imm - integer multiplication with immediate
+    // MUL32I dest, src1, imm - integer multiplication with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MUL32I = 0x24,
-    // MUL64I dest, src1, imm - integer multiplication with immediate
+    // MUL64I dest, src1, imm - integer multiplication with immediate (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MUL64I = 0x25,
-    // DIVI32I dest, src1, imm - integer division with immediate (signed 32-bit)
+    // DIVI32I dest, src1, imm - integer division with immediate (signed 32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     DIVI32I = 0x26,
-    // DIVI64I dest, src1, imm - integer division with immediate (signed 64-bit)
+    // DIVI64I dest, src1, imm - integer division with immediate (signed 64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     DIVI64I = 0x27,
-    // DIVU32I dest, src1, imm - integer division with immediate (unsigned 32-bit)
+    // DIVU32I dest, src1, imm - integer division with immediate (unsigned 32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     DIVU32I = 0x28,
-    // DIVU64I dest, src1, imm - integer division with immediate (unsigned 64-bit)
+    // DIVU64I dest, src1, imm - integer division with immediate (unsigned 64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     DIVU64I = 0x29,
-    // MODI32I dest, src1, imm - integer division remainder with immediate (signed 32-bit)
+    // MODI32I dest, src1, imm - integer division remainder with immediate (signed 32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MODI32I = 0x2a,
-    // MODI64I dest, src1, imm - integer division remainder with immediate (signed 64-bit)
+    // MODI64I dest, src1, imm - integer division remainder with immediate (signed 64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MODI64I = 0x2b,
-    // MODU32I dest, src1, imm - integer division remainder with immediate (unsigned 32-bit)
+    // MODU32I dest, src1, imm - integer division remainder with immediate (unsigned 32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MODU32I = 0x2c,
-    // MODU64I dest, src1, imm - integer division remainder with immediate (unsigned 64-bit)
+    // MODU64I dest, src1, imm - integer division remainder with immediate (unsigned 64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     MODU64I = 0x2d,
 
     // ============================================================================================
     // Floating Point Arithmetic Instructions - 0x30-0x40
-    // ADDF32 dest, src1 - floating point add - single 32bit precision
+    // ADDF32 dest, src1, src2 - floating point add - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     ADDF32 = 0x30,
-    // ADDF64 dest, src1, src2 - floating point add - double 64bit precision
+    // ADDF64 dest, src1, src2 - floating point add - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     ADDF64 = 0x31,
-    // SUBF32 dest, src1, src2 - floating point sub - single 32bit precision
+    // SUBF32 dest, src1, src2 - floating point sub - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SUBF32 = 0x32,
-    // SUBF64 dest, src1, src2 - floating point sub - double 64bit precision
+    // SUBF64 dest, src1, src2 - floating point sub - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SUBF64 = 0x33,
-    // MULF32 dest, src1, src2 - floating point mul - single 32bit precision
+    // MULF32 dest, src1, src2 - floating point mul - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MULF32 = 0x34,
-    // MULF64 dest, src1, src2 - floating point mul - double 64bit precision
+    // MULF64 dest, src1, src2 - floating point mul - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     MULF64 = 0x35,
-    // DIVF32 dest, src1, src2 - floating point div - single 32bit precision
+    // DIVF32 dest, src1, src2 - floating point div - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVF32 = 0x36,
-    // DIVF64 dest, src1, src2 - floating point div - double 64bit precision
+    // DIVF64 dest, src1, src2 - floating point div - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     DIVF64 = 0x37,
-    // SQRTF32 dest, src1 - floating point sqrt - single 32bit precision
+    // SQRTF32 dest, src1 - floating point sqrt - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     SQRTF32 = 0x38,
-    // SQRTF64 dest, src1 - floating point sqrt - double 64bit precision
+    // SQRTF64 dest, src1 - floating point sqrt - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     SQRTF64 = 0x39,
-    // ABSF32 dest, src1 - floating point abs - single 32bit precision
+    // ABSF32 dest, src1 - floating point abs - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     ABSF32 = 0x3a,
-    // ABSF64 dest, src1 - floating point abs - double 64bit precision
+    // ABSF64 dest, src1 - floating point abs - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     ABSF64 = 0x3b,
-    // NEGF32 dest, src1 - floating point neg - single 32bit precision
+    // NEGF32 dest, src1 - floating point neg - single 32bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     NEGF32 = 0x3c,
-    // NEGF64 dest, src1 - floating point neg - double 64bit precision
+    // NEGF64 dest, src1 - floating point neg - double 64bit precision (Format: RRR)
     // XXXXXXXX ddddssss 00000000 00000000
     NEGF64 = 0x3d,
 
     // ============================================================================================
     // Type Conversion - 0x40-0x50
     // Integer-to-Integer Conversions (Sign/Zero Extension)
-    // SEXT8 dest, src - sign-extend byte (8-bit to 64-bit)
+    // SEXT8 dest, src - sign-extend byte (8-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     SEXT8 = 0x40,
-    // SEXT16 dest, src - sign-extend halfword (16-bit to 64-bit)
+    // SEXT16 dest, src - sign-extend halfword (16-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     SEXT16 = 0x41,
-    // SEXT32 dest, src - sign-extend word (32-bit to 64-bit)
+    // SEXT32 dest, src - sign-extend word (32-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     SEXT32 = 0x42,
-    // ZEXT8 dest, src - zero-extend byte (8-bit to 64-bit)
+    // ZEXT8 dest, src - zero-extend byte (8-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     ZEXT8 = 0x43,
-    // ZEXT16 dest, src - zero-extend halfword (16-bit to 64-bit)
+    // ZEXT16 dest, src - zero-extend halfword (16-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     ZEXT16 = 0x44,
-    // ZEXT32 dest, src - zero-extend word (32-bit to 64-bit)
+    // ZEXT32 dest, src - zero-extend word (32-bit to 64-bit) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     ZEXT32 = 0x45,
     // Floating-Point to/from Integer Conversions
-    // CVTI32F32 dest, src - convert int32 to float32
+    // CVTI32F32 dest, src - convert int32 to float32 (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTI32F32 = 0x46,
-    // CVTI64F64 dest, src - convert int64 to float64
+    // CVTI64F64 dest, src - convert int64 to float64 (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTI64F64 = 0x47,
-    // CVTF32I32 dest, src - convert float32 to int32
+    // CVTF32I32 dest, src - convert float32 to int32 (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTF32I32 = 0x48,
-    // CVTF64I64 dest, src - convert float64 to int64
+    // CVTF64I64 dest, src - convert float64 to int64 (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTF64I64 = 0x49,
-    // CVTF64F32 dest, src - convert float64 to float32 (double to single)
+    // CVTF64F32 dest, src - convert float64 to float32 (double to single) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTF64F32 = 0x4a,
-    // CVTF32F64 dest, src - convert float32 to float64 (single to double)
+    // CVTF32F64 dest, src - convert float32 to float64 (single to double) (Format: RR)
     // XXXXXXXX ddddssss 00000000 00000000
     CVTF32F64 = 0x4b,
 
     // ============================================================================================
     // Logical/Bitwise Instructions - 0x50-0x60
-    // SLL32 dest, src1, src2 - shift left logical (32-bit)
+    // SLL32 dest, src1, src2 - shift left logical (32-bit) (Format: RRR)
     // NOTE: it is undefined behavior if rhs is outside [0,31]
     // XXXXXXXX ddddssss ssss0000 00000000
     SLL32 = 0x50,
-    // SLL64 dest, src1, src2 - shift left logical (64-bit)
+    // SLL64 dest, src1, src2 - shift left logical (64-bit) (Format: RRR)
     // NOTE: it is undefined behavior if rhs is outside [0,63]
     // XXXXXXXX ddddssss ssss0000 00000000
     SLL64 = 0x51,
-    // SRL32 dest, src1, src2 - shift right logical (fills with 0s) (32-bit)
+    // SRL32 dest, src1, src2 - shift right logical (fills with 0s) (32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRL32 = 0x52,
-    // SRL64 dest, src1, src2 - shift right logical (fills with 0s) (64-bit)
+    // SRL64 dest, src1, src2 - shift right logical (fills with 0s) (64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRL64 = 0x53,
-    // SRA32 dest, src1, src2 - shift right arithmetic (fills with sign bit) (32-bit)
+    // SRA32 dest, src1, src2 - shift right arithmetic (fills with sign bit) (32-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRA32 = 0x54,
-    // SRA64 dest, src1, src2 - shift right arithmetic (fills with sign bit) (64-bit)
+    // SRA64 dest, src1, src2 - shift right arithmetic (fills with sign bit) (64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     SRA64 = 0x55,
-    // OR64  dest, src1, src2 - bitwise OR (64-bit)
+    // OR64  dest, src1, src2 - bitwise OR (64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     OR64  = 0x56,
-    // AND64 dest, src1, src2 - bitwise AND (64-bit)
+    // AND64 dest, src1, src2 - bitwise AND (64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     AND64 = 0x57,
-    // XOR64 dest, src1, src2 - bitwise XOR (64-bit)
+    // XOR64 dest, src1, src2 - bitwise XOR (64-bit) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     XOR64 = 0x58,
 
     // ============================================================================================
     // Logical/Bitwise Instructions with immediates - 0x60-0x70
-    // SLL32I dest, src1, imm - shift left logical with immediate (32-bit)
+    // SLL32I dest, src1, imm - shift left logical with immediate (32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SLL32I = 0x60,
-    // SLL64I dest, src1, imm - shift left logical with immediate (64-bit)
+    // SLL64I dest, src1, imm - shift left logical with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SLL64I = 0x61,
-    // SRL32I dest, src1, imm - shift right logical with immediate (32-bit)
+    // SRL32I dest, src1, imm - shift right logical with immediate (32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRL32I = 0x62,
-    // SRL64I dest, src1, imm - shift right logical with immediate (64-bit)
+    // SRL64I dest, src1, imm - shift right logical with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRL64I = 0x63,
-    // SRA32I dest, src1, imm - shift right arithmetic with immediate (32-bit)
+    // SRA32I dest, src1, imm - shift right arithmetic with immediate (32-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRA32I = 0x64,
-    // SRA64I dest, src1, imm - shift right arithmetic with immediate (64-bit)
+    // SRA64I dest, src1, imm - shift right arithmetic with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     SRA64I = 0x65,
-    // OR64I  dest, src1, imm - bitwise or with immediate (64-bit)
+    // OR64I  dest, src1, imm - bitwise or with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     OR64I  = 0x66,
-    // AND64I dest, src1, imm - bitwise and with immediate (64-bit)
+    // AND64I dest, src1, imm - bitwise and with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     AND64I = 0x67,
-    // XOR64I dest, src1, imm - bitwise xor  with immediate (64-bit)
+    // XOR64I dest, src1, imm - bitwise xor  with immediate (64-bit) (Format: RRI)
     // XXXXXXXX ddddssss iiiiiiii iiiiiiii
     XOR64I = 0x68,
 
     // ============================================================================================
     // Control flow / Branching Instructions - 0x70-0x80
-    // BEQ src1, src2, addr - if src1 == src2 then pc <- addr
+    // BEQ src1, src2, addr - if src1 == src2 then pc <- addr (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BEQ = 0x70,
-    // BNE src1, src2, addr - if src1 != src2 then pc <- addr
+    // BNE src1, src2, addr - if src1 != src2 then pc <- addr (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BNE = 0x71,
-    // BLT src1, src2, addr - if src1 < src2 then pc <- addr (signed)
+    // BLT src1, src2, addr - if src1 < src2 then pc <- addr (signed) (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BLT = 0x72,
-    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr (signed)
+    // BGE src1, src2, addr - if src1 >= src2 then pc <- addr (signed) (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BGE = 0x73,
-    // BLTU src1, src2, addr - if src1 < src2 then pc <- addr (unsigned)
+    // BLTU src1, src2, addr - if src1 < src2 then pc <- addr (unsigned) (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BLTU = 0x74,
-    // BGEU src1, src2, addr - if src1 >= src2 then pc <- addr (unsigned)
+    // BGEU src1, src2, addr - if src1 >= src2 then pc <- addr (unsigned) (Format: RRR)
     // XXXXXXXX ssssssss aaaa0000 00000000
     BGEU = 0x75,
-    // JMP addr - pc <- addr (unconditional jump)
+    // JMP addr - pc <- addr (unconditional jump) (Format: R)
     // XXXXXXXX aaaa0000 00000000 00000000
     JMP = 0x76,
 
     // ============================================================================================
     // Comparison Instructions - 0x77-0x7f
     // These set dest to 1 (true) or 0 (false) based on comparison result
-    // EQ dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (sign-agnostic, width-agnostic)
+    // EQ dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (sign-agnostic, width-agnostic) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     EQ = 0x77,
-    // LT dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (signed, width-agnostic)
+    // LT dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (signed, width-agnostic) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LT = 0x78,
-    // LTU dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (unsigned, width-agnostic)
+    // LTU dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (unsigned, width-agnostic) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LTU = 0x79,
-    // EQF32 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float32)
+    // EQF32 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float32) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     EQF32 = 0x7a,
-    // EQF64 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float64)
+    // EQF64 dest, src1, src2 - dest <- (src1 == src2) ? 1 : 0 (float64) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     EQF64 = 0x7b,
-    // LTF32 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float32)
+    // LTF32 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float32) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LTF32 = 0x7c,
-    // LTF64 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float64)
+    // LTF64 dest, src1, src2 - dest <- (src1 < src2) ? 1 : 0 (float64) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LTF64 = 0x7d,
-    // LEF32 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float32)
+    // LEF32 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float32) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LEF32 = 0x7e,
-    // LEF64 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float64)
+    // LEF64 dest, src1, src2 - dest <- (src1 <= src2) ? 1 : 0 (float64) (Format: RRR)
     // XXXXXXXX ddddssss ssss0000 00000000
     LEF64 = 0x7f,
 
     // ============================================================================================
     // Function instructions - 0x80-0x90
-    // CALL addr
+    // CALL addr (Format: R)
     // 1. pushes return address on to the stack
     // 2. changes pc to addr
     // base pointer should be pushed on the stack by the callee
@@ -385,13 +385,13 @@ enum Opcode : const uint8_t {
     //    expects these values to be unchanged. 
     // XXXXXXXX aaaa0000 00000000 00000000
     CALL = 0x80,
-    // Similar to CALL but takes in an a Syscall enum for calling libc functions
+    // Similar to CALL but takes in an a Syscall enum for calling libc functions (Format: I)
     // SYSCALL Syscall.PUTS
     // SYSCALL syscall
     // YYYYYYYY - 8bits for indexing a max of 256 different syscalls
     // XXXXXXXX YYYYYYYY 00000000 00000000
     SYSCALL = 0x81,
-    // RET - pc <- [bp]
+    // RET - pc <- [bp] (Format: NONE)
     // changes the current pc to the return address pointed to by bp
     // Callee's actions before returning
     // 1. store any return value in ra (return value register)
@@ -405,12 +405,12 @@ enum Opcode : const uint8_t {
     // 2. pop any caller saved registers back into their respective registers (pop r#)
     // XXXXXXXX 00000000 00000000 00000000
     RET = 0x82,
-    // PUSH src - sp -= 4 ; [sp] <- src
+    // PUSH src - sp -= 4 ; [sp] <- src (Format: R)
     // 1. decrements sp by 4 (bytes)
     // 2. places src onto stack at [sp]
     // XXXXXXXX ssss0000 00000000 00000000
     PUSH = 0x83,
-    // POP dest - dest <- [sp] ; sp += 4
+    // POP dest - dest <- [sp] ; sp += 4 (Format: R)
     // 1. moves [sp] into dest 
     // 2. increments sp by 4 (bytes)
     // XXXXXXXX dddd0000 00000000 00000000
@@ -418,18 +418,18 @@ enum Opcode : const uint8_t {
 
     // ============================================================================================
     // other instructions - 0x90-0xa0
-    // NOP - no operation
+    // NOP - no operation (Format: NONE)
     // XXXXXXXX 000000000 00000000 00000000
     NOP = 0x90,
-    // HALT - halts the computer
+    // HALT - halts the computer (Format: NONE)
     // XXXXXXXX 000000000 00000000 00000000
     HALT = 0x91,
-    // GETCHAR - reads (from stdin) a char (1-byte) and stores it in the 
+    // GETCHAR - reads (from stdin) a char (1-byte) and stores it in the (Format: R)
     // given register
     // NOTE: THIS IS TEMPORARY - SYSCALL SHOULD BE USED INSTEAD
     // XXXXXXXX dddd00000 00000000 00000000
     GETCHAR = 0x92,
-    // PUTCHAR - outputs (to stdout) a char (1-byte) from the given register
+    // PUTCHAR - outputs (to stdout) a char (1-byte) from the given register (Format: R)
     // NOTE: THIS IS TEMPORARY - SYSCALL SHOULD BE USED INSTEAD
     // XXXXXXXX ssss00000 00000000 00000000
     PUTCHAR = 0x93,

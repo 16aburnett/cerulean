@@ -24,7 +24,7 @@ public:
 
 private:
     void execute_instruction ();
-    void handle_syscall (uint8_t sym_id);
+    void handle_syscall (uint16_t sym_id);
 
     // The bytecode for the program
     std::vector<uint8_t> code;
@@ -38,12 +38,13 @@ private:
     // Program counter - the address of the current instruction being processed
     uint64_t pc = 0;
     RegisterFile registers;
-    // r0-r12  - general purpose registers (Callee Saved - saved on stack)
-    // r13    0xd - return value  (ra)
-    const uint8_t ra = 13;
-    // r14    0xe - base pointer  (bp)
-    const uint8_t bp = 14;
-    // r15    0xf - stack pointer (sp)
-    const uint8_t sp = 15;
+    // r0      0x0  - hardwired constant 0
+    // r1-r28       - general purpose registers
+    // r29     0x1d - return address (ra)
+    const uint8_t ra = 29;
+    // r30     0x1e - base pointer   (bp)
+    const uint8_t bp = 30;
+    // r31     0x1f - stack pointer  (sp)
+    const uint8_t sp = 31;
     bool debug = false;
 };

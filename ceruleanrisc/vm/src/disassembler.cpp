@@ -6,30 +6,23 @@
 // Stores a mapping of Register IDs/Indices to the human-readable names
 // NOTE: This should probably be moved elsewhere
 const std::vector<std::string> regIDToString = {
-    "r0",
-    "r1",
-    "r2",
-    "r3",
-    "r4",
-    "r5",
-    "r6",
-    "r7",
-    "r8",
-    "r9",
-    "r10",
-    "r11",
-    "r12",
-    "ra",
-    "bp",
-    "sp",
+    "r0",  "r1",  "r2",  "r3",  "r4",  "r5",  "r6",  "r7",
+    "r8",  "r9",  "r10", "r11", "r12", "r13", "r14", "r15",
+    "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
+    "r24", "r25", "r26", "r27", "r28", "ra",  "bp",  "sp"
 };
 
 std::string disassemble (const std::vector<uint8_t>& bytes) {
-    if (bytes.empty ()) return "???";
+    if (bytes.size() < 4) return "???";
 
     Opcode opcode = static_cast<Opcode>(bytes[0]);
     const InstructionInfo* info = getInstructionInfo(opcode);
     if (!info) return "???";
+
+    uint32_t word = (static_cast<uint32_t>(bytes[0]) << 24) |
+                    (static_cast<uint32_t>(bytes[1]) << 16) |
+                    (static_cast<uint32_t>(bytes[2]) << 8)  |
+                     static_cast<uint32_t>(bytes[3]);
 
     std::ostringstream oss;
     oss << std::hex;
@@ -39,51 +32,43 @@ std::string disassemble (const std::vector<uint8_t>& bytes) {
 
     if (type == "R")
     {
-        // oooooooo rrrr0000 00000000 00000000
-        uint8_t reg = (bytes[1] >> 4) & 0x0F;
+        uint8_t reg = (word >> 19) & 0x1F;
         oss << regIDToString[reg];
     }
     else if (type == "I")
     {
-        // oooooooo 00000000 iiiiiiii iiiiiiii
-        uint16_t imm = (static_cast<uint16_t>(bytes[3]) << 8) |
-                static_cast<uint16_t>(bytes[2]);
+        uint16_t imm = (word >> 8) & 0xFFFF;
         oss << "0x" << static_cast<int>(imm);
     }
     else if (type == "RR")
     {
-        // oooooooo rrrrrrrr 00000000 00000000
-        uint8_t reg0 = (bytes[1] >> 4) & 0x0F;
-        uint8_t reg1 = (bytes[1] >> 0) & 0x0F;
+        uint8_t reg0 = (word >> 19) & 0x1F;
+        uint8_t reg1 = (word >> 14) & 0x1F;
         oss << regIDToString[reg0] << ", ";
         oss << regIDToString[reg1];
     }
     else if (type == "RI")
     {
-        // oooooooo rrrr0000 iiiiiiii iiiiiiii
-        uint8_t reg0 = (bytes[1] >> 4) & 0x0F;
-        uint16_t imm = (static_cast<uint16_t>(bytes[3]) << 8) |
-                static_cast<uint16_t>(bytes[2]);
+        uint8_t reg0 = (word >> 19) & 0x1F;
+        uint16_t imm = (word >> 3) & 0xFFFF;
         oss << regIDToString[reg0] << ", ";
         oss << "0x" << static_cast<int>(imm);
     }
     else if (type == "RRR")
     {
-        // oooooooo rrrrrrrr rrrr0000 00000000
-        uint8_t reg0 = (bytes[1] >> 4) & 0x0F;
-        uint8_t reg1 = (bytes[1] >> 0) & 0x0F;
-        uint8_t reg2 = (bytes[2] >> 4) & 0x0F;
+        uint8_t reg0 = (word >> 19) & 0x1F;
+        uint8_t reg1 = (word >> 14) & 0x1F;
+        uint8_t reg2 = (word >> 9) & 0x1F;
         oss << regIDToString[reg0] << ", ";
         oss << regIDToString[reg1] << ", ";
         oss << regIDToString[reg2];
     }
     else if (type == "RRI")
     {
-        // oooooooo rrrrrrrr iiiiiiii iiiiiiii
-        uint8_t reg0 = (bytes[1] >> 4) & 0x0F;
-        uint8_t reg1 = (bytes[1] >> 0) & 0x0F;
-        uint16_t imm = (static_cast<uint16_t>(bytes[3]) << 8) |
-                static_cast<uint16_t>(bytes[2]);
+        uint8_t reg0 = (word >> 19) & 0x1F;
+        uint8_t reg1 = (word >> 14) & 0x1F;
+        uint16_t raw_imm = word & 0x3FFF;
+        int16_t imm = (raw_imm & 0x2000) ? static_cast<int16_t>(raw_imm | 0xC000) : static_cast<int16_t>(raw_imm);
         oss << regIDToString[reg0] << ", ";
         oss << regIDToString[reg1] << ", ";
         oss << "0x" << static_cast<int>(imm);
