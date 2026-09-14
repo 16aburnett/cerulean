@@ -341,22 +341,3 @@ TEST_CASE (test_arithmetic_xor) {
     REQUIRE (vm.getRegister (4) == 13); // 15 ^ 2 = 13
     REQUIRE (vm.getRegister (5) == 8); // 15 ^ 7 = 8
 }
-
-TEST_CASE (test_arithmetic_not) {
-    std::vector<uint8_t> bytecode = {
-        Opcode::LLI,     0x00, 0x0f, 0x00, // [0x] r0.0 <- 15
-        Opcode::LUI,     0x00, 0x00, 0x00, // [0x] r0.1 <- 0
-        Opcode::NOT32,   0x20, 0x00, 0x00, // [0x] r2 <- ~r0
-        Opcode::LLI,     0x10, 0x00, 0x00, // [0x] r1.0 <- 0
-        Opcode::LUI,     0x10, 0x00, 0x00, // [0x] r1.1 <- 0
-        Opcode::SUB64I,  0x11, 0x01, 0x00, // [0x] r1 <- r1 - 1
-        Opcode::NOT64,   0x31, 0x00, 0x00, // [0x] r3 <- ~r1
-        Opcode::HALT
-    };
-
-    CeruleanRISCVM vm (bytecode, g_debug);
-    vm.run ();
-
-    REQUIRE (vm.getRegister (2) == (~15u));
-    REQUIRE (vm.getRegister (3) == (~(-1ul))); 
-}

@@ -73,7 +73,7 @@ Execution
 ## Instruction Categories
 
 - **Arithmetic:** add64, sub64, mul64, div64, mod64
-- **Bitwise:** and64, or64, xor64, not32, not64, sll64, srl64, sra64
+- **Bitwise:** and64, or64, xor64, sll64, srl64, sra64 (not32, not64 available as pseudo-instructions)
 - **Comparison:** eq, lt, ltu, eqf32, eqf64, ltf32, ltf64, lef32, lef64
 - **Memory:** load8/16/32/64, store8/16/32/64
 - **Control Flow:** jmp, beq, bne, blt, bge, bltu, bgeu

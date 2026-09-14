@@ -72,3 +72,36 @@ class TestPseudoInstructions (unittest.TestCase):
         expandedInstructions = expanderFunc (pseudoInstruction)
 
         self.assertEqual (expandedInstructions, expectedInstructions)
+
+    def testNot64Expansion (self):
+        # not64 r1, r0
+        regDest = RegisterExpressionNode (None, "r1")
+        regSrc  = RegisterExpressionNode (None, "r0")
+        pseudoInstruction = InstructionNode (None, "not64", [regDest, regSrc])
+
+        immNeg1 = IntLiteralExpressionNode (None, -1)
+        expectedInstructions = [
+            InstructionNode (None, 'xor64i', args=[regDest, regSrc, immNeg1], labels=[])
+        ]
+
+        self.assertTrue (pseudoInstruction.id in PSEUDO_INSTRUCTIONS)
+        expanderFunc = PSEUDO_INSTRUCTIONS[pseudoInstruction.id].expander
+        expandedInstructions = expanderFunc (pseudoInstruction)
+        self.assertEqual (expandedInstructions, expectedInstructions)
+
+    def testNot32Expansion (self):
+        # not32 r1, r0
+        regDest = RegisterExpressionNode (None, "r1")
+        regSrc  = RegisterExpressionNode (None, "r0")
+        pseudoInstruction = InstructionNode (None, "not32", [regDest, regSrc])
+
+        immNeg1 = IntLiteralExpressionNode (None, -1)
+        expectedInstructions = [
+            InstructionNode (None, 'xor64i', args=[regDest, regSrc, immNeg1], labels=[]),
+            InstructionNode (None, 'zext32', args=[regDest, regDest])
+        ]
+
+        self.assertTrue (pseudoInstruction.id in PSEUDO_INSTRUCTIONS)
+        expanderFunc = PSEUDO_INSTRUCTIONS[pseudoInstruction.id].expander
+        expandedInstructions = expanderFunc (pseudoInstruction)
+        self.assertEqual (expandedInstructions, expectedInstructions)

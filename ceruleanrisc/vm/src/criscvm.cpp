@@ -974,28 +974,6 @@ void CeruleanRISCVM::execute_instruction () {
             registers.set<uint64_t>(dest, c);
             break;
         }
-        case Opcode::NOT32: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src    = (0b00000000000011110000000000000000 & instruction) >> 16;
-            // Read from register
-            uint32_t a = registers.get<uint32_t>(src);
-            // Perform instruction
-            uint32_t c = ~a;
-            // Write to register
-            registers.set<uint32_t>(dest, c);
-            break;
-        }
-        case Opcode::NOT64: {
-            uint8_t dest   = (0b00000000111100000000000000000000 & instruction) >> 20;
-            uint8_t src    = (0b00000000000011110000000000000000 & instruction) >> 16;
-            // Read from register
-            uint64_t a = registers.get<uint64_t>(src);
-            // Perform instruction
-            uint64_t c = ~a;
-            // Write to register
-            registers.set<uint64_t>(dest, c);
-            break;
-        }
         // ========================================================================================
         // Logical/Bitwise Instructions with Immediates
         // ========================================================================================

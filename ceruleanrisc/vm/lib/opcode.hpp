@@ -274,12 +274,6 @@ enum Opcode : const uint8_t {
     // XOR64 dest, src1, src2 - bitwise XOR (64-bit)
     // XXXXXXXX ddddssss ssss0000 00000000
     XOR64 = 0x58,
-    // NOT32 dest, src - bitwise NOT (32-bit)
-    // XXXXXXXX ddddssss 00000000 00000000
-    NOT32 = 0x59,
-    // NOT64 dest, src - bitwise NOT (64-bit)
-    // XXXXXXXX ddddssss 00000000 00000000
-    NOT64 = 0x5a,
 
     // ============================================================================================
     // Logical/Bitwise Instructions with immediates - 0x60-0x70

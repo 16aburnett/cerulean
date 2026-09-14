@@ -83,8 +83,6 @@ INSTRUCTION_MAPPING = {
     "OR64"      : {"opcode": 0x56, "format": "RRR" },
     "AND64"     : {"opcode": 0x57, "format": "RRR" },
     "XOR64"     : {"opcode": 0x58, "format": "RRR" },
-    "NOT32"     : {"opcode": 0x59, "format": "RR"  },
-    "NOT64"     : {"opcode": 0x5a, "format": "RR"  },
 
     "SLL32I"    : {"opcode": 0x60, "format": "RRI" },
     "SLL64I"    : {"opcode": 0x61, "format": "RRI" },

@@ -88,8 +88,6 @@ const std::unordered_map<Opcode, InstructionInfo> instructionRegistry = {
     {Opcode::OR64, {"OR64", "RRR", "" }},
     {Opcode::AND64, {"AND64", "RRR", "" }},
     {Opcode::XOR64, {"XOR64", "RRR", "" }},
-    {Opcode::NOT32, {"NOT32", "RR", "" }},
-    {Opcode::NOT64, {"NOT64", "RR", "" }},
 
     {Opcode::SLL32I, {"SLL32I", "RRI", "" }},
     {Opcode::SLL64I, {"SLL64I", "RRI", "" }},

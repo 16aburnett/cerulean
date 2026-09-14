@@ -87,3 +87,32 @@ def expand_mv64 (pseudoInstruction):
     return [
         InstructionNode (token, 'add64i', args=[regDest, regSrc, imm], labels=pseudoInstruction.labels),
     ]
+
+@registerPseudoInstruction (
+    name='not64',
+    argTypes=['reg', 'reg'],
+    description='Bitwise NOT 64-bit',
+    categories=['logical']
+)
+def expand_not64 (pseudoInstruction):
+    token = pseudoInstruction.token
+    regDest, regSrc = pseudoInstruction.args
+    imm = IntLiteralExpressionNode (token, -1)
+    return [
+        InstructionNode (token, 'xor64i', args=[regDest, regSrc, imm], labels=pseudoInstruction.labels),
+    ]
+
+@registerPseudoInstruction (
+    name='not32',
+    argTypes=['reg', 'reg'],
+    description='Bitwise NOT 32-bit',
+    categories=['logical']
+)
+def expand_not32 (pseudoInstruction):
+    token = pseudoInstruction.token
+    regDest, regSrc = pseudoInstruction.args
+    imm = IntLiteralExpressionNode (token, -1)
+    return [
+        InstructionNode (token, 'xor64i', args=[regDest, regSrc, imm], labels=pseudoInstruction.labels),
+        InstructionNode (token, 'zext32', args=[regDest, regDest]),
+    ]
