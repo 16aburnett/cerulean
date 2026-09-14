@@ -50,19 +50,27 @@ void CeruleanRISCVM::execute_instruction () {
         (static_cast<uint32_t>(code[pc + 1]) << 16) |
         (static_cast<uint32_t>(code[pc + 2]) << 8)  |
         (static_cast<uint32_t>(code[pc + 3]));
+    
+    // XXXXXXXX 00000000 00000000 00000000
     Opcode opcode = static_cast<Opcode>((instruction >> 24) & 0xFF);
 
+    // Each register is 5 bits of the instruction
+    // 00000000 dddddaaa aabbbbb0 00000000
     uint8_t r_dest = (instruction >> 19) & 0x1F;
     uint8_t r_src1 = (instruction >> 14) & 0x1F;
     uint8_t r_src2 = (instruction >> 9) & 0x1F;
 
+    // 00000000 00000000 00iiiiii iiiiiiii
     auto get_imm14 = [instruction]() -> int16_t {
         uint16_t raw = instruction & 0x3FFF;
-        return (raw & 0x2000) ? static_cast<int16_t>(raw | 0xC000) : static_cast<int16_t>(raw);
+        // Sign-extend the 14-bit immediate to 16 bits
+        int16_t sign_extended = (raw & 0x2000) ? static_cast<int16_t>(raw | 0xC000) : static_cast<int16_t>(raw);
+        return sign_extended;
     };
 
+    // 00000000 00000000 iiiiiiii iiiiiiii
     auto get_imm16 = [instruction]() -> int16_t {
-        return static_cast<int16_t>((instruction >> 3) & 0xFFFF);
+        return static_cast<int16_t>(instruction & 0xFFFF);
     };
 
     if (debug)

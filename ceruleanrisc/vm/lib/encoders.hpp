@@ -43,7 +43,7 @@ inline std::vector<uint8_t> encodeRR (uint8_t opcode, uint8_t r0, uint8_t r1) {
 inline std::vector<uint8_t> encodeRI (uint8_t opcode, uint8_t r0, int16_t imm) {
     uint32_t word = (static_cast<uint32_t>(opcode & 0xFF) << 24) |
                     (static_cast<uint32_t>(r0 & 0x1F) << 19) |
-                    ((static_cast<uint32_t>(imm) & 0xFFFF) << 3);
+                    ((static_cast<uint32_t>(imm) & 0xFFFF));
     return {
         static_cast<uint8_t>((word >> 24) & 0xFF),
         static_cast<uint8_t>((word >> 16) & 0xFF),
@@ -65,7 +65,7 @@ inline std::vector<uint8_t> encodeR (uint8_t opcode, uint8_t r0) {
 
 inline std::vector<uint8_t> encodeI (uint8_t opcode, uint16_t imm) {
     uint32_t word = (static_cast<uint32_t>(opcode & 0xFF) << 24) |
-                    ((static_cast<uint32_t>(imm) & 0xFFFF) << 8);
+                    ((static_cast<uint32_t>(imm) & 0xFFFF));
     return {
         static_cast<uint8_t>((word >> 24) & 0xFF),
         static_cast<uint8_t>((word >> 16) & 0xFF),

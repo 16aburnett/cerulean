@@ -2,32 +2,32 @@
 // Main is where the program starts executing from (and must be global)
     @global main
 main:
-    lli       r0, 'H'
-    putchar   r0
-    lli       r0, 'e'
-    putchar   r0
-    lli       r0, 'l'
-    putchar   r0
-    lli       r0, 'l'
-    putchar   r0
-    lli       r0, 'o'
-    putchar   r0
-    lli       r0, ','
-    putchar   r0
-    lli       r0, ' '
-    putchar   r0
-    lli       r0, 'W'
-    putchar   r0
-    lli       r0, 'o'
-    putchar   r0
-    lli       r0, 'r'
-    putchar   r0
-    lli       r0, 'l'
-    putchar   r0
-    lli       r0, 'd'
-    putchar   r0
-    lli       r0, '!'
-    putchar   r0
-    lli       r0, '\n'
-    putchar   r0
+    lli       r1, 'H'
+    putchar   r1
+    lli       r1, 'e'
+    putchar   r1
+    lli       r1, 'l'
+    putchar   r1
+    lli       r1, 'l'
+    putchar   r1
+    lli       r1, 'o'
+    putchar   r1
+    lli       r1, ','
+    putchar   r1
+    lli       r1, ' '
+    putchar   r1
+    lli       r1, 'W'
+    putchar   r1
+    lli       r1, 'o'
+    putchar   r1
+    lli       r1, 'r'
+    putchar   r1
+    lli       r1, 'l'
+    putchar   r1
+    lli       r1, 'd'
+    putchar   r1
+    lli       r1, '!'
+    putchar   r1
+    lli       r1, '\n'
+    putchar   r1
     halt

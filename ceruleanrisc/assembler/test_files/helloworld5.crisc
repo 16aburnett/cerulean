@@ -3,11 +3,11 @@
     @extern print_string
     @global main
 main:
-    loada     r0, string_addr
+    loada     r2, string_addr
     loada     r1, print_string
-    push r0
+    push r2
     call r1
-    pop r0
+    pop r2
     ret
 
 string_addr:

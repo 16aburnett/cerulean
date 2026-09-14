@@ -89,10 +89,12 @@ Execution
 ## Building the VM
 
 ```bash
-cd ceruleanrisc/vm
+pushd ceruleanrisc/vm
+rm -rf build
 cmake -B build
-cmake --build build
-./build/criscvm --help
+cmake --build build -j
+# ./build/criscvm --help
+popd
 ```
 
 ## Running Tests

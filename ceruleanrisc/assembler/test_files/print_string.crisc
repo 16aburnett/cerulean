@@ -5,7 +5,7 @@ print_string: // print_string(ptr string_addr)
 function_prologue:
     push      bp        // save caller's bp
     add64i    bp, sp, 0 // bp = sp
-    push      r0        // save caller's r0
+    push      r10        // save caller's r10
     push      r1        // save caller's r1
     push      r2        // save caller's r2
     push      r3        // save caller's r3
@@ -16,17 +16,17 @@ function_prologue:
     push      r8        // save caller's r8
     push      r9        // save caller's r9
 function_body:
-    load64    r0, bp, 16 // r0 <- [bp + 16] - get param ptr string_addr from stack
+    load64    r10, bp, 16 // r10 <- [bp + 16] - get param ptr string_addr from stack
     loada     r3, loop_cond
     loada     r4, loop_end
     lli       r5, 0 // null-byte
 loop_cond:
-    load8     r2, r0, 0  // load char from mem
+    load8     r2, r10, 0  // load char from mem
     beq       r2, r5, r4 // if *str == null then jmp loop_end
 loop_body:
     putchar   r2         // putchar(r2)
 loop_update:
-    add32i    r0, r0, 1  // move to next char
+    add32i    r10, r10, 1  // move to next char
     jmp       r3         // jmp loop_cond
 loop_end:
 function_epilogue:
@@ -39,7 +39,7 @@ function_epilogue:
     pop       r3         // restore caller's r3
     pop       r2         // restore caller's r2
     pop       r1         // restore caller's r1
-    pop       r0         // restore caller's r0 
+    pop       r10         // restore caller's r10 
     add64i    sp, bp, 0  // sp = bp ; remove local vars 
     pop       bp         // bp = [sp] ; restore caller bp
     ret                  // return from function

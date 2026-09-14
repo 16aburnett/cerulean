@@ -10,54 +10,54 @@ string_addr:
 // This should be correctly aligned, despite above not ending at a 32bit alignment
     @global main
 main:
-    // Load string_addr into r0
+    // Load string_addr into r1
     // Currently this takes 6 instructions
-    lui       r0, %hi(string_addr)
-    lli       r0, %mh(string_addr)
-    sll64i    r0, r0, 16
-    lli       r0, %ml(string_addr)
-    sll64i    r0, r0, 16
-    lli       r0, %lo(string_addr)
+    lui       r1, %hi(string_addr)
+    lli       r1, %mh(string_addr)
+    sll64i    r1, r1, 16
+    lli       r1, %ml(string_addr)
+    sll64i    r1, r1, 16
+    lli       r1, %lo(string_addr)
 
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
-    add64i    r0, r0, 1
-    load8     r1, r0, 0
-    putchar   r1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
+    add64i    r1, r1, 1
+    load8     r2, r1, 0
+    putchar   r2
     ret

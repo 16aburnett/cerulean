@@ -37,7 +37,7 @@ std::string disassemble (const std::vector<uint8_t>& bytes) {
     }
     else if (type == "I")
     {
-        uint16_t imm = (word >> 8) & 0xFFFF;
+        uint16_t imm = word & 0xFFFF;
         oss << "0x" << static_cast<int>(imm);
     }
     else if (type == "RR")
@@ -50,7 +50,7 @@ std::string disassemble (const std::vector<uint8_t>& bytes) {
     else if (type == "RI")
     {
         uint8_t reg0 = (word >> 19) & 0x1F;
-        uint16_t imm = (word >> 3) & 0xFFFF;
+        uint16_t imm = word & 0xFFFF;
         oss << regIDToString[reg0] << ", ";
         oss << "0x" << static_cast<int>(imm);
     }

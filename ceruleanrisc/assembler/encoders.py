@@ -30,10 +30,13 @@ def encodeRR (opcode, r0, r1):
 
 # Encoding instructions with 1 register and 1 immediate (RI)
 # instruction: opcode a, imm
-# binary:      oooooooo aaaaaiii iiiiiiii iiii0000
+# binary:      oooooooo aaaaa000 iiiiiiii iiiiiiii
 def encodeRI (opcode, r0, imm):
-    word = ((opcode & 0xFF) << 24) | ((r0 & 0x1F) << 19) | ((imm & 0xFFFF) << 3)
-    return wordToBytes (word)
+    byte0 = opcode & 0xFF
+    byte1 = ((r0 & 0x1F) << 3) & 0xFF
+    immHigh = (imm >> 8) & 0xFF
+    immLow = imm & 0xFF
+    return [byte0, byte1, immHigh, immLow]
 
 # Encoding instructions with 1 register (R)
 # instruction: opcode a
@@ -44,10 +47,13 @@ def encodeR (opcode, r0):
 
 # Encoding instructions with 1 immediate (I)
 # instruction: opcode imm
-# binary:      oooooooo iiiiiiii iiiiiiii 00000000
+# binary:      oooooooo 00000000 iiiiiiii iiiiiiii
 def encodeI (opcode, imm):
-    word = ((opcode & 0xFF) << 24) | ((imm & 0xFFFF) << 8)
-    return wordToBytes (word)
+    byte0 = opcode & 0xFF
+    byte1 = 0x00
+    immLow = imm & 0xFF
+    immHigh = (imm >> 8) & 0xFF
+    return [byte0, byte1, immHigh, immLow]
 
 # Encoding instructions with no arguments
 # instruction: opcode
