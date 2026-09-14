@@ -3,7 +3,6 @@
 # ========================================================================
 
 from abc import ABC, abstractmethod
-from sys import exit
 import codecs
 
 from .AST import *

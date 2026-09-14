@@ -4,7 +4,6 @@
 
 from typing import NamedTuple
 from enum import Enum, auto 
-from sys import exit
 import re
 import sys
 

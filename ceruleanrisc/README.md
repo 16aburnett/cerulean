@@ -99,8 +99,10 @@ cmake --build build
 
 **Assembler Tests:**
 ```bash
-cd ceruleanrisc/assembler
-python3 -m pytest unittests/
+# use pytest
+python3 -m pytest ceruleanrisc/assembler/unittests/
+# or use unittest
+python3 -m unittest discover -s ceruleanrisc/assembler/unittests -p "test_*.py" -v
 ```
 
 **VM Tests:**

@@ -1,5 +1,6 @@
 import codecs
 import struct
+from .exceptions import AssemblerError
 
 DATA_DIRECTIVES = {
     # 8-bit signed integer
@@ -46,9 +47,9 @@ def getDirectiveSize (directive, value):
     elif directive == 'string':
         return len (decodeEscapeSequences (value)) + 1  # Null terminator
     else:
-        print (f"Unknown data directive type '{directive}'")
-        print (f"this is a compiler error, this should have been caught during semantic analysis")
-        exit (1)
+        msg = f"Unknown data directive type '{directive}'. This is a compiler error, this should have been caught during semantic analysis."
+        print (msg)
+        raise AssemblerError (msg)
 
 def decodeEscapeSequences (rawStr):
     stripped = rawStr.strip ('"')
@@ -66,6 +67,6 @@ def encodeDataDirective (directive, value):
         # Format string specifies type and Endianness
         return struct.pack (format, value)
     # Unknown data directive
-    print (f"ERROR: Unknown directive '{directive}' in encodeDataDirective")
-    print (f"If this is reached, then the semantic analysis pass failed to catch this case")
-    exit (1)
+    msg = f"ERROR: Unknown directive '{directive}' in encodeDataDirective. If this is reached, then the semantic analysis pass failed to catch this case."
+    print (msg)
+    raise AssemblerError (msg)

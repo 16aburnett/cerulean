@@ -4,10 +4,11 @@
 
 import os
 import sys
-from sys import exit
 from enum import Enum
 import argparse
 import json
+
+from .exceptions import AssemblerError
 
 from .tokenizer import tokenize
 from .AST import *
@@ -86,8 +87,8 @@ class CeruleanAssembler:
         semanticAnalyzer.analyze (ast)
 
         if not semanticAnalyzer.wasSuccessful:
-            print ("ERROR: Semantic Analysis failed")
-            exit (1)
+            error_details = "\n".join(semanticAnalyzer.errorMessages)
+            raise AssemblerError (f"ERROR: Semantic Analysis failed\n{error_details}")
 
         # -----------------------------------------------------------------------------------------
         # Lowering pass
@@ -198,23 +199,27 @@ if __name__ == "__main__":
     # Ensure source file exists
     if not os.path.isfile (sourceFilename):
         print (f"Error: '{sourceFilename}' does not exist or is not a file")
-        exit (1)
+        sys.exit (1)
 
     # Read source code
     with open (sourceFilename, "r") as f:
         rawSourceCode = f.read ()
 
-    assembler = CeruleanAssembler (
-        debug=args.debug,
-    )
-    objectData = assembler.assemble (
-        rawSourceCode,
-        sourceFilename,
-        emitTokens=args.emitTokens,
-        emitAST=args.emitAST
-    )
+    try:
+        assembler = CeruleanAssembler (
+            debug=args.debug,
+        )
+        objectData = assembler.assemble (
+            rawSourceCode,
+            sourceFilename,
+            emitTokens=args.emitTokens,
+            emitAST=args.emitAST
+        )
 
-    # Write target code
-    print (f"Writing object code to \"{destFilename}\"")
-    with open (destFilename, "w") as f:
-        json.dump (objectData, f, indent=4)
+        # Write target code
+        print (f"Writing object code to \"{destFilename}\"")
+        with open (destFilename, "w") as f:
+            json.dump (objectData, f, indent=4)
+    except AssemblerError as e:
+        print (e)
+        sys.exit (1)

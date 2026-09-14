@@ -3,10 +3,10 @@
 # ========================================================================
 
 from abc import ABC, abstractmethod
-from sys import exit
 
 from .AST import *
 from .visitor import ASTVisitor
+from .exceptions import AssemblerError
 
 # ========================================================================
 
@@ -39,8 +39,9 @@ class ReferenceResolverVisitor (ASTVisitor):
             return "addr64"
         # We should never reach here, semantic analysis should catch this
         # Just adding this for completion
-        print (f"ERROR: Unknown modifier '{node.modifier}'")
-        exit (1)
+        msg = f"ERROR: Unknown modifier '{node.modifier}'"
+        print (msg)
+        raise AssemblerError (msg)
 
     def visitDataDirectiveNode (self, node):
         for i, arg in enumerate (node.args):

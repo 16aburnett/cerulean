@@ -3,11 +3,10 @@
 # April 10 2021
 # ========================================================================
 
-from sys import exit
-
-from .tokenizer import printToken
+from .tokenizer import printToken, getTokenContextAsString
 from .AST import *
 from .registers import REGISTER_MAP
+from .exceptions import AssemblerError
 
 # ========================================================================
 
@@ -58,12 +57,13 @@ class Parser:
 # debug 
 
     def error (self, function, expectedToken, additional=""):
-        print (f"Parse Error: Attempted to parse <{function}>")
-        print (f"   expected {expectedToken} but got {self.tokens[self.currentToken].type}")
-        printToken (self.tokens[self.currentToken])
+        msg = f"Parse Error: Attempted to parse <{function}>\n"
+        msg += f"   expected {expectedToken} but got {self.tokens[self.currentToken].type}\n"
+        msg += getTokenContextAsString (self.tokens[self.currentToken])
         if additional != "":
-            print (f"   -> {additional}")
-        exit (1)
+            msg += f"   -> {additional}\n"
+        print (msg)
+        raise AssemblerError (msg)
 
     def enter (self, name):
         if (not self.doDebug): 

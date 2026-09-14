@@ -3,7 +3,6 @@
 # =================================================================================================
 
 from abc import ABC, abstractmethod
-from sys import exit
 
 from .visitor import ASTVisitor
 from .pseudoInstructions import *

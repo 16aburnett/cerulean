@@ -3,7 +3,6 @@
 # =================================================================================================
 
 from abc import ABC, abstractmethod
-from sys import exit
 
 from .visitor import ASTVisitor
 from .modifiers import MODIFIERS
@@ -46,9 +45,11 @@ class SemanticAnalysisVisitor (ASTVisitor):
     # Helper functions
 
     def error (self, msg, debugToken:Token):
-        print ("Semantic Analysis ERROR:", msg)
+        fullMsg = f"Semantic Analysis ERROR: {msg}"
         if debugToken:
-            print (getTokenContextAsString (debugToken))
+            fullMsg += "\n" + getTokenContextAsString (debugToken)
+        print (fullMsg)
+        self.errorMessages.append (fullMsg)
         self.wasSuccessful = False
 
     # ---------------------------------------------------------------------------------------------
