@@ -215,12 +215,12 @@ __builtin__print__char:
         // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
-        push r0 // Saving caller's r0
+        push r1 // Saving caller's r1
         // function body
-        load64 r0, bp, 16 // r0 <- [bp + 16]
-        putchar r0
+        load64 r1, bp, 16 // r1 <- [bp + 16]
+        putchar r1
         // function epilogue - this is prolly overkill
-        pop r0 // Restoring caller's r0
+        pop r1 // Restoring caller's r1
         mv64 sp, bp
         pop bp
         ret
@@ -406,12 +406,12 @@ __builtin__println:
         // function prologue
         push bp
         mv64 bp, sp
-        push r0 // Saving caller's r0
+        push r1 // Saving caller's r1
         // function body - print newline character
-        lli r0, 10 // ASCII newline
-        putchar r0
+        lli r1, 10 // ASCII newline
+        putchar r1
         // function epilogue
-        pop r0 // Restoring caller's r0
+        pop r1 // Restoring caller's r1
         mv64 sp, bp
         pop bp
         ret
