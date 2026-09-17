@@ -8,11 +8,12 @@ CeruleanRISC is a 32-bit fixed-width RISC-like instruction set architecture (ISA
 - **Instruction Width:** 32 bits (fixed)
 - **Register Width:** 64 bits
 - **Architecture:** RISC-like, load-store
-- **Registers:** 16 general-purpose registers (r0-r15)
-  - `r0-r12`: General purpose
-  - `ra/r13`: Return address
-  - `bp/r14`: Base pointer
-  - `sp/r15`: Stack pointer
+- **Registers:** 32 registers (r0-r31)
+  - `r0`    : Hardwired to zero
+  - `r1-r28`: General purpose
+  - `ra/r29`: Return address
+  - `bp/r30`: Base pointer
+  - `sp/r31`: Stack pointer
 - **Endianness:** Big-endian
 - **Alignment:** 4-byte instruction alignment
 

@@ -5,7 +5,7 @@
 # It uses a linear scan algorithm with live range analysis.
 #
 # Input:  Virtual ASM with unlimited virtual registers (%var1, %var2, etc.)
-# Output: Virtual ASM with physical registers (r0-r7) and spill annotations
+# Output: Virtual ASM with physical registers (r1-r28) and spill annotations
 # =================================================================================================
 
 from . import ceruleanVirtualRISCAST as ASM_AST
@@ -20,16 +20,16 @@ class RegisterAllocator:
     
     def __init__(self, availableRegs=None, scratchRegs=None, shouldPrintDebug=False):
         self.shouldPrintDebug = shouldPrintDebug
-        
+
         # Physical registers available for allocation
         if availableRegs is None:
-            self.availableRegs = [f"r{i}" for i in range(8)]  # r0-r7
+            self.availableRegs = [f"r{i}" for i in range(1, 26)]  # r1-r25
         else:
             self.availableRegs = availableRegs
             
         # Scratch/temporary registers (not used for allocation, reserved for operations)
         if scratchRegs is None:
-            self.scratchRegs = ["r8", "r9", "r10"]
+            self.scratchRegs = ["r26", "r27", "r28"]
         else:
             self.scratchRegs = scratchRegs
         

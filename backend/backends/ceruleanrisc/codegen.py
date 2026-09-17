@@ -32,8 +32,14 @@ class CodeGenVisitor_CeruleanRISC (ASTVisitor):
         self.wasSuccessful = True  # Used by compiler to check for errors
         
         # Configuration for register allocation (passed to RegisterAllocator)
-        self.MAX_AVAILABLE_REGISTERS = 8
-        self.scratchRegisters = ["r8", "r9", "r10"]
+        # **Registers:** 32 registers (r0-r31)
+        # - `r0`    : Hardwired to zero
+        # - `r1-r28`: General purpose
+        # - `ra/r29`: Return address
+        # - `bp/r30`: Base pointer
+        # - `sp/r31`: Stack pointer
+        self.availableRegisters = [f"r{i}" for i in range(1, 26)] # r1-r25
+        self.scratchRegisters = ["r26", "r27", "r28"]
 
     def generate (self, ast):
 
@@ -75,8 +81,8 @@ class CodeGenVisitor_CeruleanRISC (ASTVisitor):
         elif self.allocatorStrategy == AllocatorStrategy.LINEAR_SCAN:
             self.debugPrint("  Using linear scan allocator")
             registerAllocator = RegisterAllocator(
-                availableRegs=[f"r{i}" for i in range(self.MAX_AVAILABLE_REGISTERS)],
-                scratchRegs=self.scratchRegisters,
+                availableRegs=self.availableRegisters.copy(),
+                scratchRegs=self.scratchRegisters.copy(),
                 shouldPrintDebug=self.shouldPrintDebug
             )
         else:
