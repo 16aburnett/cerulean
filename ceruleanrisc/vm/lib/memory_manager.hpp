@@ -26,9 +26,9 @@ public:
     uint64_t readStack64(uint64_t sp) const;
     void writeStack64(uint64_t sp, uint64_t value);
     // Virtual address layout
-    static constexpr uint64_t CODE_BASE  = 0x00000000;
-    static constexpr uint64_t HEAP_BASE  = 0x10000000;
-    static constexpr uint64_t STACK_BASE = 0xFFFFFFFF;
+    static constexpr uint64_t CODE_BASE  = 0x0000000000000000;
+    static constexpr uint64_t HEAP_BASE  = 0x0000000010000000;
+    static constexpr uint64_t STACK_BASE = 0xFFFFFFFFFFFFFFFF;
 
 private:
     std::vector<uint8_t> code;
