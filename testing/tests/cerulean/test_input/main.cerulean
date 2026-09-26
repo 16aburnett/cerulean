@@ -6,11 +6,11 @@ function i32 main ()
     print ("Hello, "); println (name);
 
     print ("Enter an integer => ");
-    i32 intNumber = stringToInt32 (input ());
+    i32 intNumber = stringToi32 (input ());
     print (intNumber); print (" * 2 = "); println (intNumber * 2);
 
     print ("Enter a floating point number => ");
-    f32 floatNumber = stringToFloat32 (input ());
+    f32 floatNumber = stringTof32 (input ());
     print (floatNumber); print (" * 2.0 = "); println (floatNumber * 2.0);
 
     return 0;

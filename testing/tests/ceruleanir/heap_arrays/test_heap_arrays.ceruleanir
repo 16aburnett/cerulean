@@ -46,7 +46,7 @@ function void @print (ptr(%arr_ptr), i32(%N))
     }
     block for_body {
         %value = load (type(i32), ptr(%arr_ptr), i32(%i_curr))
-        call @__builtin__println__int32 (i32(%value))
+        call @__builtin__println__i32 (i32(%value))
         jmp (block(for_update))
     }
     block for_update {

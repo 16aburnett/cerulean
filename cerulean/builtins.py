@@ -48,7 +48,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     #  void print (int intToPrint);
     param0 = ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "intToPrint", None)
     printIntFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "print", None, [param0], None)
-    printIntFunc.scopeName = BUILTIN_PREFIX+"print__int32"
+    printIntFunc.scopeName = BUILTIN_PREFIX+"print__i32"
     printIntFunc.label = printIntFunc.scopeName
     # create signature for node
     signature = [f"{printIntFunc.id}("]
@@ -64,7 +64,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     #  void print (float floatToPrint);
     param0 = ParameterNode(TypeSpecifierNode (Type.F32, "f32", None), "val", None)
     printFloatFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "print", None, [param0], None)
-    printFloatFunc.scopeName = BUILTIN_PREFIX+"print__float32"
+    printFloatFunc.scopeName = BUILTIN_PREFIX+"print__f32"
     printFloatFunc.label = printFloatFunc.scopeName
     # create signature for node
     signature = [f"{printFloatFunc.id}("]
@@ -129,7 +129,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     #  void println (int intToPrint);
     param0 = ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "intToPrint", None)
     printIntFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "println", None, [param0], None)
-    printIntFunc.scopeName = BUILTIN_PREFIX+"println__int32"
+    printIntFunc.scopeName = BUILTIN_PREFIX+"println__i32"
     printIntFunc.label = printIntFunc.scopeName
     # create signature for node
     signature = [f"{printIntFunc.id}("]
@@ -145,7 +145,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     #  void println (float floatToPrint);
     param0 = ParameterNode(TypeSpecifierNode (Type.F32, "f32", None), "val", None)
     printFloatFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "println", None, [param0], None)
-    printFloatFunc.scopeName = BUILTIN_PREFIX+"println__float32"
+    printFloatFunc.scopeName = BUILTIN_PREFIX+"println__f32"
     printFloatFunc.label = printFloatFunc.scopeName
     # create signature for node
     signature = [f"{printFloatFunc.id}("]
@@ -218,7 +218,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     # for x86 this directly calls the system exit
     param0 = ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "exit_status", None)
     exitFunc = FunctionNode (TypeSpecifierNode (Type.VOID, "void", None), "exit", None, [param0], None)
-    exitFunc.scopeName = BUILTIN_PREFIX+"exit__int32"
+    exitFunc.scopeName = BUILTIN_PREFIX+"exit__i32"
     exitFunc.label = exitFunc.scopeName
     # create signature for node
     exitFunc.signature = "exit(int)"
@@ -241,8 +241,8 @@ def addBuiltinsToSymbolTable (symbolTable):
 
     #  float intToFloat (int val);
     param0 = ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "val", None)
-    builtinFunction = FunctionNode (TypeSpecifierNode (Type.F32, "f32", None), "int32ToFloat32", None, [param0], None)
-    builtinFunction.scopeName = BUILTIN_PREFIX+"int32ToFloat32__int32"
+    builtinFunction = FunctionNode (TypeSpecifierNode (Type.F32, "f32", None), "i32Tof32", None, [param0], None)
+    builtinFunction.scopeName = BUILTIN_PREFIX+"i32Tof32__i32"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -258,8 +258,8 @@ def addBuiltinsToSymbolTable (symbolTable):
     #  float stringToFloat (char[]);
     param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
     param0.type.arrayDimensions = 1
-    builtinFunction = FunctionNode (TypeSpecifierNode (Type.F32, "f32", None), "stringToFloat32", None, [param0], None)
-    builtinFunction.scopeName = BUILTIN_PREFIX+"stringToFloat32__char__1"
+    builtinFunction = FunctionNode (TypeSpecifierNode (Type.F32, "f32", None), "stringTof32", None, [param0], None)
+    builtinFunction.scopeName = BUILTIN_PREFIX+"stringTof32__char__1"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -304,8 +304,8 @@ def addBuiltinsToSymbolTable (symbolTable):
 
     #  int floatToInt (float);
     param0 = ParameterNode(TypeSpecifierNode (Type.F32, "f32", None), "val", None)
-    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "float32ToInt32", None, [param0], None)
-    builtinFunction.scopeName = BUILTIN_PREFIX+"float32ToInt32__float32"
+    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "f32Toi32", None, [param0], None)
+    builtinFunction.scopeName = BUILTIN_PREFIX+"f32Toi32__f32"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -318,11 +318,11 @@ def addBuiltinsToSymbolTable (symbolTable):
     builtinFunction.signature = signature
     symbolTable.insert (builtinFunction, builtinFunction.id, Kind.FUNC)
 
-    #  int stringToInt32 (char[]);
+    #  int stringToi32 (char[]);
     param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
     param0.type.arrayDimensions = 1
-    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "stringToInt32", None, [param0], None)
-    builtinFunction.scopeName = BUILTIN_PREFIX+"stringToInt32__char__1"
+    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "stringToi32", None, [param0], None)
+    builtinFunction.scopeName = BUILTIN_PREFIX+"stringToi32__char__1"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -337,8 +337,8 @@ def addBuiltinsToSymbolTable (symbolTable):
 
     #  int charToInt (char);
     param0 = ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None), "val", None)
-    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "charToInt32", None, [param0], None)
-    builtinFunction.scopeName = BUILTIN_PREFIX+"charToInt32__char"
+    builtinFunction = FunctionNode (TypeSpecifierNode (Type.I32, "i32", None), "charToi32", None, [param0], None)
+    builtinFunction.scopeName = BUILTIN_PREFIX+"charToi32__char"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -355,7 +355,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     param0 = ParameterNode(TypeSpecifierNode (Type.I32, "i32", None), "val", None)
     builtinFunction = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None), "string", None, [param0], None)
     builtinFunction.type.arrayDimensions = 1
-    builtinFunction.scopeName = BUILTIN_PREFIX+"string__int32"
+    builtinFunction.scopeName = BUILTIN_PREFIX+"string__i32"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
@@ -372,7 +372,7 @@ def addBuiltinsToSymbolTable (symbolTable):
     param0 = ParameterNode(TypeSpecifierNode (Type.F32, "f32", None), "val", None)
     builtinFunction = FunctionNode (TypeSpecifierNode (Type.CHAR, "char", None), "string", None, [param0], None)
     builtinFunction.type.arrayDimensions = 1
-    builtinFunction.scopeName = BUILTIN_PREFIX+"string__float32"
+    builtinFunction.scopeName = BUILTIN_PREFIX+"string__f32"
     builtinFunction.label = builtinFunction.scopeName
     # create signature for node
     signature = [f"{builtinFunction.id}("]
