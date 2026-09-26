@@ -97,8 +97,8 @@ __builtin__print__char__1___function_epilogue:
 // Prints an int to the screen
 // void print (int valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__print__int32:
-__builtin__print__int32__function_prologue:
+__builtin__print__i32:
+__builtin__print__i32__function_prologue:
     push      bp        // save caller's bp
     add64i    bp, sp, 0 // bp = sp
     push      r10        // save caller's r10
@@ -117,18 +117,18 @@ __builtin__print__int32__function_prologue:
 
     // --- Step 1: Handle Edge Cases (Zero and Negative) ---
     // Check if n == 0
-    loada r5, __builtin__print__int32__check_neg       // Load address of check_neg label
+    loada r5, __builtin__print__i32__check_neg       // Load address of check_neg label
     bne r1, r0, r5            // If r1 != 0, branch to check_neg
     
     // If we didn't branch, n == 0. Print '0' and exit.
     lli r1, 48                // Load ASCII '0'
     putchar r1                // Execute dedicated print instruction
-    loada       r5, __builtin__print__int32__function_epilogue
+    loada       r5, __builtin__print__i32__function_epilogue
     jmp         r5            // Exit routine
 
-__builtin__print__int32__check_neg:
+__builtin__print__i32__check_neg:
     // Check if n < 0
-    loada r5, __builtin__print__int32__prep_loops      // Load address of prep_loops label
+    loada r5, __builtin__print__i32__prep_loops      // Load address of prep_loops label
     bge r1, r0, r5            // If r1 >= 0, skip to prep_loops
 
     // If here, n < 0. Print '-' and negate r1.
@@ -138,14 +138,14 @@ __builtin__print__int32__check_neg:
     // Negate: r1 = 0 - r1
     sub32 r1, r0, r1          // r1 = r0 (0) - r1
 
-__builtin__print__int32__prep_loops:
+__builtin__print__i32__prep_loops:
     // Initialize loop tracking variables to zero using r0
     add32i r2, r0, 0          // reversed = 0
     add32i r3, r0, 0          // digit_count = 0
 
 // --- Step 2: Loop 1 (Reverse and Count Digits) ---
-__builtin__print__int32__loop1_start:
-    loada r5, __builtin__print__int32__loop2_start     // Load address of loop 2 exit target
+__builtin__print__i32__loop1_start:
+    loada r5, __builtin__print__i32__loop2_start     // Load address of loop 2 exit target
     beq r1, r0, r5            // If n == 0, we are done reversing. Jump to printing.
 
     // reversed = reversed * 10
@@ -161,12 +161,12 @@ __builtin__print__int32__loop1_start:
     // digit_count++
     add32i r3, r3, 1          // Increment digit counter
     
-    loada r5, __builtin__print__int32__loop1_start     // Load head of loop 1 address
+    loada r5, __builtin__print__i32__loop1_start     // Load head of loop 1 address
     jmp r5                    // Repeat loop 1
 
 // --- Step 3: Loop 2 (Print Using Digit Count) ---
-__builtin__print__int32__loop2_start:
-    loada r5, __builtin__print__int32__function_epilogue // Load routine exit address
+__builtin__print__i32__loop2_start:
+    loada r5, __builtin__print__i32__function_epilogue // Load routine exit address
     beq r3, r0, r5            // If digit_count == 0, we are finished. Exit.
 
     // Extract next digit to print from reversed number
@@ -181,10 +181,10 @@ __builtin__print__int32__loop2_start:
     // digit_count--
     add32i r3, r3, -1         // Decrement remaining digit counter
     
-    loada r5, __builtin__print__int32__loop2_start     // Load head of loop 2 address
+    loada r5, __builtin__print__i32__loop2_start     // Load head of loop 2 address
     jmp r5                    // Repeat loop 2
 
-__builtin__print__int32__function_epilogue:
+__builtin__print__i32__function_epilogue:
     pop       r9         // restore caller's r9
     pop       r8         // restore caller's r8
     pop       r7         // restore caller's r7
@@ -204,8 +204,8 @@ __builtin__print__int32__function_epilogue:
 // Prints an int to the screen
 // void print (i64 valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__print__int64:
-__builtin__print__int64__function_prologue:
+__builtin__print__i64:
+__builtin__print__i64__function_prologue:
     push      bp        // save caller's bp
     add64i    bp, sp, 0 // bp = sp
     push      r10       // save caller's r10
@@ -224,18 +224,18 @@ __builtin__print__int64__function_prologue:
 
     // --- Step 1: Handle Edge Cases (Zero and Negative) ---
     // Check if n == 0
-    loada     r5, __builtin__print__int64__check_neg
+    loada     r5, __builtin__print__i64__check_neg
     bne       r1, r0, r5 // If r1 != 0, branch to check_neg
     
     // If we didn't branch, n == 0. Print '0' and exit safely via epilogue.
     lli       r1, 48     // Load ASCII '0'
     putchar   r1         // Execute dedicated print instruction
-    loada     r5, __builtin__print__int64__function_epilogue
+    loada     r5, __builtin__print__i64__function_epilogue
     jmp       r5         
 
-__builtin__print__int64__check_neg:
+__builtin__print__i64__check_neg:
     // Check if n < 0
-    loada     r5, __builtin__print__int64__prep_loops
+    loada     r5, __builtin__print__i64__prep_loops
     bge       r1, r0, r5 // If r1 >= 0, skip to prep_loops
 
     // If here, n < 0. Print '-' and negate r1 using 64-bit subtraction.
@@ -244,15 +244,15 @@ __builtin__print__int64__check_neg:
     putchar   r4         
     sub64     r1, r0, r1 // CHANGED: r1 = r0 (0) - r1 (64-bit signed negation)
 
-__builtin__print__int64__prep_loops:
+__builtin__print__i64__prep_loops:
     // Initialize loop tracking variables to zero using r0
     add64i    r2, r0, 0  // CHANGED: reversed = 0 (64-bit clean width)
     add64i    r3, r0, 0  // CHANGED: digit_count = 0 (64-bit clean width)
     add64i    r8, r0, 1  // Safe constant '1' for decrementing loop counters without negative immediates
 
 // --- Step 2: Loop 1 (Reverse and Count Digits) ---
-__builtin__print__int64__loop1_start:
-    loada     r5, __builtin__print__int64__loop2_start
+__builtin__print__i64__loop1_start:
+    loada     r5, __builtin__print__i64__loop2_start
     beq       r1, r0, r5 // If n == 0, we are done reversing. Jump to printing loop.
 
     // reversed = reversed * 10
@@ -268,12 +268,12 @@ __builtin__print__int64__loop1_start:
     // digit_count++
     add32i    r3, r3, 1  // Increment loop counter
     
-    loada     r5, __builtin__print__int64__loop1_start
+    loada     r5, __builtin__print__i64__loop1_start
     jmp       r5         
 
 // --- Step 3: Loop 2 (Print Using Digit Count) ---
-__builtin__print__int64__loop2_start:
-    loada     r5, __builtin__print__int64__function_epilogue
+__builtin__print__i64__loop2_start:
+    loada     r5, __builtin__print__i64__function_epilogue
     beq       r3, r0, r5 // If digit_count == 0, we are finished. Exit.
 
     // Extract next digit to print from reversed 64-bit accumulator
@@ -288,10 +288,10 @@ __builtin__print__int64__loop2_start:
     // digit_count--
     sub32     r3, r3, r8 // CHANGED: r3 = r3 - r8(1) (Avoids immediate parser bug)
     
-    loada     r5, __builtin__print__int64__loop2_start
+    loada     r5, __builtin__print__i64__loop2_start
     jmp       r5         
 
-__builtin__print__int64__function_epilogue:
+__builtin__print__i64__function_epilogue:
     pop       r9         
     pop       r8         
     pop       r7         
@@ -427,12 +427,12 @@ __builtin__print__char:
 
 // ========================================================================
 
-// Prints a float to the screen
+// Prints a f32 to the screen
 // Utilizes printf "%f"
-// void print (float valueToPrint);
+// void print (f32 valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__print__float32:
-__builtin__print__float32__function_prologue:
+__builtin__print__f32:
+__builtin__print__f32__function_prologue:
     push      bp        // save caller's bp
     add64i    bp, sp, 0 // bp = sp
     push      r10       // save caller's r10
@@ -446,27 +446,27 @@ __builtin__print__float32__function_prologue:
     push      r8        // save caller's r8
     push      r9        // save caller's r9
 
-    // Load float argument from the stack slot
-    loadu32    r1, bp, 16 // r1 = input float value (f) (e.g., 3.14)
+    // Load f32 argument from the stack slot
+    loadu32    r1, bp, 16 // r1 = input f32 value (f) (e.g., 3.14)
 
     // --- Step 1: Handle Sign (Negative) ---
     addf32    r2, r0, r0 // r2 = 0.0f
     ltf32     r4, r1, r2 // r4 = (r1 < 0.0f) ? 1 : 0
     
-    loada     r5, __builtin__print__float32__extract_whole
+    loada     r5, __builtin__print__f32__extract_whole
     beq       r4, r0, r5 // If r4 == 0 (f >= 0.0f), skip negation
 
     add64i    r4, r0, 45 // Clear and load ASCII '-'
     putchar   r4
-    subf32    r1, r2, r1 // r1 = 0.0f - r1 (negate float value)
+    subf32    r1, r2, r1 // r1 = 0.0f - r1 (negate f32 value)
 
-__builtin__print__float32__extract_whole:
+__builtin__print__f32__extract_whole:
     // --- Step 2: Extract and Print Whole Number Integer Part FIRST ---
     cvtf32i32 r3, r1    // r3 = (int)f  (e.g., 3)
     
     // Call your integer printer routine using your working push/pop convention
     push      r3         // Pushed argument goes to bp + 16 inside target
-    loada     r5, __builtin__print__int32
+    loada     r5, __builtin__print__i32
     call      r5         // Invoke print_int(3)
     pop       r3         // Clean up stack slot
 
@@ -475,10 +475,10 @@ __builtin__print__float32__extract_whole:
     putchar   r4
 
     // --- Step 4: Convert Fraction to a 6-digit Integer ---
-    cvti32f32 r2, r3     // r2 = (float)int_part (e.g., 3.0f)
+    cvti32f32 r2, r3     // r2 = (f32)int_part (e.g., 3.0f)
     subf32    r1, r1, r2 // r1 = f - int_part (e.g., 3.14 - 3.0 = 0.14)
 
-    // Mathematically construct float 1000000.0f directly in r6
+    // Mathematically construct f32 1000000.0f directly in r6
     add64i    r6, r0, 0  
     lui       r6, 15     
     lli       r6, 16960  // r6 = integer 1000000
@@ -497,8 +497,8 @@ __builtin__print__float32__extract_whole:
     add64i    r8, r0, 1     // Constant 1 for loop decrementing
 
 // --- Step 5: Single Forward Digit Extraction Loop ---
-__builtin__print__float32__print_loop:
-    loada     r5, __builtin__print__float32__function_epilogue
+__builtin__print__f32__print_loop:
+    loada     r5, __builtin__print__f32__function_epilogue
     beq       r3, r0, r5    // After 6 prints, finish up
 
     // Extract the highest digit forward
@@ -514,10 +514,10 @@ __builtin__print__float32__print_loop:
 
     // Decrement loop counter safely without negative immediates
     sub32     r3, r3, r8    // r3 = r3 - 1
-    loada     r5, __builtin__print__float32__print_loop
+    loada     r5, __builtin__print__f32__print_loop
     jmp       r5
 
-__builtin__print__float32__function_epilogue:
+__builtin__print__f32__function_epilogue:
     pop       r9         
     pop       r8         
     pop       r7         
@@ -539,8 +539,8 @@ __builtin__print__float32__function_epilogue:
 // Utilizes printf "%f"
 // void print (f64 valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__print__float64:
-__builtin__print__float64__function_prologue:
+__builtin__print__f64:
+__builtin__print__f64__function_prologue:
     push      bp        // save caller's bp
     add64i    bp, sp, 0 // bp = sp
     push      r10       // save caller's r10
@@ -561,20 +561,20 @@ __builtin__print__float64__function_prologue:
     addf64    r2, r0, r0 // CHANGED: r2 = 0.0f (64-bit positive zero via r0)
     ltf64     r4, r1, r2 // CHANGED: r4 = (r1 < 0.0) ? 1 : 0 (64-bit float compare)
     
-    loada     r5, __builtin__print__float64__extract_whole
+    loada     r5, __builtin__print__f64__extract_whole
     beq       r4, r0, r5 // If r4 == 0 (f >= 0.0), skip negation
 
     add64i    r4, r0, 45 // Clear and load ASCII '-'
     putchar   r4
     subf64    r1, r2, r1 // CHANGED: r1 = 0.0 - r1 (64-bit float negation)
 
-__builtin__print__float64__extract_whole:
+__builtin__print__f64__extract_whole:
     // --- Step 2: Extract and Print Whole Number Integer Part ---
-    cvtf64i64 r3, r1    // CHANGED: r3 = (int64_t)f using 64-bit conversion
+    cvtf64i64 r3, r1    // CHANGED: r3 = (i64_t)f using 64-bit conversion
     
     // Call your working integer printer routine using your stack convention
     push      r3         
-    loada     r5, __builtin__print__int32
+    loada     r5, __builtin__print__i32
     call      r5         // Invoke print_int(3)
     pop       r3         
 
@@ -605,8 +605,8 @@ __builtin__print__float64__extract_whole:
     add64i    r8, r0, 1     // Constant 1 for loop decrementing
 
 // --- Step 5: Single Forward Digit Extraction Loop ---
-__builtin__print__float64__print_loop:
-    loada     r5, __builtin__print__float64__function_epilogue
+__builtin__print__f64__print_loop:
+    loada     r5, __builtin__print__f64__function_epilogue
     beq       r3, r0, r5    // After 6 prints, finish up
 
     // Extract the highest digit forward (Still uses 32-bit int math for speed)
@@ -622,10 +622,10 @@ __builtin__print__float64__print_loop:
 
     // Decrement loop counter safely without negative immediates
     sub32     r3, r3, r8    // r3 = r3 - 1
-    loada     r5, __builtin__print__float64__print_loop
+    loada     r5, __builtin__print__f64__print_loop
     jmp       r5
 
-__builtin__print__float64__function_epilogue:
+__builtin__print__f64__function_epilogue:
     pop       r9         
     pop       r8         
     pop       r7         
@@ -696,7 +696,7 @@ __builtin__println__char__1___function_epilogue:
 // Utilizes printf "%d"
 // void println (int valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__println__int32:
+__builtin__println__i32:
         // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
@@ -706,7 +706,7 @@ __builtin__println__int32:
         // print char from stack
         load64 r1, bp, 16 // r1 <- [bp + 16]
         push r1
-        loada r2, __builtin__print__int32
+        loada r2, __builtin__print__i32
         call r2
         pop r0
         // print newline
@@ -724,7 +724,7 @@ __builtin__println__int32:
 // Prints an int to the screen with a newline
 // void println (i64 valueToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__println__int64:
+__builtin__println__i64:
         // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
@@ -734,7 +734,7 @@ __builtin__println__int64:
         // print char from stack
         load64 r1, bp, 16 // r1 <- [bp + 16]
         push r1
-        loada r2, __builtin__print__int64
+        loada r2, __builtin__print__i64
         call r2
         pop r0
         // print newline
@@ -779,7 +779,7 @@ __builtin__println__ptr:
 // Prints a float to the screen with a newline
 // void println (f32 floatToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__println__float32:
+__builtin__println__f32:
       // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
@@ -789,7 +789,7 @@ __builtin__println__float32:
         // print char from stack
         load64 r1, bp, 16 // r1 <- [bp + 16]
         push r1
-        loada r2, __builtin__print__float32
+        loada r2, __builtin__print__f32
         call r2
         pop r0
         // print newline
@@ -806,7 +806,7 @@ __builtin__println__float32:
 // Prints a float to the screen with a newline
 // void println (f64 floatToPrint);
 // valueToPrint : [rbp + 16]
-__builtin__println__float64:
+__builtin__println__f64:
       // function prologue - this is prolly overkill
         push bp
         mv64 bp, sp
@@ -816,7 +816,7 @@ __builtin__println__float64:
         // print char from stack
         load64 r1, bp, 16 // r1 <- [bp + 16]
         push r1
-        loada r2, __builtin__print__float64
+        loada r2, __builtin__print__f64
         call r2
         pop r0
         // print newline

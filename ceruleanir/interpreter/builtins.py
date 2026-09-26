@@ -66,16 +66,6 @@ def builtin_print_i32(args):
     print(int_value, end='')
     return None
 
-@register_builtin("@__builtin__print__int32")
-def builtin_print_int32(args):
-    """Print a 32-bit integer."""
-    if len(args) != 1:
-        print(f"ERROR: __builtin__print__int32 expects 1 argument, got {len(args)}")
-        sys.exit(1)
-    int_value = args[0]
-    print(int_value, end='')
-    return None
-
 @register_builtin("@__builtin__print__i64")
 def builtin_print_i64(args):
     """Print a 64-bit integer."""
@@ -96,11 +86,6 @@ def builtin_print_f32(args):
     print(float_value, end='')
     return None
 
-@register_builtin("@__builtin__print__float32")
-def builtin_print_float32(args):
-    """Print a 32-bit float (alias for f32)."""
-    return builtin_print_f32(args)
-
 @register_builtin("@__builtin__print__f64")
 def builtin_print_f64(args):
     """Print a 64-bit float."""
@@ -120,41 +105,41 @@ def builtin_println(args):
     print()  # Print newline
     return None
 
-@register_builtin("@__builtin__println__int32")
+@register_builtin("@__builtin__println__i32")
 def builtin_println_i32(args):
     """Print a 32-bit integer followed by newline."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__println__int32 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__println__i32 expects 1 argument, got {len(args)}")
         sys.exit(1)
     int_value = args[0]
     print(int_value)
     return None
 
-@register_builtin("@__builtin__println__int64")
+@register_builtin("@__builtin__println__i64")
 def builtin_println_i64(args):
     """Print a 64-bit integer followed by newline."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__println__int64 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__println__i64 expects 1 argument, got {len(args)}")
         sys.exit(1)
     int_value = args[0]
     print(int_value)
     return None
 
-@register_builtin("@__builtin__println__float32")
+@register_builtin("@__builtin__println__f32")
 def builtin_println_f32(args):
     """Print a 32-bit float followed by newline."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__println__float32 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__println__f32 expects 1 argument, got {len(args)}")
         sys.exit(1)
     float_value = args[0]
     print(float_value)
     return None
 
-@register_builtin("@__builtin__println__float64")
+@register_builtin("@__builtin__println__f64")
 def builtin_println_f64(args):
     """Print a 64-bit float followed by newline."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__println__float64 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__println__f64 expects 1 argument, got {len(args)}")
         sys.exit(1)
     float_value = args[0]
     print(float_value)
@@ -231,11 +216,11 @@ def builtin_input(args):
 # String Conversion Functions
 # =================================================================================================
 
-@register_builtin("@__builtin__stringToInt32__char__1")
-def builtin_string_to_int32(args):
+@register_builtin("@__builtin__stringToi32__char__1")
+def builtin_string_to_i32(args):
     """Convert a string to a 32-bit integer."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__stringToInt32__char__1 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__stringToi32__char__1 expects 1 argument, got {len(args)}")
         sys.exit(1)
     string_value = args[0]
     try:
@@ -244,11 +229,11 @@ def builtin_string_to_int32(args):
         print(f"ERROR: Invalid integer string: '{string_value}'")
         sys.exit(1)
 
-@register_builtin("@__builtin__stringToFloat32__char__1")
-def builtin_string_to_float32(args):
+@register_builtin("@__builtin__stringTof32__char__1")
+def builtin_string_to_f32(args):
     """Convert a string to a 32-bit float."""
     if len(args) != 1:
-        print(f"ERROR: __builtin__stringToFloat32__char__1 expects 1 argument, got {len(args)}")
+        print(f"ERROR: __builtin__stringTof32__char__1 expects 1 argument, got {len(args)}")
         sys.exit(1)
     string_value = args[0]
     try:

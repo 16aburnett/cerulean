@@ -34,32 +34,32 @@ __print__char__1__endloop:
 
 //========================================================================
 // Prints an int to the screen
-// void print (int32 intToPrint);
-__builtin__print__int32:
+// void print (i32 intToPrint);
+__builtin__print__i32:
     stackget __str 0
     print __str
     return 0
 
 //========================================================================
 // Prints an int to the screen
-// void print (int64 intToPrint);
-__builtin__print__int64:
+// void print (i64 intToPrint);
+__builtin__print__i64:
     stackget __str 0
     print __str
     return 0
 
 //========================================================================
 // Prints a float to the screen
-// void print (float32 floatToPrint);
-__builtin__print__float32:
+// void print (f32 floatToPrint);
+__builtin__print__f32:
     stackget __str 0
     print __str
     return 0
 
 //========================================================================
 // Prints a float to the screen
-// void print (float64 floatToPrint);
-__builtin__print__float64:
+// void print (f64 floatToPrint);
+__builtin__print__f64:
     stackget __str 0
     print __str
     return 0
@@ -106,32 +106,32 @@ __println__char__1__endloop:
 
 //========================================================================
 // Prints an int to the screen with a newline
-// void println (int32 intToPrint);
-__builtin__println__int32:
+// void println (i32 intToPrint);
+__builtin__println__i32:
     stackget __str 0
     println __str
     return 0
 
 //========================================================================
 // Prints an int to the screen with a newline
-// void println (int64 intToPrint);
-__builtin__println__int64:
+// void println (i64 intToPrint);
+__builtin__println__i64:
     stackget __str 0
     println __str
     return 0
 
 //========================================================================
 // Prints a float to the screen with a newline
-// void println (float32 floatToPrint);
-__builtin__println__float32:
+// void println (f32 floatToPrint);
+__builtin__println__f32:
     stackget __str 0
     println __str
     return 0
 
 //========================================================================
 // Prints a float to the screen with a newline
-// void println (float64 floatToPrint);
-__builtin__println__float64:
+// void println (f64 floatToPrint);
+__builtin__println__f64:
     stackget __str 0
     println __str
     return 0
@@ -175,66 +175,66 @@ __builtin__exit:
 //========================================================================
 
 // Exits the program with the given exit code 
-// void exit(int32 exit_code)
+// void exit(i32 exit_code)
 // - exit_code : 
-__builtin__exit__int32:
+__builtin__exit__i32:
     // ** not implemented for amyasm
     halt
 
 //========================================================================
-// returns default float32 value
-// float32 float32 ();
-__builtin__float32:
+// returns default f32 value
+// f32 f32 ();
+__builtin__f32:
     return 0.0
 
 //========================================================================
-// returns default float64 value
-// float64 float64 ();
-__builtin__float64:
+// returns default f64 value
+// f64 f64 ();
+__builtin__f64:
     return 0.0
 
 //========================================================================
-// converts int32 to float32
-// float32 int32ToFloat32 (int32);
-__builtin__int32ToFloat32__int32:
+// converts i32 to f32
+// f32 i32Tof32 (i32);
+__builtin__i32Tof32__i32:
     stackget val 0
     itof res val
     return res
 
 //========================================================================
-// converts int64 to float64
-// float64 int64ToFloat64 (int64);
-__builtin__int64ToFloat64__int64:
+// converts i64 to f64
+// f64 i64Tof64 (i64);
+__builtin__i64Tof64__i64:
     stackget val 0
     itof res val
     return res
 
 //========================================================================
-// parses a float32 from a given char[]
-// float32 stringToFloat32 (char[]);
-__builtin__stringToFloat32__char__1:
+// parses a f32 from a given char[]
+// f32 stringTof32 (char[]);
+__builtin__stringTof32__char__1:
     stackget val 0
     stof res val
     return res
 
 //========================================================================
-// parses a float64 from a given char[]
-// float64 stringToFloat64 (char[]);
-__builtin__stringToFloat64__char__1:
+// parses a f64 from a given char[]
+// f64 stringTof64 (char[]);
+__builtin__stringTof64__char__1:
     stackget val 0
     stof res val
     return res
 
 //========================================================================
-// returns default int32 value
-// int32 int32 ();
-__builtin__int32:
+// returns default i32 value
+// i32 i32 ();
+__builtin__i32:
     return 0
 
 //========================================================================
-// returns default int64 value
-// int64 int64 ();
-__builtin__int64:
+// returns default i64 value
+// i64 i64 ();
+__builtin__i64:
     return 0
 
 //========================================================================
@@ -244,49 +244,49 @@ __builtin__char:
     return '0'
 
 //========================================================================
-// converts float32 to int32
-// int32 float32ToInt32 (float32);
-__builtin__float32ToInt32__float32:
+// converts f32 to i32
+// i32 f32Toi32 (f32);
+__builtin__f32Toi32__f32:
     stackget val 0
     ftoi res val
     return res
 
 //========================================================================
-// converts float64 to int64
-// int64 float64ToInt64 (float64);
-__builtin__float64ToInt64__float64:
+// converts f64 to i64
+// i64 f64Toi64 (f64);
+__builtin__f64Toi64__f64:
     stackget val 0
     ftoi res val
     return res
 
 //========================================================================
-// parses an int32 from a given char[]
-// int32 stringToInt32 (char[]);
-__builtin__stringToInt32__char__1:
+// parses an i32 from a given char[]
+// i32 stringToi32 (char[]);
+__builtin__stringToi32__char__1:
     stackget val 0
     stoi res val
     return res
 
 //========================================================================
-// parses an int64 from a given char[]
-// int64 stringToInt64 (char[]);
-__builtin__stringToInt64__char__1:
+// parses an i64 from a given char[]
+// i64 stringToi64 (char[]);
+__builtin__stringToi64__char__1:
     stackget val 0
     stoi res val
     return res
 
 //========================================================================
-// parses an int32 from a given char
-// int32 charToInt32 (char);
-__builtin__charToInt32__char:
+// parses an i32 from a given char
+// i32 charToi32 (char);
+__builtin__charToi32__char:
     stackget val 0
     ctoi res val
     return res
 
 //========================================================================
-// parses an int64 from a given char
-// int64 charToInt64 (char);
-__builtin__charToInt64__char:
+// parses an i64 from a given char
+// i64 charToi64 (char);
+__builtin__charToi64__char:
     stackget val 0
     ctoi res val
     return res
