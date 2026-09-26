@@ -61,8 +61,6 @@ class LoweringVisitor (ASTVisitor):
         Returns:
             List of instruction nodes
         """
-        # FIXME: Skip full 64-bit load if the value fits in 16 bits
-
         # For character literals, zero out register then load character
         if isinstance(value, ASM_AST.CharLiteralNode):
             # XOR register with itself to zero it, then load the char into lower bits
@@ -85,15 +83,38 @@ class LoweringVisitor (ASTVisitor):
         ml = (val >> 16) & 0xFFFF
         mh = (val >> 32) & 0xFFFF
         hi = (val >> 48) & 0xFFFF
-        
-        return [
-            ASM_AST.InstructionNode("lui", [destReg, ASM_AST.IntLiteralNode(hi)]),
-            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(mh)]),
-            ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(16)]),
-            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(ml)]),
-            ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(16)]),
-            ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(lo)])
-        ]
+
+        instructions = []
+        # Conditionally build the full 64-bit register based on how large the immediate value is
+        # 64-bit immediate
+        if hi != 0:
+            # Dont need to zero out register since we will touch every 16-bit chunk
+            instructions.append(ASM_AST.InstructionNode("lui",    [destReg, ASM_AST.IntLiteralNode(hi)], comment="64-bit immediate: hi"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(mh)], comment="64-bit immediate: mh"))
+            instructions.append(ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(32)], comment="64-bit immediate: shift left 32 bits"))
+            instructions.append(ASM_AST.InstructionNode("lui",    [destReg, ASM_AST.IntLiteralNode(ml)], comment="64-bit immediate: ml"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(lo)], comment="64-bit immediate: lo"))
+        # 48-bit immediate
+        elif hi == 0 and mh != 0:
+            # Dont need to zero out register since we will touch every 16-bit chunk
+            instructions.append(ASM_AST.InstructionNode("lui",    [destReg, ASM_AST.IntLiteralNode(hi)], comment="48-bit immediate: hi"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(mh)], comment="48-bit immediate: mh"))
+            instructions.append(ASM_AST.InstructionNode("sll64i", [destReg, destReg, ASM_AST.IntLiteralNode(32)], comment="48-bit immediate: shift left 32 bits"))
+            instructions.append(ASM_AST.InstructionNode("lui",    [destReg, ASM_AST.IntLiteralNode(ml)], comment="48-bit immediate: ml"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(lo)], comment="48-bit immediate: lo"))
+        # 32-bit immediate
+        elif hi == 0 and mh == 0 and ml != 0:
+            instructions.append(ASM_AST.InstructionNode("xor64",  [destReg, destReg, destReg],           comment="32-bit immediate: Zero out register"))
+            instructions.append(ASM_AST.InstructionNode("lui",    [destReg, ASM_AST.IntLiteralNode(ml)], comment="32-bit immediate: ml"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(lo)], comment="32-bit immediate: lo"))
+        # 16-bit immediate
+        elif hi == 0 and mh == 0 and ml == 0 and lo != 0:
+            instructions.append(ASM_AST.InstructionNode("xor64",  [destReg, destReg, destReg],           comment="16-bit immediate: Zero out register"))
+            instructions.append(ASM_AST.InstructionNode("lli",    [destReg, ASM_AST.IntLiteralNode(lo)], comment="16-bit immediate: lo"))
+        # 0 immediate
+        elif hi == 0 and mh == 0 and ml == 0 and lo == 0:
+            instructions.append(ASM_AST.InstructionNode("xor64", [destReg, destReg, destReg],            comment="0 immediate: Zero out register"))
+        return instructions
 
     def getNewFloatLabel(self):
         """Get a new unique float label."""
