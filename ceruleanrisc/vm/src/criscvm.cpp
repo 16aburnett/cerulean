@@ -1103,7 +1103,7 @@ void CeruleanRISCVM::execute_instruction () {
             uint8_t src1   = r_dest;
             uint8_t src2   = r_src1;
             uint8_t addr   = r_src2;
-            if (registers.get<uint32_t>(src1) == registers.get<uint32_t>(src2))
+            if (registers.get<uint64_t>(src1) == registers.get<uint64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
@@ -1111,7 +1111,7 @@ void CeruleanRISCVM::execute_instruction () {
             uint8_t src1   = r_dest;
             uint8_t src2   = r_src1;
             uint8_t addr   = r_src2;
-            if (registers.get<uint32_t>(src1) != registers.get<uint32_t>(src2))
+            if (registers.get<uint64_t>(src1) != registers.get<uint64_t>(src2))
                 pc = registers.get<uint64_t>(addr) - 4;
             break;
         }
