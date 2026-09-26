@@ -6,7 +6,7 @@ global @globalString = value (ptr("Global string"))
 global @globalFloat = value (f32(3.1415926535))
 global @globalFloat64 = value (f64(3.1415926535))
 global @globalInt64 = value (i64(123456789))
-global @globalPtr = value (ptr(3735928559)) // 0xdeadbeef
+global @globalPtr = value (ptr(0xdeadbeef))
 
 function i32 @main ()
 {
