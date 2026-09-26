@@ -1,0 +1,34 @@
+// Testing printing
+// Author: Amy Burnett
+//========================================================================
+
+global @globalString = value (ptr("Global string"))
+global @globalFloat = value (f32(3.1415926535))
+global @globalFloat64 = value (f64(3.1415926535))
+global @globalInt64 = value (i64(123456789))
+
+function i32 @main ()
+{
+    block entry {
+        %char = value (char('A'))
+        call @__builtin__println__char (char(%char))
+        call @__builtin__println__char (char('A'))
+        %str0 = value (ptr("Hello, World!"))
+        call @__builtin__println__char__1 (ptr(%str0))
+        call @__builtin__println__char__1 (ptr("String literal passed to function"))
+        %str1 = load (type(ptr), ptr(@globalString), i32(0))
+        call @__builtin__println__char__1 (ptr(%str1))
+        call @__builtin__println__int32 (i32(1776))
+        %int64 = load (type(ptr), ptr(@globalInt64), i32(0))
+        call @__builtin__println__int64 (i64(%int64))
+        call @__builtin__println__int64 (i64(42))
+        %f = load (type(f32), ptr(@globalFloat), i32(0))
+        call @__builtin__println__float32 (f32(%f))
+        call @__builtin__println__float32 (f32(12345.321))
+        call @__builtin__println__float32 (f32(3.14))
+        call @__builtin__println__float64 (f64(3.14))
+        call @__builtin__println__int64 (i64(@globalString))
+        call @__builtin__println__ptr (ptr(@globalString))
+        return (i32(0))
+    }
+}

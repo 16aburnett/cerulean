@@ -52,15 +52,7 @@ class ASMASTVisitor (ABC):
         pass
 
     @abstractmethod
-    def visitFloatLiteralNode (self, node):
-        pass
-
-    @abstractmethod
     def visitCharLiteralNode (self, node):
-        pass
-
-    @abstractmethod
-    def visitStringLiteralNode (self, node):
         pass
 
     @abstractmethod

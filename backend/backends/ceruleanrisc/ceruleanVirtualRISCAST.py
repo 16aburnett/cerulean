@@ -66,7 +66,7 @@ class FunctionNode (Node):
         return visitor.visitFunctionNode (self)
 
     def copy (self):
-        node = FunctionNode (self.type, self.id, self.token, [param.copy() for param in self.params])
+        node = FunctionNode (self.id, self.token, [param.copy() for param in self.params])
         node.signature = self.signature
         node.scopeName = self.scopeName
         node.label = self.label
@@ -89,22 +89,23 @@ class FunctionNode (Node):
 
 class InstructionNode (Node):
     
-    def __init__ (self, command, arguments, labels=None):
+    def __init__ (self, command, arguments, labels=None, comment=None):
         self.command = command
         self.arguments = arguments
-        self.labels = []
+        self.labels = [label for label in labels] if labels is not None else []
+        self.comment = comment
 
     def accept (self, visitor):
         return visitor.visitInstructionNode (self)
 
     def copy (self):
-        return InstructionNode (self.command.copy (), [argument.copy () for argument in self.arguments])
+        return InstructionNode (self.command.copy (), [argument.copy () for argument in self.arguments], labels=[label.copy() for label in self.labels], comment=self.comment)
 
     def __repr__ (self):
         return f"Instruction({repr (self.command)}, args={repr (self.arguments)}, labels={repr (self.labels)})"
 
     def __str__ (self):
-        return f"{self.command} " + ', '.join (str (arg) for arg in self.arguments)
+        return f"{self.command} " + ', '.join (str (arg) for arg in self.arguments) + (f" // {self.comment}" if self.comment else "")
 
 # ========================================================================
 
@@ -280,26 +281,6 @@ class IntLiteralNode (LiteralNode):
 
 # ========================================================================
 
-class FloatLiteralNode (LiteralNode):
-
-    def __init__ (self, value:float):
-        super ().__init__ (value)
-        self.value = value
-
-    def accept (self, visitor):
-        return visitor.visitFloatLiteralNode (self)
-
-    def copy (self):
-        return FloatLiteralNode (self.value)
-
-    def __repr__ (self):
-        return f"Float({repr (self.value)})"
-
-    def __str__ (self):
-        return str (self.value)
-
-# ========================================================================
-
 class CharLiteralNode (LiteralNode):
 
     def __init__ (self, value:chr):
@@ -317,26 +298,6 @@ class CharLiteralNode (LiteralNode):
 
     def __str__ (self):
         return f"'{str(self.value)}'"
-
-# ========================================================================
-
-class StringLiteralNode (LiteralNode):
-
-    def __init__ (self, value:str):
-        super ().__init__ (value)
-        self.value = value
-
-    def accept (self, visitor):
-        return visitor.visitStringLiteralNode (self)
-
-    def copy (self):
-        return StringLiteralNode (self.value)
-
-    def __repr__ (self):
-        return f"String({repr (self.value)})"
-
-    def __str__ (self):
-        return str (self.value)
 
 # ========================================================================
 

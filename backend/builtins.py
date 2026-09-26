@@ -71,6 +71,12 @@ def addBuiltinsToSymbolTable (symbolTable):
         f"{BUILTIN_PREFIX}print__char",
         [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 0), "val", None)]
     )
+    #  void print__ptr (ptr val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}print__ptr",
+        [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
+    )
 
 #     #  void print (Enum e);
 #     param0 = ParameterNode(TypeSpecifierNode (Type.USERTYPE, "Enum", None), "e", None)
@@ -123,6 +129,12 @@ def addBuiltinsToSymbolTable (symbolTable):
         TypeSpecifierNode (Type.VOID, "void", None, 0),
         f"{BUILTIN_PREFIX}println__char",
         [ParameterNode(TypeSpecifierNode (Type.CHAR, "char", None, 0), "c", None)]
+    )
+    #  void println (ptr val);
+    add_builtin_function (
+        TypeSpecifierNode (Type.VOID, "void", None, 0),
+        f"{BUILTIN_PREFIX}println__ptr",
+        [ParameterNode(TypeSpecifierNode (Type.PTR, "ptr", None, 0), "val", None)]
     )
 
 #     #  void println (Enum e);
