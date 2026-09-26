@@ -42,6 +42,8 @@ token_specification = [
 # literals 
     # ('FLOAT',    r'[-+]?[0-9]+[.][0-9]*([eE][-+]?[0-9]+)?'),
     # ('INT',      r'[-+]?[0-9]+'),
+    # Matches: 0x1A, 0Xff, -0x20, +0X0
+    ('HEX',      r'[-+]?0[xX][0-9a-fA-F]+'),
     # Matches: -3.14, +1., -.5, -1e5, +2.3e-4
     ('FLOAT',    r'[-+]?(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+)(?:[eE][-+]?[0-9]+)?|[-+]?[0-9]+[eE][-+]?[0-9]+'),
     # Matches: -42, +100, 0
@@ -118,7 +120,11 @@ def tokenize(code, filename):
         lexeme = value
         # + 1 bc 1-based indexes for columns 
         column = mo.start() - line_start + 1
-        if kind == 'INT':
+        if kind == 'HEX':
+            # Convert hexadecimal string to integer for simplicity
+            kind = 'INT'
+            value = int(value, 16)
+        elif kind == 'INT':
             value = int(value)
         elif kind == 'FLOAT':
             value = float(value)
