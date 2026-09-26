@@ -42,6 +42,9 @@ function i32 @main ()
         call @__builtin__println__int64 (i64(70000)) // requires 32-bit immediate
         call @__builtin__println__int64 (i64(4294967296)) // requires 48-bit immediate
         call @__builtin__println__int64 (i64(281474976710656)) // requires 64-bit immediate
+        // Print negative number
+        call @__builtin__println__int64 (i64(-42))
+        call @__builtin__println__float32 (f32(-2e-3))
         return (i32(0))
     }
 }
