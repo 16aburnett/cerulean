@@ -6,29 +6,42 @@ global @globalString = value (ptr("Global string"))
 global @globalFloat = value (f32(3.1415926535))
 global @globalFloat64 = value (f64(3.1415926535))
 global @globalInt64 = value (i64(123456789))
+global @globalPtr = value (ptr(3735928559)) // 0xdeadbeef
 
 function i32 @main ()
 {
     block entry {
+        // Printing a character
         %char = value (char('A'))
         call @__builtin__println__char (char(%char))
         call @__builtin__println__char (char('A'))
+        // Printing strings
         %str0 = value (ptr("Hello, World!"))
         call @__builtin__println__char__1 (ptr(%str0))
         call @__builtin__println__char__1 (ptr("String literal passed to function"))
         %str1 = load (type(ptr), ptr(@globalString), i32(0))
         call @__builtin__println__char__1 (ptr(%str1))
+        // Printing integers
         call @__builtin__println__int32 (i32(1776))
         %int64 = load (type(ptr), ptr(@globalInt64), i32(0))
         call @__builtin__println__int64 (i64(%int64))
         call @__builtin__println__int64 (i64(42))
+        // Printing floating-point numbers
         %f = load (type(f32), ptr(@globalFloat), i32(0))
         call @__builtin__println__float32 (f32(%f))
         call @__builtin__println__float32 (f32(12345.321))
         call @__builtin__println__float32 (f32(3.14))
         call @__builtin__println__float64 (f64(3.14))
-        call @__builtin__println__int64 (i64(@globalString))
-        call @__builtin__println__ptr (ptr(@globalString))
+        // Printing a pointer
+        %ptr = load (type(ptr), ptr(@globalPtr), i32(0))
+        call @__builtin__println__int64 (i64(%ptr))
+        call @__builtin__println__ptr (ptr(%ptr))
+        // Check printing ints of different sizes
+        call @__builtin__println__int64 (i64(0)) // immediate is 0
+        call @__builtin__println__int64 (i64(42)) // requires 16-bit immediate
+        call @__builtin__println__int64 (i64(70000)) // requires 32-bit immediate
+        call @__builtin__println__int64 (i64(4294967296)) // requires 48-bit immediate
+        call @__builtin__println__int64 (i64(281474976710656)) // requires 64-bit immediate
         return (i32(0))
     }
 }
