@@ -65,6 +65,14 @@ __builtin__print__f64:
     return 0
 
 //========================================================================
+// Prints a pointer address to the screen
+// void print (ptr valueToPrint);
+__builtin__print__ptr:
+    stackget __str 0
+    print __str
+    return 0
+
+//========================================================================
 // Prints a char to the screen
 // void print (char charToPrint);
 __builtin__print__char:
@@ -132,6 +140,14 @@ __builtin__println__f32:
 // Prints a float to the screen with a newline
 // void println (f64 floatToPrint);
 __builtin__println__f64:
+    stackget __str 0
+    println __str
+    return 0
+
+//========================================================================
+// Prints a pointer address to the screen with a newline
+// void println (ptr valueToPrint);
+__builtin__println__ptr:
     stackget __str 0
     println __str
     return 0
