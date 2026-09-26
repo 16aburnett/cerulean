@@ -93,10 +93,29 @@ python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/hell
 python3 -m ceruleanir.interpreter ceruleanir/test_files/helloworld.ceruleanir
 
 # test_math
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_math.ceruleanir -o ceruleanir/test_files/test_math.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/test_math.crisc -o ceruleanir/test_files/test_math.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/test_math.crisco -o ceruleanir/test_files/test_math.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_math.criscbc
+# Currently this fails from unimplemented builtin print functions, string labels appearing as args to PUSH, and RII to RRI instructions.
+# Test target=amyasm
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_math.ceruleanir -o ceruleanir/test_files/test_math.amyasm --debug --emitTokens --emitAST --emitIR
 python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_math.amyasm
 # Test target=ceruleanir - oh hey! its already there, just run it.
 python3 -m ceruleanir.interpreter ceruleanir/test_files/test_math.ceruleanir
+
+# test_print
+# Test target=ceruleanrisc
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_print.ceruleanir -o ceruleanir/test_files/test_print.crisc --target=ceruleanrisc --debug --emitTokens --emitAST --emitIR
+python3 -m ceruleanrisc.assembler.assembler ceruleanir/test_files/test_print.crisc -o ceruleanir/test_files/test_print.crisco --debug --emitTokens --emitAST
+python3 -m ceruleanrisc.linker.linker ceruleanir/test_files/test_print.crisco -o ceruleanir/test_files/test_print.criscbc --debug
+ceruleanrisc/vm/build/criscvm ceruleanir/test_files/test_print.criscbc
+# Test target=amyasm
+python3 -m ceruleanir.compiler ceruleanir/test_files/test_print.ceruleanir -o ceruleanir/test_files/test_print.amyasm --debug --emitTokens --emitAST --emitIR
+python3 ../AmyAssembly/code/amyAssemblyInterpreter.py ceruleanir/test_files/test_print.amyasm
+# Test target=ceruleanir
+python3 -m ceruleanir.interpreter ceruleanir/test_files/test_print.ceruleanir
 
 # test_heap_arrays
 python3 -m ceruleanir.compiler ceruleanir/test_files/test_heap_arrays.ceruleanir -o ceruleanir/test_files/test_heap_arrays.amyasm --debug --emitTokens --emitAST --emitIR

@@ -26,7 +26,6 @@ class ASMEmitter:
         self.shouldPrintDebug = shouldPrintDebug
         self.code = []
         self.dataSection = []
-        self.nextStringIndex = 0
         
     def emit(self, finalASM):
         """
@@ -99,12 +98,6 @@ class EmitterVisitor(ASMASTVisitor):
         if label:
             self.emitter.dataSection.append(f"{label}:\n")
         self.emitter.dataSection.append(f"   {directive}\n")
-    
-    def getNewStringLabel(self):
-        """Get a new unique string label."""
-        label = f"str_{self.emitter.nextStringIndex}"
-        self.emitter.nextStringIndex += 1
-        return label
     
     # === VISITOR METHODS ========================================================================
     
@@ -306,13 +299,6 @@ class EmitterVisitor(ASMASTVisitor):
                 scratch = scratchRegs[i % len(scratchRegs)]
                 self._emitLoad(arg, scratch)
                 self.emitLine(f"push {scratch}")
-            # Handle immediate/literal arguments - must load into register first
-            # TODO: Move push instruction generation to lowering pass
-            elif isinstance(arg, (ASM_AST.IntLiteralNode, ASM_AST.FloatLiteralNode, ASM_AST.CharLiteralNode)):
-                scratch = scratchRegs[i % len(scratchRegs)]
-                argValue = self.visit(arg)
-                self.emitLine(f"lli {scratch}, {argValue}")
-                self.emitLine(f"push {scratch}")
             else:
                 # Handle normal arguments (physical registers)
                 argValue = self.visit(arg)
@@ -479,12 +465,13 @@ class EmitterVisitor(ASMASTVisitor):
         
         # Emit the actual instruction with mapped operands
         mappedArgs = [mapped for (_, mapped) in operandMapping]
+        commentString = f" // {node.comment}" if node.comment else ""
         
         if mappedArgs:
             argStr = ", ".join(str(arg) for arg in mappedArgs)
-            self.emitLine(f"{command} {argStr}")
+            self.emitLine(f"{command} {argStr}{commentString}")
         else:
-            self.emitLine(f"{command}")
+            self.emitLine(f"{command}{commentString}")
         
         # Store result to spilled destination if needed
         if destIdx >= 0 and destIdx < len(operandMapping):
@@ -509,53 +496,20 @@ class EmitterVisitor(ASMASTVisitor):
             return f"__epilogue__{self.currentFunction.id}"
         
         return labelId
-        return labelId
     
     def visitIntLiteralNode(self, node):
         """Visit an integer literal node."""
-        return str(node.value)
-    
-    def visitFloatLiteralNode(self, node):
-        """Visit a float literal node."""
         return str(node.value)
     
     def visitCharLiteralNode(self, node):
         """Visit a char literal node."""
         return f"'{node.value}'"
     
-    def visitStringLiteralNode(self, node):
-        """Visit a string literal node - add to data section."""
-        label = self.getNewStringLabel()
-        self.emitData(f'.ascii {node.value}', label)
-        return label
-    
     def visitGlobalVariableNode(self, node):
         """Visit a global variable node - add to data section."""
-        initialValueStr = "0"  # default
-        
-        # Process initial value
-        if node.initialValue is not None:
-            if isinstance(node.initialValue, ASM_AST.StringLiteralNode):
-                # String literal - emit it to data section and use its label as the pointer value
-                # NOTE: String literals should be handled by the lowering pass, not here
-                label = self.visit(node.initialValue)
-                initialValueStr = label
-            elif isinstance(node.initialValue, ASM_AST.FloatLiteralNode):
-                # Float literal - extract the value
-                initialValueStr = str(node.initialValue.value)
-            elif isinstance(node.initialValue, ASM_AST.IntLiteralNode):
-                # Integer literal - extract the value
-                initialValueStr = str(node.initialValue.value)
-            elif isinstance(node.initialValue, ASM_AST.CharLiteralNode):
-                # Char literal - extract the value
-                initialValueStr = str(ord(node.initialValue.value))
-            else:
-                # Fallback - try to convert to string
-                initialValueStr = str(node.initialValue)
-        
         # Emit global variable to data section with its label
-        self.emitter.debugPrint(f"Emitting global variable '{node.id}' ({node.directive}, init={initialValueStr})")
-        self.emitData(f'{node.directive} {initialValueStr}', node.id)
+        self.emitter.debugPrint(f"Emitting global variable '{node.id}' ({node.directive}, init={node.initialValue})")
+        self.emitData(f'{node.directive} {node.initialValue}', node.id)
         
         # Return the label for use in instructions
         return node.id

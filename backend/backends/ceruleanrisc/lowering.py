@@ -23,6 +23,13 @@ class LoweringVisitor (ASTVisitor):
         self.currentFunctionIndex = 0  # Index of current function
         self.blockIndex = 0  # Block counter within current function
         self.blockNameToIndex = {}  # Map block name -> index for current function
+        self.nextFloatIndex = 0  # Counter for unique float labels
+        self.nextStringIndex = 0  # Counter for unique string labels
+        self.globalVariables = []  # List to store global variable nodes
+        self.isGlobalDeclaration = False
+        # Stores the current argument expression node being processed
+        # This is useful for passing type info to the argument
+        self.containingArgExpressionNode = None
 
     def lower (self, ast):
         asm_ast = ast.accept (self)
@@ -54,6 +61,8 @@ class LoweringVisitor (ASTVisitor):
         Returns:
             List of instruction nodes
         """
+        # FIXME: Skip full 64-bit load if the value fits in 16 bits
+
         # For character literals, zero out register then load character
         if isinstance(value, ASM_AST.CharLiteralNode):
             # XOR register with itself to zero it, then load the char into lower bits
@@ -86,6 +95,18 @@ class LoweringVisitor (ASTVisitor):
             ASM_AST.InstructionNode("lli", [destReg, ASM_AST.IntLiteralNode(lo)])
         ]
 
+    def getNewFloatLabel(self):
+        """Get a new unique float label."""
+        label = f"float_{self.nextFloatIndex}"
+        self.nextFloatIndex += 1
+        return label
+
+    def getNewStringLabel(self):
+        """Get a new unique string label."""
+        label = f"str_{self.nextStringIndex}"
+        self.nextStringIndex += 1
+        return label
+
     # === VISITOR FUNCTIONS =======================================================================
 
     def visitProgramNode (self, node):
@@ -116,6 +137,11 @@ class LoweringVisitor (ASTVisitor):
                     newCodeunit = codeunit.accept (self)
                     if newCodeunit:
                         codeunits += [newCodeunit]
+        # FIXME: This is gross
+        # Add any other global variables that were found during lowering
+        for globalVar in self.globalVariables:
+            if globalVar not in globalVars:
+                globalVars.append(globalVar)
         
         self.debugPrint(f"Total extern symbols: {externSymbols}")
         self.debugPrint(f"Total global variables: {len(globalVars)}")
@@ -149,7 +175,7 @@ class LoweringVisitor (ASTVisitor):
         
         # Extract type from the first argument (if available)
         irType = IRType.I64  # default
-        initialValueNode = None  # Will be AST node (literal or string)
+        initialValue = None
         
         if hasattr(node, 'arguments') and len(node.arguments) > 0:
             arg = node.arguments[0]
@@ -161,15 +187,22 @@ class LoweringVisitor (ASTVisitor):
             # Get initial value from argument expression
             # We need to lower it to get the proper ASM node
             if hasattr(arg, 'expression') and arg.expression:
-                initialValueNode = arg.expression.accept(self)
-        
+                self.isGlobalDeclaration = True
+                initialValue = arg.expression.accept(self)
+                # can expand to multiple instructions
+                if isinstance(initialValue, tuple):
+                    [initialValue, _] = initialValue
+                else:
+                    initialValue = initialValue
+                self.isGlobalDeclaration = False
+
         # Get size in bytes and data directive directly from IRType
         size = getTypeSize(irType)
         directive = getDataDirective(irType)
         
         # Create global variable node for data section
         self.debugPrint(f"Creating global variable '{globalId}' of type {irType} (size={size} bytes, directive={directive})")
-        globalVar = ASM_AST.GlobalVariableNode(globalId, size=size, initialValue=initialValueNode, directive=directive)
+        globalVar = ASM_AST.GlobalVariableNode(globalId, size=size, initialValue=initialValue, directive=directive)
         return globalVar
 
     # =============================================================================================
@@ -244,10 +277,21 @@ class LoweringVisitor (ASTVisitor):
 
     def visitInstructionNode (self, node):
         asmArguments = []
-        for arg in node.arguments:
-            asmArguments += [arg.accept (self)]
         # can expand to multiple instructions
         asmInstructions = []
+
+        # Process arguments to generate any necessary instructions prior to this instruction
+        for arg in node.arguments:
+            # Arguments may themselves expand to asm instructions
+            argResults = arg.accept (self)
+            if isinstance(argResults, tuple):
+                [asmArg, asmArgInstructions] = argResults
+            else:
+                asmArg = argResults
+                asmArgInstructions = []
+            asmArguments += [asmArg]
+            asmInstructions += asmArgInstructions
+
         commandName = node.command
         if commandName == "add":
             lhsReg = node.lhsVariable.accept (self)
@@ -260,6 +304,7 @@ class LoweringVisitor (ASTVisitor):
             # Usage 2: Reg, Imm
             # CeruleanIR : <dest> = add (<src0>, <imm>)
             # CeruleanRISC: addi <dest>, <src0>, <imm>
+            # FIXME: Handle II case which is not supported in CeruleanRISC
             else: # assuming imm is the only other option
                 asmInstruction = ASM_AST.InstructionNode ("add64i", [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
@@ -356,12 +401,6 @@ class LoweringVisitor (ASTVisitor):
             # Both global variables and string literals are represented as LabelNode or StringLiteralNode
             elif isinstance (asmArguments[0], ASM_AST.LabelNode):
                 # Global variable reference - load its address
-                asmInstruction = ASM_AST.InstructionNode ("loada", [lhsReg, *asmArguments])
-                asmInstructions += [asmInstruction]
-            elif isinstance (asmArguments[0], ASM_AST.StringLiteralNode):
-                # String literals are handled by the emitter (creates data section)
-                # For now, keep the string literal and let emitter handle it
-                # But we need loada instead of lli
                 asmInstruction = ASM_AST.InstructionNode ("loada", [lhsReg, *asmArguments])
                 asmInstructions += [asmInstruction]
             # Usage 3: Imm
@@ -868,17 +907,40 @@ class LoweringVisitor (ASTVisitor):
     # =============================================================================================
 
     def visitCallInstructionNode (self, node):
-        astArguments = []
+        asmArguments = []
+        # can expand to multiple instructions
+        asmInstructions = []
         for arg in node.arguments:
-            astArguments += [arg.accept (self)]
-        return [ASM_AST.CallInstructionNode (node.function_name, node.token, astArguments)]
+            # Arguments may themselves expand to asm instructions
+            argResults = arg.accept (self)
+
+            # Unpack results
+            if isinstance(argResults, tuple):
+                [asmArg, asmArgInstructions] = argResults
+            else:
+                asmArg = argResults
+                asmArgInstructions = []
+
+            # Handle int/char immediate arguments
+            if isinstance(asmArg, (ASM_AST.IntLiteralNode, ASM_AST.CharLiteralNode)):
+                tempReg = ASM_AST.VirtualTempRegisterNode()
+                asmArgInstructions += self.emitLoadImmediate64(tempReg, asmArg)
+                asmArg = tempReg
+
+            asmArguments += [asmArg]
+            asmInstructions += asmArgInstructions
+        return asmInstructions + [ASM_AST.CallInstructionNode (node.function_name, node.token, asmArguments)]
 
     # =============================================================================================
 
     # writes any code it needs to
     # returns the parsed argument
     def visitArgumentExpressionNode (self, node):
-        return node.expression.accept (self)
+        # FIXME: This feels hacky. We should probably have a better solution for passing type info to the argument
+        self.containingArgExpressionNode = node
+        result = node.expression.accept (self)
+        self.containingArgExpressionNode = None
+        return result
 
     # =============================================================================================
 
@@ -896,12 +958,20 @@ class LoweringVisitor (ASTVisitor):
         globalId = node.id[1:] if node.id.startswith('@') else node.id
         # Sanitize label name - replace periods and other invalid characters with underscores
         globalId = globalId.replace('.', '_')
-        return ASM_AST.LabelNode (globalId)
+
+        label = ASM_AST.LabelNode (globalId)
+        tempReg = ASM_AST.VirtualTempRegisterNode()
+        # Load address of global variable
+        # Note: it should be the user's responsibility to load/store a global variable
+        asmInstructions = [
+                ASM_AST.InstructionNode ("loada", [tempReg, label], comment=f"Load address of global variable: '{label.id}'"),
+            ]
+        return (tempReg, asmInstructions)
 
     # =============================================================================================
 
     def visitLocalVariableExpressionNode (self, node):
-        return ASM_AST.VirtualRegisterNode (node.id)
+        return (ASM_AST.VirtualRegisterNode (node.id), [])
 
     # =============================================================================================
 
@@ -911,24 +981,85 @@ class LoweringVisitor (ASTVisitor):
         # Scope label to current function with unique suffix
         # Format: functionName_blockName_fN_bM
         scopedLabel = f"{self.currentFunctionName}_{node.id}_f{self.currentFunctionIndex}_b{blockIdx}"
-        return ASM_AST.LabelNode (scopedLabel)
+        return (ASM_AST.LabelNode (scopedLabel), [])
 
     # =============================================================================================
 
     def visitIntLiteralExpressionNode (self, node):
-        return ASM_AST.IntLiteralNode (node.value)
+        # Global declarations just need the value since they are already in the data section
+        if self.isGlobalDeclaration:
+            return node.value
+        # FIXME: Spill int literal to data section if it is too large to be an immediate
+        # FIXME: If literal is 0, then just use the zero register
+        return (ASM_AST.IntLiteralNode (node.value), [])
 
     # =============================================================================================
 
     def visitFloatLiteralExpressionNode (self, node):
-        return ASM_AST.FloatLiteralNode (node.value)
+        # Global declarations just need the value since they are already in the data section
+        if self.isGlobalDeclaration:
+            return node.value
+
+        # FIXME: If literal is 0.0, then just use the zero register
+
+        # CeruleanRISC does not allow floats as immediates
+        # Create a global variable / data directive for storing the literal
+        # Determine precision
+        floatType = self.containingArgExpressionNode.type.type if self.containingArgExpressionNode else None
+        if (floatType == IRType.F32):
+            directive = ".f32"
+            loadInstruction = "load32"
+        elif (floatType == IRType.F64):
+            directive = ".f64"
+            loadInstruction = "load64"
+        else:
+            raise ValueError(f"Unsupported type for float literal: {floatType}")
+
+        # Determine the size based on the directive
+        size = getTypeSize(floatType)
+
+        label = self.getNewFloatLabel()
+        globalVarNode = ASM_AST.GlobalVariableNode (label, size=size, initialValue=node.value, directive=directive)
+
+        # Add the global variable to the list of global variables
+        self.globalVariables.append(globalVarNode)
+
+        # Need to fetch global variable into a register
+        # This requires injecting new instructions prior to the instruction that this expression is part of.
+        tempRegister = ASM_AST.VirtualTempRegisterNode()
+        asmInstructions = [
+            ASM_AST.InstructionNode ("loada", [tempRegister, ASM_AST.LabelNode(label)], comment=f"Load address of float literal from data section"),
+            ASM_AST.InstructionNode (loadInstruction, [tempRegister, tempRegister, ASM_AST.IntLiteralNode(0)], comment=f"Load float literal from data section")
+        ]
+
+        return (tempRegister, asmInstructions)
 
     # =============================================================================================
 
     def visitCharLiteralExpressionNode (self, node):
-        return ASM_AST.CharLiteralNode (node.value)
+        # Global declarations just need the value since they are already in the data section
+        if self.isGlobalDeclaration:
+            return ord(node.value)
+        return (ASM_AST.CharLiteralNode (node.value), [])
 
     # =============================================================================================
 
     def visitStringLiteralExpressionNode (self, node):
-        return ASM_AST.StringLiteralNode (node.value)
+        asmStringLiteral = f'"{node.value[1:-1]}\0"'
+        size = len(node.value) - 2 + 1  # length of the string without quotes + null terminator
+        label = self.getNewStringLabel()
+        globalVarNode = ASM_AST.GlobalVariableNode (label, size=size, initialValue=asmStringLiteral, directive=".ascii")
+        self.globalVariables.append(globalVarNode)
+
+        # Global string declarations should generate a second label for the string literal itself
+        # And we dont want to load anything since we outside of a function
+        if self.isGlobalDeclaration:
+            return (label, [])
+
+        # Load string address into a temporary register
+        tempRegister = ASM_AST.VirtualTempRegisterNode()
+        asmInstructions = [
+            ASM_AST.InstructionNode("loada", [tempRegister, ASM_AST.LabelNode(label)], comment=f"Load address of string literal: '{label}'")
+        ]
+
+        return (tempRegister, asmInstructions)
