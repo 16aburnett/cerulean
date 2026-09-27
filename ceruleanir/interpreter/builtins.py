@@ -35,27 +35,6 @@ def builtin_print_char(args):
     print(char_value, end='')
     return None
 
-@register_builtin("@__builtin__print__char__1")
-def builtin_print_char_1(args):
-    """Print a string (array of characters) given a pointer."""
-    if len(args) != 1:
-        print(f"ERROR: __builtin__print__char__1 expects 1 argument, got {len(args)}")
-        sys.exit(1)
-    string_value = args[0]
-    # If it's already a string, print it
-    if isinstance(string_value, str):
-        print(string_value, end='')
-    # If it's a list/array, iterate and print each character
-    elif isinstance(string_value, list):
-        for char in string_value:
-            if isinstance(char, int):
-                print(chr(char), end='')
-            else:
-                print(char, end='')
-    else:
-        print(string_value, end='')
-    return None
-
 @register_builtin("@__builtin__print__i32")
 def builtin_print_i32(args):
     """Print a 32-bit integer."""
@@ -96,6 +75,37 @@ def builtin_print_f64(args):
     print(float_value, end='')
     return None
 
+@register_builtin("@__builtin__print__ptr")
+def builtin_print_ptr(args):
+    """Print a pointer as hexadecimal."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__print__ptr expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    ptr_value = args[0]
+    print(f"0x{ptr_value:x}", end='')
+    return None
+
+@register_builtin("@__builtin__print__char__1")
+def builtin_print_char_1(args):
+    """Print a string (array of characters) given a pointer."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__print__char__1 expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    string_value = args[0]
+    # If it's already a string, print it
+    if isinstance(string_value, str):
+        print(string_value, end='')
+    # If it's a list/array, iterate and print each character
+    elif isinstance(string_value, list):
+        for char in string_value:
+            if isinstance(char, int):
+                print(chr(char), end='')
+            else:
+                print(char, end='')
+    else:
+        print(string_value, end='')
+    return None
+
 @register_builtin("@__builtin__println")
 def builtin_println(args):
     """Print a newline."""
@@ -103,6 +113,19 @@ def builtin_println(args):
         print(f"ERROR: __builtin__println expects 0 arguments, got {len(args)}")
         sys.exit(1)
     print()  # Print newline
+    return None
+
+@register_builtin("@__builtin__println__char")
+def builtin_println_char(args):
+    """Print a single character followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__char expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    char_value = args[0]
+    # Convert integer character code to character if needed
+    if isinstance(char_value, int):
+        char_value = chr(char_value)
+    print(char_value)
     return None
 
 @register_builtin("@__builtin__println__i32")
@@ -143,6 +166,16 @@ def builtin_println_f64(args):
         sys.exit(1)
     float_value = args[0]
     print(float_value)
+    return None
+
+@register_builtin("@__builtin__println__ptr")
+def builtin_println_ptr(args):
+    """Print a pointer as hexadecimal followed by newline."""
+    if len(args) != 1:
+        print(f"ERROR: __builtin__println__ptr expects 1 argument, got {len(args)}")
+        sys.exit(1)
+    ptr_value = args[0]
+    print(f"0x{ptr_value:x}")
     return None
 
 @register_builtin("@__builtin__println__char__1")
