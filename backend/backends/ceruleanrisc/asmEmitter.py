@@ -26,6 +26,9 @@ class ASMEmitter:
         self.shouldPrintDebug = shouldPrintDebug
         self.code = []
         self.dataSection = []
+        # Formatting
+        self.instructionMinWidth = 12
+        self.argMinWidth = 25
         
     def emit(self, finalASM):
         """
@@ -79,6 +82,22 @@ class EmitterVisitor(ASMASTVisitor):
         """Emit a line of code with proper indentation."""
         self.emitIndent()
         self.emit(f"{line}\n")
+
+    def emitInstruction(self, instruction, operands=[], comment=None):
+        """Emit a formatted instruction with operands and optional comment"""
+        line = f"{instruction} "
+        # Pad line to ensure minimum instruction width
+        # Only if there is something else to print
+        if operands or comment:
+            line = line.ljust(self.emitter.instructionMinWidth)
+        if operands:
+            line += ", ".join(operands)
+        # Pad line to ensure minimum argument width
+        # Only if there is something else to print
+        if comment:
+            line = line.ljust(self.emitter.instructionMinWidth + self.emitter.argMinWidth)
+            line += f" // {comment}"
+        self.emitLine(line)
     
     def emitIndent(self):
         """Emit indentation spaces."""
@@ -200,10 +219,10 @@ class EmitterVisitor(ASMASTVisitor):
         
         # Function prologue
         self.emitComment("Prologue: Setup stack frame")
-        self.emitLine("push bp")
-        self.emitLine("mv64 bp, sp")
+        self.emitInstruction("push", ["bp"])
+        self.emitInstruction("mv64", ["bp", "sp"])
         if stackFrameSize > 0:
-            self.emitLine(f"sub64i sp, sp, {stackFrameSize} // allocate {stackFrameSize} bytes")
+            self.emitInstruction("sub64i", ["sp", "sp", str(stackFrameSize)], f"allocate {stackFrameSize} bytes")
         
         # Emit instructions
         self.emitComment("Function body")
@@ -214,9 +233,9 @@ class EmitterVisitor(ASMASTVisitor):
         epilogueLabel = f"__epilogue__{node.id}"
         self.emitComment("Epilogue")
         self.emitLabel(epilogueLabel)
-        self.emitLine("mv64 sp, bp // restore stack pointer")
-        self.emitLine("pop bp")
-        self.emitLine("ret")
+        self.emitInstruction("mv64", ["sp", "bp"], "restore stack pointer")
+        self.emitInstruction("pop", ["bp"])
+        self.emitInstruction("ret")
         
         self.indentation -= 1
         
@@ -251,9 +270,9 @@ class EmitterVisitor(ASMASTVisitor):
                     if regName in allocaOffsets:
                         offset = allocaOffsets[regName]
                         # Compute address into scratch register
-                        self.emitLine(f"mv64 r8, bp // alloca: compute stack address")
+                        self.emitInstruction("mv64", ["r8", "bp"], "alloca: compute stack address")
                         if offset > 0:
-                            self.emitLine(f"sub64i r8, r8, {offset}")
+                            self.emitInstruction("sub64i", ["r8", "r8", str(offset)])
                         # Store result to destination (may be spilled)
                         self._emitStore(destOperand, "r8")
                         return
@@ -270,8 +289,8 @@ class EmitterVisitor(ASMASTVisitor):
                     # Replace with actual epilogue label
                     if self.currentFunction:
                         epilogueLabel = f"__epilogue__{self.currentFunction.id}"
-                        self.emitLine(f"loada r8, {epilogueLabel}")
-                        self.emitLine(f"jmp r8")
+                        self.emitInstruction("loada", ["r8", epilogueLabel])
+                        self.emitInstruction("jmp", ["r8"])
                         return
         
         # Standard instruction emission with spill handling
@@ -298,19 +317,19 @@ class EmitterVisitor(ASMASTVisitor):
             if self._isSpilled(arg):
                 scratch = scratchRegs[i % len(scratchRegs)]
                 self._emitLoad(arg, scratch)
-                self.emitLine(f"push {scratch}")
+                self.emitInstruction("push", [scratch])
             else:
                 # Handle normal arguments (physical registers)
                 argValue = self.visit(arg)
-                self.emitLine(f"push {argValue}")
+                self.emitInstruction("push", [argValue])
         
         # Call function
-        self.emitLine(f"loada r8, {funcName}")
-        self.emitLine(f"call r8")
+        self.emitInstruction("loada", ["r8", funcName])
+        self.emitInstruction("call", ["r8"])
         
         # Pop arguments
         for _ in node.arguments:
-            self.emitLine("pop r8")
+            self.emitInstruction("pop", ["r8"])
     
     def visitRegisterNode(self, node):
         """Visit a register node - return the register name."""
@@ -370,10 +389,10 @@ class EmitterVisitor(ASMASTVisitor):
         if offset is not None:
             if kind == 'param':
                 # Parameters are at positive offsets: [bp + offset]
-                self.emitLine(f"load64 {scratchReg}, bp, {offset} // load parameter {operand.id}")
+                self.emitInstruction("load64", [scratchReg, "bp", str(offset)], f"load parameter {operand.id}")
             elif kind == 'spill':
                 # Spilled locals are at negative offsets: [bp - offset]
-                self.emitLine(f"load64 {scratchReg}, bp, -{offset} // load spilled {operand.id}")
+                self.emitInstruction("load64", [scratchReg, "bp", f"-{offset}"], f"load spilled {operand.id}")
         else:
             self.emitComment(f"ERROR: Cannot load operand {operand.id}")
     
@@ -384,10 +403,10 @@ class EmitterVisitor(ASMASTVisitor):
             if kind == 'param':
                 # Parameters shouldn't be stored to (they're read-only in this context)
                 # But if needed: [bp + offset]
-                self.emitLine(f"store64 bp, {scratchReg}, {offset} // store to parameter {operand.id}")
+                self.emitInstruction("store64", ["bp", scratchReg, str(offset)], f"store to parameter {operand.id}")
             elif kind == 'spill':
                 # Spilled locals are at negative offsets: [bp - offset]
-                self.emitLine(f"store64 bp, {scratchReg}, -{offset} // store to spilled {operand.id}")
+                self.emitInstruction("store64", ["bp", scratchReg, f"-{offset}"], f"store to spilled {operand.id}")
         else:
             self.emitComment(f"ERROR: Cannot store to operand {operand.id}")
     
@@ -469,9 +488,9 @@ class EmitterVisitor(ASMASTVisitor):
         
         if mappedArgs:
             argStr = ", ".join(str(arg) for arg in mappedArgs)
-            self.emitLine(f"{command} {argStr}{commentString}")
+            self.emitInstruction(command, mappedArgs, node.comment)
         else:
-            self.emitLine(f"{command}{commentString}")
+            self.emitInstruction(command, [], node.comment)
         
         # Store result to spilled destination if needed
         if destIdx >= 0 and destIdx < len(operandMapping):
