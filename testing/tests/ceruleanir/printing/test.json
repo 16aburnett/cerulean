@@ -1,4 +1,4 @@
 {
   "entry": "test_print.ceruleanir",
-  "skip_backends": ["ceruleanir"]
+  "skip_backends": []
 }

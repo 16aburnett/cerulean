@@ -1,0 +1,21 @@
+A
+A
+Hello, World!
+String literal passed to function
+Global string
+1776
+123456789
+42
+3.1415926535
+12345.321
+3.14
+3.14
+3735928559
+0xdeadbeef
+0
+42
+70000
+4294967296
+281474976710656
+-42
+-0.002
